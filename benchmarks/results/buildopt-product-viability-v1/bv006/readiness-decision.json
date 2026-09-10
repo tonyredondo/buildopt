@@ -1,0 +1,35 @@
+{
+  "schema": "buildopt.viability/owner-readiness-decision/v1",
+  "step": "BV-006",
+  "status": "partial",
+  "decision": "INSUFFICIENT_READINESS",
+  "atUTC": "2026-09-08T23:50:01.264877+00:00",
+  "measurementCompleted": true,
+  "actualOwnerQualificationPassed": false,
+  "wrapperP95NS": 1352567,
+  "maximumWrapperP95NS": 10000000,
+  "nativeMedianExtraNS": 139333503,
+  "candidateMedianExtraNS": 728016001,
+  "armImbalanceNS": 588682498,
+  "maximumArmImbalanceNS": 100000000,
+  "nativeEndUpperBoundNS": 5996661,
+  "reconstruction": {
+    "path": "owner-overhead-reconstruction.json",
+    "sha256": "062dc3895ec30075b44fe2ada18782cd2a951bec8ecd52611b810455cf3364bd"
+  },
+  "diagnosis": {
+    "path": "owner-overhead-diagnosis.json",
+    "sha256": "bf03fa021d3281c63fd1a5842c6263286540f1ef4940e9a46082adae83fea641"
+  },
+  "candidateEngineeringOrdinalsConsumed": [],
+  "seedValidationOrdinalsConsumed": [],
+  "confirmationFrozen": false,
+  "candidateCorrectnessG2": "Existing scoped proof remains verified",
+  "next": [
+    "Preregister bounded collector/daemon phase attribution",
+    "Select one evidence-backed correction or fixed qualification design",
+    "Requalify with unchanged 10-ms/100-ms limits",
+    "Only then execute engineering 0..20 and freeze confirmation"
+  ],
+  "discardedPrimaryRemedy": "File-open-only optimization: isolated sink is 14-32 ms, with omitted Groovy/serialization costs explicitly unmeasured"
+}

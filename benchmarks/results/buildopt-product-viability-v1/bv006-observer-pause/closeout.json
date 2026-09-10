@@ -1,0 +1,66 @@
+{
+  "status": "verified",
+  "decision": "ORIGINAL_PAUSE_NOT_REPRODUCED",
+  "originalCauseEstablished": false,
+  "observationQualified": false,
+  "productionSourceUnchanged": true,
+  "entryFilesChecked": 20060,
+  "changedEntryFiles": [
+    "benchmarks/results/buildopt-product-viability-v1/README.md",
+    "docs/plans/buildopt-product-viability-v1-cpu-screen.md",
+    "docs/plans/buildopt-product-viability-v1-tracker.md",
+    "docs/research-status.md"
+  ],
+  "priorSealedFilesVerified": 5558,
+  "recordsVerified": 1360,
+  "probeProcesses": 4,
+  "heartbeatProcesses": 4,
+  "closedProcessIdentities": [
+    {
+      "pid": 1079756,
+      "startTicks": "41153924"
+    },
+    {
+      "pid": 1079757,
+      "startTicks": "41153924"
+    },
+    {
+      "pid": 1080383,
+      "startTicks": "41159941"
+    },
+    {
+      "pid": 1080384,
+      "startTicks": "41159941"
+    },
+    {
+      "pid": 1080765,
+      "startTicks": "41165952"
+    },
+    {
+      "pid": 1080766,
+      "startTicks": "41165952"
+    },
+    {
+      "pid": 1080832,
+      "startTicks": "41166965"
+    },
+    {
+      "pid": 1080833,
+      "startTicks": "41166965"
+    }
+  ],
+  "gradleActual": 0,
+  "helperJVMActual": 0,
+  "probeWallSeconds": 140.523979,
+  "localLinksChecked": 174,
+  "originCopiesVerified": 58,
+  "phaseLogicalBytes": 34762914,
+  "portableCopyBytes": 34883592,
+  "freeBytes": 838935515136,
+  "programGradleReserved": 644,
+  "programGradleActual": 545,
+  "cpuScreenGradleReserved": 0,
+  "cpuScreenGradleActual": 0,
+  "compilerCommands": 2,
+  "atUTC": "2026-09-09T12:00:33.461847+00:00"
+}

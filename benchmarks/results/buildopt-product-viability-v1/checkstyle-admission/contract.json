@@ -1,0 +1,142 @@
+{
+  "schemaVersion": "buildopt.viability/checkstyle-contract/v1",
+  "step": "C1",
+  "status": "verified",
+  "subject": "elastic/elasticsearch :server:precommit Checkstyle tasks",
+  "revision": "22d6425e9a44ec9e1aedc2785f4478b8019c851a",
+  "gradleVersion": "9.7.1",
+  "checkstyleVersion": "13.11.0",
+  "javaVersion": "Temurin 21.0.12+8",
+  "files": [
+    {
+      "path": "gradle/wrapper/gradle-wrapper.properties",
+      "sha256": "d0bebe8133babb74ab29a31ee6616c56ef8985fc801e1fd16c61b5ed2189e907",
+      "gitBlob": "760c45969c452620d7d65601033a80ceb19fc675"
+    },
+    {
+      "path": "gradle/build.versions.toml",
+      "sha256": "c28e155dc456d8a1a862ff2965f3bb7ec9d00abf48cd1d8a393b7eedef4b4867",
+      "gitBlob": "0968189dcafaad36562d8f2fffbcf7db0098ffc3"
+    },
+    {
+      "path": "server/build.gradle",
+      "sha256": "bf4e9bf0b5dfcf110c8e4239fabc90d7fdf3dd06f66495dcecb4d55cd1c445ce",
+      "gitBlob": "4eb538658ce62d72562b10077527b025d46a36a8"
+    },
+    {
+      "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstylePrecommitPlugin.java",
+      "sha256": "4bcb596e7d09d08cdcf8ea1c94472421c223769c5e139c200f16dddc3e301015",
+      "gitBlob": "dc8ea4424ba8993a5b457f1f49a204d2acca19f0"
+    },
+    {
+      "path": "build-tools-internal/src/main/resources/checkstyle.xml",
+      "sha256": "51d4149c0e631af64016e63f14d5467a7d4f0022d2b4c6a6c5cc2398ad62a81f",
+      "gitBlob": "bfa5e6de7a53c0d51964999a8c33c49d7a1e391c"
+    },
+    {
+      "path": "build-tools-internal/src/main/resources/checkstyle_suppressions.xml",
+      "sha256": "e0ed16371edadad9f15100f33f97dad63d4c4a29eafea2344e32d91ec8035fa6",
+      "gitBlob": "3c77c60a7d7eb4956dd7f2373012ba94661c0dd0"
+    },
+    {
+      "path": "build-tools-internal/src/integTest/groovy/org/elasticsearch/gradle/internal/precommit/CheckstylePrecommitPluginFuncTest.groovy",
+      "sha256": "ffc855f47a6710ba54ca95955ad607e026e089fc41e914183711287f76651aeb",
+      "gitBlob": "6725b6d1f1431e4abf0ec57148faa84f2ca57bda"
+    },
+    {
+      "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/AstUtils.java",
+      "sha256": "f62ba040481c946a3da63391e049a59ec2ef6c849fecefba7a4c566214502f2b",
+      "gitBlob": "ef571e32a502d0b218029f0d50c003d6adbdf6aa"
+    },
+    {
+      "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/HiddenFieldCheck.java",
+      "sha256": "002a554ea7f534625270b5f0a432f99bdda0ab60ce8e11da563471a8972fe32d",
+      "gitBlob": "4eca3017f0f225f1a4ccd63daeea7f3a63555ce1"
+    },
+    {
+      "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/MissingJavadocTypeCheck.java",
+      "sha256": "3409846723ffcda32d239123d41a692b7d04fac41ff3c583f1e45dd1e28d9153",
+      "gitBlob": "fd4ec38fa15a56b36054e458cf6fe1e2e4234e27"
+    },
+    {
+      "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/SnippetLengthCheck.java",
+      "sha256": "e921f57b903c4c9cbe3fe45ccbcb242e9ed8ae50f50938447ad3e3a90356abd4",
+      "gitBlob": "32f28c4b7f6e8148d61e7039f760193e57d521ab"
+    },
+    {
+      "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/StringFormattingCheck.java",
+      "sha256": "2db1debd76815b776f935a542839274ed52381aaa73b00e4488f000a4d74f28f",
+      "gitBlob": "ca46ffc5f846cdb3f839e5399678b93939deaf2d"
+    },
+    {
+      "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/SwitchBetweenCheck.java",
+      "sha256": "b2fb9c6e49d5b92c4936175875256169fe96d67b780590bcc58a6a473470af40",
+      "gitBlob": "4c263d7ed95b0c7c898459554986be6c624757cb"
+    }
+  ],
+  "activeModules": [
+    "Checker",
+    "BeforeExecutionExclusionFileFilter",
+    "SuppressionFilter",
+    "SuppressionFilter",
+    "SuppressWarningsFilter",
+    "RegexpMultiline",
+    "RegexpMultiline",
+    "org.elasticsearch.gradle.internal.checkstyle.SnippetLengthCheck",
+    "LineLength",
+    "TreeWalker",
+    "SuppressWarningsHolder",
+    "AvoidStarImport",
+    "UnusedImports",
+    "SuppressionCommentFilter",
+    "OuterTypeFilename",
+    "NoLineWrap",
+    "OneStatementPerLine",
+    "OneTopLevelClass",
+    "UpperEll",
+    "EqualsHashCode",
+    "ModifierOrder",
+    "RedundantModifier",
+    "PackageDeclaration",
+    "org.elasticsearch.gradle.internal.checkstyle.StringFormattingCheck",
+    "org.elasticsearch.gradle.internal.checkstyle.SwitchBetweenCheck",
+    "RegexpSinglelineJava",
+    "RegexpSinglelineJava",
+    "DescendantToken",
+    "NeedBraces"
+  ],
+  "activeCustomRules": [
+    "SnippetLengthCheck",
+    "StringFormattingCheck",
+    "SwitchBetweenCheck"
+  ],
+  "inactiveCustomRules": [
+    "HiddenFieldCheck",
+    "MissingJavadocTypeCheck",
+    "AstUtils"
+  ],
+  "nativeContract": {
+    "source": "Complete native SourceTask file tree for each source set; no source filtering to manufacture up-to-date/cache hits",
+    "classpath": "Empty compiled-source classpath already native; full Checkstyle engine, transitive dependencies and owner rule implementation classpath remains a semantic input",
+    "configuration": "Full config tree, charset, rule properties/messages, standard and optional additional suppressions, module-info exclusion; current three active custom rules read only the current FileText/AST",
+    "outputs": "Full XML file entries and diagnostic attributes (file,line,column,severity,message,source), same failure behavior; retain main.xml, test.xml, internalClusterTest.xml. HTML false, SARIF false in inspected native records; no absent-input/no-source contract relaxed",
+    "failures": "Exceptions remain failures; maxErrors/maxWarnings/ignoreFailures must match actual Gradle task; rejected/failed input must not be cached as successful",
+    "nativeCacheAvailable": "Checker.cacheFile is unset upstream. Source audit predicts cached-file XML omission, timestamp identity risk and unbound custom implementation changes; qualification pending",
+    "configurationCache": "Prior native Spotless restarted-daemon failure remains; admission baseline retains --no-configuration-cache",
+    "failureSettings": {
+      "maxErrors": 0,
+      "maxWarnings": 2147483647,
+      "ignoreFailures": false,
+      "showViolations": true,
+      "enableExternalDtdLoad": false,
+      "evidence": "Pinned Gradle CheckstyleExtension/CodeQualityExtension defaults; CheckstylePlugin mappings, no inspected owner override; real native task fails on an unsuppressed error"
+    }
+  },
+  "proofLimits": [
+    "C1 is source and native report audit, not incremental implementation correctness",
+    "Owner functional test covers configuration/NO_SOURCE with fake dependencies only; cannot prove Checkstyle engine semantics",
+    "Three custom rules reviewed in full; disabled rules are not an applicability promise",
+    "CLI/engine probes are fixtures, not workflow savings"
+  ],
+  "validationOrdinalsConsumed": []
+}

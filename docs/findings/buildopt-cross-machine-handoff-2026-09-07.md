@@ -1,5 +1,11 @@
 # BuildOpt cross-machine handoff
 
+> **Research disposition: HISTORICAL evidence (2026-09-08).** Original
+> findings, limits and outcomes are preserved below. Old recommendations and
+> successor instructions are scoped to that campaign. Use the
+> [research status register](../research-status.md) and
+> [current tracker](../plans/buildopt-product-viability-v1-tracker.md) for new work.
+
 Snapshot date: 2026-09-07. Conversation language: Spanish. Repository language:
 English. This file preserves the complete cross-machine briefing that was
 truncated in chat. It is a dated handoff, not a new experiment contract.

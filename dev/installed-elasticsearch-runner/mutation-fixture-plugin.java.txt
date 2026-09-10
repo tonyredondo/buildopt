@@ -1,0 +1,37 @@
+package org.elasticsearch.gradle.internal.precommit;
+
+import org.gradle.api.Plugin;
+import org.gradle.api.Project;
+import org.gradle.api.tasks.TaskProvider;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/** Configuration adapter only: executes the unchanged owner task class. */
+public class MutationFixturePlugin implements Plugin<Project> {
+    @Override
+    public void apply(Project project) {
+        String fixture = project.getProviders().gradleProperty("fixture").get();
+        String phase = project.getProviders().gradleProperty("phase").get();
+        TaskProvider<ForbiddenPatternsTask> seed = project.getTasks().register("seedForbiddenPatterns", ForbiddenPatternsTask.class);
+        TaskProvider<ForbiddenPatternsTask> target = project.getTasks().register("forbiddenPatterns", ForbiddenPatternsTask.class);
+        for (TaskProvider<ForbiddenPatternsTask> provider : List.of(seed, target)) {
+            provider.configure(task -> {
+                task.getSourceFolders().set(List.of(project.fileTree("src")));
+                if (fixture.equals("rules")) {
+                    task.rule(new HashMap<>(Map.of("name", "fixture rule", "pattern", phase.equals("after") ? "unused_after_rule" : "unused_before_rule")));
+                }
+                if (fixture.equals("excludes") && phase.equals("after")) {
+                    task.exclude("**/excluded.txt");
+                }
+                if (fixture.equals("relative-root")) {
+                    task.getRootDir().set(phase.equals("after") ? project.getProjectDir().getParentFile() : project.getProjectDir());
+                }
+            });
+        }
+        if (phase.equals("before")) {
+            target.configure(task -> task.dependsOn(seed));
+        }
+    }
+}

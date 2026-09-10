@@ -12,6 +12,11 @@ public final class ReviewedNativePatchJavaRecipe {
             "REVIEWED_RELATIVE_CACHEABILITY_JAVA_V1";
     public static final String MARKER_ONLY_CACHEABILITY_RECIPE_ID =
             "REVIEWED_MARKER_ONLY_CACHEABILITY_JAVA_V1";
+    public static final String ELASTICSEARCH_FORBIDDEN_PATTERNS_RECIPE_ID =
+            "REVIEWED_ELASTICSEARCH_FORBIDDEN_PATTERNS_JAVA_V1";
+    public static final String ELASTICSEARCH_FORBIDDEN_PATTERNS_PATH =
+            "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/"
+                    + "ForbiddenPatternsTask.java";
     public static final String RECIPE_VERSION = "1.0";
     private static final int MAXIMUM_SOURCE_BYTES = 1024 * 1024;
     private static final Definition MICRONAUT_PYTHON_VFS = new Definition(
@@ -29,6 +34,12 @@ public final class ReviewedNativePatchJavaRecipe {
             "sha256:22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04",
             "sha256:dd75bc28223141ac121f6377f7ba95832fd250739861196f60120264dd4c2d1d",
             List.of(new Edit(2452, "@org.gradle.api.tasks.CacheableTask\n")));
+    private static final Definition ELASTICSEARCH_FORBIDDEN_PATTERNS = new Definition(
+            ELASTICSEARCH_FORBIDDEN_PATTERNS_PATH,
+            "sha256:61fe2eaa06ff463c2a49cea656b147889060855acfa094288ebb8b31567e11b6",
+            "sha256:d6858f5ac43ad671496cf1e54e7af309cb98ebda4a9be53e61578df8baefa2d0",
+            List.of(new Edit(1154, "import org.gradle.api.tasks.CacheableTask;\n"),
+                    new Edit(2276, "@CacheableTask\n")));
 
     private ReviewedNativePatchJavaRecipe() {}
 
@@ -42,6 +53,32 @@ public final class ReviewedNativePatchJavaRecipe {
     public static Result applyMarkerOnlyCacheability(String relativePath, byte[] source)
             throws PatchFailure {
         return apply(SPRING_ARCHITECTURE_CHECK, relativePath, source);
+    }
+
+    /** Applies the retained Elasticsearch correction only to its exact qualified source. */
+    public static Result applyElasticsearchForbiddenPatterns(String relativePath, byte[] source)
+            throws PatchFailure {
+        return apply(ELASTICSEARCH_FORBIDDEN_PATTERNS, relativePath, source);
+    }
+
+    // Bundle delivery and signed exact inverse share the same frozen byte binding.
+    static void validateElasticsearchOperations(List<PatchBundleVerifier.Operation> operations)
+            throws PatchFailure {
+        Definition definition = ELASTICSEARCH_FORBIDDEN_PATTERNS;
+        if (operations.size() != 1) {
+            throw new PatchFailure(PatchFailure.Status.REJECTED,
+                    "Elasticsearch recipe requires exactly one exact MODIFY");
+        }
+        var operation = operations.get(0);
+        boolean forward = definition.preimageDigest().equals(operation.preimageDigest())
+                && definition.postimageDigest().equals(operation.postimageDigest());
+        boolean inverse = definition.postimageDigest().equals(operation.preimageDigest())
+                && definition.preimageDigest().equals(operation.postimageDigest());
+        if (!"MODIFY".equals(operation.type()) || !definition.path().equals(operation.path())
+                || !(forward || inverse)) {
+            throw new PatchFailure(PatchFailure.Status.REJECTED,
+                    "Elasticsearch bundle does not match the qualified path and exact byte pair");
+        }
     }
 
     static Result applyForTest(

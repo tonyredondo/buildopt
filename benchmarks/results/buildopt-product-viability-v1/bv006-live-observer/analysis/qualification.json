@@ -1,0 +1,651 @@
+{
+  "status": "verified",
+  "cases": [
+    {
+      "records": 40,
+      "phaseRows": 40,
+      "snapshotExitGaps": [],
+      "processes": [
+        1099862,
+        1099867
+      ],
+      "error": "",
+      "metrics": {
+        "scan": {
+          "count": 40,
+          "maximumMS": 0.604992,
+          "medianMS": 0.481601,
+          "p95MS": 0.546151
+        },
+        "encode": {
+          "count": 40,
+          "maximumMS": 0.056541,
+          "medianMS": 0.01914,
+          "p95MS": 0.02736
+        },
+        "write": {
+          "count": 40,
+          "maximumMS": 0.03611,
+          "medianMS": 0.02651,
+          "p95MS": 0.03377
+        },
+        "encodeReturn": {
+          "count": 40,
+          "maximumMS": 0.00545,
+          "medianMS": 0.00489,
+          "p95MS": 0.00529
+        },
+        "samplingGap": {
+          "count": 39,
+          "maximumMS": 101.035873,
+          "medianMS": 99.95184,
+          "p95MS": 100.792612
+        },
+        "internalHeartbeat": {
+          "count": 399,
+          "maximumMS": 11.042257,
+          "medianMS": 10.145804,
+          "p95MS": 10.503676
+        },
+        "externalHeartbeat": {
+          "count": 399,
+          "maximumMS": 10.632096,
+          "medianMS": 10.147364,
+          "p95MS": 10.492246
+        }
+      },
+      "runtimePauseDeltas": {
+        "/sched/pauses/total/gc:seconds": [
+          {
+            "lowerSeconds": "4.096e-06",
+            "upperSeconds": "5.12e-06",
+            "count": 2
+          }
+        ],
+        "/sched/pauses/total/other:seconds": []
+      },
+      "phaseSHA256": "f9d9c9a95c5c76a541a46335a155b4d8d7a32f368ceb0d3aa18d9d61c10d192e",
+      "payloadSHA256": "92730449e5c8f88829d2dcb0ad7355df6fc0d6c6a1513680306fe0277fef988c",
+      "externalSHA256": "07043227b99e6389316761e771d42d2d07ded7563930f94f1de4c1013229b240",
+      "driverCPUms": 33.47,
+      "observerSeconds": 4.000997282,
+      "name": "normal"
+    },
+    {
+      "records": 40,
+      "phaseRows": 40,
+      "snapshotExitGaps": [],
+      "processes": [
+        1099909,
+        1099914
+      ],
+      "error": "",
+      "metrics": {
+        "scan": {
+          "count": 40,
+          "maximumMS": 0.614732,
+          "medianMS": 0.481711,
+          "p95MS": 0.564391
+        },
+        "encode": {
+          "count": 40,
+          "maximumMS": 0.04957,
+          "medianMS": 0.018925,
+          "p95MS": 0.0275
+        },
+        "write": {
+          "count": 40,
+          "maximumMS": 2104.63999,
+          "medianMS": 0.02518,
+          "p95MS": 0.03417
+        },
+        "encodeReturn": {
+          "count": 40,
+          "maximumMS": 0.00763,
+          "medianMS": 0.004825,
+          "p95MS": 0.00526
+        },
+        "samplingGap": {
+          "count": 39,
+          "maximumMS": 2105.065581,
+          "medianMS": 100.004209,
+          "p95MS": 100.922392
+        },
+        "internalHeartbeat": {
+          "count": 599,
+          "maximumMS": 10.967326,
+          "medianMS": 10.149344,
+          "p95MS": 10.494275
+        },
+        "externalHeartbeat": {
+          "count": 599,
+          "maximumMS": 10.744035,
+          "medianMS": 10.162334,
+          "p95MS": 10.490265
+        }
+      },
+      "runtimePauseDeltas": {
+        "/sched/pauses/total/gc:seconds": [
+          {
+            "lowerSeconds": "3.072e-06",
+            "upperSeconds": "3.584e-06",
+            "count": 1
+          },
+          {
+            "lowerSeconds": "3.584e-06",
+            "upperSeconds": "4.096e-06",
+            "count": 1
+          }
+        ],
+        "/sched/pauses/total/other:seconds": []
+      },
+      "phaseSHA256": "b1127e203e194401f4f1eb71b7f336474442e0e8972cc7795c032fffd404ea4a",
+      "payloadSHA256": "6bb03713171d2f2657055a61064d0206dfb5f39bd4bb1cff4592b48f8e33a659",
+      "externalSHA256": "2fa872510f30f36abcd6bdf6c716db8ae7e81678b73b121c2648d42b10bc233b",
+      "driverCPUms": 38.973,
+      "observerSeconds": 6.001317322,
+      "name": "writer-delay",
+      "classification": "WRITE_BOUNDARY_PAUSE"
+    },
+    {
+      "records": 40,
+      "phaseRows": 40,
+      "snapshotExitGaps": [],
+      "processes": [
+        1100002,
+        1100007
+      ],
+      "error": "",
+      "metrics": {
+        "scan": {
+          "count": 40,
+          "maximumMS": 0.499141,
+          "medianMS": 0.407141,
+          "p95MS": 0.495171
+        },
+        "encode": {
+          "count": 40,
+          "maximumMS": 0.138911,
+          "medianMS": 0.016235,
+          "p95MS": 0.02117
+        },
+        "write": {
+          "count": 40,
+          "maximumMS": 0.03395,
+          "medianMS": 0.021315,
+          "p95MS": 0.02934
+        },
+        "encodeReturn": {
+          "count": 40,
+          "maximumMS": 0.00624,
+          "medianMS": 0.004285,
+          "p95MS": 0.00513
+        },
+        "samplingGap": {
+          "count": 39,
+          "maximumMS": 2110.204981,
+          "medianMS": 99.982899,
+          "p95MS": 100.905981
+        },
+        "internalHeartbeat": {
+          "count": 389,
+          "maximumMS": 2110.730822,
+          "medianMS": 10.145914,
+          "p95MS": 10.476745
+        },
+        "externalHeartbeat": {
+          "count": 599,
+          "maximumMS": 10.577026,
+          "medianMS": 10.146435,
+          "p95MS": 10.364495
+        }
+      },
+      "runtimePauseDeltas": {
+        "/sched/pauses/total/gc:seconds": [
+          {
+            "lowerSeconds": "3.584e-06",
+            "upperSeconds": "4.096e-06",
+            "count": 1
+          },
+          {
+            "lowerSeconds": "8.192e-06",
+            "upperSeconds": "1.024e-05",
+            "count": 1
+          }
+        ],
+        "/sched/pauses/total/other:seconds": []
+      },
+      "phaseSHA256": "b32c950bc7cd8a8be7f130b68511f17276969db9c737766e4da9b05510e6145a",
+      "payloadSHA256": "e576abe9fd07b08054ca84029d434bc8abd8897a78a6dddf0bf0ec4eab5a09c6",
+      "externalSHA256": "fedc4d6aae167bc4faeb3013508687357c22372362abb46ad8e96fbb4a648dd5",
+      "driverCPUms": 29.75,
+      "observerSeconds": 6.001017033,
+      "name": "process-pause",
+      "classification": "PROCESS_OR_RUNTIME_PAUSE"
+    },
+    {
+      "records": 2,
+      "phaseRows": 3,
+      "snapshotExitGaps": [],
+      "processes": [
+        1100138,
+        1100143
+      ],
+      "error": "deliberate writer failure",
+      "metrics": {
+        "scan": {
+          "count": 3,
+          "maximumMS": 0.480041,
+          "medianMS": 0.431841,
+          "p95MS": 0.480041
+        },
+        "encode": {
+          "count": 3,
+          "maximumMS": 0.040501,
+          "medianMS": 0.0191,
+          "p95MS": 0.040501
+        },
+        "write": {
+          "count": 3,
+          "maximumMS": 0.01514,
+          "medianMS": 0.01273,
+          "p95MS": 0.01514
+        },
+        "encodeReturn": {
+          "count": 3,
+          "maximumMS": 0.00469,
+          "medianMS": 0.00455,
+          "p95MS": 0.00469
+        },
+        "samplingGap": {
+          "count": 2,
+          "maximumMS": 99.912,
+          "medianMS": 99.680914,
+          "p95MS": 99.912
+        },
+        "internalHeartbeat": {
+          "count": 29,
+          "maximumMS": 10.343694,
+          "medianMS": 10.113714,
+          "p95MS": 10.318725
+        },
+        "externalHeartbeat": {
+          "count": 29,
+          "maximumMS": 10.384574,
+          "medianMS": 10.114854,
+          "p95MS": 10.344854
+        }
+      },
+      "runtimePauseDeltas": {
+        "/sched/pauses/total/gc:seconds": [
+          {
+            "lowerSeconds": "3.584e-06",
+            "upperSeconds": "4.096e-06",
+            "count": 2
+          }
+        ],
+        "/sched/pauses/total/other:seconds": []
+      },
+      "phaseSHA256": "46387bb1ac65d8c30ab38d93d6a33e6b4d7cc7a20d3cef40ba91303acf7e60bb",
+      "payloadSHA256": "5c1e18b54a4a1c243d87a45edd8df58da162d925bf1ee0a263002a335317a9d4",
+      "externalSHA256": "8748d03d2e711a7b097e4db6f83b0bdf615d3f7168131454ef92467f87573947",
+      "driverCPUms": 2.78,
+      "observerSeconds": 0.30057597,
+      "name": "writer-failure"
+    },
+    {
+      "records": 0,
+      "phaseRows": 0,
+      "snapshotExitGaps": [],
+      "processes": [],
+      "error": "",
+      "metrics": {
+        "scan": {
+          "count": 0,
+          "maximumMS": 0.0,
+          "medianMS": 0,
+          "p95MS": 0
+        },
+        "encode": {
+          "count": 0,
+          "maximumMS": 0.0,
+          "medianMS": 0,
+          "p95MS": 0
+        },
+        "write": {
+          "count": 0,
+          "maximumMS": 0.0,
+          "medianMS": 0,
+          "p95MS": 0
+        },
+        "encodeReturn": {
+          "count": 0,
+          "maximumMS": 0.0,
+          "medianMS": 0,
+          "p95MS": 0
+        },
+        "samplingGap": {
+          "count": 0,
+          "maximumMS": 0.0,
+          "medianMS": 0,
+          "p95MS": 0
+        },
+        "internalHeartbeat": {
+          "count": 0,
+          "maximumMS": 0.0,
+          "medianMS": 0,
+          "p95MS": 0
+        },
+        "externalHeartbeat": {
+          "count": 0,
+          "maximumMS": 0.0,
+          "medianMS": 0,
+          "p95MS": 0
+        }
+      },
+      "runtimePauseDeltas": {
+        "/sched/pauses/total/gc:seconds": [],
+        "/sched/pauses/total/other:seconds": []
+      },
+      "phaseSHA256": "6888464036d02bc0f5eb616cde8b8e496e5a185529a4947a7ab2a8fe0a5ac4f5",
+      "payloadSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalSHA256": "f2c3692812e87420aaa850ff2f5acae4bc609875d956a6f2d9681b1a3823f08b",
+      "driverCPUms": 0.004,
+      "observerSeconds": 4.46e-06,
+      "name": "cancel-before"
+    },
+    {
+      "records": 1,
+      "phaseRows": 1,
+      "snapshotExitGaps": [],
+      "processes": [
+        1100167,
+        1100172
+      ],
+      "error": "",
+      "metrics": {
+        "scan": {
+          "count": 1,
+          "maximumMS": 0.515321,
+          "medianMS": 0.515321,
+          "p95MS": 0.515321
+        },
+        "encode": {
+          "count": 1,
+          "maximumMS": 0.05223,
+          "medianMS": 0.05223,
+          "p95MS": 0.05223
+        },
+        "write": {
+          "count": 1,
+          "maximumMS": 150.496291,
+          "medianMS": 150.496291,
+          "p95MS": 150.496291
+        },
+        "encodeReturn": {
+          "count": 1,
+          "maximumMS": 0.00554,
+          "medianMS": 0.00554,
+          "p95MS": 0.00554
+        },
+        "samplingGap": {
+          "count": 0,
+          "maximumMS": 0.0,
+          "medianMS": 0,
+          "p95MS": 0
+        },
+        "internalHeartbeat": {
+          "count": 24,
+          "maximumMS": 10.206264,
+          "medianMS": 10.081039,
+          "p95MS": 10.132875
+        },
+        "externalHeartbeat": {
+          "count": 24,
+          "maximumMS": 10.117984,
+          "medianMS": 10.1135945,
+          "p95MS": 10.115594
+        }
+      },
+      "runtimePauseDeltas": {
+        "/sched/pauses/total/gc:seconds": [
+          {
+            "lowerSeconds": "3.072e-06",
+            "upperSeconds": "3.584e-06",
+            "count": 1
+          },
+          {
+            "lowerSeconds": "3.584e-06",
+            "upperSeconds": "4.096e-06",
+            "count": 1
+          }
+        ],
+        "/sched/pauses/total/other:seconds": []
+      },
+      "phaseSHA256": "d624219dff7be230091518cdaa0d09a3000c2da11efecc8bdee0eba23ac47c2c",
+      "payloadSHA256": "2336064f6145db5bce252cdb0951522ebd5f2b8b2a108363ad5cb2111a9f37ad",
+      "externalSHA256": "ce57f60333bb75e0fc031945bfaee8814cb017fd1e9feea9358418feda2a9110",
+      "driverCPUms": 1.756,
+      "observerSeconds": 0.251589623,
+      "name": "cancel-write"
+    },
+    {
+      "records": 0,
+      "phaseRows": 1,
+      "snapshotExitGaps": [],
+      "processes": [],
+      "error": "deliberate scan failure",
+      "metrics": {
+        "scan": {
+          "count": 1,
+          "maximumMS": 0.0322,
+          "medianMS": 0.0322,
+          "p95MS": 0.0322
+        },
+        "encode": {
+          "count": 0,
+          "maximumMS": 0.0,
+          "medianMS": 0,
+          "p95MS": 0
+        },
+        "write": {
+          "count": 0,
+          "maximumMS": 0.0,
+          "medianMS": 0,
+          "p95MS": 0
+        },
+        "encodeReturn": {
+          "count": 0,
+          "maximumMS": 0.0,
+          "medianMS": 0,
+          "p95MS": 0
+        },
+        "samplingGap": {
+          "count": 0,
+          "maximumMS": 0.0,
+          "medianMS": 0,
+          "p95MS": 0
+        },
+        "internalHeartbeat": {
+          "count": 9,
+          "maximumMS": 10.169944,
+          "medianMS": 10.074404,
+          "p95MS": 10.169944
+        },
+        "externalHeartbeat": {
+          "count": 9,
+          "maximumMS": 10.114014,
+          "medianMS": 10.084664,
+          "p95MS": 10.114014
+        }
+      },
+      "runtimePauseDeltas": {
+        "/sched/pauses/total/gc:seconds": [
+          {
+            "lowerSeconds": "3.584e-06",
+            "upperSeconds": "4.096e-06",
+            "count": 2
+          }
+        ],
+        "/sched/pauses/total/other:seconds": []
+      },
+      "phaseSHA256": "4977f771983f15a47e8c9096153ca8ef91bd77ccacbe6849cfc419819c3c6aac",
+      "payloadSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "externalSHA256": "9d7b52d107b093b7be77092ac2371965ddee07730f89018f8877fb6aefeb8010",
+      "driverCPUms": 0.896,
+      "observerSeconds": 0.100475691,
+      "name": "scan-failure"
+    },
+    {
+      "records": 3,
+      "phaseRows": 3,
+      "snapshotExitGaps": [
+        0
+      ],
+      "processes": [
+        1100193,
+        1100198
+      ],
+      "error": "",
+      "metrics": {
+        "scan": {
+          "count": 3,
+          "maximumMS": 0.504342,
+          "medianMS": 0.396471,
+          "p95MS": 0.504342
+        },
+        "encode": {
+          "count": 3,
+          "maximumMS": 0.02829,
+          "medianMS": 0.02001,
+          "p95MS": 0.02829
+        },
+        "write": {
+          "count": 3,
+          "maximumMS": 0.01574,
+          "medianMS": 0.01262,
+          "p95MS": 0.01574
+        },
+        "encodeReturn": {
+          "count": 3,
+          "maximumMS": 0.0041,
+          "medianMS": 0.00406,
+          "p95MS": 0.0041
+        },
+        "samplingGap": {
+          "count": 2,
+          "maximumMS": 99.990399,
+          "medianMS": 99.870964,
+          "p95MS": 99.990399
+        },
+        "internalHeartbeat": {
+          "count": 29,
+          "maximumMS": 10.286485,
+          "medianMS": 10.113384,
+          "p95MS": 10.198454
+        },
+        "externalHeartbeat": {
+          "count": 29,
+          "maximumMS": 10.117455,
+          "medianMS": 10.074494,
+          "p95MS": 10.115014
+        }
+      },
+      "runtimePauseDeltas": {
+        "/sched/pauses/total/gc:seconds": [
+          {
+            "lowerSeconds": "3.072e-06",
+            "upperSeconds": "3.584e-06",
+            "count": 1
+          },
+          {
+            "lowerSeconds": "3.584e-06",
+            "upperSeconds": "4.096e-06",
+            "count": 1
+          }
+        ],
+        "/sched/pauses/total/other:seconds": []
+      },
+      "phaseSHA256": "6a0b63f37cb211fd047c819c3a87de5d1012f9c230616ffb634196a38502ead3",
+      "payloadSHA256": "1f2f95f352e15b4a51c36aa1e353d5862eb41d9a6b54fa9da415859d65145ae2",
+      "externalSHA256": "fa65ce9ed65522640dc6758cfe0a1a324bd3effaa62abdb86120ea2b09e570e9",
+      "driverCPUms": 2.406,
+      "observerSeconds": 0.30084872,
+      "name": "process-exit"
+    },
+    {
+      "records": 2,
+      "phaseRows": 2,
+      "snapshotExitGaps": [],
+      "processes": [
+        1100214,
+        1100219
+      ],
+      "error": "sampler record limit",
+      "metrics": {
+        "scan": {
+          "count": 2,
+          "maximumMS": 0.428821,
+          "medianMS": 0.427516,
+          "p95MS": 0.428821
+        },
+        "encode": {
+          "count": 2,
+          "maximumMS": 0.04009,
+          "medianMS": 0.030385,
+          "p95MS": 0.04009
+        },
+        "write": {
+          "count": 2,
+          "maximumMS": 0.0192,
+          "medianMS": 0.0158,
+          "p95MS": 0.0192
+        },
+        "encodeReturn": {
+          "count": 2,
+          "maximumMS": 0.00425,
+          "medianMS": 0.004135,
+          "p95MS": 0.00425
+        },
+        "samplingGap": {
+          "count": 1,
+          "maximumMS": 100.30122,
+          "medianMS": 100.30122,
+          "p95MS": 100.30122
+        },
+        "internalHeartbeat": {
+          "count": 29,
+          "maximumMS": 10.610506,
+          "medianMS": 10.074384,
+          "p95MS": 10.135374
+        },
+        "externalHeartbeat": {
+          "count": 28,
+          "maximumMS": 10.116404,
+          "medianMS": 10.074529,
+          "p95MS": 10.114714
+        }
+      },
+      "runtimePauseDeltas": {
+        "/sched/pauses/total/gc:seconds": [
+          {
+            "lowerSeconds": "3.072e-06",
+            "upperSeconds": "3.584e-06",
+            "count": 2
+          }
+        ],
+        "/sched/pauses/total/other:seconds": []
+      },
+      "phaseSHA256": "7a4de9f93db88b008f2b4aab41b24e3b05045593eb34b274f6eff11550befbf5",
+      "payloadSHA256": "8b705b06d12d35ecf80b417eb40a05b65fb4d90b766b440a507df036f3d67bce",
+      "externalSHA256": "2644a7fb3e35abf73c9258c0a3d35bc846a3af3eeed6093569c93742e0c785f9",
+      "driverCPUms": 1.983,
+      "observerSeconds": 0.300034958,
+      "name": "record-limit"
+    }
+  ],
+  "gradleActual": 0,
+  "helperJVMActual": 0,
+  "originalCauseEstablished": false,
+  "observationQualified": false
+}

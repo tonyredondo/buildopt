@@ -66,8 +66,8 @@ function Clear-BuildOptDirectGradleEnvironment {
     # repository-selected credential name, so clear the private namespace.
     $Names = @([Environment]::GetEnvironmentVariables('Process').Keys)
     foreach ($Name in $Names) {
-        if ([string]$Name -clike 'BUILDOPT_*') {
-            [Environment]::SetEnvironmentVariable([string]$Name, $null, 'Process')
+        if ([string]$Name -like 'BUILDOPT_*' -or [string]$Name -like 'WCNCP_*') {
+            [Environment]::SetEnvironmentVariable([string]$Name, [NullString]::Value, 'Process')
         }
     }
 }

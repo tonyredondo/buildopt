@@ -1,0 +1,9 @@
+replication	originalOrdinal	warmup	arm	implementation	nativeSeconds	customerSeconds	outsideEnvelopeSeconds	hostFlag	externalCoresUpperBound	maximumSampleGapSeconds
+1	6	True	N	current optimized implementation	206.975300761	207.074585113	0.0	FLAGGED	0.8164141020510473	1.935522169
+1	6	True	I	revised optimized implementation	202.28342710500002	202.550521449	0.0	FLAGGED	0.29148987742248855	1.188990882
+1	7	False	N	current optimized implementation	124.144570198	124.537290534	0.0	FLAGGED	13.203748208565512	3.313544273
+1	7	False	I	revised optimized implementation	82.768565338	83.160056553	0.002626745	FLAGGED	0.3379050133601852	1.011049564
+2	6	True	N	current optimized implementation	204.601443997	204.88758975399998	0.0	FLAGGED	0.4604307850436435	1.07872501
+2	6	True	I	revised optimized implementation	203.936088178	204.46075141699998	0.0	FLAGGED	0.7753566508195888	1.037714213
+2	7	False	N	current optimized implementation	82.53510074799999	83.00274395000001	0.0	FLAGGED	0.2700322959740478	1.021159835
+2	7	False	I	revised optimized implementation	97.163911188	97.33924641499999	0.0025916869999999996	FLAGGED	0.32205489047558244	1.093384197

@@ -1,0 +1,1663 @@
+{
+  "status": "verified",
+  "captures": [
+    "cs-owner-native-full",
+    "cs-owner-state-binding-full"
+  ],
+  "contractSHA256": "0f78177a1f79ac2d0c909ef4f3c56ac14aaf8158e4d5f0e633891ac7e8f7be34",
+  "graphTasks": 1301,
+  "inventories": [
+    50225,
+    50226
+  ],
+  "exactEntries": 50020,
+  "candidateOnlyOutputs": [
+    "server/build/checkstyle-content-aware.xml"
+  ],
+  "approvedDifferences": [
+    {
+      "path": "client/client-benchmark-noop-api-plugin/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "94cfe37024f30d8fda540ae1714fbdc36667e62cbdc3dd97e1c901b8abd90e2d",
+        "5ce1a11bd6eb32844eec05dcd49956deef2f0da4ff5ea2082bd9afd069cee5fb"
+      ]
+    },
+    {
+      "path": "client/rest/build/distributions/elasticsearch-rest-client-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "b6f731f4b4df1e3e1da4a79d570bcd438b1e72190de7d81ff8290ddc3a39032d",
+        "32decfca2ac330508a4c1322e507e49cf8c946d2613182556acd1bfe539e8870"
+      ]
+    },
+    {
+      "path": "client/rest/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "65a18536711325576494c647e950f6c3cd6682c922d48540b0f0f515ca45f45d",
+        "c602dcc5d9459f9a69c096734beb3a1a1885aaf309dcf6328af20479ec4e3343"
+      ]
+    },
+    {
+      "path": "client/sniffer/build/distributions/elasticsearch-rest-client-sniffer-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "150056f5e5f45283f47fc172b8f92cf0c3dc37b211bc19294f89a93ad747d3c3",
+        "69e1e3e444d3012713a6c018081b390840ff874a9c14d322245485f97bb0f2e6"
+      ]
+    },
+    {
+      "path": "libs/arrow/build/distributions/elasticsearch-arrow-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "d7d74f6b412e9be122291713ff53b59e5d448dfb81a734b4dc76f99558a905e6",
+        "079fe5db830a4009aea22aa40b710f1eebab2f153c0776757268f918890b1b04"
+      ]
+    },
+    {
+      "path": "libs/cli-terminal/build/distributions/elasticsearch-cli-terminal-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "2e392068706c6345a7ffe10f7d2df1679c8a2ba2b2cb5226975a4502081ecc6c",
+        "46318b981f252135e5ff307f1557540d21b2793a14a391f7c34514f082695823"
+      ]
+    },
+    {
+      "path": "libs/cli/build/distributions/elasticsearch-cli-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "77deafaacfc83c6145d86629ab71f3bc58c85b2469b137a595d1f8314ac466f0",
+        "0abb70ccd600033897de04d20cc47189da1898c3a41dc8500632bf686a31968b"
+      ]
+    },
+    {
+      "path": "libs/cli/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "f824a19796da9ab46792b979d25b2aa15b745e28c35c666a4b94c31ddfe86d7c",
+        "1c61f45ff1ab81effff612e515d7cc3a1e86bc6329012b77cfff4950b5d430fa"
+      ]
+    },
+    {
+      "path": "libs/columnar/build/distributions/elasticsearch-columnar-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "a3c93dc003965320c2b9392cef32e28da009805936392f7f1732e77a378c87e9",
+        "6b9fb572eec472ac5966b12a35e7964d2d816dba8e51317ba5abd9c1b811d816"
+      ]
+    },
+    {
+      "path": "libs/columnar/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "03e86625958aac8a0cc2c4a135aac69e1b33003bd58ce51af8dbed192de7dc74",
+        "c5f0ebe4a8c34dfddc3486e14f6ccb0075df976b71ff00d7d433074c9dc88aac"
+      ]
+    },
+    {
+      "path": "libs/core/build/distributions/elasticsearch-core-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "06f07f90d0909ef50122ee0924a2ab8ecaad52b6f48bed07c1b15df6281a8c28",
+        "dc2cb47e51551658d5fa7a4b310aa2b9a66cacad85178b69367e4987ee6a2678"
+      ]
+    },
+    {
+      "path": "libs/dissect/build/distributions/elasticsearch-dissect-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "3a37ff6b261cb3094769a8aa28004e91032b87aaefc1aa377dde1fe3fedff066",
+        "0d7ca3aa78470171521a019cb18e87567f1c68599c11c59aadc899da13b804b0"
+      ]
+    },
+    {
+      "path": "libs/entitlement/asm-provider/build/distributions/elasticsearch-entitlement-asm-provider-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "e041cf161d5fb8cfa311bee421411617fafa724dfca3a2f7dd5eb05a3e286ddc",
+        "a999df6685dc7be10cad2812af0e90a7f12628aacbccfc13d78aeafe4e61cdc3"
+      ]
+    },
+    {
+      "path": "libs/entitlement/bridge/build/distributions/elasticsearch-entitlement-bridge-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "bb875689b0016a87211f8c49a878eab15e6ea5300c0a4a8bcc860645c2e68a21",
+        "3c957331ae33a072a9a97723f64958e0bcae700b8e10c1bb5d3c217012c6ba33"
+      ]
+    },
+    {
+      "path": "libs/entitlement/build/distributions/elasticsearch-entitlement-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "11de5b8b13956e1c70610c41e27fb0e409e25ad3bed7865d96ceb8f78cffd8bc",
+        "c83c4dbffa99fac4f7f419a2ce8ff6c9261ee8ad97bb597426e7328e82cbf053"
+      ]
+    },
+    {
+      "path": "libs/entitlement/build/generated-resources/generateAsm-providerProviderImpl/IMPL-JARS/entitlement/elasticsearch-entitlement-asm-provider-9.6.0-SNAPSHOT.jar/META-INF/MANIFEST.MF",
+      "kind": "manifest",
+      "rawSHA256": [
+        "8b6db5f9e886ebdfc316931f2ad938d2de175ec39550734c346ca582ea3958dd",
+        "7fea5f9d573485ff3684549a34a2a960594270e894fe682c91413cd17234bd70"
+      ]
+    },
+    {
+      "path": "libs/exponential-histogram/build/distributions/elasticsearch-exponential-histogram-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "513c2abafdb1f5092847873a12d3c62dd4ba13a7d0c8afd69dcd3a58bc1802fa",
+        "53e5fc75639e97dba743f2b447161c016d91d0dd7e10ca84645fef88f00a838f"
+      ]
+    },
+    {
+      "path": "libs/exponential-histogram/build/distributions/elasticsearch-exponential-histogram-test-artifacts-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "f4c685bcbc8801144ba787dbe58463a2d61ab93de986d7b0764bda1453fbfb12",
+        "a259268854c9ffbb402ff3ac36a14e89cd4ee7bf9b525094b41cec87db6d5eaf"
+      ]
+    },
+    {
+      "path": "libs/exponential-histogram/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "f21bc9c0054d4fd13bf32a6d1706cadcb6feed9d6f0ef42ba4200dc90fab85eb",
+        "20b839ddc665d33f4d33385468c1fa077e373e4bf6c248331292b1c3eece395f"
+      ]
+    },
+    {
+      "path": "libs/exponential-histogram/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "67ca1f0627d6efc2860cf108f16a49cf9348c745f5bd4ec54f3643db97f0de84",
+        "17ba396c9144b2a9e149f9456040a94b9dc61d991fd869105ee36ad2ff952a9e"
+      ]
+    },
+    {
+      "path": "libs/foreign-adapter/build/distributions/elasticsearch-foreign-adapter-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "ab8188f40b3d7e5b55d1e067120b27714277f670f755a2bc4e7fc17397484240",
+        "326a02cf221cb990a9cce1915e69e4c13ed9eca59089c4f26860c331fde2f61f"
+      ]
+    },
+    {
+      "path": "libs/foreign-library/build/distributions/elasticsearch-foreign-library-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "5c5d6251ac7854f4e153ae4ac44597a391420e93b8002635814d1ed0caef623e",
+        "57b2828a1b983c408d1efe2b1fd8d60c6be1c3753f035e24a363656431a83b90"
+      ]
+    },
+    {
+      "path": "libs/foreign-library/processor/build/distributions/elasticsearch-foreign-library-processor-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "c870e97d386a2877ee6c6d377bba1c791f2473e9fa80413887ec93ec8d586369",
+        "acd49e18951e8f2f44ba5e92c6591f182b0d3554cd594fb94bec40b937df489c"
+      ]
+    },
+    {
+      "path": "libs/geo/build/distributions/elasticsearch-geo-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "769976dfeba813e07be833a24de7744d197e7dc26ec5fdbff0b0891dccb18676",
+        "d51a833cc0cc0405b02938ca5782cc85ded20fdd7eb182296b46a544c5ef63e0"
+      ]
+    },
+    {
+      "path": "libs/geo/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "01f0fa2a7711daf1ae961d8c4901bd236aa0d9dcb68fceb0add3a3d3a600864a",
+        "3ed56ffd4f06110fdb0b51cda12e0ee803eca6d88f1858f6da7c8b56c24ced69"
+      ]
+    },
+    {
+      "path": "libs/gpu-codec/build/distributions/elasticsearch-gpu-codec-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "a0f524729db2903a9619b7d5d7ba3652167024c0bb11c7fbb9df56924b8641fa",
+        "799f113a775120685364c163292f155ef240a632ada9843df0ec7173916cc46c"
+      ]
+    },
+    {
+      "path": "libs/gpu-codec/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "fb2975846d275a8f749cb752f4410bfe0ad88e458033d8a8bee00b1116f85a0d",
+        "72a4507558a10980a9626fb3ad873b7b9612691ff6a162477e35ae5ae7c77787"
+      ]
+    },
+    {
+      "path": "libs/grok/build/distributions/elasticsearch-grok-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "bb08208478179fc044618c3a8b950ef86a263480668d5e833612b2e98670577c",
+        "929203d0f125416fb4772c2fe8ebb27ddc1d7ad53428eff47fead29cf8eae2f0"
+      ]
+    },
+    {
+      "path": "libs/grok/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "11ec33a4821b4c282dc0a663ebb8061a8706e19e779d268dc957aebcf171ad8a",
+        "138cefc5b01ee6d7ebd366fd3ccf53bc68622b9328daef34b9e67c77e2ad76a3"
+      ]
+    },
+    {
+      "path": "libs/h3/build/distributions/elasticsearch-h3-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "7c86bcc23247ce710a9641287d33c557b60d5407d8b6ef48f918713f7fbd7ba6",
+        "591ca62097429c3010b7fca5355353c50f460e4a39c9a908afaf475a66e9169f"
+      ]
+    },
+    {
+      "path": "libs/h3/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "ae6fe125ef2f9de66c2601d03d49aff0a4664cb55719e5201c04a5b00b4cd620",
+        "fe279cab7b68699512c7aff46fe1ed779e429d5e405a912cfb8a6bb6f9ec8994"
+      ]
+    },
+    {
+      "path": "libs/ip-location-api/build/distributions/elasticsearch-ip-location-api-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "e5dec73e60f79011ae83458a90d9ff84297ac6f8618155b86860ec778d270d46",
+        "1c6730e36c10e09c9089926bb76f056db116e528874dbf86972222bacfa47276"
+      ]
+    },
+    {
+      "path": "libs/logging/build/distributions/elasticsearch-logging-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "a195ebb1d0e23976a21f85f0b46bf3492293cfadb72b593a8e7a56efdb9a70c9",
+        "b1514b54e31c058a70dd2438d5efa8cf856550db600761555fac420719d404e2"
+      ]
+    },
+    {
+      "path": "libs/lucene-store/build/distributions/elasticsearch-lucene-store-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "d4a3854d2bc24380f28d1c050b0551da80d0b0e0dbc72c64443a5159ad3eefce",
+        "ea9a4b99af0475259ed5215fc63f06b3f011e14a373ffecf1770748df602bec0"
+      ]
+    },
+    {
+      "path": "libs/lz4/build/distributions/elasticsearch-lz4-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "26780dc202e7a180e4181f52cd89317a701ccb4e0690a466e5fb51f5da841b47",
+        "6105130063c0adfb4226b2582025146a2ce5f111702c401a0d935945041f512f"
+      ]
+    },
+    {
+      "path": "libs/lz4/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "c6d88eea39e4440f258e3921f5a42083c24306edf2c06d3a45f89f56a1dc364d",
+        "2cb847a42fb712361a0bca793e1fa1b6b54acd61a707d642fcbab69b8ac7a5e5"
+      ]
+    },
+    {
+      "path": "libs/native/build/distributions/elasticsearch-native-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "24438cb14350704c151b28581e583c86626635aeafa4b46cfb8d06b5451122b1",
+        "2a7a909c72014812b83bbd283dfa453a7864c5a49cb3c61d0aa44ef5d2bdd3f0"
+      ]
+    },
+    {
+      "path": "libs/native/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "97062933e53bab85f41ed3af5088f2765eec5be47dade05b0ed5b8c2b13df8b2",
+        "93f5428c8d9328578ef939a5c01db0f3912acbf14a66922640c02f86dea42841"
+      ]
+    },
+    {
+      "path": "libs/plugin-analysis-api/build/distributions/elasticsearch-plugin-analysis-api-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "0d5bfcf3d10d99c305a5ed989d17bdfa9d50642628324da6ce211841d299f09d",
+        "ef98aea9f813c74ff16f0c757e04f234384d156ae11428624150576f86b4c317"
+      ]
+    },
+    {
+      "path": "libs/plugin-api/build/distributions/elasticsearch-plugin-api-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "159151ab81d10b53cdf4236170d7a5402ec0ebd482fdd567596be0b244938393",
+        "da5b283a128a6690bf9947b4f24bd93def4d346aecfdee0a81897d57e0e2f473"
+      ]
+    },
+    {
+      "path": "libs/simdvec/build/distributions/elasticsearch-simdvec-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "ddb5dfc13eabcf504c86c07915882c4f6c926632d3c9c2934cf596b34f2efff7",
+        "e3595dcca4d9510f7f1e04765fab13b8b3b0597a1852a765d453446c31c02db4"
+      ]
+    },
+    {
+      "path": "libs/simdvec/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "b85132c0067bc60e578630807d30774282610571273c55bc1b262f49b846db28",
+        "bed89079b21731788d28e92d54d1b54d04122d03d2c48808205377238c278024"
+      ]
+    },
+    {
+      "path": "libs/ssl-config/build/distributions/elasticsearch-ssl-config-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "22454f112e6faeae06770f7c5bfd63820c224350856982f0f3fb9523a1340b27",
+        "35ae6929b3d5e22ef23eff9a1aaff24684b49e92072bcc2e9343a5a841d0332f"
+      ]
+    },
+    {
+      "path": "libs/ssl-config/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "b01aa38b377e6f55e058e74fac0eba8149c3e7677459a9458a1dd44fecdd6089",
+        "f4baa92a5601ba9da01422a2e8c7ce57701cf9223673d5fc61e69686e4be4462"
+      ]
+    },
+    {
+      "path": "libs/swisshash/build/distributions/elasticsearch-swisshash-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "700be430b67d1e40b48869d175e9b9434560588e7d0056a1c49db2391e0043ec",
+        "3263e4cfee114cea91e8e0d9475c983fbf49b9b72238803e1d65c609c6b4a749"
+      ]
+    },
+    {
+      "path": "libs/swisshash/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "cf931a4e87515458dd4db91631d06ca44dd1d5a5cd058431d07a814a492cc3c6",
+        "540663a0fc0b62ea5d029028728f5b3c771b8855afe3c8097b5f15f57252c13e"
+      ]
+    },
+    {
+      "path": "libs/tdigest/build/distributions/elasticsearch-tdigest-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "5a1f53d47fe0fded4c24fccc55680ad5fad3edcfd9cceaca932d3aaf44498354",
+        "0216483f96f059aa00e1fe875c0440116f802469889b28afc4ec7c0957faa3e3"
+      ]
+    },
+    {
+      "path": "libs/user-agent-api/build/distributions/elasticsearch-user-agent-api-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "6489ee00fadd895553bb5bc1f928fbba9b2e4e92e7f041a24e91c1d140f0e8da",
+        "1242d20a24a4c32ea88367a2a3003d4e6a1326d1e51590d786f35901d8eacb70"
+      ]
+    },
+    {
+      "path": "libs/user-agent-api/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "d7e33a50b60be40fae34f6db1a33766ce077a4184154eb6c02c7cc0260b3f7b5",
+        "870508cfeec799df8682c8337fdae05e9859636da3cf6bac14118d407ea18e26"
+      ]
+    },
+    {
+      "path": "libs/web-utils/build/distributions/elasticsearch-web-utils-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "86cb983e57aeea094fbf3b87645082fe58bdd3c90a5acc17c860925f1041c701",
+        "f78cdf91246ca7973dbd531bc9897de796e5cd3b7c6aaccf554833a7b9871985"
+      ]
+    },
+    {
+      "path": "libs/web-utils/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "7f3ccfb456052771af6b4a1c2a71aa0b0ae079d73d91e300cc2c82e29c153550",
+        "6a54f74ae68025c27461f0b3cacf9b6acc27fa88db1eb37919c0a83bde7a94d6"
+      ]
+    },
+    {
+      "path": "libs/workload-identity-aws/build/distributions/elasticsearch-workload-identity-aws-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "0c452eedda5080b243c47b4df6ecc7c9d6be82254aca68d0ef6eaff7174bcaea",
+        "50e0162477060b6c99902825002f5f51476c4ecae215d512ef804b18caf5a76d"
+      ]
+    },
+    {
+      "path": "libs/x-content/build/distributions/elasticsearch-x-content-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "d93139ea22dc590fd8373ce2379bf05f5284344fe2196d025ea95525b22c09b8",
+        "d46c2dbc077aad881156aa68413796c37b4006861b4a135f9ede549c695c10f4"
+      ]
+    },
+    {
+      "path": "libs/x-content/build/generated-resources/generateImplProviderImpl/IMPL-JARS/x-content/x-content-impl-9.6.0-SNAPSHOT.jar/META-INF/MANIFEST.MF",
+      "kind": "manifest",
+      "rawSHA256": [
+        "5eacdbe396036b3cfa101e04f3372b0741ac5146f089f4e813679f744162286d",
+        "77ef8ca69c157276a92325e9b510ff8afba40dc86d988e1803c3116b9a62a711"
+      ]
+    },
+    {
+      "path": "libs/x-content/impl/build/distributions/x-content-impl-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "12c59aadbef716c870510199f9748a0c4f1ca3612370e3258a7e98326550bcb4",
+        "e679936aca0ea6b682595f23af8b949f45354915dcb16ad12101d53ca9fb5124"
+      ]
+    },
+    {
+      "path": "libs/x-content/impl/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "5b8e2349360ed363a2a849c0232ff97454743468d928e5aa01f9c890e51cd2e6",
+        "c92ac6522eac92bbf137d80f09e70e4dd0633fb0cfa0623601fa2aa69c12943a"
+      ]
+    },
+    {
+      "path": "modules/aggregations/build/distributions/aggregations-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "0b3348a124d9b914bdb0af1bbc0c7d3c91a7a0a0d91e43ced101c7f37cbc8352",
+        "7e68025aa5082690798a4684575d365ca02d42670ea699f6ff58b7f1f5bde1e5"
+      ]
+    },
+    {
+      "path": "modules/aggregations/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "bf80f10b25920c01e61af29376dacf5bdceb5acf9e6a9718ae9f30dbf6b098e4",
+        "aa6e27d8c108c978e489b43a02fc9cfbaf360a214296b89417979d9c208847b6"
+      ]
+    },
+    {
+      "path": "modules/analysis-common/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "871d5dc2b9ff66ec1630498632de75a174e6e8ce77f531f44114d1efe4aa9525",
+        "080046d72236499b4b4beb1df11d68a07a361975d5bc7249d4961a6f304cc808"
+      ]
+    },
+    {
+      "path": "modules/apm/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "4e28db23587728796b9aac9eabfa4af31dd3b45d6831c3e1bc1ffcf265826e20",
+        "1a678cdd84ae5878aaba4c2d9a12faf93aee61cc14ba3892373812e57f6a729a"
+      ]
+    },
+    {
+      "path": "modules/bitmap/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "9a06494cc4c52d1805548acd299038f79f34b60b17fe3103f8a11e840408c89c",
+        "972afd3fcc8733df519ab8433a6b32bf89640101ed76236e7a23e6d5c023c686"
+      ]
+    },
+    {
+      "path": "modules/data-streams/build/distributions/data-streams-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "e67df586161300ee8a426269344942e6ebc3cd516f46001c0cab4b62f0f771bf",
+        "6d32ac3289c426edb0feeb3ed0254f38a63eedacef608ae844f51bfea4c5738f"
+      ]
+    },
+    {
+      "path": "modules/data-streams/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "ca3ea6516029e45d969fbf8b95fd61f21a4cfdcb9ebc66e8cccbe89dc83d1772",
+        "5cab82d0f4be50b6b57f4ee510541aafe87826996faf49d6a1e991dc2aa88f02"
+      ]
+    },
+    {
+      "path": "modules/dot-prefix-validation/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "a875506e0101b393f26ea79c9556a1888a464bce9eeb46721d7a0419f08e46ba",
+        "2b3bde1b12e92a2f47e78586012cea3f722dcbf73cf1cf004b5842714991b628"
+      ]
+    },
+    {
+      "path": "modules/ingest-attachment/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "ed0919869c8bd5fb0af46f8b4647f91f6aac94fa5bee0288dc59ba278db5dda1",
+        "5b4cc71350ea8c53ef3229fac1cc26f6855e758d54ab746b061602a5a474a049"
+      ]
+    },
+    {
+      "path": "modules/ingest-common/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "d21896602c6220ad7feb5b53abeba6587f126471c48899915bb83e15fff4b8e3",
+        "bdd9f5552c4cdc5e63852041845d6b872a72e04ac8beb058a357a2030cfd3a91"
+      ]
+    },
+    {
+      "path": "modules/ingest-ip-location/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "060914bb04f9cf9b63885faff3b022d160be51ee7d74a2f632ce4be6aeb791b6",
+        "0ecd9745ed74fb11f2b5b310e0aff62c6350d8253f56ffeb87cb25b7a644d70b"
+      ]
+    },
+    {
+      "path": "modules/ip-location/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "232e8b4cb35af569e89b1126d5e1ccba58a57b59d40462e09db3c2c3e7bfb7da",
+        "509625e3b5219791f7db72b60c82e70d073ec44246d912f8c892c4af58d2fc2f"
+      ]
+    },
+    {
+      "path": "modules/kibana/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "ba542a6ff1dd9a9a5e9177f1b8d096e4dbfba9abf0941a6de7912ef19af023df",
+        "e5e9c18ecd48a71fdc63f66bbcc38b45e1f4e4c6258c6d58fe1f16d534851b8d"
+      ]
+    },
+    {
+      "path": "modules/lang-expression/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "08a9540f83ff64a64ca30f8f8c2f194db49c9c2bebbe8f37d6a26bd82170ca6c",
+        "8d9c55ef6d2967fdd4cfe07116aaa83c35646acfcde566b14e2a767c1cd964d1"
+      ]
+    },
+    {
+      "path": "modules/lang-mustache/build/distributions/lang-mustache-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "cbd9afb8b339b70775074ad08d067797c7ebc514d90fd97939bdefefcd95ca57",
+        "2f4b40100b72e4554bac7fedb2fddaeb3d92e09f5b9b9910cfff5e7c2ccdfc48"
+      ]
+    },
+    {
+      "path": "modules/lang-mustache/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "08cdec35ad0b1e55ed0a799a7a410b687ed0da0b09a1432f6b668fc5e176fe07",
+        "eb361339512fba7e7d18c749e6bc2dd34939bc326f1bc9c70c721b3031241e2f"
+      ]
+    },
+    {
+      "path": "modules/lang-painless/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "0912e87d616c9b30eb408bbde84c5af1a2a114b0d8a1ebac2570252562619fc5",
+        "f75c74bd7a0c51e0c84b3174d47987e52e2937f4e00dac0b2f723610b4c9ce30"
+      ]
+    },
+    {
+      "path": "modules/legacy-geo/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "9234ee9265ba40d55f380442dd2f379acdccf91e9fa6ceff51817079696d25e5",
+        "738f40ef54af9800c0d75b3377da6e3a7995a90ca7ef265cd6247aedfd6acf85"
+      ]
+    },
+    {
+      "path": "modules/mapper-extras/build/distributions/mapper-extras-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "17a8a4e90ff528c3ad9db7bf10b026f489a2f725c308a134e5124e8863c087fc",
+        "bad09bae2a5c2035dfc6352c55cb5378203b787b1751eeb9932cc04bf1382d90"
+      ]
+    },
+    {
+      "path": "modules/mapper-extras/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "2c0aa06f250d02830eb986187093461289a9a7decba3dfdc318a9b58a73582d6",
+        "2682bb2b2607f4db278d150d05e788a12df6c380f1a10f4a3188f9c572892d14"
+      ]
+    },
+    {
+      "path": "modules/percolator/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "ff646fcfab0214a2da6d7b0a3238ad1439af5536c6cb018d054b887cdb384ecf",
+        "723c0fe6a8c7f8f2ccfd01d669a24c935b394f1deb02390ad6b84115ffe0e868"
+      ]
+    },
+    {
+      "path": "modules/reindex-management/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "8448cdb07eec1f94f1ff192838829f6b3c345df261f787a8c7968e8f0455b6b0",
+        "68fd7fd159e94cacf05656e7999a13219ca75b948c8d7a33f5f91df7fa818d32"
+      ]
+    },
+    {
+      "path": "modules/reindex/build/distributions/reindex-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "bcb242bdf079efcd255a6b165e2f952e8ec9108824a9bedabd210b1e41e33eba",
+        "5fbcb675eb4014e133f83dfd2dba4e0fcaf76c063ecbb07493216ae7509fee1a"
+      ]
+    },
+    {
+      "path": "modules/reindex/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "7f8b264196e9936d1a1b72f65c80876db16f41e988dd8e82bfa7192c1b95003b",
+        "4fdb0a72bbd811ed73eb6b90c53b8ea74cbfb9a7bb453a77f7c2232aa6e0806f"
+      ]
+    },
+    {
+      "path": "modules/repository-azure/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "6c3bb42793dc15c612efb2d550a19bf0bc7021ffc3e674f46551397a8681c728",
+        "dd4263144dc20ad20b703aa6ae3c0d458780c1444543ae9c3486f1027657aacd"
+      ]
+    },
+    {
+      "path": "modules/repository-s3/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "be9d0514436ea3d5a20766929361a09b12346f304312470373f4d72a967ac0fc",
+        "e17cf09b128b6d5bf79f8f72f121595182be78ee3bfea2961ffc54ed1b8000d1"
+      ]
+    },
+    {
+      "path": "modules/repository-url/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "e364b0567a38676138765403fa86525a68603147c42cda500b550ab924604ac4",
+        "33cfc4ae3fefeb7db35c62b8e2f5048d1a84b8489c7e977a86af67df6290f863"
+      ]
+    },
+    {
+      "path": "modules/rest-root/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "90416ae19c03a165b8048157b4f08fbd7ebe4a7efc886267d95ea1f899e51781",
+        "a0ef611d0edfea07a9a21e88d9e4ead732b471a519fd311fc454ed099958ed17"
+      ]
+    },
+    {
+      "path": "modules/streams/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "10843242b752a7d53ff90d94570f0c551a9b450b0b094bf425ccba8b13fa19fe",
+        "a9c8d2398400366b735437334637b47363815e350fa34349397a7f5c621f5303"
+      ]
+    },
+    {
+      "path": "modules/transport-netty4/build/distributions/transport-netty4-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "377da6cecc9073cfccfec3ad6660efc456ea47ada9d422b076de20142110c618",
+        "d951fad47fd979568562fd1c752fcac9549832437d43ce3d12939c38cf3bcf1f"
+      ]
+    },
+    {
+      "path": "modules/transport-netty4/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "b9db0de5f42c460f0a745f224e0c44bd640c9c537cddcd045b7c1e5186a0eeab",
+        "7935c9ca3ad08d85ab7d444ea08a73375dc57c483737e6477164c93ecc93f1ce"
+      ]
+    },
+    {
+      "path": "modules/workload-identity/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "908243c6d143d4f44ce74fbfe1363de762dca66ff2db1576acf39e484df48254",
+        "2e7f83fc1e10473eb67233571d1dacfc0285ea512ee9e85744a4761d8ef59ef3"
+      ]
+    },
+    {
+      "path": "modules/workload-identity/spi/build/distributions/elasticsearch-workload-identity-spi-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "a86572b34079c84f1b97f4dd9223e7202da6b5a068897b9f872fd6f11a363e52",
+        "ecfc35a305ecd40ee98d9dd200e06d1b7092d506952c32a319f7fdbb56aa669a"
+      ]
+    },
+    {
+      "path": "plugins/analysis-icu/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "a103bd9c9f135eab79bab190658cb61fd7b56be9fa8b32d5d78625c19b92f951",
+        "7fbe9df43a0f717ff585291ac27f3a330b44d4be37f8c5b59c3eebdb399767fd"
+      ]
+    },
+    {
+      "path": "plugins/discovery-azure-classic/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "563d548a039008c10daae18d0e43ab702366f971e7d517f8e68b5385ee634518",
+        "61a1f99c17258f9e85957a03c6725b0151162d73525b2795784bc6a6f67ab555"
+      ]
+    },
+    {
+      "path": "plugins/discovery-ec2/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "47f69d16944ef88f09b0ea21b2d0836077e1351668972628f5308aff0cac42bc",
+        "1c0c5c3decfc6faea70f9fab3e9f86fd7759e26a29ef0a94b85a34a77e969cf4"
+      ]
+    },
+    {
+      "path": "plugins/mapper-annotated-text/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "fcc0e765cabaf6f15fd66b262ae9c3a93eb5698b33d6e6bcb54791540467dbec",
+        "5b4ef7d735a66afda48abc865042f03d4420d738c935caab699eee7d426eadab"
+      ]
+    },
+    {
+      "path": "plugins/repository-hdfs/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "194f95b1fe8272e3d435c91ef7f5dcdafe14d27d2ba3b72531d9ce18db265f45",
+        "84620ab1da51cc9e1ed713c49989405a617358a2fede1cb9cfe7e52846cb63d4"
+      ]
+    },
+    {
+      "path": "qa/system-indices/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "55b9df3d0d1a18b2bae2cc14f550c80f474ec6396f1a273e3e9749858d2d25f8",
+        "485d96c140424948498ae957368fc6ed890381e420a09adb8c3169c2d1d5ca2e"
+      ]
+    },
+    {
+      "path": "server/build/distributions/elasticsearch-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "180f8d469df09df18f1fc271df280d29a6932ad599262830d77b9d169a4b16a9",
+        "2a4dc9dac15fac678ead41932dc9711765bc2c2b5545cd62108a937d1535a9c1"
+      ]
+    },
+    {
+      "path": "server/build/reports/checkstyle/internalClusterTest.xml",
+      "kind": "checkstyle",
+      "rawSHA256": [
+        "10ffcbc900641b90b17eac3be4e332c7d85062f91a24134a7b27df19df3f152a",
+        "aa83a0311dfb2e91840cc3601ef837a587f610fb928938c0dd907c12cb1a7db3"
+      ]
+    },
+    {
+      "path": "server/build/reports/checkstyle/main.xml",
+      "kind": "checkstyle",
+      "rawSHA256": [
+        "8808ffe85fad1ef2e19663d39c2562c1ae891b9a2ffbbd3121e82e43da4aeea3",
+        "561e6e06a7b56039e8796d9be88885d712c62bc21ce22579c53232240c1bb3bc"
+      ]
+    },
+    {
+      "path": "server/build/reports/checkstyle/test.xml",
+      "kind": "checkstyle",
+      "rawSHA256": [
+        "f4023220fe7c63eec31fb8e9c87ec76f88a6948019b5ffb900063961539b5977",
+        "544fa8c716dbed7dfa7a5717acc602e07d30b4ff7197996fb9feecf2aa37951f"
+      ]
+    },
+    {
+      "path": "server/build/reports/licenseHeaders/rat.xml",
+      "kind": "rat",
+      "rawSHA256": [
+        "09a645ebe91848547a6c539bdb0a15cf09dfa01257f56798e1cce3cf1d2177b6",
+        "707c39f88315028471303f1b5fad4fb8f6c100beb95bc8043b421308fd04bbce"
+      ]
+    },
+    {
+      "path": "server/build/tmp/compileInternalClusterTestJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "b3db605c3ea9d7ac6b51e4302b84b6781b6a2f484b38251b40f127db9d61e6e7",
+        "6fc87807e843deddcdd7fdeaffd115547701fef20c5cb05410750aedcb8a4c49"
+      ]
+    },
+    {
+      "path": "server/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "d40b67beb6292431ce2a0a81247a6de0091fff44252da65931745e9eaa6f11ca",
+        "9f397260bf99c6351552f5ba5e00eceb92524047b9bd7cd329233a1f82daf3dc"
+      ]
+    },
+    {
+      "path": "server/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "b42aff7ea5ff652c8be5e31de67eb99194c980ececc6c984d546ca110c82d2b8",
+        "b80aa2b892e642b00eb1f3254aeb1d646c100ca5f93af1c0ba4b5b4a25e408a3"
+      ]
+    },
+    {
+      "path": "test/external-modules/esql-heap-attack/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "759d9cb9884627ef68940d6812e4ac7d492b4e5c8d94d9a2224d640bc6fd89ae",
+        "b00172a5ac8bade9bd408741852b112fb8652ce076aa96485364e6a00bf45729"
+      ]
+    },
+    {
+      "path": "test/external-modules/multi-project/build/distributions/test-multi-project-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "045ded9b2c9072a18f592fb39d6c2f802ee052285dc25b3c00d65360559f8a04",
+        "389c5875079fc683574aeb084621d470db78267fe40ddc02296e52ce6805508d"
+      ]
+    },
+    {
+      "path": "test/external-modules/multi-project/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "4b63efc9fc9d0b942201eaba22abad763aa8bdef755544de0626b714476d58eb",
+        "ac9d558f6be10cfcd41d702d2cc274ce26e2d408a276c58a7f4adeb3c9aa8252"
+      ]
+    },
+    {
+      "path": "test/external-modules/otel-filter-plugin/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "723cca96232f9e665ff1801dcddec9b56d6ee7237d0273fd28ad4d84d8cf46b9",
+        "7a3fb31b5538ea50f5aca2f2a4b0d03452e2be9aff4786c93db206f9afc4f3a5"
+      ]
+    },
+    {
+      "path": "test/framework/build/distributions/framework-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "0a5936a5c10e7ff22a424cd475d41523f90624311611ec7c602dc098bea871c9",
+        "5a871c4ae95521c0ae9cb0cb2b0d30330738610bf60efd9daf1f7fe8bab38315"
+      ]
+    },
+    {
+      "path": "test/framework/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "daa662894cb6bdc8fcb9f3444aac10fd042acb503778f9ef71e6c24ad326cfa7",
+        "3aca84c6840f57025a7c817c1c18ce543f5a99b795afcb9551a52cadc3871cea"
+      ]
+    },
+    {
+      "path": "test/logger-usage/build/distributions/logger-usage-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "c99f0445b3f93df9b0a2ac44c7447a569eb9f6ffd2ac0e35637152eda70bc20d",
+        "12f31cb337a6df5355a5cdfd38dc5f417a7a7ef5c195f417adcf885e671fa5fa"
+      ]
+    },
+    {
+      "path": "x-pack/extras/plugins/microsoft-graph-authz/kiota-merged/build/distributions/kiota-merged-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "93cec7b7805e6734f74ae45cb383deace4df3df790181184839640e7fcb5dd83",
+        "abb9d3a7c2e27055fbd0b1a9089c7e030db018470c8920b63ea891781b0fb286"
+      ]
+    },
+    {
+      "path": "x-pack/libs/es-opensaml-security-api/build/distributions/es-opensaml-security-api-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "5e89d179830355d21e5eaff99862e2de273f60e910691fe235c30948b1187730",
+        "981a4c6133bae99c17fa88b7c25e10026c34e05085e2b664aa369c28408adeb5"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/analytics/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "d9fe3f5111fe423d3cd0f5dec2b458326d6f95f070dba01c0a05452225ec7cd7",
+        "1cc2477ba0e8482defcd4318400ac66ddb382d5098a21ed8e894cefa03f4bfe8"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/apm-data/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "33cf8a067aaeb4aff86232c9bbcb2300d38e1de69f7462e9e7885667f1c721fb",
+        "5d1e953832c89441b3482b3732e130c48261d8b363905e540b6a8d1c4a85bdd3"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/async-search/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "b46ee57973242a8e1a26e8e1e17f5982001a8a1465bfb75ff786572a7bd4c16e",
+        "d3712e0bd3e1d77ede7598c66c4e5651dd3af31cc3aec40bf2d3937730142e4a"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/async/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "4edba1a27f26ab55d7dccce424c39e42b13803d6232cfc64ef6954cfeb4db330",
+        "1e770c08170ed5c64e5ec392ac3c277131d88663512a6c02fefd2dd249a44aeb"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/autoscaling/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "43aaa0c316a3aa8fa8dd7a1de0161ae3610200d76a90c8f117380cd4feee6e17",
+        "7a64968ee210f975e885eb67eec607565982fdc6ab0411e73904f007fc240d1c"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/blob-cache/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "80b4d07ec07912e44195d4afc57577a282f3c6513bd3fefbb1a478100ae9873c",
+        "99058ac512ab90e5ecf1803a9767cdecac2e2ee50f0d2b5c1c257f00233380fb"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/ccr/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "ee4688245cb6e80e57b6adac7fded45865ef53865467162fa477596e34a5ad4d",
+        "ff774fa3b105f824f9f5efd31f69572d057dda288e0b7afe74a05cfb276a8293"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/core/build/distributions/x-pack-core-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "eae9f0bef89f3b74c565655c5901ff4b2e026602c3945647635868870c2fce09",
+        "1d1b8108cc68972c9cb49e5094ff1ad4ce84f7c570ae1490dcce01c7b0c81666"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/core/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "591aa6020fbcad454a524aa608977f81e951fc8e14e748b4227a783ec098e8e6",
+        "3d7a118b0bf38401ace65f5d1d32352a866171afa5b99962a596516a3ce192cf"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/core/template-resources/build/distributions/x-pack-template-resources-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "3ed67512189f1ca1c09de151a883cdbd61993898e00d42697526ada182e56074",
+        "a7648ff5b2b15ddf7fd2c01eb1ec0c57739892beb8fe7d4901e4a7f9a538f6c6"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/deprecation/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "654f36b7d7c12c32e6fa03fd419682012301d16c432dec205936d933bbce6318",
+        "62b815d46cc5e7dda50aaac44f3ae568d57ac225782efde3d2dc968f33885b54"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/deprecation/qa/common/build/distributions/common-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "e3085590c6e3204f5207712466a69f0d9a84ceeca05e2da88aa1f38c65ecaf07",
+        "c8bc67e3cccfe86517847e30376cb3712e4effbfe93242fd86d9e7c74b182043"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/deprecation/qa/common/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "cfd7e81abe95204d168cbb6758e02298dbcc7b3ceba8f7e30bf5c6f43b459a7c",
+        "5961f6c23d498c4b95a92c8a3f38487bc29dc5cd1c1aca26fcca38e6d08a503e"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/deprecation/qa/deprecation-plugin/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "af998bc4741f62d7e77ca23b1cd4cc162acf658e81800d512c766a88349bffb6",
+        "e0b9128b699b8dc9b36fe3127469046cd34fd2af114cbb98b9fa7e86e5c5477a"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/diskbbq/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "66106e0cbe816d8df5bf5f8ea1ceaad94d1d3ca8b8f5088f24488401e771cbd2",
+        "23bb322c0ca1360affae8e27ce010784f277351c1dce0ed6fc27b93eb62b615c"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/dlm-frozen-transition/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "3b8ee4664116fb451dac898d4173c1c32293cb5dfc9fe3a34921adf1c63f18bf",
+        "493168e1903b4321f3da4d780603e7a927342698c30de3229c3c70f1923495d7"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/downsample/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "f92b3557c7c2574ebe80cdef32122a148499a5257302e6232e5f832d2d8ade76",
+        "7fc7dc6d2669ed257f8fc61d12d6ecf487f23fd3a5133b20209f0e0cef62b5f9"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/encryption/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "5020c8409d543624c25654f40c5f7b218d76f99a6054461e15671d78e5bd94c2",
+        "3b746ca82834f69ad81df62eec69f20eaacb785b5df7d6cb7a8e642581867940"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/encryption/spi/build/distributions/elasticsearch-x-pack-encryption-spi-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "3f2fc635a38419d24aad147ba728ea1ba6cfae54587a0f5a445d776738e87926",
+        "ca99da732533d0a3f5042a192e98a0b90c74533e37193cb5a977792765a82cb2"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/encryption/spi/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "86f0a0e9e03adb1af13c6e45cfee4ba5cfdea24fe060b46ff30d3749fb8ded4c",
+        "10cd1888edb28e331da83341494ef236a588f7dbe1391cd0d5305732e7a587b2"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/enrich/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "bfb2d69d19b213cdbee11afe9e55bb8684d485e42f568ab47a9488a25f02df84",
+        "857349949ffc98d27bf367407928e5096c763505781da9faba6a0342616206d7"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/ent-search/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "57bc5f15f1fa777a348a50cb0d340463d1ce9fcddcd6c64bdfdd55216c898f10",
+        "a65678f1103ef81ea2dba770db24ab65ef78209c3525cc125192fbf9e729bd85"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/eql/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "5a66988487081c1db9cb40b78902d7b068bef9fcb13527b277db8f29bb01f8fa",
+        "378f51a0d4152d8dc5cf595ece3bef9b35825d5bc6fc1595272a90b6588c18c9"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql-core/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "489ea420b425380b15f8841f0c95ae5a6053c8631b601e22c301b251dfcf3603",
+        "b98740124f2b822418d2cc3f21d899beded027351cdc1027fbb79322427f6e8a"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql-datasource-azure/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "c8f34ddf99ebb12c98cc20622fb789e008521142926c1c8655da9e072c323843",
+        "727c19032e3fdcad601d7b874527720d31f42bc6e159f9c72e8b7dce0e754c6e"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql-datasource-bzip2/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "2451f04a5282b634678cb3686df76c03e454d088620a4ee910dc98de06364a8f",
+        "7adcf5a1e5b0b130a652f1b79c8ec1a8c6a56622f201c5ddab1d368c31a8363a"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql-datasource-csv/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "002721f1fa2433f5d677839d5b44fd14a97860b835c8a1787e403a32c6c7aa81",
+        "2a1bb1392b837e69207f5e43441593e84c4038128a4f0b7548651adb535ee911"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql-datasource-gcs/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "408823a4c79845b83a319508d41869641af893e0685fc17f452d3937322c3a21",
+        "016a25c43a14d3e2d3a87f85d09c3a0c2812b557a2871d8f6152ec494a867f77"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql-datasource-http/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "0a55f35f1c908e006eaa7b3ebdcaf1aed4aeb48fde1abb6ac0522d63fb2a03e1",
+        "61d478b3e9fe3ee4d645a4a217fd7b6cd08a69638b99797756e2d988aac3d883"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql-datasource-ndjson/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "b756580014d803b51e263a810130a89ca3ae144fee9d71827553eece50265111",
+        "d9d9a2666984b7868d396c26053e876473f5e36187acbb4cbade419a47e4fe3b"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql-datasource-orc/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "37437ac5012f3ea314f5a21fd5e87605987054292b0df5de8e96eb476e8b7822",
+        "68aad78f45a58606c8b938a323525d6905a467d1f5b06b995060dbc4bc1910e7"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql-datasource-parquet/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "cb72c5a0d245eec28a4393b072b4715f43fbb54882ede47308825829adcf05c7",
+        "7a2993a143e86006a58330c3a9b83cdfe80f5f41b7927dad72c1e9741e80d9ef"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql-datasource-s3/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "33472e045062df5378af57e8091e89886b4ea9c7e6fd9fb4de145e8b9040f962",
+        "e9a2b13ae02fbed51a69fe53d3789caf587547a1a1a098b8b925d4991bc061c3"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "65365253f27d5c954926bf4b082449bbb9b8552726ef0535744ac6a9c4d66b57",
+        "b250de58970448876b0b1f0e464fe87ef8c0a0d73e4e6fb5d47e8f7b57770f1a"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql/compute/ann/build/distributions/x-pack-esql-compute-ann-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "c9f236fcef53934cdb95124092c5a801f169297fdbbb547d19851e3893d34ce6",
+        "2b794307dae92c788277497dabef5c6f86a41c7b1608056511c6aa9ce967f7a3"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql/compute/build/distributions/x-pack-esql-compute-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "a233e9ec02baf5a2030eba385dfd8c9f847864c7cc0ddffe7dc1162f6fbd5e98",
+        "0e2ab038e2f288b00d74b6674849aa20889f5fa1e701a733807ed38eed648b7c"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql/compute/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "6f1bbfa569f0ad6c3fff6b0f58805cddd64ac09c5500e64bd42d94320173d5b7",
+        "189dab11fa3ac6159ebdbd0b204c10ec3681a268ce22ae26f0cffe00ea8f7a09"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql/compute/gen/build/distributions/gen-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "74f6083b9bf764d4a1beea4ba4a6c7415a976068e5a3e3b3a32eef394a2250ca",
+        "11d85b2495be292b6e42e40a10ecb61b9f17e5b4ec8a202b7d5116a46d0ff9f4"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/fleet/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "d29337cf87f23e8d01dcff7f115593df59b902c82f9da319f0a15d9d8d4820da",
+        "795c13b37617efce77d107adc0e833e1c44ef7d82606d94cd1a030758daf34f2"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/geoip-enterprise-downloader/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "20af68124d25d21f0c213cda43ed90af0241e8b45c3ff7d8c24003e36e849bdb",
+        "b3a2e1214e4bfdbee9b63b9179291c8637cbf65aacb09a7eeb4a120d6e8455c6"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/gpu/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "c614145049036375b14a9164aa75ccd34b93caa55f2fc994a86387539c0ece04",
+        "6a7b79f3c50bb2ac540f779465ad96180bb579da348025882b8b4f75aa92d817"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/graph/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "0a78dc4e75469f8c557d898ea0c2e9cc020a66c48269d0271aa52ad902aeb07f",
+        "7cbaf6ae89045e8dcf1e5d939b2d40d45c96c10fcf74ed40e3866f17a7498e6c"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/identity-provider/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "2d98baf27790d2327cafebdd5a35efba3bb21c81859a75e5ddf46a3b06df3629",
+        "2a5b74296c4f93d681817d36d85673eb4dbae0170e8fb2bbdcb7502e679adbd1"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/ilm/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "26b4bca9b1617a86d32335a9f7f6555abad829cc7398d474602f3b60a1dcfbca",
+        "c142c79b4fed0c0479ccd49f23d0fb00d82e201fe483544a830b8a81d423ef57"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/inference/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "c53d17500b558980658185e223e31a7825b3b65e554331e24cd539d0373cd3a0",
+        "b58a6262d2e8ebbdbc13876b93faddc189416f2086085fcd9b45994c75711b71"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/inference/qa/test-service-plugin/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "d87dc04fd96f3863431ab14b12bf09eb4cb6d4cd8e43acfc5d68a032fd5130f4",
+        "21ab4a228c049a4bc30e0dd1ec6ff9a0b6a617ccdb077f1b38f2b0b9c6302203"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/kql/build/distributions/x-pack-kql-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "0f8b0fa18c280b34a0df23db75f0274a0a58cdfdff4e56d669ab1a376186b539",
+        "e471c91738e9d6565a26123c44738177d6cf60b02ed484829dc64ea6619f9582"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/kql/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "f5c44bc16176a60421397bf2e1e1909e2e3bbae1bcd630654be55c5a40885120",
+        "95bac4f32c4ac2de9312296fc3a33f027ea57e0f6955ab146846ce185e2f9f4d"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/logsdb/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "f3fcb344747b3b76332a3fe7977426dfa86fdac60e77b80ff00cf3d2020fd71d",
+        "43431e502e204aae156c5dca548b504dc858ec12633f7d611bb050ecdbb1c3f5"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/logstash/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "aa86d332a0a3ee741fa6ed5156e76f756d6f5b7bbf1617e6a772962637ce0be9",
+        "15a4373bc9fad89f7c3131a2145e400abd75f321e632e102254a88f4505d0c30"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/mapper-aggregate-metric/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "035c2f7412b9cae7d5834bd7a645f0999efe3c292c8e6017923b739cf143f7f0",
+        "4f157777df6a6ced5dee05b094156b45f207f11157f498d9f52265894d005203"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/mapper-counted-keyword/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "1d16694c96f6240c08389bfd81a177ed57f9f50875b2878be1da90e0c3347bb6",
+        "b5598d06c310bc1719216773e38cbf2d01eb6c4ad43c27623de04d7d6a5bfaff"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/mapper-unsigned-long/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "986cfdbac9f40005d4fc02e9b31f7b11306b28ef4c9d49a703de6eda73507669",
+        "83c2308666d66a557bd19ea2bd7176f0c776a5a77c0342d37864658589fc7314"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/mapper-version/build/distributions/x-pack-mapper-version-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "5386c418706c3a116dd745691130b4c7f49f356d14f481d6077f4078d4fc5187",
+        "80ee1f626c22a868a211e61938581c69e4098ad4928a999108829b897fc8ce45"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/migrate/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "5dd53b1b79ae921478a0acc47d34cc97bcdb259e7d26f284ba61c9de8556e02f",
+        "fc2c7ec5900eaa8ce4f1f15cd56550af76788a57a0c08330b4dc6aa439342117"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/ml-package-loader/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "d9eb7b2dc9f3183905c3aa3907aa2cd09435cb3975d4f0cec99f416fa80613f2",
+        "8eeb2a11782f688bb0286d59483fe46bba1f452a6bd0d3dca78041ce4ca42b37"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/ml/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "9b4a89f17816753112c56d06eac0a7cf18d49d2be8a898e511cf52c32b0b87b9",
+        "a18ada6627b29047050ebed0e969641be6994224c919c5250acc386115207e06"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/monitoring/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "b2e983e238b7770baccdb453180efd071c4c32b692a78635d9fd64b2e6d8a818",
+        "4243228093c99827af1ccf178061851b1223ed16f356263109541a104b9d4d11"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/old-lucene-versions/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "60eaa8a91b02af5499018ac5260f148be43128129225a3bf5835f7bd8e95ca5b",
+        "d122f7396f7cd4fbd66d92e478590155405e9e37a935cabdb91ae1851e26e4a3"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/otel-data/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "1b9fee9733726c2fed6d0d3646bf20cabe85c33a1314d41be029d3305b6dbe35",
+        "d2a18586d0cd002fc15cad4d03f21eebb7dad11f9284e21d5122bf2c9fa2b761"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/profiling/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "c6940fa1ca9b4a5eac2f7318a33de07c3f2f3ac394b5ad5f656b955d34bbc4f8",
+        "b700c473d52ea16c9a19e1e6d12082fef5287aa07f398aea9233aa4ed4669c71"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/prometheus/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "f711949c2c46e7861c4f950cd7246e061bf529020123eda488ee4a15b17eb9d3",
+        "51ad1a7c476bf487a2116820b3934ba7afe9377b607fa085c71666512c1affff"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/ql/build/distributions/x-pack-ql-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "d225b7416113bd54b098cf497184dd23cfe764f7d79dff2ebad0f3f6a4c1c849",
+        "e5aeb3ffb53be9740c300c5a16e4a0af290e83d700c2436fa91a6940e2f71d74"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/ql/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "0cf94d0d05bd8e5e0f6361c799a25f4f6996216cc976bdfbb6071af378acb610",
+        "373a2c49ed50652b96100ceb362aded3321e4836cdd98340b9d12fca246f77c7"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/rank-rrf/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "803351d47a2ce03041ccfe965edc11e28415f1489ed0fcb9bd13f4cfba670e15",
+        "c06f22ba96cac128a8ae8f98b38fa5bb5a46a47ef8494259b7d94ede1f7e7819"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/rank-vectors/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "2b44ad1ced9d48eed87e877174b1b408ea89cdd849a2d16e2c1be73851caef6b",
+        "f593d3a6ccfab1f16bc60254fdbdb49f5b70b4e03334574c4a54931138d07be0"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/redact/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "66bf07ff70d6ff84e85eaad65de38f550189ccf76b536cf5c1e31044a43b6999",
+        "0697d051951c2729f712a8144c85a3ac69af0dbfc74a17a772e666f170d1d310"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/repositories-metering-api/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "e1f4da31c5748b85234864db849c8918432963407c615710378ad88ea4fa66a9",
+        "471972a2138caf077eeeb6c6e4aed5c370e9d80477fcf16ff57b42f9abe1810e"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/rollup/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "eb435698010ba3a2b813a717122a22d6fc8f67a40dd3a31bd150310f6434b5bd",
+        "aad6706297a445579f1441f69ff2face5378615a70906ebf8d995736bab7c50c"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/searchable-snapshots/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "002a30bc554c174d2a68134102e409d9d0fc1e8643116ec9f742dad9185fa7ea",
+        "d4eeae86d87748d2b9addad16f6b84044818ed7801e18e7640bcfbcf892ac624"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/security/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "78228b8b4693a2a418ad11b5175a5ed194d538a2a711d744504d30aea9d04f82",
+        "b52257d9dbb80d5a70b6748de98be5873723e9bff02e319bbd75cf0ef8fe1aa2"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/shutdown/build/distributions/x-pack-shutdown-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "55faac31d398aa0ba1929ab18373bbbb05ee2b7d5909b8d2f8de401b73182f61",
+        "3f223d582f491af9eb483c81c7843d2b1d6b7eef79ded33353509a9c3e6b8cc7"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/shutdown/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "225011658be299d7821e2052d6f396477121eac51df24143d5343632b3a18a26",
+        "03b321c57d92c51f0e2cd7b9c92c8d4072a507023e3a4dfffdbe06c36424ef19"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/slm/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "8385b7c1ede0759a5107e81276afdde6b4c0a8e13b93d4ed14ee1e923dc5fd80",
+        "a2013b5d221e0fd8aec8c2386a0fe26787f40365253a7d094ed426b9e2ef21ef"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/snapshot-repo-test-kit/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "c06fd9e83fc2c41677aa0813cfebf5bb2d7a898805c1b48afbbec9a828ee5c6f",
+        "805ec07ad801376fff685a92159556687aeb0d2c6cf9689292b7e9ca23435243"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/spatial/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "7bb508cb3629561c43bf2d0b4f55f51c40e451d4b129f375a9264a739f7cafc3",
+        "45b38fa815cd49756d5f4ce33b6558195f6ef70b4e173806e55cf88945388f7f"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/sql/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "570497870da97472874adf4cfa64d8d33c50d1eea94759652088d65e7a2ebc2d",
+        "d31cecf96028ffa59c9dbb42341d36972ddcb2848604495ee3a34c5148fff0e5"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/sql/sql-action/build/distributions/sql-action-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "234dfa1b7a22b9c5285112270e2998e2291b7adb223dd5d284a33e447d0974d8",
+        "727ef111e8e8c1868c0b321cbf8616a7ccb42f335dc691e25510738a19562698"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/sql/sql-action/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "9dc369edb3d19662c8a96c6b5adf0069a6eecdfaf044333b4f793895d0b0be74",
+        "70419c0c53ff96ee82cfef6f063270df768059e756c0686557201ac467798030"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/sql/sql-proto/build/distributions/sql-proto-9.6.0-SNAPSHOT.jar",
+      "kind": "archive",
+      "rawSHA256": [
+        "0032a3775f54989e2e6b678db090342cd9702e08872b0a7db389a925af1f0d25",
+        "815ca7cf82117a9882d4d8bc61706ead63069dd32777dcf905733958c615b217"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/sql/sql-proto/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "990f99361fa213cb31442ecdb052eb53bc6cb7c319f98ff3c82c0a75d53c26a2",
+        "4c7cb1510390df7413766974b9f74349a233d302ccc0d56ebe5a419cbef50eb9"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/stack/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "5391dfaa1e1e95a68a058bfda97fd0f527eff92ae0d9fa6a626819f58a0a0395",
+        "04ae68064736f4fb975f751861e699957697a5e3c9b8549ac0974854c3904e24"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/stateless-health-shards-availability/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "57730c3259be90fd32e801ea390be6cc0d3274ad5ff65583234b1eda4c14420f",
+        "eda121c387415fceb9927a52515ac08653eac00b500d3287e89dc10d1b165eaa"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/stateless-sigterm/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "b2dfb168fb152dfa57a50aaa39f73d1dae5a84b96fe5d7b18a37229e12edd3c0",
+        "917a8cb71113eba744cc84a204fea72ac7dbcad4f429ecce091552a45bcd5521"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/stateless/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "ae6e5562482dd9cccbedc6403f64e709915a6653dcd9d3271528067dce3467c3",
+        "aa338d416247a9b53fbff2cd1d59b11d52cbebc0b8664254a92bd6a86bd182f8"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/text-structure/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "d8762523b26840c0ad0417156efd9da991eb1e3fbb2aecb16cd7117f6b1439e0",
+        "39fffe4ced6802581e78479e3fc3553bca20660da45748967a9576008b84a61e"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/transform/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "98c4809689ee81ede67f4cc35f982484dec13299f135f5e7bc3b3719e3f8145a",
+        "ce7931e23debb2cc2164866cda3e6392199a4aef757c82cf025f8e6d7564977f"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/vector-tile/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "b071af1c8d4394e2d120c090300ac3520e97c2d43d79a0e4e124a3cd3134977d",
+        "3500e437d49c3d033665b49308be7594c4df63741e407617f7b5e67ffda77e3d"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/voting-only-node/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "8c9829a1c4cd427ba0516cf201206b47aff00e32131f9d31fa7e44676cac70df",
+        "1c6a7de0df0ff181e5c93507c8e44ed0dcb6fc4841d072870fe10a55bb121627"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/watcher/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "1439f3b4db03e0048e0fbd897ddc683632af1304c48f66fe5cc0b62577b6ef19",
+        "d7924f704f3dbc5e6ec91d9923fbbbf4ce299fb2e83e41029cd9dca79bbcda12"
+      ]
+    },
+    {
+      "path": "x-pack/plugin/wildcard/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "7c2547c97333bc37f54fe40cb1f15dfa7ba35675ddc213d1ca065da0ef5a13cb",
+        "397182e5c4998bf6d0f87a3a0886d326ef92233ebc70cef0c7bb9427b79af0f6"
+      ]
+    },
+    {
+      "path": "x-pack/qa/security-example-spi-extension/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "d7b57aa0395eba9517b2ab427379c34894fb682f13cd1fa15c6a1b038fbf6fd5",
+        "d447b2add77e0dec66c95f0475cf12e337286dda24849a99626681d612202a97"
+      ]
+    },
+    {
+      "path": "x-pack/qa/security-implicit-privileges-extension/build/tmp/compileJava/previous-compilation-data.bin",
+      "kind": "compilation metadata",
+      "rawSHA256": [
+        "5188bbfa9c5f5bd98769de096ba81816690f78c6403fe06e311977fcb1a15ff2",
+        "04f07e1c80879f392d7385244c250d66009d19c0f4c1e3a30dc9ad8c704868b0"
+      ]
+    }
+  ],
+  "lexicalProjections": 136,
+  "metadataProjections": 274,
+  "completeRetainedOutputsRehashed": true,
+  "valueClaim": false
+}

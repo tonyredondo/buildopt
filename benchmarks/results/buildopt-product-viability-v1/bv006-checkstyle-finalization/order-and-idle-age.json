@@ -1,0 +1,216 @@
+{
+  "status": "verified descriptive order and idle-age reconstruction; causal attribution unverified",
+  "primaryDecision": "FINALIZATION_VALUE_NOT_ESTABLISHED",
+  "rows": [
+    {
+      "attempt": "r1-001-g0-I",
+      "replication": 1,
+      "arm": "I",
+      "startBootNS": 489477115504104,
+      "endBootNS": 489559884069442,
+      "nativeSeconds": 82.768565338,
+      "customerSeconds": 83.160056553,
+      "idleSinceOwnColdNativeCompletionSeconds": 334.954451848,
+      "hostFlag": "FLAGGED",
+      "hostObservation": {
+        "attempt": "r1-001-g0-I",
+        "replication": 1,
+        "originalOrdinal": 7,
+        "arm": "I",
+        "nativeSeconds": 82.768565338,
+        "coverageSeconds": 82.768565338,
+        "maximumSampleGapSeconds": 1.011049564,
+        "samplingQualified": true,
+        "incompleteOwnershipSeconds": 0,
+        "externalCPUAttributionQualified": true,
+        "contendedFractionUpperBound": 0.26987002883019573,
+        "contendedFractionLowerBound": 0.26987002883019573,
+        "contention": "FLAGGED",
+        "averageExternalCoreEquivalentsUpperBound": 0.3379050133601852,
+        "averageHostBusyCoreEquivalents": 4.842071280892705,
+        "averageOwnedCoreEquivalentsLowerBound": 4.504166267532519,
+        "averagePressure": {
+          "cpu": 0.08350534418822839,
+          "io": 0.013206143607523112,
+          "memory": 0.0031583632397700163
+        }
+      },
+      "observedProcessReadBytes": 0,
+      "observedProcessMajorFaults": 0,
+      "daemonObservedReadBytes": 0,
+      "daemonObservedMajorFaults": 0,
+      "selectedTaskSeconds": {
+        ":server:compileJava": 20.82747904,
+        ":server:compileTestJava": 34.187297024,
+        ":server:collectTransportVersionReferences": 0.444976128,
+        ":server:checkstyleMain": 10.450541056,
+        ":server:checkstyleTest": 7.688386816
+      },
+      "measuredOrder": 1,
+      "gapFromPriorMeasuredNativeSeconds": null
+    },
+    {
+      "attempt": "r1-001-g0-N",
+      "replication": 1,
+      "arm": "N",
+      "startBootNS": 489604353761951,
+      "endBootNS": 489728498332149,
+      "nativeSeconds": 124.144570198,
+      "customerSeconds": 124.537290534,
+      "idleSinceOwnColdNativeCompletionSeconds": 1394.436690089,
+      "hostFlag": "FLAGGED",
+      "hostObservation": {
+        "attempt": "r1-001-g0-N",
+        "replication": 1,
+        "originalOrdinal": 7,
+        "arm": "N",
+        "nativeSeconds": 124.144570198,
+        "coverageSeconds": 124.144570198,
+        "maximumSampleGapSeconds": 3.313544273,
+        "samplingQualified": false,
+        "incompleteOwnershipSeconds": 0,
+        "externalCPUAttributionQualified": false,
+        "contendedFractionUpperBound": 0.805175386765408,
+        "contendedFractionLowerBound": 0.805175386765408,
+        "contention": "FLAGGED",
+        "averageExternalCoreEquivalentsUpperBound": 13.203748208565512,
+        "averageHostBusyCoreEquivalents": 17.034627395059086,
+        "averageOwnedCoreEquivalentsLowerBound": 3.830879186493571,
+        "averagePressure": {
+          "cpu": 0.173095824694488,
+          "io": 0.10303470095403905,
+          "memory": 0.0020149941421339084
+        }
+      },
+      "observedProcessReadBytes": 202059776,
+      "observedProcessMajorFaults": 8739,
+      "daemonObservedReadBytes": 185466880,
+      "daemonObservedMajorFaults": 8696,
+      "selectedTaskSeconds": {
+        ":server:compileJava": 38.715163904,
+        ":server:compileTestJava": 43.811950848,
+        ":server:collectTransportVersionReferences": 9.753704192,
+        ":server:checkstyleMain": 77.304756992,
+        ":server:checkstyleTest": 73.879104768
+      },
+      "measuredOrder": 2,
+      "gapFromPriorMeasuredNativeSeconds": 44.469692509
+    },
+    {
+      "attempt": "r2-001-g0-N",
+      "replication": 2,
+      "arm": "N",
+      "startBootNS": 491560608261510,
+      "endBootNS": 491643143362258,
+      "nativeSeconds": 82.535100748,
+      "customerSeconds": 83.00274395000001,
+      "idleSinceOwnColdNativeCompletionSeconds": 210.258777812,
+      "hostFlag": "FLAGGED",
+      "hostObservation": {
+        "attempt": "r2-001-g0-N",
+        "replication": 2,
+        "originalOrdinal": 7,
+        "arm": "N",
+        "nativeSeconds": 82.535100748,
+        "coverageSeconds": 82.535100748,
+        "maximumSampleGapSeconds": 1.021159835,
+        "samplingQualified": true,
+        "incompleteOwnershipSeconds": 0,
+        "externalCPUAttributionQualified": true,
+        "contendedFractionUpperBound": 0.21797444177029068,
+        "contendedFractionLowerBound": 0.21797444177029068,
+        "contention": "FLAGGED",
+        "averageExternalCoreEquivalentsUpperBound": 0.2700322959740478,
+        "averageHostBusyCoreEquivalents": 4.761739455057768,
+        "averageOwnedCoreEquivalentsLowerBound": 4.49170715908372,
+        "averagePressure": {
+          "cpu": 0.0699626025698693,
+          "io": 0.022586103181908963,
+          "memory": 0.001013926461338898
+        }
+      },
+      "observedProcessReadBytes": 0,
+      "observedProcessMajorFaults": 0,
+      "daemonObservedReadBytes": 0,
+      "daemonObservedMajorFaults": 0,
+      "selectedTaskSeconds": {
+        ":server:compileJava": 21.756239104,
+        ":server:compileTestJava": 32.859782144,
+        ":server:collectTransportVersionReferences": 0.787648,
+        ":server:checkstyleMain": 51.532070144,
+        ":server:checkstyleTest": 51.161451264
+      },
+      "measuredOrder": 1,
+      "gapFromPriorMeasuredNativeSeconds": null
+    },
+    {
+      "attempt": "r2-001-g0-I",
+      "replication": 2,
+      "arm": "I",
+      "startBootNS": 491685769473222,
+      "endBootNS": 491782933384410,
+      "nativeSeconds": 97.163911188,
+      "customerSeconds": 97.33924641499999,
+      "idleSinceOwnColdNativeCompletionSeconds": 652.124183716,
+      "hostFlag": "FLAGGED",
+      "hostObservation": {
+        "attempt": "r2-001-g0-I",
+        "replication": 2,
+        "originalOrdinal": 7,
+        "arm": "I",
+        "nativeSeconds": 97.163911188,
+        "coverageSeconds": 97.163911188,
+        "maximumSampleGapSeconds": 1.093384197,
+        "samplingQualified": true,
+        "incompleteOwnershipSeconds": 0,
+        "externalCPUAttributionQualified": true,
+        "contendedFractionUpperBound": 0.37869108322333866,
+        "contendedFractionLowerBound": 0.37869108322333866,
+        "contention": "FLAGGED",
+        "averageExternalCoreEquivalentsUpperBound": 0.32205489047558244,
+        "averageHostBusyCoreEquivalents": 4.455991683487744,
+        "averageOwnedCoreEquivalentsLowerBound": 4.133936793012161,
+        "averagePressure": {
+          "cpu": 0.06530716676378653,
+          "io": 0.07636999069257124,
+          "memory": 0.007894461567230652
+        }
+      },
+      "observedProcessReadBytes": 3929038848,
+      "observedProcessMajorFaults": 964022,
+      "daemonObservedReadBytes": 3926884352,
+      "daemonObservedMajorFaults": 963926,
+      "selectedTaskSeconds": {
+        ":server:compileJava": 21.622021888,
+        ":server:compileTestJava": 40.252648704,
+        ":server:collectTransportVersionReferences": 2.427154176,
+        ":server:checkstyleMain": 11.156488704,
+        ":server:checkstyleTest": 8.196184832
+      },
+      "measuredOrder": 2,
+      "gapFromPriorMeasuredNativeSeconds": 42.626110964
+    }
+  ],
+  "firstMeasuredCustomerSeconds": [
+    83.160056553,
+    83.00274395000001
+  ],
+  "secondMeasuredCustomerSeconds": [
+    124.537290534,
+    97.33924641499999
+  ],
+  "firstMeanCustomerSeconds": 83.08140025150001,
+  "secondMeanCustomerSeconds": 110.93826847449999,
+  "bothSecondRequestsSlower": true,
+  "sameActualCheckingWork": true,
+  "observation": "The first measured arm is I in replication1 and N in replication2. Both first requests are near83s; both second requests are slower. Their private daemons also have longer idle ages. This is an association, not proof that capture, cache eviction or another process caused the delay.",
+  "implication": "The original both-pairs saving criterion fails. No first-only comparison, outlier removal, timing replacement or new value gate is permitted. A small identical-code A/A control should precede additional native-value claims.",
+  "nextControl": "Four owner builds: identical correctness-qualified code on both arms, same6->7 schedule and observation. Predeclare whether it produces a spurious material difference; do not expand to native17..20 until this measurement concern is resolved.",
+  "limits": [
+    "Only two replications; no variance or causal estimate",
+    "Cold-to-measured interval contains capture, comparison and other-arm work; it is not pure daemon sleep",
+    "Sampled process reads/faults omit unobserved boundary work and do not identify a cache layer",
+    "Whole-build comparisons across replications are descriptive and cannot replace the registered paired decision"
+  ],
+  "analyzerSHA256": "e5381f73bf3d08fc86f829c55ac2b213605d5159f798e4f819291ccd532dd2be"
+}

@@ -1,0 +1,112 @@
+{
+  "status": "verified",
+  "claim": "The replay preserves all three success records and XML reports unchanged between candidate6 completion and candidate7 start",
+  "after6": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/profiles/history-8/run/attempts/r1-006-g0-I/after.json",
+    "sha256": "01f41a31f66b88c0a9bb110956a0f565d90d301c21b3d12b73a704698c98dd23"
+  },
+  "before7": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/profiles/history-8/run/states/r1-I-007-before.json",
+    "sha256": "29b57795c9c404f79b67d3233e225200245bdc45699ed2653359865e14adeda3"
+  },
+  "preservedEntries": {
+    "repo/.gradle/buildopt-checkstyle/server/checkstyleInternalClusterTest/success": {
+      "path": "repo/.gradle/buildopt-checkstyle/server/checkstyleInternalClusterTest/success",
+      "kind": "file",
+      "mode": 384,
+      "size": 181375,
+      "sha256": "2801d60af8b09753a87cdd8867baef705ff12c1f238d8d7dba5cc4d0460bc92e",
+      "target": ""
+    },
+    "repo/.gradle/buildopt-checkstyle/server/checkstyleMain/success": {
+      "path": "repo/.gradle/buildopt-checkstyle/server/checkstyleMain/success",
+      "kind": "file",
+      "mode": 384,
+      "size": 1556503,
+      "sha256": "85743be00aa1c28df8285770d3127708dad3b3108942f1f2958f9b3c4c43cf47",
+      "target": ""
+    },
+    "repo/.gradle/buildopt-checkstyle/server/checkstyleTest/success": {
+      "path": "repo/.gradle/buildopt-checkstyle/server/checkstyleTest/success",
+      "kind": "file",
+      "mode": 384,
+      "size": 901058,
+      "sha256": "b4344448a97c048d2aa1b3002c0b3659f2ff88b97e65bd9d3f120121bdbff52d",
+      "target": ""
+    },
+    "repo/server/build/reports/checkstyle/internalClusterTest.xml": {
+      "path": "repo/server/build/reports/checkstyle/internalClusterTest.xml",
+      "kind": "file",
+      "mode": 420,
+      "size": 154011,
+      "sha256": "5f212b15e0dc9098af65e733f06ddba6741931c8e7dc9e7becd7320b0c0a5af4",
+      "target": ""
+    },
+    "repo/server/build/reports/checkstyle/main.xml": {
+      "path": "repo/server/build/reports/checkstyle/main.xml",
+      "kind": "file",
+      "mode": 420,
+      "size": 1313294,
+      "sha256": "838abeb6b55d3cfb1fce399677537d8caafc2f3f5935734558c41c39a4e0809a",
+      "target": ""
+    },
+    "repo/server/build/reports/checkstyle/test.xml": {
+      "path": "repo/server/build/reports/checkstyle/test.xml",
+      "kind": "file",
+      "mode": 420,
+      "size": 762415,
+      "sha256": "7fd39b8ec20bb27f0c23985d19a047ebbd853cdd65aa1d33be0338b39726b2f0",
+      "target": ""
+    }
+  },
+  "perTask": [
+    {
+      "task": "checkstyleInternalClusterTest",
+      "sameContext": true,
+      "previousFileCount": 554,
+      "currentFileCount": 554,
+      "sameContentFiles": 554,
+      "changedOrAddedFiles": [],
+      "removedFiles": [],
+      "actualEngineSkipCount": "not directly observed"
+    },
+    {
+      "task": "checkstyleMain",
+      "sameContext": true,
+      "previousFileCount": 4959,
+      "currentFileCount": 4958,
+      "sameContentFiles": 4954,
+      "changedOrAddedFiles": [
+        "server/src/main/java/org/elasticsearch/index/codec/tsdb/AbstractTSDBDocValuesProducer.java",
+        "server/src/main/java/org/elasticsearch/index/mapper/BlockLoader.java",
+        "server/src/main/java/org/elasticsearch/index/mapper/DateFieldMapper.java",
+        "server/src/main/java/org/elasticsearch/index/mapper/NumberFieldMapper.java"
+      ],
+      "removedFiles": [
+        "server/src/main/java/org/elasticsearch/lucene/queries/SortedNumericDocValuesRangeQuery.java"
+      ],
+      "actualEngineSkipCount": "not directly observed"
+    },
+    {
+      "task": "checkstyleTest",
+      "sameContext": true,
+      "previousFileCount": 2825,
+      "currentFileCount": 2825,
+      "sameContentFiles": 2819,
+      "changedOrAddedFiles": [
+        "server/src/test/java/org/elasticsearch/index/codec/tsdb/AbstractTSDBDocValuesFormatTests.java",
+        "server/src/test/java/org/elasticsearch/index/mapper/DateFieldTypeTests.java",
+        "server/src/test/java/org/elasticsearch/index/mapper/NumberFieldTypeTests.java",
+        "server/src/test/java/org/elasticsearch/index/mapper/RangeFieldQueryStringQueryBuilderTests.java",
+        "server/src/test/java/org/elasticsearch/index/query/QueryStringQueryBuilderTests.java",
+        "server/src/test/java/org/elasticsearch/search/DocValuesRangeIteratorFalsePositiveReproductionTests.java"
+      ],
+      "removedFiles": [],
+      "actualEngineSkipCount": "not directly observed"
+    }
+  ],
+  "limits": [
+    "Does not observe the later task Prepare admission decision, engine skip count, phase durations, GC, JIT or I/O attribution",
+    "The potential reusable-file count alone cannot establish which engine path ran"
+  ]
+}

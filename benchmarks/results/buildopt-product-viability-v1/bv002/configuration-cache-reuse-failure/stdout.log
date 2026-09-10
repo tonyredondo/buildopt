@@ -1,0 +1,187 @@
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -Duser.home=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/native-state/user -Dmaven.repo.local=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/native-state/maven
+Starting a Gradle Daemon (subsequent builds will be faster)
+Parallel Configuration Cache is an incubating feature.
+Reusing configuration cache.
+> Task :libs:columnar:extractForeignApiJar UP-TO-DATE
+> Task :libs:cli-terminal:compileJava UP-TO-DATE
+> Task :libs:logging:compileJava UP-TO-DATE
+> Task :libs:native:extractForeignApiJar UP-TO-DATE
+> Task :libs:lucene-store:extractForeignApiJar UP-TO-DATE
+> Task :server:extractForeignApiJar UP-TO-DATE
+> Task :libs:foreign-library:extractForeignApiJar UP-TO-DATE
+> Task :libs:core:extractForeignApiJar UP-TO-DATE
+> Task :libs:cli:processResources NO-SOURCE
+> Task :libs:grok:compileJava UP-TO-DATE
+> Task :libs:simdvec:extractForeignApiJar UP-TO-DATE
+> Task :libs:cli-terminal:processResources NO-SOURCE
+> Task :libs:cli-terminal:classes UP-TO-DATE
+> Task :libs:geo:compileJava UP-TO-DATE
+> Task :libs:cli-terminal:processMain22Resources NO-SOURCE
+> Task :libs:core:processResources NO-SOURCE
+> Task :libs:columnar:processResources UP-TO-DATE
+> Task :libs:entitlement:bridge:compileJava UP-TO-DATE
+> Task :libs:plugin-api:compileJava UP-TO-DATE
+> Task :libs:entitlement:processMain26Resources NO-SOURCE
+> Task :libs:entitlement:processMain25Resources NO-SOURCE
+> Task :libs:entitlement:processMain27Resources NO-SOURCE
+> Task :libs:entitlement:processResources NO-SOURCE
+> Task :libs:exponential-histogram:processResources NO-SOURCE
+> Task :libs:entitlement:asm-provider:processResources UP-TO-DATE
+> Task :libs:foreign-adapter:processMain22Resources NO-SOURCE
+> Task :libs:geo:processResources NO-SOURCE
+> Task :libs:geo:classes UP-TO-DATE
+> Task :libs:foreign-library:processResources NO-SOURCE
+> Task :libs:foreign-adapter:processResources NO-SOURCE
+> Task :libs:core:compileJava UP-TO-DATE
+> Task :libs:cli-terminal:compileMain22Java UP-TO-DATE
+> Task :libs:plugin-analysis-api:compileJava UP-TO-DATE
+> Task :libs:logging:processResources NO-SOURCE
+> Task :libs:ip-location-api:processResources NO-SOURCE
+> Task :libs:lucene-store:processResources NO-SOURCE
+> Task :libs:cli:compileJava UP-TO-DATE
+> Task :libs:cli:classes UP-TO-DATE
+> Task :libs:grok:processResources UP-TO-DATE
+> Task :libs:cli-terminal:main22Classes UP-TO-DATE
+> Task :libs:geo:jar UP-TO-DATE
+> Task :libs:core:classes UP-TO-DATE
+> Task :libs:foreign-adapter:compileJava UP-TO-DATE
+> Task :libs:lz4:compileJava UP-TO-DATE
+> Task :libs:ip-location-api:compileJava UP-TO-DATE
+> Task :libs:foreign-adapter:classes UP-TO-DATE
+> Task :libs:x-content:compileJava UP-TO-DATE
+> Task :libs:user-agent-api:compileJava UP-TO-DATE
+> Task :libs:lucene-store:compileJava UP-TO-DATE
+> Task :libs:cli:jar UP-TO-DATE
+> Task :libs:grok:classes UP-TO-DATE
+> Task :libs:cli-terminal:jar UP-TO-DATE
+> Task :libs:core:jar UP-TO-DATE
+> Task :libs:ip-location-api:classes UP-TO-DATE
+> Task :libs:logging:classes UP-TO-DATE
+> Task :libs:foreign-adapter:compileMain22Java UP-TO-DATE
+> Task :libs:foreign-adapter:main22Classes UP-TO-DATE
+> Task :libs:foreign-library:compileJava UP-TO-DATE
+> Task :libs:entitlement:compileJava UP-TO-DATE
+> Task :libs:grok:jar UP-TO-DATE
+> Task :libs:tdigest:compileJava UP-TO-DATE
+> Task :libs:ip-location-api:jar UP-TO-DATE
+> Task :libs:foreign-library:classes UP-TO-DATE
+> Task :libs:lucene-store:classes UP-TO-DATE
+> Task :libs:logging:jar UP-TO-DATE
+> Task :libs:exponential-histogram:compileJava UP-TO-DATE
+> Task :libs:exponential-histogram:classes UP-TO-DATE
+> Task :libs:foreign-adapter:jar UP-TO-DATE
+> Task :libs:native:compileJava UP-TO-DATE
+> Task :libs:entitlement:asm-provider:compileJava UP-TO-DATE
+> Task :libs:entitlement:asm-provider:classes UP-TO-DATE
+> Task :libs:lz4:processResources NO-SOURCE
+> Task :libs:lz4:classes UP-TO-DATE
+> Task :libs:foreign-library:jar UP-TO-DATE
+> Task :libs:lucene-store:jar UP-TO-DATE
+> Task :libs:native:processResources NO-SOURCE
+> Task :libs:plugin-analysis-api:processResources NO-SOURCE
+> Task :libs:plugin-analysis-api:classes UP-TO-DATE
+> Task :libs:plugin-api:processResources NO-SOURCE
+> Task :libs:plugin-api:classes UP-TO-DATE
+> Task :libs:foreign-library:processor:processResources UP-TO-DATE
+> Task :libs:simdvec:processResources NO-SOURCE
+> Task :libs:tdigest:processResources NO-SOURCE
+> Task :libs:tdigest:classes UP-TO-DATE
+> Task :libs:foreign-library:processor:compileJava UP-TO-DATE
+> Task :libs:foreign-library:processor:classes UP-TO-DATE
+> Task :libs:exponential-histogram:jar UP-TO-DATE
+> Task :libs:lz4:jar UP-TO-DATE
+> Task :libs:plugin-analysis-api:jar UP-TO-DATE
+> Task :libs:entitlement:asm-provider:jar UP-TO-DATE
+> Task :libs:tdigest:jar UP-TO-DATE
+> Task :libs:plugin-api:jar UP-TO-DATE
+> Task :libs:user-agent-api:processResources NO-SOURCE
+> Task :libs:user-agent-api:classes UP-TO-DATE
+> Task :libs:foreign-library:processor:jar UP-TO-DATE
+> Task :libs:x-content:processResources NO-SOURCE
+> Task :libs:entitlement:generateAsm-providerProviderManifest UP-TO-DATE
+> Task :libs:native:processForeignAnnotations UP-TO-DATE
+> Task :libs:user-agent-api:jar UP-TO-DATE
+> Task :libs:x-content:impl:compileJava UP-TO-DATE
+> Task :libs:native:classes UP-TO-DATE
+> Task :libs:x-content:impl:processResources UP-TO-DATE
+> Task :libs:x-content:impl:classes UP-TO-DATE
+> Task :libs:simdvec:compileJava UP-TO-DATE
+> Task :libs:simdvec:processForeignAnnotations UP-TO-DATE
+> Task :server:generateModulesList UP-TO-DATE
+> Task :server:generatePluginsList UP-TO-DATE
+> Task :libs:simdvec:classes UP-TO-DATE
+> Task :libs:native:augmentForeignModuleInfo UP-TO-DATE
+> Task :libs:simdvec:augmentForeignModuleInfo UP-TO-DATE
+> Task :client:rest:compileJava UP-TO-DATE
+> Task :libs:columnar:compileJava UP-TO-DATE
+> Task :libs:entitlement:generateAsm-providerProviderImpl UP-TO-DATE
+> Task :libs:columnar:classes UP-TO-DATE
+> Task :server:generateTransportVersionManifest UP-TO-DATE
+> Task :libs:entitlement:classes UP-TO-DATE
+> Task :libs:x-content:impl:jar UP-TO-DATE
+> Task :libs:native:jar UP-TO-DATE
+> Task :libs:simdvec:jar UP-TO-DATE
+> Task :libs:ssl-config:compileJava UP-TO-DATE
+> Task :test:framework:extractForeignApiJar UP-TO-DATE
+> Task :libs:x-content:generateImplProviderManifest UP-TO-DATE
+> Task :libs:entitlement:compileMain25Java UP-TO-DATE
+> Task :libs:entitlement:main25Classes UP-TO-DATE
+> Task :libs:columnar:jar UP-TO-DATE
+> Task :server:copyCheckstyleConf UP-TO-DATE
+> Task :test:test-clusters:compileJava UP-TO-DATE
+> Task :server:processTestResources UP-TO-DATE
+> Task :server:processInternalClusterTestResources UP-TO-DATE
+> Task :libs:entitlement:compileMain26Java UP-TO-DATE
+> Task :libs:entitlement:main26Classes UP-TO-DATE
+> Task :libs:entitlement:compileMain27Java UP-TO-DATE
+> Task :libs:entitlement:main27Classes UP-TO-DATE
+> Task :libs:entitlement:jar UP-TO-DATE
+> Task :client:rest:processResources UP-TO-DATE
+> Task :client:rest:classes UP-TO-DATE
+> Task :client:rest:jar UP-TO-DATE
+> Task :libs:exponential-histogram:processTestResources NO-SOURCE
+> Task :libs:ssl-config:processResources NO-SOURCE
+> Task :libs:ssl-config:classes UP-TO-DATE
+> Task :libs:ssl-config:jar UP-TO-DATE
+> Task :test:framework:processResources UP-TO-DATE
+> Task :libs:entitlement:bridge:processResources NO-SOURCE
+> Task :libs:entitlement:bridge:classes UP-TO-DATE
+> Task :server:forbiddenApisResources UP-TO-DATE
+> Task :libs:entitlement:bridge:jar UP-TO-DATE
+> Task :libs:x-content:generateImplProviderImpl UP-TO-DATE
+> Task :libs:x-content:classes UP-TO-DATE
+> Task :test:logger-usage:compileJava UP-TO-DATE
+> Task :server:dependencyLicenses UP-TO-DATE
+> Task :server:licenseHeaders UP-TO-DATE
+> Task :test:logger-usage:processResources NO-SOURCE
+> Task :test:logger-usage:classes UP-TO-DATE
+> Task :spotlessInternalRegisterDependencies UP-TO-DATE
+> Task :server:splitPackagesAudit UP-TO-DATE
+> Task :server:spotlessJava FAILED
+> Task :server:checkstyleInternalClusterTest UP-TO-DATE
+> Task :libs:x-content:jar UP-TO-DATE
+> Task :server:thirdPartyAuditResources UP-TO-DATE
+> Task :test:logger-usage:jar UP-TO-DATE
+> Task :server:checkstyleTest UP-TO-DATE
+> Task :server:checkstyleMain UP-TO-DATE
+> Task :server:compileJava UP-TO-DATE
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':server:spotlessJava' (registered by plugin 'elasticsearch.formatting').
+> Error while evaluating property 'lineEndingsPolicy' of task ':server:spotlessJava'.
+   > Spotless JVM-local cache is stale. Regenerate the cache with
+       rm -rf .gradle/configuration-cache
+     To make this workaround obsolete, please upvote https://github.com/diffplug/spotless/issues/987
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 6s
+102 actionable tasks: 1 executed, 101 up-to-date
+The build is running offline. A build scan will not be published at this time, but it can be published if you run the 'buildScanPublishPrevious' task in the next build.
+Configuration cache entry reused.
+Build operation trace: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv002/native-prefix/000/operations-log.txt

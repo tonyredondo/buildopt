@@ -1,0 +1,784 @@
+{
+  "schemaVersion": "buildopt.viability/checkstyle-correctness-matrix/v1",
+  "status": "verified",
+  "cases": [
+    {
+      "id": "C01",
+      "status": "verified",
+      "evidence": [
+        {
+          "request": "cs-final-cold",
+          "resultSHA256": "c0bc8d0f50da0b30ca8c1d62990b967e3f5b3a9cdf35a560674faf7dd6853296",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        },
+        {
+          "request": "cs-provider-fix-cold",
+          "resultSHA256": "ad55bf5cc3b34c47903bc17efba60ad698ef6fcc40946daede3a92b246e0852d",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        },
+        {
+          "request": "cs-state-binding-admitted",
+          "resultSHA256": "a77499d0077f89b8b71ae8e1dbf6f5c59775e6c9f8062de70caefd792aa8469e",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C02",
+      "status": "verified",
+      "evidence": [
+        {
+          "request": "cs-final-unchanged",
+          "resultSHA256": "67098dc52dc85e883ff203f3f4ca96ead7fdd3dbfb38b667894e6edb352305ee",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            0,
+            0
+          ]
+        },
+        {
+          "request": "cs-provider-fix-warm",
+          "resultSHA256": "cd047ed95a13a3d9fb68c1dad8de9d158a940335eaf7eea490c654ceb557b458",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            0
+          ]
+        },
+        {
+          "request": "cs-state-binding-warm",
+          "resultSHA256": "0dc17658cd9c8cfd4f25f022f847239e35eb38ce712e5c8c39e550eeaa76f726",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C03",
+      "status": "verified",
+      "evidence": [
+        {
+          "request": "cs-final-edit",
+          "resultSHA256": "ad255041baf41443e5746763fc00086edb81f9da717573de369a566e6cd56a89",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            1
+          ]
+        },
+        {
+          "request": "cs-provider-fix-edit",
+          "resultSHA256": "bc7d6a6a428bcdca89cdee93996b184e26bd99342515c4154644f488d051f1d6",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C04",
+      "status": "verified",
+      "evidence": [
+        {
+          "request": "cs-final-add",
+          "resultSHA256": "571a6bba275bb55ff7bc1a76df3968654b75518eb8cfdef4e468440a2ca63050",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            3,
+            1
+          ]
+        },
+        {
+          "request": "cs-final-added-error",
+          "resultSHA256": "3a7e143cd9c2177a5ba9e13f412c8ac54721caf088dc84795be9848239d70f33",
+          "actualExit": 1,
+          "actualProcessedCounts": [
+            3,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C05",
+      "status": "verified",
+      "evidence": [
+        {
+          "request": "cs-final-multiple-errors",
+          "resultSHA256": "3b1336d956f0d76ce37b09bcd97e56d585d6da409383c6ea577c203df6d4ee70",
+          "actualExit": 1,
+          "actualProcessedCounts": [
+            3,
+            3
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C06",
+      "status": "verified",
+      "evidence": [
+        {
+          "request": "cs-final-delete",
+          "resultSHA256": "56d9204f3772f09de14e5c3c2b55b5f5c3bc04e93e3470519b53b2f6b55cc467",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C07",
+      "status": "verified",
+      "evidence": [
+        {
+          "request": "cs-final-rename",
+          "resultSHA256": "a668cca742c8dcaf7592212b94e7207959b9dc8627d7c645a07f72f672cc4508",
+          "actualExit": 1,
+          "actualProcessedCounts": [
+            2,
+            1
+          ]
+        },
+        {
+          "request": "cs-final-rename-valid",
+          "resultSHA256": "9ab10ba98360af28821714ffc70134ebe3fed8dc43febd6ace9fca52cc7ed36a",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        },
+        {
+          "request": "cs-final-rename-back",
+          "resultSHA256": "e050f91fe14c65042fc3d38ed4b5fe9ce63a55a98bc7ef2db885ee30dbcdbad0",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            1
+          ]
+        },
+        {
+          "request": "cs-final-restored-folder",
+          "resultSHA256": "59a13446992caa20567588282b06ecf04fb123d6d2a94b7308972c670016aaff",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            0,
+            0
+          ]
+        },
+        {
+          "request": "cs-final-cross-root",
+          "resultSHA256": "280e2d31d59b027fa6fac9c6fbc54ceba9ce532e5140db6809535cabb8252fc8",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C08",
+      "status": "verified",
+      "evidence": [
+        {
+          "request": "cs-final-empty",
+          "resultSHA256": "a9d304c2f22543803e76627f4f0ae95c24306bc2bd6e9cd01cc71ccfb00415fc",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            0,
+            0
+          ]
+        },
+        {
+          "request": "cs-final-new-folder",
+          "resultSHA256": "3e03e71ff83c5d9bcf57376912deaca223de3e80629a2e95b6a716b0fc8f5d9e",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        },
+        {
+          "request": "cs-final-restored-folder",
+          "resultSHA256": "59a13446992caa20567588282b06ecf04fb123d6d2a94b7308972c670016aaff",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C09",
+      "status": "verified",
+      "evidence": [
+        {
+          "request": "cs-final-rule-change",
+          "resultSHA256": "c06095bf12ded4ff3bb95e4bd4cdc9ec6cf66bca5e324d76478a2412d1ce2975",
+          "actualExit": 1,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        },
+        {
+          "request": "cs-final-rule-unsupported-repeat",
+          "resultSHA256": "4a1d532adfd372741bf1eab26c510e2e04e50498056f32b5da950e1ba34d8d5a",
+          "actualExit": 1,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        },
+        {
+          "request": "cs-final-rule-restore",
+          "resultSHA256": "51555b6bcee4d6daf47d8a9aa2e95229fc51a4a77d58f11fe67f1b3231a4e782",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        },
+        {
+          "request": "cs-final-before-suppression",
+          "resultSHA256": "cc4f04f8900659adf80309f75f28d46a251ed468f1e2fb03d1f24f89ed5b0186",
+          "actualExit": 1,
+          "actualProcessedCounts": [
+            2,
+            1
+          ]
+        },
+        {
+          "request": "cs-final-suppression-add",
+          "resultSHA256": "04781e1a6e62c1ba6326558d81d97fa05c7c03e20c4f75867c31c39ffc4bd8ee",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        },
+        {
+          "request": "cs-final-suppression-warm",
+          "resultSHA256": "59e5614ed3b1ddef73e643421141fb0137646d6898b2976acd7fcbf301db8ff5",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            0
+          ]
+        },
+        {
+          "request": "cs-final-suppression-remove",
+          "resultSHA256": "642c634efa4f733595e1a63b40e15b432308fc7ddabf0f94474dbc17c366cb93",
+          "actualExit": 1,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        },
+        {
+          "request": "cs-state-binding-config-directory",
+          "resultSHA256": "c60ecea0dd6d57edcf00e2e4f2ab4cb7fba4068297929f8360fc6ce47cc8621d",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C10",
+      "status": "verified",
+      "evidence": [
+        {
+          "request": "cs-final-exclude",
+          "resultSHA256": "accca35edc0b29a9176a93dbcf4b1fdc2ddb8e1f5ac2326cb24b286333ed47dc",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            1,
+            0
+          ]
+        },
+        {
+          "request": "cs-final-include",
+          "resultSHA256": "0305148a43acadcb867fc339c34a3d8a869be599c9ca2a832c0460d62bf425b0",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            1
+          ]
+        },
+        {
+          "request": "cs-final-new-folder",
+          "resultSHA256": "3e03e71ff83c5d9bcf57376912deaca223de3e80629a2e95b6a716b0fc8f5d9e",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C11",
+      "status": "verified",
+      "evidence": [
+        {
+          "request": "cs-final-crlf",
+          "resultSHA256": "3c4a85965882a302767ef10c02ac20b7ec49f88ec198697d758f201db566b54f",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            1
+          ]
+        },
+        {
+          "request": "cs-final-lf",
+          "resultSHA256": "dbc179793ed5d4d66f753fac98737ef8789df90f98f0b3d11e15f52f638a6818",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            1
+          ]
+        },
+        {
+          "request": "cs-final-malformed-utf8",
+          "resultSHA256": "9b2cca31e4729797e5dd1ad1694055f9c943b384c9dcc561162836e64448f71a",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            1
+          ]
+        },
+        {
+          "request": "cs-final-malformed-utf8-rule-error",
+          "resultSHA256": "cd24dd7e88b3f583b0c97c04e995a38790c95e2aa0fd1ba7604feaa1b8253f98",
+          "actualExit": 1,
+          "actualProcessedCounts": [
+            2,
+            1
+          ]
+        },
+        {
+          "request": "cs-final-decoding-recover",
+          "resultSHA256": "48a78efe4f448f78d99f2f52d8419b34af7ddf63a5783c7325fa3366f710e10c",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        },
+        {
+          "request": "cs-final-malformed-java",
+          "resultSHA256": "d9cc3701e0a33f22275bbac59dcd8bfc7978b200d5502ca16192872ba5301bbb",
+          "actualExit": 1,
+          "actualProcessedCounts": [
+            2,
+            1
+          ]
+        },
+        {
+          "request": "cs-final-parser-recover",
+          "resultSHA256": "9c8b96cec2ef053bc902e5f039eb7f412a8a79f4c946d4445308e96f3440eef5",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        },
+        {
+          "request": "cs-final-charset-change",
+          "resultSHA256": "c3899fc57172f5982f759bf673993ab5e397fa09c3c6771210b6b6a52fe8b659",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        },
+        {
+          "request": "cs-final-charset-repeat",
+          "resultSHA256": "7b6d6df35143e82c35d740f50f4d015b9ffa06a8029dde81434e1cebfdb57824",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        },
+        {
+          "request": "cs-final-charset-restore",
+          "resultSHA256": "bc4272357c68461924dc646b64433085471ab17281e266f11023bc8f8dfcf2ce",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C12",
+      "status": "verified",
+      "evidence": [
+        {
+          "request": "cs-final-partial-fix",
+          "resultSHA256": "6e4d011f35a332b4db46a64c4657ec04cfe0102adac3ec41573a0c7a3a056df6",
+          "actualExit": 1,
+          "actualProcessedCounts": [
+            3,
+            3
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C13",
+      "status": "verified",
+      "evidence": [
+        {
+          "request": "cs-final-full-fix",
+          "resultSHA256": "ffa0b9cec451e5b02d28a276ffc0a2f029df89e4f47c5d87968e635790d3ff5a",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            3,
+            3
+          ]
+        },
+        {
+          "request": "cs-final-recover",
+          "resultSHA256": "230d41927b1a4669f6cce27c94d980d4e4ee1bda0c14c731ffc843464d830a4c",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        },
+        {
+          "request": "cs-final-suppression-recover",
+          "resultSHA256": "761779a7efefec30d3c0c7fd35fff441f974ef8a7ecf2c31801a12c23a32c5b6",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C14",
+      "status": "verified",
+      "evidence": [
+        {
+          "request": "cs-final-report-tampered",
+          "resultSHA256": "a96d073d55da8a360161bb01595a9b6a96eb7d9ebdd97059e705be1b3fcdd138",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        },
+        {
+          "request": "cs-final-report-missing",
+          "resultSHA256": "95e70c90490388740b63394b1f7b2c060b50b732c6352d0f3191d4966728561c",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C15",
+      "status": "verified",
+      "evidence": [
+        {
+          "request": "cs-final-history-corrupt",
+          "resultSHA256": "200abd6ea1ce64a510efca01e873350a7868ddd35ac5bf08bb17c644dfa27bf4",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        },
+        {
+          "request": "cs-final-history-missing",
+          "resultSHA256": "7b26a226a9fdec32de6979290c76e41098adfb1b2dea830487b0790cde1b4f9c",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        },
+        {
+          "request": "cs-final-root-history-loss",
+          "resultSHA256": "426bd7de76ea686cfda4edb76d7a18b4b819319cfc09a4e11db4d460c4b6c73a",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        },
+        {
+          "request": "cs-final-history-io",
+          "resultSHA256": "2942b908ef293015be03f873fcab2315849b37c477876bc1f06c1c358b579665",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        },
+        {
+          "request": "cs-final-history-io-recover",
+          "resultSHA256": "8411710d36d14f50075f7ca754a2eefbc393c14291fb211758b7407190893158",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        },
+        {
+          "request": "cs-state-binding-regression",
+          "resultSHA256": "774cb758a8e046be6c7e29662e09f77560cfd6ed33452d20e250bcf25f55f637",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C16",
+      "status": "verified",
+      "evidence": [
+        {
+          "request": "cs-final-cache-prime",
+          "resultSHA256": "957081ea5c75298e6040c60e5bd46a60de1a60ced60409bab7cb5e4d58f54b83",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            1
+          ]
+        },
+        {
+          "request": "cs-final-cache-hit",
+          "resultSHA256": "590170d8e179e6c7a731f578d51b71923ec9b7dfb60ee1d6bd655af675fd4254",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            0
+          ]
+        },
+        {
+          "request": "cs-final-cache-next-edit",
+          "resultSHA256": "58d7e92fb9c543dfd23303dbead744f418db7cf50c1192da9c00d3258e21d331",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C17",
+      "status": "verified",
+      "evidence": [
+        {
+          "request": "cs-final-cross-root",
+          "resultSHA256": "280e2d31d59b027fa6fac9c6fbc54ceba9ce532e5140db6809535cabb8252fc8",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C18",
+      "status": "verified",
+      "evidence": [
+        {
+          "request": "cs-provider-fix-regression",
+          "resultSHA256": "ee7cdb5ecfdb89f1d20af6bfe830503c77c4a0c374d14aeb3e5ad3f869c317b5",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        },
+        {
+          "request": "cs-provider-fix-cold",
+          "resultSHA256": "ad55bf5cc3b34c47903bc17efba60ad698ef6fcc40946daede3a92b246e0852d",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        },
+        {
+          "request": "cs-provider-fix-edit",
+          "resultSHA256": "bc7d6a6a428bcdca89cdee93996b184e26bd99342515c4154644f488d051f1d6",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            1
+          ]
+        },
+        {
+          "request": "cs-final-checker-bytecode",
+          "resultSHA256": "710da3353812900f0369fbe6b5f2d00879f38d904c9a2332f916d2888c4fe840",
+          "actualExit": 1,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        },
+        {
+          "request": "cs-final-checker-bytecode-repeat",
+          "resultSHA256": "f15f2757f33ee86529fad2dd025531c871c8adc15d2f78cfb5c95dd97d9024e4",
+          "actualExit": 1,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        },
+        {
+          "request": "cs-final-checker-bytecode-restore",
+          "resultSHA256": "f8eb06220d4525f9e02d7d0ed3b2cdd85e22e4fe913a4b2e8637b97d195e7ac8",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        },
+        {
+          "request": "cs-final-java25",
+          "resultSHA256": "0da6c56e384a14e0d73b9822a5e16963cc84cce2a4316c753a1580776928f0ac",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        },
+        {
+          "request": "cs-final-java21-restore",
+          "resultSHA256": "a30464c6947802c25d1ce93530bb3991cb29a1cf452309d9548fd1cd5b915ac0",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        },
+        {
+          "request": "cs-final-legacy-checkstyle",
+          "resultSHA256": "1ea60997517ad67c197cda3819865b130ad8009df12ce9b29079f5c2572a1a24",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        },
+        {
+          "request": "cs-final-engine-restore",
+          "resultSHA256": "3e54fc12dcf19ac3364ba47c3e3da35ac95c1054093cef5e2a6dbc3fb517dca9",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        },
+        {
+          "request": "cs-state-binding-regression",
+          "resultSHA256": "774cb758a8e046be6c7e29662e09f77560cfd6ed33452d20e250bcf25f55f637",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        },
+        {
+          "request": "cs-state-binding-config-directory",
+          "resultSHA256": "c60ecea0dd6d57edcf00e2e4f2ab4cb7fba4068297929f8360fc6ce47cc8621d",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C19",
+      "status": "verified",
+      "evidence": [
+        {
+          "request": "cs-final-cancel-recover",
+          "resultSHA256": "ed2b2234b358138e15597a56ed13d06c2d9a3173b98d48e3ac8038a66ae47ae3",
+          "actualExit": 0,
+          "actualProcessedCounts": [
+            2,
+            2
+          ]
+        },
+        {
+          "evidence": "cancellation.json",
+          "nativeExit": 143,
+          "candidateExit": 143,
+          "ownedWorkersTerminated": true,
+          "partialSuccessRejected": true
+        }
+      ]
+    },
+    {
+      "id": "C20",
+      "status": "verified",
+      "evidence": [
+        {
+          "evidence": "inverse-proof-v2/result.json",
+          "exactInverse": true,
+          "nativeAfterRemoval": true,
+          "safeReapplication": true,
+          "driftRefused": true
+        }
+      ]
+    }
+  ],
+  "verifiedFixtureObservations": 67,
+  "allFixtureRequestsIncludingEarlierVersionsAndFailures": 87,
+  "proofVersionValidity": [
+    "core-proof-validity.json",
+    "state-binding-proof-validity.json"
+  ],
+  "actualOwnerIntegration": "owner-comparison/result.json",
+  "ownerFailure": "owner-failure-fixture/result.json",
+  "sameDaemon": "daemon-session/result.json",
+  "nativeCacheCounterexamples": [
+    "complete warm XML",
+    "same-mtime changed source bytes",
+    "changed custom-rule bytecode"
+  ],
+  "limits": "Pinned Linux owner proof. No value timing, validation transition, independent-owner performance or adaptive-controller result."
+}

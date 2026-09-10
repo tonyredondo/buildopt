@@ -1,0 +1,1599 @@
+{
+  "scope": "All completed phase commands, including reproductions, setup failures, timeouts and failed owner gate",
+  "commands": [
+    {
+      "label": "acquisition-fix-01",
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "test",
+        "./dev/history-replay",
+        "-run",
+        "^TestAcquisitionUsesContentsNotCheckoutName$",
+        "-count=1"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 516042608,
+      "receipt": {
+        "path": "receipts/acquisition-fix-01-end.json",
+        "sha256": "96171429bb012e31515151d46633df679db6b3fdf4662a76b7635773ad9b6036"
+      },
+      "log": {
+        "path": "logs/acquisition-fix-01.jsonl",
+        "sha256": "5d35dabe6ccfc85d45337d6b70f8f78c3d4431f39de606f46d2e6b70a1f9c639"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "acquisition-reproduction-02",
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "test",
+        "./dev/history-replay",
+        "-run",
+        "^TestAcquisitionUsesContentsNotCheckoutName$",
+        "-count=1"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 1,
+      "durationNS": 516477920,
+      "receipt": {
+        "path": "receipts/acquisition-reproduction-02-end.json",
+        "sha256": "633d2c32db66cd922f507b0cd205b77b930e6361ced9ee486b18359dadfb1c88"
+      },
+      "log": {
+        "path": "logs/acquisition-reproduction-02.jsonl",
+        "sha256": "b59cef9d2093acb8b8ecafb88eac41811c73917ac25d58075a185961b37652b0"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "adaptive-cohort-registration",
+      "command": [
+        "python3",
+        ".tools/state/buildopt-product-viability-v1/bv006/register-adaptive-cohort.py"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 2969574066,
+      "receipt": {
+        "path": "receipts/adaptive-cohort-registration-end.json",
+        "sha256": "2ec549136ee07cf4a16e1dc9eae5f8884eb74e2b1f6275a4a328cc7c8f0ba843"
+      },
+      "log": {
+        "path": "logs/adaptive-cohort-registration.jsonl",
+        "sha256": "d58d562a1aae118e6b4252ab73bdef77771861f3ea71fac46a5ce34e15038738"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 5
+    },
+    {
+      "label": "adaptive-history-acquisition-01",
+      "command": [
+        "python3",
+        ".tools/state/buildopt-product-viability-v1/bv006/acquire-adaptive-history.py"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 15343601267,
+      "receipt": {
+        "path": "receipts/adaptive-history-acquisition-01-end.json",
+        "sha256": "aa925cc0632d54baffee9465bf7add262c4b4354d02796b8454986bc4d25a6f3"
+      },
+      "log": {
+        "path": "logs/adaptive-history-acquisition-01.jsonl",
+        "sha256": "7c911eeea8241b3e94ef3c8e52800c0af67bfdce910fc74f8ffbba691004fadb"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 7
+    },
+    {
+      "label": "adaptive-overlap-survey-01",
+      "command": [
+        "python3",
+        ".tools/state/buildopt-product-viability-v1/bv006/survey-adaptive-overlap.py"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 14240753343,
+      "receipt": {
+        "path": "receipts/adaptive-overlap-survey-01-end.json",
+        "sha256": "5f384a57f68e0bc1eca69b64bea7bd2eea5c9071a96e59d475369dfcdf19adeb"
+      },
+      "log": {
+        "path": "logs/adaptive-overlap-survey-01.jsonl",
+        "sha256": "079a2323877c786a9a6f76b7a8c2a65d223e2228d16d8ae97a0bb8f844fcaaae"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "directory-binding-fix-01",
+      "command": [
+        "python3",
+        ".tools/state/buildopt-product-viability-v1/bv006/correct-directory-bindings.py"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 6174614951,
+      "receipt": {
+        "path": "receipts/directory-binding-fix-01-end.json",
+        "sha256": "857436b1c9780ded113d6f5a1313b95e9c2f7a1b3219dc1c174daa47b59c307f"
+      },
+      "log": {
+        "path": "logs/directory-binding-fix-01.jsonl",
+        "sha256": "59d07364f99db337fdcada8a2ad53c35ff9db8a0a40b61f7673c33c1f5d9b5b2"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 2
+    },
+    {
+      "label": "evidence-copy-native-requalification-01",
+      "command": [
+        "/usr/bin/env",
+        "BUILDOPT_REPLAY_GRADLE_HOME=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-prototype/native-state/gradle/wrapper/dists/gradle-9.7.1-bin/1w1c7tv4s851m17nbqdsro2tv/gradle-9.7.1",
+        "BUILDOPT_REPLAY_JAVA_HOME=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155",
+        "bash",
+        "-e",
+        "-c",
+        "./dev/run --toolchain go -- go test -mod=readonly -race ./dev/history-replay -run \"^TestEvidenceCop\" -count=1 -timeout=100s\n./dev/check-history-replay --native"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 98051919769,
+      "receipt": {
+        "path": "receipts/evidence-copy-native-requalification-01-end.json",
+        "sha256": "4f015d8e450635fe014de86a604d0804dfa45c50d39b4c404860cf503488c67d"
+      },
+      "log": {
+        "path": "logs/evidence-copy-native-requalification-01.jsonl",
+        "sha256": "0995aa9f40ddd279e6847dc9117dbdfeebf6e184629b1a4abdbcbccb9c28bc3b"
+      },
+      "reservedGradleStarts": 18,
+      "reservedWorkflowOrToolStarts": 25
+    },
+    {
+      "label": "evidence-copy-requalification-01",
+      "command": [
+        "bash",
+        "-e",
+        "-c",
+        "./dev/check-history-replay --unit\n./dev/check-history-replay --integration"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 384138263260,
+      "receipt": {
+        "path": "receipts/evidence-copy-requalification-01-end.json",
+        "sha256": "c97cd57b377bf609e812279ca1cb2e70fea9f7e9794c67f21b9fd282d974aab5"
+      },
+      "log": {
+        "path": "logs/evidence-copy-requalification-01.jsonl",
+        "sha256": "4cce4f0f34af4fab03e92780ffd9cd26ef0bd1a936b9a51205124830c795d625"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 106
+    },
+    {
+      "label": "evidence-copy-sizing-01",
+      "command": [
+        "/usr/bin/env",
+        "BUILDOPT_REPLAY_COPY_SIZING_MANIFEST=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/inputs/copy-sizing-plan.json",
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "test",
+        "-mod=readonly",
+        "-tags=replay_integration,replay_copy",
+        "./dev/history-replay",
+        "-run",
+        "^TestRetainedOutputCopySizing$",
+        "-v",
+        "-count=1",
+        "-timeout=105s"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 44312831107,
+      "receipt": {
+        "path": "receipts/evidence-copy-sizing-01-end.json",
+        "sha256": "7791874a124a1077741700c380267ce6b86e02b8c7b1dcaed189453adb127279"
+      },
+      "log": {
+        "path": "logs/evidence-copy-sizing-01.jsonl",
+        "sha256": "a6d73ece836a13f5542f1da44cb70c50aa00b22c0c1c22f32570ece217ad853d"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "evidence-copy-unit-01",
+      "command": [
+        "./dev/check-history-replay",
+        "--unit"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 3622927928,
+      "receipt": {
+        "path": "receipts/evidence-copy-unit-01-end.json",
+        "sha256": "53f133b7e4c125414f8e8860ac80b7eed2e56d3e4c2ef05ddf68c3abb5d3ea93"
+      },
+      "log": {
+        "path": "logs/evidence-copy-unit-01.jsonl",
+        "sha256": "c581839dd5a491aa358aaaf97f606452a449fee06d2b3714b217bfa04df51576"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 2
+    },
+    {
+      "label": "final-documentation-01",
+      "command": [
+        "bash",
+        "-e",
+        "-c",
+        "./dev/check-documentation\n./dev/check-tracker-consistency\n./dev/check-layout\ngit diff --check"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 1,
+      "durationNS": 42801542419,
+      "receipt": {
+        "path": "receipts/final-documentation-01-end.json",
+        "sha256": "5e63eadd0e17ce9196ef6ff160b3300c4e241458f198ccf4bd08609f0f6f21b9"
+      },
+      "log": {
+        "path": "logs/final-documentation-01.jsonl",
+        "sha256": "91ba7f2fd1b99069e173577893af3ce095a7ebf9c15d0233096ed7819b0f8ee6"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 8
+    },
+    {
+      "label": "final-documentation-02",
+      "command": [
+        "bash",
+        "-e",
+        "-c",
+        "./dev/check-documentation\n./dev/check-tracker-consistency\n./dev/check-layout\ngit diff --check"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 35431540772,
+      "receipt": {
+        "path": "receipts/final-documentation-02-end.json",
+        "sha256": "0f316216a8b1336db9c94956400eb8d89b2ea25059fdbe51e9dce9ec746e052f"
+      },
+      "log": {
+        "path": "logs/final-documentation-02.jsonl",
+        "sha256": "3235a1470a2724571145fbce4b6f4bb648f69a6ed3796fe87dc6a10341838fd6"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 8
+    },
+    {
+      "label": "freeze-seed-history-v2-101",
+      "command": [
+        ".tools/state/buildopt-product-viability-v1/bv006/versions/native-calibration-03/history-replay",
+        "history",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/eic-native-v1/repos/elasticsearch.git",
+        "16bd5bc5355ac7c6ad736f8a6f93281b24a05ab7",
+        "101",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/inputs/seed-history-v2-101.json"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 2068622836,
+      "receipt": {
+        "path": "receipts/freeze-seed-history-v2-101-end.json",
+        "sha256": "cdeeb390e7020d94a5e3eeb1cbc863bcb9a393a82a2cef5a9986c07ca530bbaf"
+      },
+      "log": {
+        "path": "logs/freeze-seed-history-v2-101.jsonl",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "freeze-seed-history-v2",
+      "command": [
+        ".tools/state/buildopt-product-viability-v1/bv006/versions/native-calibration-03/history-replay",
+        "history",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/eic-native-v1/repos/elasticsearch.git",
+        "16bd5bc5355ac7c6ad736f8a6f93281b24a05ab7",
+        "100",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/inputs/seed-history-v2.json"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 1267169127,
+      "receipt": {
+        "path": "receipts/freeze-seed-history-v2-end.json",
+        "sha256": "24b28e1d5ad36cc26a1207228548e8612b31cd7cbc7e521ec121b9343f24a010"
+      },
+      "log": {
+        "path": "logs/freeze-seed-history-v2.jsonl",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "full-go-build-01",
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "build",
+        "-mod=readonly",
+        "./..."
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 3271461257,
+      "receipt": {
+        "path": "receipts/full-go-build-01-end.json",
+        "sha256": "e275f8149a0b4b0e49928501e9761b128aee80d79100843ed1527468ee2b09e8"
+      },
+      "log": {
+        "path": "logs/full-go-build-01.jsonl",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "full-go-build-02",
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "build",
+        "-mod=readonly",
+        "./..."
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 8882756646,
+      "receipt": {
+        "path": "receipts/full-go-build-02-end.json",
+        "sha256": "0355b98e75e415b4086316f8c3f2db9f0b4bc56004fed50777aaea1e944dbee3"
+      },
+      "log": {
+        "path": "logs/full-go-build-02.jsonl",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "instrument-unit-v3",
+      "command": [
+        "./dev/check-history-replay",
+        "--unit"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 816244772,
+      "receipt": {
+        "path": "receipts/instrument-unit-v3-end.json",
+        "sha256": "f8717338f5dbc55ac71c036b0478ab9185315f5bf851799ea3b2f6e6065f9dab"
+      },
+      "log": {
+        "path": "logs/instrument-unit-v3.jsonl",
+        "sha256": "da701dc1ad33f05674b298fe9e1c25f50a14a7de60b12c76946bb8e87d76dca4"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "integration-requalification-01",
+      "command": [
+        "./dev/check-history-replay",
+        "--integration"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 1,
+      "durationNS": 294161002356,
+      "receipt": {
+        "path": "receipts/integration-requalification-01-end.json",
+        "sha256": "d6cfe068b33da7fdcf93928a96cb562ad63f431e39c7123a51204bac6f3dba65"
+      },
+      "log": {
+        "path": "logs/integration-requalification-01.jsonl",
+        "sha256": "76d2ab9273eccf757b64dbc209efbbc7fd2213f99656505e806945e60bdeb5d2"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 130
+    },
+    {
+      "label": "integration-requalification-02",
+      "command": [
+        "./dev/check-history-replay",
+        "--integration"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 325661940339,
+      "receipt": {
+        "path": "receipts/integration-requalification-02-end.json",
+        "sha256": "1ec94394906debfa4a924727b9aef98ba3004f2da7d1ca4a8ff459c418040f6d"
+      },
+      "log": {
+        "path": "logs/integration-requalification-02.jsonl",
+        "sha256": "b55c017c356cc15379145a2041519e4f2fd5a9206e6ab1d429f5e5700b01a103"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 130
+    },
+    {
+      "label": "jdk-binding-diagnostic",
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "run",
+        ".tools/state/buildopt-product-viability-v1/bv006/inspect-binding.go",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155",
+        ".tools/state/buildopt-product-viability-v1/bv006/jdk21-go-inventory.json"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 315516527,
+      "receipt": {
+        "path": "receipts/jdk-binding-diagnostic-end.json",
+        "sha256": "e70a39776da43242f02376debe909fab730eb73aec7f511405fcc762c232ae05"
+      },
+      "log": {
+        "path": "logs/jdk-binding-diagnostic.jsonl",
+        "sha256": "3a1ff00df2be4862660f8047fb718fe83a7daffe087dd5fc53d53f996a42b4de"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "live-disk-race-fix",
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "test",
+        "./dev/history-replay",
+        "-run",
+        "^TestLiveDiskMeasurementToleratesNativeTempDeletion$",
+        "-count=20"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 566826343,
+      "receipt": {
+        "path": "receipts/live-disk-race-fix-end.json",
+        "sha256": "ed4f0be9754a8eaea14a204f7690fc0ac036b30f2c71f6e8cd2a4917fc8acfc5"
+      },
+      "log": {
+        "path": "logs/live-disk-race-fix.jsonl",
+        "sha256": "892493a80ef50b793ebbcc6e54337c0f1c5987d20e08379a798a7407409562b8"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "live-disk-race-reproduction",
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "test",
+        "./dev/history-replay",
+        "-run",
+        "^TestLiveDiskMeasurementToleratesNativeTempDeletion$",
+        "-count=1"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 1,
+      "durationNS": 466955393,
+      "receipt": {
+        "path": "receipts/live-disk-race-reproduction-end.json",
+        "sha256": "79dbab5f6b33667c6b0db398e1801763b6316145ef064abf45849c9a1ec1e5ba"
+      },
+      "log": {
+        "path": "logs/live-disk-race-reproduction.jsonl",
+        "sha256": "99db89a43c89c043c1332a59a82e0b27cfb3e0503df9e556efb7d7e9492dcd19"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "mode-copy-fix-unit",
+      "command": [
+        "./dev/check-history-replay",
+        "--unit"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 967097683,
+      "receipt": {
+        "path": "receipts/mode-copy-fix-unit-end.json",
+        "sha256": "e7e07113432008a9cfcd4055da516b771d836cd711f6f2f94ceec52426b12437"
+      },
+      "log": {
+        "path": "logs/mode-copy-fix-unit.jsonl",
+        "sha256": "c045b173f75c7094a2c1837e10902e9c11d24851da6eb6212942ed0d6c5bd0e2"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "mode-copy-reproduction",
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "test",
+        "./dev/history-replay",
+        "-run",
+        "^TestExactCopyPreservesModesAndIndependentBytes$",
+        "-count=1"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 1,
+      "durationNS": 465827542,
+      "receipt": {
+        "path": "receipts/mode-copy-reproduction-end.json",
+        "sha256": "4b696964ced41344848aaaf1a4b1caf5660f21f843132edde8fd840ed96336fb"
+      },
+      "log": {
+        "path": "logs/mode-copy-reproduction.jsonl",
+        "sha256": "bf30ab8e0c8fd4393c9f8fe2311e305ae2e5ea5c62462d9a1575c6096e3f8446"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "native-boundary-integration-03",
+      "command": [
+        "bash",
+        "-e",
+        "-c",
+        "for test in TestTypedFailuresAndNativeFallback TestDriftStopsBeforeNextChild TestAllocationStopsAndDetachedChild TestRawEvidenceTampering TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost TestCheckpointResumeAndCrashRecovery; do timeout --signal=TERM --kill-after=5s 175s ./dev/run --toolchain go -- go test -mod=readonly -tags=replay_integration -run \"^${test}$\" ./dev/history-replay -count=1 -timeout=160s -v; done"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 349955201878,
+      "receipt": {
+        "path": "receipts/native-boundary-integration-03-end.json",
+        "sha256": "e976d1f7b1e1c11f4b55d302474a664d440334cedc12c1c98896ab80da101600"
+      },
+      "log": {
+        "path": "logs/native-boundary-integration-03.jsonl",
+        "sha256": "21e616a14bde6971e4b2dbb8ffd51deb79ef9c08be6dedf7fc38673f6090995e"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 84
+    },
+    {
+      "label": "native-boundary-live-race-02",
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "test",
+        "-mod=readonly",
+        "./dev/history-replay",
+        "-run",
+        "^TestLiveDisk",
+        "-count=20",
+        "-timeout=100s"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 3020684991,
+      "receipt": {
+        "path": "receipts/native-boundary-live-race-02-end.json",
+        "sha256": "481a3951420240c801a4aeb9dd217498fc3c148ef6e97c4577f63e6ea06a1cb6"
+      },
+      "log": {
+        "path": "logs/native-boundary-live-race-02.jsonl",
+        "sha256": "dcaada877f04028fdcfb7f5ba7da361ff4823bd24c4c3e276324d842eb9e3207"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "native-boundary-native-03",
+      "command": [
+        "/usr/bin/env",
+        "BUILDOPT_REPLAY_GRADLE_HOME=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-prototype/native-state/gradle/wrapper/dists/gradle-9.7.1-bin/1w1c7tv4s851m17nbqdsro2tv/gradle-9.7.1",
+        "BUILDOPT_REPLAY_JAVA_HOME=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155",
+        "bash",
+        "-e",
+        "-c",
+        "./dev/run --toolchain go -- go test -mod=readonly -race ./dev/history-replay -run \"^(TestLiveDisk|TestEvidenceCop)\" -count=1 -timeout=100s\n./dev/check-history-replay --native"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 108472764636,
+      "receipt": {
+        "path": "receipts/native-boundary-native-03-end.json",
+        "sha256": "0b1bfd696a923641de17799ae207a8553478584929f4664bfb429f8a4417356f"
+      },
+      "log": {
+        "path": "logs/native-boundary-native-03.jsonl",
+        "sha256": "d5284e07b6637603daaf0dc76709fececa5ae2373db06ebf6db1f5e458494c56"
+      },
+      "reservedGradleStarts": 18,
+      "reservedWorkflowOrToolStarts": 25
+    },
+    {
+      "label": "native-boundary-requalification-02",
+      "command": [
+        "bash",
+        "-e",
+        "-c",
+        "./dev/check-history-replay --unit\n./dev/check-history-replay --integration"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 1,
+      "durationNS": 308913955521,
+      "receipt": {
+        "path": "receipts/native-boundary-requalification-02-end.json",
+        "sha256": "6c30cc11143aa151ac9eeda18c299261459d24583bda90b3ce8b49c0065c7b12"
+      },
+      "log": {
+        "path": "logs/native-boundary-requalification-02.jsonl",
+        "sha256": "9d9227488bd81d13b2b735bc0e3439b2c362ed2f0692fa8ee1843de02eaece7c"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 106
+    },
+    {
+      "label": "native-boundary-unit-01",
+      "command": [
+        "./dev/check-history-replay",
+        "--unit"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 1,
+      "durationNS": 3394734431,
+      "receipt": {
+        "path": "receipts/native-boundary-unit-01-end.json",
+        "sha256": "61a24a10673b68bb9a30a4db7f344cb8f05ed0772efe64af361805d0bb28adfc"
+      },
+      "log": {
+        "path": "logs/native-boundary-unit-01.jsonl",
+        "sha256": "82f0db710117b57ab4d6af1ffe3f31ea9b3af4bbe33d2678d39aa51f5d39f96f"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 2
+    },
+    {
+      "label": "native-calibration-04-independent-check",
+      "command": [
+        ".tools/state/buildopt-product-viability-v1/bv006/versions/owner-readiness-v4/history-replay",
+        "check",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/native-calibration-04"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 120622529819,
+      "receipt": {
+        "path": "receipts/native-calibration-04-independent-check-end.json",
+        "sha256": "9c3c44b0bde6f761e64c6195eef1b9ef5ae15635ea33ede4fb4a064074d6e006"
+      },
+      "log": {
+        "path": "logs/native-calibration-04-independent-check.jsonl",
+        "sha256": "88fd282248bed1dafbec965fadd3b1825ba2cdf3fd0ff8468245c8ee1172c766"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "native-end-observation-01",
+      "command": [
+        "python3",
+        ".tools/state/buildopt-product-viability-v1/bv006/observe-native-end.py"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 469959773124,
+      "receipt": {
+        "path": "receipts/native-end-observation-01-end.json",
+        "sha256": "0e884382ec211562fd6222afac25fdd39cb73717920fd54abd7a4fe3dd93ce3e"
+      },
+      "log": {
+        "path": "logs/native-end-observation-01.jsonl",
+        "sha256": "dfbedcba077ea679ecd29c537501598aa3acd8f23b459294d8aeda9126ce5151"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "native-end-observation-02",
+      "command": [
+        "python3",
+        ".tools/state/buildopt-product-viability-v1/bv006/observe-native-end-v2.py"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 171845816808,
+      "receipt": {
+        "path": "receipts/native-end-observation-02-end.json",
+        "sha256": "7272fb8083bfc49cb03dde5cff9aead1c149b0b6e130fb3bdf38dfe164e814ba"
+      },
+      "log": {
+        "path": "logs/native-end-observation-02.jsonl",
+        "sha256": "b44a1589019b76a910d23208f5df47a361b58aadfe81093827af6fbf5fdb90e3"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "native-owner-calibration-01",
+      "command": [
+        ".tools/state/buildopt-product-viability-v1/bv006/versions/native-calibration-01/history-replay",
+        "run",
+        ".tools/state/buildopt-product-viability-v1/bv006/versions/native-calibration-01/manifest.json"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 1,
+      "durationNS": 288219418737,
+      "receipt": {
+        "path": "receipts/native-owner-calibration-01-end.json",
+        "sha256": "adaac85b1f6462bd2222b9ad4c4e8af46b135d40f6bb20e78b10520b515d6943"
+      },
+      "log": {
+        "path": "logs/native-owner-calibration-01.jsonl",
+        "sha256": "dce00b2d675d71ab4bb180f9dc3d77b8645b41c1899823632f4f7860a464ffa3"
+      },
+      "reservedGradleStarts": 8,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "native-owner-calibration-02",
+      "command": [
+        ".tools/state/buildopt-product-viability-v1/bv006/versions/native-calibration-02/history-replay",
+        "run",
+        ".tools/state/buildopt-product-viability-v1/bv006/versions/native-calibration-02/manifest.json"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 1,
+      "durationNS": 743191483982,
+      "receipt": {
+        "path": "receipts/native-owner-calibration-02-end.json",
+        "sha256": "afd0cb4be5f37437880101d12b27a2eb590d6a1d5826538963a573c257f65b6b"
+      },
+      "log": {
+        "path": "logs/native-owner-calibration-02.jsonl",
+        "sha256": "3411f69d96e05e4a1fbe7879b7e9c2ec96b7a402c28fdf7e6b000d58065c8a67"
+      },
+      "reservedGradleStarts": 8,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "native-owner-calibration-03",
+      "command": [
+        ".tools/state/buildopt-product-viability-v1/bv006/versions/native-calibration-03/history-replay",
+        "run",
+        ".tools/state/buildopt-product-viability-v1/bv006/versions/native-calibration-03/manifest.json"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": -15,
+      "durationNS": 1123265625881,
+      "receipt": {
+        "path": "receipts/native-owner-calibration-03-end.json",
+        "sha256": "2913eaa18219aaa9351701fff403fca60bbb06edbf9ef9966c326ccb20d19856"
+      },
+      "log": {
+        "path": "logs/native-owner-calibration-03.jsonl",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "reservedGradleStarts": 8,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "native-owner-calibration-04",
+      "command": [
+        ".tools/state/buildopt-product-viability-v1/bv006/versions/owner-readiness-v4/history-replay",
+        "run",
+        ".tools/state/buildopt-product-viability-v1/bv006/versions/owner-readiness-v4/native-manifest.json"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 3140324104638,
+      "receipt": {
+        "path": "receipts/native-owner-calibration-04-end.json",
+        "sha256": "ce4cef5ed0dbd50f177fba72c23a6f1514164a2c68543891aee250f3a030fe8b"
+      },
+      "log": {
+        "path": "logs/native-owner-calibration-04.jsonl",
+        "sha256": "5235a6e78beeea8c3ee966fefb054c61957fb976c26831cc1d35a9910c068427"
+      },
+      "reservedGradleStarts": 8,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "native-requalification-01",
+      "command": [
+        "/usr/bin/env",
+        "BUILDOPT_REPLAY_GRADLE_HOME=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-prototype/native-state/gradle/wrapper/dists/gradle-9.7.1-bin/1w1c7tv4s851m17nbqdsro2tv/gradle-9.7.1",
+        "BUILDOPT_REPLAY_JAVA_HOME=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155",
+        "./dev/check-history-replay",
+        "--native"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 92409294349,
+      "receipt": {
+        "path": "receipts/native-requalification-01-end.json",
+        "sha256": "67b4aba299a7fdd5667a74a61e586c2de0267386770db50c54d23ef5a97770a7"
+      },
+      "log": {
+        "path": "logs/native-requalification-01.jsonl",
+        "sha256": "527ea0f7e796da4a401ec037a399a5acf1edfc3c510aae23d75d08c1c466e5c0"
+      },
+      "reservedGradleStarts": 18,
+      "reservedWorkflowOrToolStarts": 24
+    },
+    {
+      "label": "native-requalification-02",
+      "command": [
+        "/usr/bin/env",
+        "BUILDOPT_REPLAY_GRADLE_HOME=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-prototype/native-state/gradle/wrapper/dists/gradle-9.7.1-bin/1w1c7tv4s851m17nbqdsro2tv/gradle-9.7.1",
+        "BUILDOPT_REPLAY_JAVA_HOME=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155",
+        "./dev/check-history-replay",
+        "--native"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 143502566628,
+      "receipt": {
+        "path": "receipts/native-requalification-02-end.json",
+        "sha256": "143d8d32c0887ba3c79a4d51f2ec505148c071a4a143cd8fdad84cd68aea67f1"
+      },
+      "log": {
+        "path": "logs/native-requalification-02.jsonl",
+        "sha256": "ada5fa34d2b6d06bf5c6e9d1920c499f13b4c1cffcc3360f5cfac1dd08a86ebc"
+      },
+      "reservedGradleStarts": 18,
+      "reservedWorkflowOrToolStarts": 24
+    },
+    {
+      "label": "owner-adapter-compile-01",
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "test",
+        "./dev/history-replay",
+        "-run",
+        "^TestStrictContract$",
+        "-count=1"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 565870053,
+      "receipt": {
+        "path": "receipts/owner-adapter-compile-01-end.json",
+        "sha256": "221904ff243a112a56c527ec73d7096f94d1cc91937396e89aeb04705810ed1e"
+      },
+      "log": {
+        "path": "logs/owner-adapter-compile-01.jsonl",
+        "sha256": "fe712340c85bd166bb66686d13948c7e43b4b506372bd9c77b4d9b7314de234a"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "owner-adapter-unit-01",
+      "command": [
+        "./dev/check-history-replay",
+        "--unit"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 1,
+      "durationNS": 115354339,
+      "receipt": {
+        "path": "receipts/owner-adapter-unit-01-end.json",
+        "sha256": "3fb6551575200add7ebf7380cbd9a7ca6ef0b3e26a3d5612d37177640469011e"
+      },
+      "log": {
+        "path": "logs/owner-adapter-unit-01.jsonl",
+        "sha256": "cdba0e843a7edbfe40d0e71da998178c32d477ddc6f8b41da02b8d82a6311332"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "owner-adapter-unit-02",
+      "command": [
+        "./dev/check-history-replay",
+        "--unit"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 1018893673,
+      "receipt": {
+        "path": "receipts/owner-adapter-unit-02-end.json",
+        "sha256": "b528505cc1cd50ed003fe2ef39ba84bacfedae511bfa182562f4c8dd130e9a9b"
+      },
+      "log": {
+        "path": "logs/owner-adapter-unit-02.jsonl",
+        "sha256": "52b580cb5d589c9b097275e736698c6dc23c12ed4c4c3c9560c52064bfad6300"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "owner-adversarial-01",
+      "command": [
+        "/usr/bin/env",
+        "BUILDOPT_REPLAY_OWNER_POLICY=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-retained-fixture-02/policy.json",
+        "python3",
+        "-I",
+        "dev/history-replay/owner_compare_test.py"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 1917999229,
+      "receipt": {
+        "path": "receipts/owner-adversarial-01-end.json",
+        "sha256": "85130fdeceda9ef55517f0596bc9efbcfa61764b67280f52c8546f24a3fd3df0"
+      },
+      "log": {
+        "path": "logs/owner-adversarial-01.jsonl",
+        "sha256": "7f48e91ec8ecb0157b2c2033b9575c75c9a5d62acad25dda22d76cd6a5f35862"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 24
+    },
+    {
+      "label": "owner-adversarial-02",
+      "command": [
+        "/usr/bin/env",
+        "BUILDOPT_REPLAY_OWNER_POLICY=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-retained-fixture-02/policy.json",
+        "python3",
+        "-I",
+        "dev/history-replay/owner_compare_test.py"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 4573535571,
+      "receipt": {
+        "path": "receipts/owner-adversarial-02-end.json",
+        "sha256": "e8c4a7605500cc15ca8572ac42e01722caa88044aa219f7b0bd3560ff410f8de"
+      },
+      "log": {
+        "path": "logs/owner-adversarial-02.jsonl",
+        "sha256": "65e3f63c27a47dadd0e97c844a0a068065424e11b2fceea0482bfc9fa9e4db4d"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 30
+    },
+    {
+      "label": "owner-adversarial-03",
+      "command": [
+        "/usr/bin/env",
+        "BUILDOPT_REPLAY_OWNER_POLICY=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-retained-fixture-02/owner-policy.json",
+        "python3",
+        "-B",
+        "dev/history-replay/owner_compare_test.py",
+        "-v"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 1,
+      "durationNS": 115322128,
+      "receipt": {
+        "path": "receipts/owner-adversarial-03-end.json",
+        "sha256": "b0b8d9853aa3e489e2f5d726066da53fe04d69eb27a54ca1e6ebc466e9efa901"
+      },
+      "log": {
+        "path": "logs/owner-adversarial-03.jsonl",
+        "sha256": "cb176f1d648a014bd8f44288819b6b28aa2540b62ab624083af83df2d3036408"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "owner-adversarial-04",
+      "command": [
+        "/usr/bin/env",
+        "BUILDOPT_REPLAY_OWNER_POLICY=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-retained-fixture-02/policy.json",
+        "python3",
+        "-I",
+        "dev/history-replay/owner_compare_test.py",
+        "-v"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 5827280713,
+      "receipt": {
+        "path": "receipts/owner-adversarial-04-end.json",
+        "sha256": "617f102e765982fc7c3a5fb016d5196b58a0303766415b42c7f579a604fb2359"
+      },
+      "log": {
+        "path": "logs/owner-adversarial-04.jsonl",
+        "sha256": "7505e03e6c25c7d861b267cc08f8b81242735fcb72d1c76c60d85e59aa221725"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "owner-end-observer-v5",
+      "command": [
+        "python3",
+        "-I",
+        ".tools/state/buildopt-product-viability-v1/bv006/wait-and-observe-owner-v5.py"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 1367554628341,
+      "receipt": {
+        "path": "receipts/owner-end-observer-v5-end.json",
+        "sha256": "0542526c5bb1efb20a51f1afc2a68da2cc505e11a0e8018a0836b17dc8b1994b"
+      },
+      "log": {
+        "path": "logs/owner-end-observer-v5.jsonl",
+        "sha256": "fdd3faaf78384336b82a5177ecb83662d32167fb8556f97b2724024a4bdaac63"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "owner-overhead-compile",
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "test",
+        "-tags=replay_integration,replay_gradle,replay_owner",
+        "./dev/history-replay",
+        "-run",
+        "^TestStrictContract$",
+        "-count=1"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 821500520,
+      "receipt": {
+        "path": "receipts/owner-overhead-compile-end.json",
+        "sha256": "b3eb91883053e214e6dc1d63635a836350118db7134163ec3463dde183ce0a74"
+      },
+      "log": {
+        "path": "logs/owner-overhead-compile.jsonl",
+        "sha256": "75a1febc40d6590b59350ec8a9a106afc8015a315a062711d5d391cb402b2a9f"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "owner-overhead-v5-02",
+      "command": [
+        "/usr/bin/env",
+        "BUILDOPT_REPLAY_OWNER_OVERHEAD_MANIFEST=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/versions/owner-readiness-v5/overhead-manifest.json",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/versions/owner-readiness-v5/owner-overhead.test",
+        "-test.run=^TestGradleOwnerSymmetricCaptureOverhead$",
+        "-test.v",
+        "-test.timeout=6900s"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 1,
+      "durationNS": 1631406172811,
+      "receipt": {
+        "path": "receipts/owner-overhead-v5-02-end.json",
+        "sha256": "4afbd7ba42465133e3d231d89c09859abda1eea03c327b00ceae2f9b0c7ad920"
+      },
+      "log": {
+        "path": "logs/owner-overhead-v5-02.jsonl",
+        "sha256": "4e3e397962fafb11c76112d96d38c8b40c839b623b6c108d2fc0d347ca6ff66d"
+      },
+      "reservedGradleStarts": 20,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "owner-overhead-v5-diagnosis",
+      "command": [
+        "python3",
+        "-B",
+        "-I",
+        ".tools/state/buildopt-product-viability-v1/bv006/diagnose-overhead-records-v5.py"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 516345221,
+      "receipt": {
+        "path": "receipts/owner-overhead-v5-diagnosis-end.json",
+        "sha256": "030104566198f1bc30e0f0f808f2c16cbc403c3f1083cf4e9fbe88a4f480d76d"
+      },
+      "log": {
+        "path": "logs/owner-overhead-v5-diagnosis.jsonl",
+        "sha256": "ef3f28f43c537c2e4459beb4fe611d73c559a962649d18c9d0e113c4e38194a6"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "owner-overhead-v5",
+      "command": [
+        "/usr/bin/env",
+        "BUILDOPT_REPLAY_OWNER_OVERHEAD_MANIFEST=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/versions/owner-readiness-v5/overhead-manifest.json",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/versions/owner-readiness-v5/owner-overhead.test",
+        "-test.run=^TestGradleOwnerSymmetricCaptureOverhead$",
+        "-test.v",
+        "-test.timeout=6900s"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 1,
+      "durationNS": 9212795,
+      "receipt": {
+        "path": "receipts/owner-overhead-v5-end.json",
+        "sha256": "9b0f5bff10dd6890112a907ec06a567651d81b461933c1ee78f9db2282bf3d3e"
+      },
+      "log": {
+        "path": "logs/owner-overhead-v5.jsonl",
+        "sha256": "7f016a4768b95a34b2b40839adc8abb66571f5465b0ec8233b8be38c9b9a845f"
+      },
+      "reservedGradleStarts": 20,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "owner-overhead-v5-reconstruct",
+      "command": [
+        "python3",
+        "-B",
+        "-I",
+        ".tools/state/buildopt-product-viability-v1/bv006/reconstruct-owner-overhead-v5.py"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 455242371,
+      "receipt": {
+        "path": "receipts/owner-overhead-v5-reconstruct-end.json",
+        "sha256": "ac6d387303ab64f8721a1a681661800fad6e3e3f46d1e8bd1b880864b2caee25"
+      },
+      "log": {
+        "path": "logs/owner-overhead-v5-reconstruct.jsonl",
+        "sha256": "58038c4347938d2757e5737ec30f2d2cd5d79de133e69c798b47d37bbda065a9"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "owner-reader-binding",
+      "command": [
+        "/usr/bin/env",
+        "BUILDOPT_REPLAY_OWNER_POLICY=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-retained-fixture-02/policy.json",
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "test",
+        "-tags=replay_integration,replay_owner",
+        "./dev/history-replay",
+        "-run",
+        "^TestOwnerQualificationCannotBorrowDifferentReaders$",
+        "-count=1"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 616137925,
+      "receipt": {
+        "path": "receipts/owner-reader-binding-end.json",
+        "sha256": "4ab963361dbd36b86e4a5a97100cf27edcc8e3f7420cf294adf7aed5f6a94792"
+      },
+      "log": {
+        "path": "logs/owner-reader-binding.jsonl",
+        "sha256": "6a20741c889713d83cd7bb7ff0ae316222c54d14b2f2c7b32125a66a1a8a7260"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "owner-reader-diagnostic-01",
+      "command": [
+        "python3",
+        "-I",
+        ".tools/state/buildopt-product-viability-v1/bv006/diagnose-owner-reader-v5.py"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 46900213744,
+      "receipt": {
+        "path": "receipts/owner-reader-diagnostic-01-end.json",
+        "sha256": "a8f0b322138e18cd0d90053d252a9e5e8a6ed5685818909ef01c579791b7ed8e"
+      },
+      "log": {
+        "path": "logs/owner-reader-diagnostic-01.jsonl",
+        "sha256": "b273047df1e31d5269f4cf418b39029a9abed8a65e5f65a767300254c9a90023"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "owner-reader-environment-diagnostic-02",
+      "command": [
+        "/usr/bin/env",
+        "-i",
+        "PATH=/usr/bin:/bin",
+        "LANG=C.UTF-8",
+        "TZ=UTC",
+        "PYTHONDONTWRITEBYTECODE=1",
+        "/usr/bin/python3",
+        "-I",
+        ".tools/state/buildopt-product-viability-v1/bv006/diagnose-owner-reader-v5.py"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 46959792370,
+      "receipt": {
+        "path": "receipts/owner-reader-environment-diagnostic-02-end.json",
+        "sha256": "bf2a2bfb6f5405ee6e12be66c9ed97f179cbe154df76e803b5d4e746c3b20f43"
+      },
+      "log": {
+        "path": "logs/owner-reader-environment-diagnostic-02.jsonl",
+        "sha256": "a1509d9966d6818552a8d31b4e190826479036d0727d367d1ae8af0136bfb825"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "owner-readers-v5-02",
+      "command": [
+        "python3",
+        ".tools/state/buildopt-product-viability-v1/bv006/requalify-owner-readers-v5-02.py"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 86622655448,
+      "receipt": {
+        "path": "receipts/owner-readers-v5-02-end.json",
+        "sha256": "fa61fe9cfe4d2789b62ae290b75f23f95abd8bd4d057cea54020a0539f308c7d"
+      },
+      "log": {
+        "path": "logs/owner-readers-v5-02.jsonl",
+        "sha256": "e59c4719f3873cebc4c06d24e7151b61e86de0a008320b22fc2799daa37a9a9b"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "owner-readers-v5",
+      "command": [
+        "python3",
+        ".tools/state/buildopt-product-viability-v1/bv006/requalify-owner-readers-v5.py"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 1,
+      "durationNS": 180157780103,
+      "receipt": {
+        "path": "receipts/owner-readers-v5-end.json",
+        "sha256": "3a6530ab40a2e7e7520e0b707e69cd66bd6695d597e6e34cddbe72f3dd733d29"
+      },
+      "log": {
+        "path": "logs/owner-readers-v5.jsonl",
+        "sha256": "5e3c0ed0e77052b752334d410b944d4f7c81685ad15e50852be3409625d229e3"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "owner-readiness-seal-v5",
+      "command": [
+        "bash",
+        "-e",
+        "-c",
+        "python3 .tools/state/buildopt-product-viability-v1/bv006/seal-owner-qualification-v5.py\n./dev/run --toolchain go -- go build -mod=readonly ./..."
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 3571479939,
+      "receipt": {
+        "path": "receipts/owner-readiness-seal-v5-end.json",
+        "sha256": "bff3b112e00061b5f2e30371e87475024c6e89ffffe06769f60374b8c7de811e"
+      },
+      "log": {
+        "path": "logs/owner-readiness-seal-v5.jsonl",
+        "sha256": "6c00d8c9618e7a6ba492d3e79cd076bdb1a6759ff93c3c1e6a6be39515abf3ca"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 2
+    },
+    {
+      "label": "owner-retained-comparison-01",
+      "command": [
+        "bash",
+        "-c",
+        "python3 dev/history-replay/owner_compare.py < .tools/state/buildopt-product-viability-v1/bv006/owner-retained-fixture-02/request.json"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 1,
+      "durationNS": 3721682449,
+      "receipt": {
+        "path": "receipts/owner-retained-comparison-01-end.json",
+        "sha256": "a7679be8035cc14c7037ae681d5c2afafbbfdf35fb067b1e046e0b205de55e15"
+      },
+      "log": {
+        "path": "logs/owner-retained-comparison-01.jsonl",
+        "sha256": "8cfb269a6365feebfb8950ec2e42a7ba7479c519725af44c295d6c01f8c04f2b"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 2
+    },
+    {
+      "label": "owner-retained-comparison-02",
+      "command": [
+        "bash",
+        "-c",
+        "python3 dev/history-replay/owner_compare.py < .tools/state/buildopt-product-viability-v1/bv006/owner-retained-fixture-02/request.json"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 45797583142,
+      "receipt": {
+        "path": "receipts/owner-retained-comparison-02-end.json",
+        "sha256": "dc2794d6446b5e6629febb9013db8ad75dd56080ba1f9b32562bed076accc87a"
+      },
+      "log": {
+        "path": "logs/owner-retained-comparison-02.jsonl",
+        "sha256": "abfc32aed3b485e7cdb76c70edbd1f26e3683b16366689583769fa0e3b717ec0"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 3
+    },
+    {
+      "label": "owner-retained-graph-reproduction",
+      "command": [
+        "bash",
+        "-c",
+        "python3 dev/history-replay/owner_compare.py < .tools/state/buildopt-product-viability-v1/bv006/owner-retained-fixture-02/request.json"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 1,
+      "durationNS": 3470222330,
+      "receipt": {
+        "path": "receipts/owner-retained-graph-reproduction-end.json",
+        "sha256": "59611bb82a173002b94f7cb11962d7aa6ac4f47033764be1b3ab1ae06dfd81b4"
+      },
+      "log": {
+        "path": "logs/owner-retained-graph-reproduction.jsonl",
+        "sha256": "8cfb269a6365feebfb8950ec2e42a7ba7479c519725af44c295d6c01f8c04f2b"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "prepare-closeout-01",
+      "command": [
+        "python3",
+        "-B",
+        ".tools/state/buildopt-product-viability-v1/bv006/prepare-closeout.py"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 666161215,
+      "receipt": {
+        "path": "receipts/prepare-closeout-01-end.json",
+        "sha256": "245f72bd99a6cd1a763d2dd18c9894f549e103dd7dac1b18f376e120a43b87d3"
+      },
+      "log": {
+        "path": "logs/prepare-closeout-01.jsonl",
+        "sha256": "6166036ca1573f05efc45b8d7dfd3fe8741d34097f42f5b25a37772c67bd0ff1"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 2
+    },
+    {
+      "label": "prepare-native-calibration-01",
+      "command": [
+        "python3",
+        ".tools/state/buildopt-product-viability-v1/bv006/prepare-native-calibration.py"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 1,
+      "durationNS": 152438029092,
+      "receipt": {
+        "path": "receipts/prepare-native-calibration-01-end.json",
+        "sha256": "e78df69049dbe623be5e854bef448fb1cd6ae68ad0bc4bef5e38c48fb8a516fe"
+      },
+      "log": {
+        "path": "logs/prepare-native-calibration-01.jsonl",
+        "sha256": "e1f76f456c52b7ed31423e7fba2fd8cfd98c0e9ae63972551b934a91142c23de"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 3
+    },
+    {
+      "label": "prepare-native-calibration-02",
+      "command": [
+        "python3",
+        ".tools/state/buildopt-product-viability-v1/bv006/prepare-calibration-v2.py"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 4774371389,
+      "receipt": {
+        "path": "receipts/prepare-native-calibration-02-end.json",
+        "sha256": "36615688e14994278af5e9cf8db6bda46d0388db6cbf4c0dacb8f1a3cf9ea2af"
+      },
+      "log": {
+        "path": "logs/prepare-native-calibration-02.jsonl",
+        "sha256": "eab146fc91011478a499f86a4dc886c16cc77cda4677322122bf12eeded65814"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 2
+    },
+    {
+      "label": "prepare-native-calibration-03",
+      "command": [
+        "python3",
+        ".tools/state/buildopt-product-viability-v1/bv006/prepare-calibration-v3.py"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 4823529658,
+      "receipt": {
+        "path": "receipts/prepare-native-calibration-03-end.json",
+        "sha256": "4aacb4ec47a33f0a678c67c079eb1b4ddf0967cffe306f2474ac14c3472aeedc"
+      },
+      "log": {
+        "path": "logs/prepare-native-calibration-03.jsonl",
+        "sha256": "6917fcc510a12739a72bb576e0ddc4679796fe6c6e10c352df5131d820021518"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 2
+    },
+    {
+      "label": "prepare-owner-overhead-01",
+      "command": [
+        "python3",
+        ".tools/state/buildopt-product-viability-v1/bv006/prepare-owner-overhead.py"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 1217331189,
+      "receipt": {
+        "path": "receipts/prepare-owner-overhead-01-end.json",
+        "sha256": "e016e06d7e9d7d6d1ac6486b8eb133803d0c18249b68aefa0638b29629ea0a17"
+      },
+      "log": {
+        "path": "logs/prepare-owner-overhead-01.jsonl",
+        "sha256": "108d766010dd7a9494ea4a3b91a992d75d902006932d7d080d77cf1214366398"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 2
+    },
+    {
+      "label": "prepare-owner-readiness-v4",
+      "command": [
+        "python3",
+        ".tools/state/buildopt-product-viability-v1/bv006/prepare-owner-readiness-v4.py"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 17245078990,
+      "receipt": {
+        "path": "receipts/prepare-owner-readiness-v4-end.json",
+        "sha256": "7e3757771c1feb3cb69d41ce3173478bc4ff97dc91eaf1611138c0afee318835"
+      },
+      "log": {
+        "path": "logs/prepare-owner-readiness-v4.jsonl",
+        "sha256": "f2ff4ac056e503d19d08775c152b07c4b24f2373c07bd9551b0fb21724be42c0"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 3
+    },
+    {
+      "label": "prepare-owner-readiness-v5",
+      "command": [
+        "python3",
+        ".tools/state/buildopt-product-viability-v1/bv006/prepare-owner-readiness-v5.py"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 5475429391,
+      "receipt": {
+        "path": "receipts/prepare-owner-readiness-v5-end.json",
+        "sha256": "683b782aecdfd3a5a80100834f1b30f405e13a1a25b5b5c7560cc0852b7093de"
+      },
+      "log": {
+        "path": "logs/prepare-owner-readiness-v5.jsonl",
+        "sha256": "e32d17020545e3a558d4340d6f26c86ad0cfa0532df7a7c48323226b8c4db56b"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 4
+    },
+    {
+      "label": "prepare-owner-retained-01",
+      "command": [
+        "python3",
+        ".tools/state/buildopt-product-viability-v1/bv006/prepare-owner-fixtures.py"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 1,
+      "durationNS": 1617877047,
+      "receipt": {
+        "path": "receipts/prepare-owner-retained-01-end.json",
+        "sha256": "b32009e8eed365f02f447335a9877a757232b91fc00f29d7b04a81d17d3b6717"
+      },
+      "log": {
+        "path": "logs/prepare-owner-retained-01.jsonl",
+        "sha256": "9a61906d28d2e249eab50a788793fbdf815f501b8815cc85faeec3de60af4c26"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "prepare-owner-retained-02",
+      "command": [
+        "python3",
+        ".tools/state/buildopt-product-viability-v1/bv006/prepare-owner-fixtures.py"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 93139366105,
+      "receipt": {
+        "path": "receipts/prepare-owner-retained-02-end.json",
+        "sha256": "0fe17248beadfc82c44bcbb911ed9af0709b07ab63c89216873fdb128bde404b"
+      },
+      "log": {
+        "path": "logs/prepare-owner-retained-02.jsonl",
+        "sha256": "680551bd10d7ab2148c23c06d8b2bfebc2b3064482cb8e0cce351f6eddda9db0"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 1
+    },
+    {
+      "label": "writer-sink-diagnostic-01",
+      "command": [
+        "bash",
+        "-e",
+        "-c",
+        ".tools/toolchains/temurin-jdk-21-e4446ff06a276155/bin/javac -d .tools/state/buildopt-product-viability-v1/bv006/writer-sink-diagnostic-01/classes .tools/state/buildopt-product-viability-v1/bv006/writer-sink-diagnostic-01/CaptureSinkProbe.java\n.tools/toolchains/temurin-jdk-21-e4446ff06a276155/bin/java -cp .tools/state/buildopt-product-viability-v1/bv006/writer-sink-diagnostic-01/classes CaptureSinkProbe .tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/attempts/overhead-06-N-lean/graph.jsonl .tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/attempts/overhead-07-I-lean/graph.jsonl .tools/state/buildopt-product-viability-v1/bv006/writer-sink-diagnostic-01/outputs"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+      "exitCode": 0,
+      "durationNS": 916606931,
+      "receipt": {
+        "path": "receipts/writer-sink-diagnostic-01-end.json",
+        "sha256": "80ded1c85c03ea7a97ee313b56ac568b8c0fcb34e65b4c2103502c0f79f1d848"
+      },
+      "log": {
+        "path": "logs/writer-sink-diagnostic-01.jsonl",
+        "sha256": "da2eb183fd4277872a189fec42358275059c75bc364c1f48da815a664d935e77"
+      },
+      "reservedGradleStarts": 0,
+      "reservedWorkflowOrToolStarts": 2
+    }
+  ],
+  "sealingCommand": "finalize-evidence-01 has an immutable start receipt and initial log snapshot in this bundle; its completion is attached in the following seal audit"
+}

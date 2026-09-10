@@ -1,0 +1,248 @@
+{
+  "status": "verified",
+  "rows": [
+    {
+      "arm": "N",
+      "largestIntervals": [
+        {
+          "previousIndex": 955,
+          "nextIndex": 956,
+          "samplingGapMS": 327.407421,
+          "segmentsMS": {
+            "scan": 3.770649,
+            "encoding": 0.17267,
+            "write": 323.422692,
+            "encodeReturn": 0.02833,
+            "beforeScan": 0.00443,
+            "beforeEncode": 0.00344,
+            "afterEncodeToNextWake": 0.00521
+          },
+          "writeSharePercent": 98.7829448129705,
+          "driverCPUWhileWriteMS": 1.408,
+          "heartbeatMaximumGapMS": {
+            "internal": 10.172834,
+            "external": 10.539745
+          },
+          "writtenBytes": 35926,
+          "payloadSHA256": "b085b201c52b4cbebdcae4c82800c2716d8edb9d6094b2e39d311dd349385c71",
+          "writeCalls": 1
+        },
+        {
+          "previousIndex": 914,
+          "nextIndex": 915,
+          "samplingGapMS": 148.469845,
+          "segmentsMS": {
+            "scan": 3.352478,
+            "encoding": 0.15934,
+            "write": 144.886797,
+            "encodeReturn": 0.05401,
+            "beforeScan": 0.00367,
+            "beforeEncode": 0.00302,
+            "afterEncodeToNextWake": 0.01053
+          },
+          "writeSharePercent": 97.58668300623604,
+          "driverCPUWhileWriteMS": 1.083,
+          "heartbeatMaximumGapMS": {
+            "internal": 10.480274,
+            "external": 10.124294
+          },
+          "writtenBytes": 35924,
+          "payloadSHA256": "211c261e00d50b6bcde6f15b138d486ef9540b6ec9b32f7953db24d5d5089752",
+          "writeCalls": 1
+        },
+        {
+          "previousIndex": 910,
+          "nextIndex": 911,
+          "samplingGapMS": 145.399348,
+          "segmentsMS": {
+            "scan": 3.060887,
+            "encoding": 0.151701,
+            "write": 142.15718,
+            "encodeReturn": 0.02072,
+            "beforeScan": 0.00273,
+            "beforeEncode": 0.00274,
+            "afterEncodeToNextWake": 0.00339
+          },
+          "writeSharePercent": 97.77016331600056,
+          "driverCPUWhileWriteMS": 0.62,
+          "heartbeatMaximumGapMS": {
+            "internal": 10.246573,
+            "external": 10.119983
+          },
+          "writtenBytes": 35896,
+          "payloadSHA256": "7c2c881f0c376b387d4a4d902ce9f40d616121806f81fe8ec15ba259e7105314",
+          "writeCalls": 1
+        },
+        {
+          "previousIndex": 2051,
+          "nextIndex": 2052,
+          "samplingGapMS": 100.965836,
+          "segmentsMS": {
+            "scan": 2.812976,
+            "encoding": 0.14754,
+            "write": 0.03863,
+            "encodeReturn": 0.01887,
+            "beforeScan": 0.00302,
+            "beforeEncode": 0.00256,
+            "afterEncodeToNextWake": 97.94224
+          },
+          "writeSharePercent": 0.03826046663942841,
+          "driverCPUWhileWriteMS": 0.039,
+          "heartbeatMaximumGapMS": {
+            "internal": 10.19954,
+            "external": 10.147779
+          },
+          "writtenBytes": 35422,
+          "payloadSHA256": "4b5220eb044f5929a23e40337171cc90a1603dc00e4056b2b667ff652ba07156",
+          "writeCalls": 1
+        },
+        {
+          "previousIndex": 705,
+          "nextIndex": 706,
+          "samplingGapMS": 100.956624,
+          "segmentsMS": {
+            "scan": 2.657606,
+            "encoding": 0.13433,
+            "write": 0.0456,
+            "encodeReturn": 0.01712,
+            "beforeScan": 0.00563,
+            "beforeEncode": 0.00272,
+            "afterEncodeToNextWake": 98.093618
+          },
+          "writeSharePercent": 0.04516791290485308,
+          "driverCPUWhileWriteMS": 0.046,
+          "heartbeatMaximumGapMS": {
+            "internal": 10.843245,
+            "external": 10.119853
+          },
+          "writtenBytes": 27681,
+          "payloadSHA256": "0636bda606cb8f3b30c8860d6c1eae5efd0cd1661ae69d9ca9e231ead7175086",
+          "writeCalls": 1
+        }
+      ]
+    },
+    {
+      "arm": "I",
+      "largestIntervals": [
+        {
+          "previousIndex": 2048,
+          "nextIndex": 2049,
+          "samplingGapMS": 344.202757,
+          "segmentsMS": {
+            "scan": 3.448437,
+            "encoding": 0.174321,
+            "write": 340.541409,
+            "encodeReturn": 0.0283,
+            "beforeScan": 0.00271,
+            "beforeEncode": 0.00282,
+            "afterEncodeToNextWake": 0.00476
+          },
+          "writeSharePercent": 98.93628161729106,
+          "driverCPUWhileWriteMS": 1.399,
+          "heartbeatMaximumGapMS": {
+            "internal": 10.555592,
+            "external": 10.117751
+          },
+          "writtenBytes": 38461,
+          "payloadSHA256": "8492eb0fc8e8f96e67d791f8bb5bb5fe58ce9729b46dc52d4f00f66efe00730f",
+          "writeCalls": 1
+        },
+        {
+          "previousIndex": 235,
+          "nextIndex": 236,
+          "samplingGapMS": 286.648223,
+          "segmentsMS": {
+            "scan": 0.950982,
+            "encoding": 0.04267,
+            "write": 285.623411,
+            "encodeReturn": 0.01909,
+            "beforeScan": 0.00399,
+            "beforeEncode": 0.00323,
+            "afterEncodeToNextWake": 0.00485
+          },
+          "writeSharePercent": 99.64248443989133,
+          "driverCPUWhileWriteMS": 1.472,
+          "heartbeatMaximumGapMS": {
+            "internal": 10.527081,
+            "external": 10.17077
+          },
+          "writtenBytes": 9032,
+          "payloadSHA256": "41d08da8f05c8ad1aa808acec0310f557c11126fb211978ff13fca5eb188d862",
+          "writeCalls": 1
+        },
+        {
+          "previousIndex": 825,
+          "nextIndex": 826,
+          "samplingGapMS": 262.965754,
+          "segmentsMS": {
+            "scan": 4.874389,
+            "encoding": 0.28473,
+            "write": 257.748924,
+            "encodeReturn": 0.03956,
+            "beforeScan": 0.0069,
+            "beforeEncode": 0.005131,
+            "afterEncodeToNextWake": 0.00612
+          },
+          "writeSharePercent": 98.01615612655023,
+          "driverCPUWhileWriteMS": 1.698,
+          "heartbeatMaximumGapMS": {
+            "internal": 10.16741,
+            "external": 10.12446
+          },
+          "writtenBytes": 35451,
+          "payloadSHA256": "994e0dd353885ac4b23ffa288f0810e74281adca18be752aa245f654ffa3717b",
+          "writeCalls": 1
+        },
+        {
+          "previousIndex": 238,
+          "nextIndex": 239,
+          "samplingGapMS": 200.538014,
+          "segmentsMS": {
+            "scan": 0.860682,
+            "encoding": 0.03916,
+            "write": 199.611132,
+            "encodeReturn": 0.01758,
+            "beforeScan": 0.00247,
+            "beforeEncode": 0.00283,
+            "afterEncodeToNextWake": 0.00416
+          },
+          "writeSharePercent": 99.53780234404834,
+          "driverCPUWhileWriteMS": 1.097,
+          "heartbeatMaximumGapMS": {
+            "internal": 10.470191,
+            "external": 10.1444
+          },
+          "writtenBytes": 9090,
+          "payloadSHA256": "b86db8b48bc198a1c92a9d7c745c46432f93b0bc27abf9be6c78058080f5b28b",
+          "writeCalls": 1
+        },
+        {
+          "previousIndex": 278,
+          "nextIndex": 279,
+          "samplingGapMS": 187.876849,
+          "segmentsMS": {
+            "scan": 1.033622,
+            "encoding": 0.04997,
+            "write": 186.747067,
+            "encodeReturn": 0.03003,
+            "beforeScan": 0.00322,
+            "beforeEncode": 0.00591,
+            "afterEncodeToNextWake": 0.00703
+          },
+          "writeSharePercent": 99.39865821360459,
+          "driverCPUWhileWriteMS": 1.007,
+          "heartbeatMaximumGapMS": {
+            "internal": 10.17839,
+            "external": 10.120949
+          },
+          "writtenBytes": 9970,
+          "payloadSHA256": "526a3cdc6b42cffa99023a0cdd83f01b8606ad3dc5a6c00b9dd683f44c96153c",
+          "writeCalls": 1
+        }
+      ]
+    }
+  ],
+  "originalCauseEstablished": false,
+  "inferenceBoundary": "Wall time is localized to the real synchronous writer boundary. Continuous internal/external heartbeat excludes a whole-process pause of the same duration for that event. File-system internals versus writer-thread scheduling are not separately traced; the historical 2104-ms event still has no phase records.",
+  "ownerResultSHA256": "0f792b974f98514048d7b50eb144ef75bee67c1e5fdd40c9bc09c2c26303ac94"
+}

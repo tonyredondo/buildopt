@@ -1,0 +1,60 @@
+{
+  "schema": "buildopt.viability/replay-corrections/v1",
+  "failures": [
+    {
+      "command": "projection-and-horizon-01",
+      "classification": "diagnostic capability defect",
+      "observed": "Two fixtures stop before child execution: user cgroup does not delegate io.stat.",
+      "correction": "Optional I/O evidence records UNAVAILABLE explicitly; CPU/memory/pids remain observed.",
+      "finalProof": "projection-and-horizon-02 and final current-source integration",
+      "failedCorrections": 0
+    },
+    {
+      "command": "limits-recovery-final-01",
+      "classification": "qualification assertion race",
+      "observed": "Driver-death test fails in 5.63s total, shorter than its six-second termination deadline. Native exit receipt records signal 9 and driver disappeared. Therefore the empty-group condition broke the wait before the separate sameProcess assertion. The PID is absent at subsequent inspection; exact transient kernel process state was not captured in that failed run.",
+      "correction": "Wait for both cgroup empty/missing and the same process identity gone within the unchanged six-second deadline. Retain timestamped process/cgroup observations. No production process-kill code changed.",
+      "diagnosticProof": "Five successful instrumented repetitions before correction; no claim that these reproduced the failing window.",
+      "finalProof": "driver-death-final-01: five actual driver kills, five descendant terminations, candidate interruption costs retained.",
+      "failedCorrections": 0
+    },
+    {
+      "command": "standalone-check-resume-01",
+      "classification": "qualification script expected wrong refusal on expired fixture",
+      "observed": "check exits 0; resume exits 1 with NOT_RUN_LIMIT: elapsed allocation, preserving every evidence byte.",
+      "correction": "Use a fresh separate standalone fixture for full-horizon refusal; preserve the expired manifest."
+    },
+    {
+      "command": "standalone-cli-02",
+      "classification": "failed fixture setup correction",
+      "observed": "New run root accidentally retains the earlier absolute deadline and starts zero workflows; result remains INCOMPLETE_EVIDENCE.",
+      "correction": "Prospectively bind a new 80-second deadline only in a new standalone-cli-03 manifest, under the unchanged enclosing allocation. No expired experiment is resumed or reset.",
+      "finalProof": "standalone-cli-03 validates, runs four workflows, checks raw evidence and refuses completed resume without mutation.",
+      "failedCorrections": 1
+    },
+    {
+      "command": "reconstruct-qualification.py initial offline analysis",
+      "classification": "analysis assumption corrected before sealing",
+      "observed": "Native command IDs total correctly, but TestKit clientWorkingDirectory remains the caller root for nested commands; cwd is not a nesting discriminator.",
+      "correction": "Count one observed outer native CLI per attempt and its extra distinct Gradle command UUIDs as nested, with raw logs and the verified fixture helper contract retained.",
+      "finalProof": "native-start-reconstruction.json: 50 distinct commands, eight nested; overhead independently recomputed from 20 native receipts.",
+      "failedCorrections": 0
+    },
+    {
+      "command": "documentation-final-01",
+      "classification": "documentation contract violations",
+      "observed": "README title starts with a tracker ID; the command checker treats a relative dev package argument as an executable command.",
+      "correction": "Use a descriptive README title and the full local module import path in the build command. Existing validator unchanged; production code unchanged.",
+      "finalProof": "documentation-final-02",
+      "failedCorrections": 0
+    },
+    {
+      "command": "verify-archives.py initial inventory audit",
+      "classification": "analysis inventory defect",
+      "observed": "Archive bytes and symlink targets match, but the expected-path set omitted two intentional shared-state directory symlinks because is_dir follows links.",
+      "correction": "Include symlink entries explicitly in the expected inventory. No archive or retained fixture changed.",
+      "finalProof": "archive-final-01 and archive-verification.json",
+      "failedCorrections": 0
+    }
+  ]
+}

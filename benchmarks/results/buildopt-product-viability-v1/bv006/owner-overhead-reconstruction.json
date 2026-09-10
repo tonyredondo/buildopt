@@ -1,0 +1,441 @@
+{
+  "schema": "bv006-owner-overhead-reconstruction/v1",
+  "scope": "Fixed-anchor Elasticsearch plain/lean capture; no historical value claim",
+  "plan": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/plan.json",
+    "sha256": "db96b8a5f5b86d0582f79086f36424f03d2bd14a624750c91c2723887b675bb9"
+  },
+  "result": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/result.json",
+    "sha256": "1dad094ca0cb2f0f920b98450e2fd37ecaab48d0b200255035a88bc937f5c892"
+  },
+  "reconstructor": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/reconstruct-owner-overhead-v5.py",
+    "sha256": "f98d3be3ab472ac5b42face17e8448e0356ad3909c7f5131d4167075e0c5b05c"
+  },
+  "actualGradleStarts": 20,
+  "nestedStarts": 0,
+  "warmups": 4,
+  "measuredSamples": 16,
+  "nativeMedianExtraNS": 139333503,
+  "candidateMedianExtraNS": 728016001,
+  "armImbalanceNS": 588682498,
+  "wrapperP95NS": 1352567,
+  "samplingGatesQualified": false,
+  "nativeEndUpperBoundNS": 5996661,
+  "nativeEndQualified": true,
+  "decision": "INSUFFICIENT_READINESS",
+  "samples": [
+    {
+      "index": 1,
+      "arm": "N",
+      "pair": -1,
+      "style": "plain",
+      "warmup": true,
+      "nativeNS": 239845648103,
+      "wrapperNS": 1410112,
+      "sample": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-01.json",
+        "sha256": "0a03c5f77ad8cc0c72fcb117654a3ef5d7957ccca95ee8ab77a1d5b46f98f991"
+      },
+      "native": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/attempts/overhead-01-N-plain/native-finish.json",
+        "sha256": "bd74ee1bc974b8923c79c3dbb917055f9830f8dd3d4a91d5903bc862a97d7f52"
+      }
+    },
+    {
+      "index": 2,
+      "arm": "I",
+      "pair": -1,
+      "style": "lean",
+      "warmup": true,
+      "nativeNS": 239705011904,
+      "wrapperNS": 1579949,
+      "sample": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-02.json",
+        "sha256": "b4318a3251f918cf8d887e005197636e4e3bc32bf28b940677a3ef73e4bdefa7"
+      },
+      "native": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/attempts/overhead-02-I-lean/native-finish.json",
+        "sha256": "987c3db94c3fba968785cab67b7495d4b0508fda736cf4998a9c37bca57613fd"
+      }
+    },
+    {
+      "index": 3,
+      "arm": "I",
+      "pair": -1,
+      "style": "plain",
+      "warmup": true,
+      "nativeNS": 7022755510,
+      "wrapperNS": 1204816,
+      "sample": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-03.json",
+        "sha256": "6ff223f8af7c26c1b1425196f2259d277ced937ee81541ae61a8e9eac1133d45"
+      },
+      "native": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/attempts/overhead-03-I-plain/native-finish.json",
+        "sha256": "688afc1d4583b36687cc510c00148606c54a52f269cc2d697aa871e4d6d9fa83"
+      }
+    },
+    {
+      "index": 4,
+      "arm": "N",
+      "pair": -1,
+      "style": "lean",
+      "warmup": true,
+      "nativeNS": 10383718251,
+      "wrapperNS": 1161966,
+      "sample": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-04.json",
+        "sha256": "e0572e0c133d8757a19e01bcdb996d8b5b2147473d2a5c3d3a5ba1bcf9ac2e55"
+      },
+      "native": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/attempts/overhead-04-N-lean/native-finish.json",
+        "sha256": "20b00a1935c1fbaa6878e24209682725308b328f5f14c7d244b5b58f7731002c"
+      }
+    },
+    {
+      "index": 5,
+      "arm": "N",
+      "pair": 0,
+      "style": "plain",
+      "warmup": false,
+      "nativeNS": 6000237616,
+      "wrapperNS": 1072576,
+      "sample": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-05.json",
+        "sha256": "8a789dc91ca58f09ba066eb756efa4f971d8735e75dd8efec0a9c75180212abc"
+      },
+      "native": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/attempts/overhead-05-N-plain/native-finish.json",
+        "sha256": "fa8217c19f6edf4916d54fc9ed3d1fd8209fd313d55d79069466c53a4e6d188c"
+      }
+    },
+    {
+      "index": 6,
+      "arm": "N",
+      "pair": 0,
+      "style": "lean",
+      "warmup": false,
+      "nativeNS": 6118318054,
+      "wrapperNS": 1304317,
+      "sample": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-06.json",
+        "sha256": "229eda24fd8bd4cd4bd25ad155c023ed4dea1870bc641a90794ed06cb0a574df"
+      },
+      "native": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/attempts/overhead-06-N-lean/native-finish.json",
+        "sha256": "dde5ecc113793d9691a1621ba71a2072d71fc820c5e8e2f979139e45725826e7"
+      }
+    },
+    {
+      "index": 7,
+      "arm": "I",
+      "pair": 0,
+      "style": "lean",
+      "warmup": false,
+      "nativeNS": 6297571220,
+      "wrapperNS": 1067825,
+      "sample": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-07.json",
+        "sha256": "b0d2ee16199692038fcc0ee9019f623bd57acd33d289535158d5cff35a7067fe"
+      },
+      "native": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/attempts/overhead-07-I-lean/native-finish.json",
+        "sha256": "5212a36e37aa156930ecd2201099a709c468c34426d30d0a4fc1de62a96e21ad"
+      }
+    },
+    {
+      "index": 8,
+      "arm": "I",
+      "pair": 0,
+      "style": "plain",
+      "warmup": false,
+      "nativeNS": 5526562810,
+      "wrapperNS": 1062525,
+      "sample": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-08.json",
+        "sha256": "081d635009b6420540a8051afa1f802697195f9fb5cae7b9f3523162e06e4bcb"
+      },
+      "native": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/attempts/overhead-08-I-plain/native-finish.json",
+        "sha256": "8a47b2a0813749eab7b4089cfcedd8925a0123b27f2074f21c2ff870a827b78a"
+      }
+    },
+    {
+      "index": 9,
+      "arm": "I",
+      "pair": 1,
+      "style": "plain",
+      "warmup": false,
+      "nativeNS": 5770013271,
+      "wrapperNS": 1265006,
+      "sample": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-09.json",
+        "sha256": "71743774812e410dff21ce764392465ba042c4d054e43734a2bf2482cca09d0f"
+      },
+      "native": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/attempts/overhead-09-I-plain/native-finish.json",
+        "sha256": "1a96a8e0f5fc7f47a412b1265e64445e60aabaa975a195dc30de6d38f251218d"
+      }
+    },
+    {
+      "index": 10,
+      "arm": "I",
+      "pair": 1,
+      "style": "lean",
+      "warmup": false,
+      "nativeNS": 5868814211,
+      "wrapperNS": 1074495,
+      "sample": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-10.json",
+        "sha256": "5e0d81602b625bb07840130fb008e88d751e5f393b7aadae0b55825c81017eea"
+      },
+      "native": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/attempts/overhead-10-I-lean/native-finish.json",
+        "sha256": "db73247672e345b68e2da79278c7fd7004b06aebade7169365e51a0883f515d0"
+      }
+    },
+    {
+      "index": 11,
+      "arm": "N",
+      "pair": 1,
+      "style": "lean",
+      "warmup": false,
+      "nativeNS": 5815278865,
+      "wrapperNS": 1220666,
+      "sample": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-11.json",
+        "sha256": "c2078db6103c0ec84c165cb6f9525670567ce4d9370ac8fbac8c171dafea3af6"
+      },
+      "native": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/attempts/overhead-11-N-lean/native-finish.json",
+        "sha256": "7a679aa3c065bdb08418d2d6e45d946840dc14320e39e2e2f65afdc2253a3104"
+      }
+    },
+    {
+      "index": 12,
+      "arm": "N",
+      "pair": 1,
+      "style": "plain",
+      "warmup": false,
+      "nativeNS": 5675945362,
+      "wrapperNS": 1175915,
+      "sample": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-12.json",
+        "sha256": "3422fb8c85446e00c062a225ed3a6e3ff3b9bb0aa98e4dc8392877666a3c2bd0"
+      },
+      "native": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/attempts/overhead-12-N-plain/native-finish.json",
+        "sha256": "974827ba81e6636885a0013c96a200001d6ddd0755e064ab71a38e95bc0de627"
+      }
+    },
+    {
+      "index": 13,
+      "arm": "N",
+      "pair": 2,
+      "style": "plain",
+      "warmup": false,
+      "nativeNS": 5904120221,
+      "wrapperNS": 1184826,
+      "sample": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-13.json",
+        "sha256": "f94b21bfaeade11347fca9b55d856a57995422586d6a2838aec3eb8df0e2b405"
+      },
+      "native": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/attempts/overhead-13-N-plain/native-finish.json",
+        "sha256": "dc989cea1ed3e62906e3c4b8ce6174a437fc0265a6dd234afacbbd3633cb8806"
+      }
+    },
+    {
+      "index": 14,
+      "arm": "N",
+      "pair": 2,
+      "style": "lean",
+      "warmup": false,
+      "nativeNS": 6670193866,
+      "wrapperNS": 1352567,
+      "sample": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-14.json",
+        "sha256": "cccfdb9b6d70f237f8d88ebf246a22424de96c018acb4b032479aa6c6c6815b4"
+      },
+      "native": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/attempts/overhead-14-N-lean/native-finish.json",
+        "sha256": "b22b89c12fc72fb2079a90dcf9dd37226b4032263a0a50f7d28de4e33db287b1"
+      }
+    },
+    {
+      "index": 15,
+      "arm": "I",
+      "pair": 2,
+      "style": "lean",
+      "warmup": false,
+      "nativeNS": 6311605641,
+      "wrapperNS": 1114804,
+      "sample": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-15.json",
+        "sha256": "b4ae4a7b4c74871409debea8f0252aaa83916c39f98007bf21c2bdad8bc878be"
+      },
+      "native": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/attempts/overhead-15-I-lean/native-finish.json",
+        "sha256": "370049623a3edd034b9cd5fee44116e684eac20b951b7cdcb28ea3054f304ce7"
+      }
+    },
+    {
+      "index": 16,
+      "arm": "I",
+      "pair": 2,
+      "style": "plain",
+      "warmup": false,
+      "nativeNS": 5357476066,
+      "wrapperNS": 1206205,
+      "sample": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-16.json",
+        "sha256": "d8eb8113579d9db50cd0792f2d2d49e1f6de25f95f258020f303032c1dc5a4a6"
+      },
+      "native": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/attempts/overhead-16-I-plain/native-finish.json",
+        "sha256": "69f049c1108c42f541f94885f9dfb335e79de781a0919e0a3e25a0ff503ecac8"
+      }
+    },
+    {
+      "index": 17,
+      "arm": "I",
+      "pair": 3,
+      "style": "plain",
+      "warmup": false,
+      "nativeNS": 5489550113,
+      "wrapperNS": 1085385,
+      "sample": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-17.json",
+        "sha256": "2c346733f90b689840aa81ab8898e67efe385e6ff763cd8342ce28c55817defc"
+      },
+      "native": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/attempts/overhead-17-I-plain/native-finish.json",
+        "sha256": "e6d5ab91deba66395765f9bfbf1653b053f4fa68f4aa4113ce7fbe14b828c08a"
+      }
+    },
+    {
+      "index": 18,
+      "arm": "I",
+      "pair": 3,
+      "style": "lean",
+      "warmup": false,
+      "nativeNS": 6217566114,
+      "wrapperNS": 1160596,
+      "sample": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-18.json",
+        "sha256": "24d1b020b74a776e6e70cbb7866acbb95feb4281d0a05cd9bbf720f437b39d6f"
+      },
+      "native": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/attempts/overhead-18-I-lean/native-finish.json",
+        "sha256": "296f19f583cd403ab8d0a4194ef83ae5d149f17648701d1907efd2f894d44c27"
+      }
+    },
+    {
+      "index": 19,
+      "arm": "N",
+      "pair": 3,
+      "style": "lean",
+      "warmup": false,
+      "nativeNS": 5848123278,
+      "wrapperNS": 1203315,
+      "sample": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-19.json",
+        "sha256": "f3532e35255dc7a35cc24bfd0153960156a406c9270c719f799ba297b56746f0"
+      },
+      "native": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/attempts/overhead-19-N-lean/native-finish.json",
+        "sha256": "761c761b4750bc5014eb5174579e22193f7ac4d7a6586526b2f33a363e95246b"
+      }
+    },
+    {
+      "index": 20,
+      "arm": "N",
+      "pair": 3,
+      "style": "plain",
+      "warmup": false,
+      "nativeNS": 5466605089,
+      "wrapperNS": 1150824,
+      "sample": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-20.json",
+        "sha256": "4170762662a16316ab37e0f31248a6f6d7390aaa38072106cef5be8ec4f4e204"
+      },
+      "native": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/attempts/overhead-20-N-plain/native-finish.json",
+        "sha256": "a138ed11005bf2dc7e8349001fb24cb7d323fa0f2a1906bc56a904ab85b16e99"
+      }
+    }
+  ],
+  "rootGraphs": [
+    {
+      "sample": 2,
+      "rootTasks": 1301,
+      "outcomes": 1301
+    },
+    {
+      "sample": 4,
+      "rootTasks": 1301,
+      "outcomes": 1301
+    },
+    {
+      "sample": 6,
+      "rootTasks": 1301,
+      "outcomes": 1301
+    },
+    {
+      "sample": 7,
+      "rootTasks": 1301,
+      "outcomes": 1301
+    },
+    {
+      "sample": 10,
+      "rootTasks": 1301,
+      "outcomes": 1301
+    },
+    {
+      "sample": 11,
+      "rootTasks": 1301,
+      "outcomes": 1301
+    },
+    {
+      "sample": 14,
+      "rootTasks": 1301,
+      "outcomes": 1301
+    },
+    {
+      "sample": 15,
+      "rootTasks": 1301,
+      "outcomes": 1301
+    },
+    {
+      "sample": 18,
+      "rootTasks": 1301,
+      "outcomes": 1301
+    },
+    {
+      "sample": 19,
+      "rootTasks": 1301,
+      "outcomes": 1301
+    }
+  ],
+  "ownedUnitsClosed": [
+    {
+      "unit": "buildopt-replay-88ab2583a74ab5fc-r1-I-2.service",
+      "LoadState": "not-found",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "MainPID": "0",
+      "ControlGroup": ""
+    },
+    {
+      "unit": "buildopt-replay-88ab2583a74ab5fc-r1-N-1.service",
+      "LoadState": "not-found",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "MainPID": "0",
+      "ControlGroup": ""
+    }
+  ],
+  "limit": "Both plain and lean use the owned worker and resource guard; this comparison measures incremental graph capture and wrapper boundaries, not an unmonitored external native baseline."
+}

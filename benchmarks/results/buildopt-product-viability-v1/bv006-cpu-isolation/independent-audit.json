@@ -1,0 +1,20 @@
+{
+  "status": "verified",
+  "ownerRequestsReconstructed": 32,
+  "measuredRequests": 16,
+  "registeredParserAccepted": 31,
+  "registeredParserRejected": 1,
+  "rejectionReconstructed": true,
+  "noTimingDecision": true,
+  "nativeAndObserverThreadMasksVerified": true,
+  "originCopiesVerified": 5553,
+  "sourceQualificationPreserved": true,
+  "fixtureRequests": {
+    "GRADLE": 40,
+    "FIXTURE": 104
+  },
+  "directAffinityChildren": 3,
+  "priorSealedFilesVerified": 5625,
+  "readinessQualified": false,
+  "valueQualified": false
+}

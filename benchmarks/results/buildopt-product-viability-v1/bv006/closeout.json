@@ -1,0 +1,79 @@
+{
+  "schema": "buildopt.viability/owner-readiness-closeout/v1",
+  "step": "BV-006",
+  "status": "partial",
+  "decision": "INSUFFICIENT_READINESS",
+  "startedUTC": "2026-09-08T18:55:32.690760+00:00",
+  "closedUTC": "2026-09-08T23:59:06.097643+00:00",
+  "elapsedSeconds": 18213.406883,
+  "measurementCompleted": true,
+  "ownerOutputIntegration": "verified",
+  "affectedRunnerQualification": "verified",
+  "actualOwnerOverhead": "partial: fixed sample completed, 588.682498-ms arm imbalance exceeds 100 ms",
+  "source": {
+    "path": "owner-readiness-v5/source-manifest.json",
+    "sha256": "fff92c680c85064fb82b4fd0758add7a5441991288d160dfc35a76d16fc8f8eb"
+  },
+  "qualification": {
+    "path": "qualification.json",
+    "sha256": "25682b49a97b7df5e6a950d41ce503c5626c8723d35cf352659af3cacd30b2ce"
+  },
+  "verification": {
+    "path": "final-verification.json",
+    "sha256": "2fa22e88cd31c738aad2e9740dedb96e19c97706a9e62d0a4e47242080623c7d"
+  },
+  "commands": {
+    "path": "command-index.json",
+    "sha256": "a46f98baa10e1217c7e978767760047bfce30b65d8351ccb089594871d6f8d9d"
+  },
+  "readinessDecision": {
+    "path": "readiness-decision.json",
+    "sha256": "2b8df89a003815ad67e52c7dbca36aa157dc5402ec5169d3a91f9b210b3ae7ad"
+  },
+  "overhead": {
+    "path": "owner-overhead-reconstruction.json",
+    "sha256": "062dc3895ec30075b44fe2ada18782cd2a951bec8ecd52611b810455cf3364bd"
+  },
+  "allocation": {
+    "path": "allocation.json",
+    "sha256": "b34f1b52d921e2857683fcc0c0cf2491c90b321628bc65d1b67fa406a0020237"
+  },
+  "charges": {
+    "path": "charges.json",
+    "sha256": "9de6fea2b2bb637c2df9bf1f3e5935407e05341ede0db28eac27987d3930a856"
+  },
+  "failedCorrections": {
+    "native-end-boundary": 1,
+    "documentation-heading": 0
+  },
+  "limitsRemaining": {
+    "gradleReservations": 84,
+    "qualificationWorkflowOrToolReservations": 87,
+    "deadlineUTC": "2026-09-09T02:55:32.690760+00:00",
+    "noMoreNativeStartsInThisAttempt": true
+  },
+  "completed": [
+    "C5 output adapter and complete output/reuse qualification",
+    "affected instrument and full Go build proof",
+    "fixed owner overhead measurement and independent failed-gate reconstruction",
+    "six-repository endpoint inventory",
+    "four metadata-only adaptive cohort registrations",
+    "source and evidence preservation"
+  ],
+  "requiredUnrun": [
+    "C5 engineering ordinals 0..20",
+    "404-start confirmation sizing and complete fresh-root allocation",
+    "confirmation freeze"
+  ],
+  "validationOrdinalsConsumed": [],
+  "confirmationFrozen": false,
+  "remainingIssues": [
+    "Collector/daemon source of arm imbalance is not causally isolated",
+    "One earlier full-reader timeout has no observed precise cause",
+    "Groovy, Kafka and Micronaut lack an eligible unconsumed H3 cohort; resolve for any selected owner before H3"
+  ],
+  "next": "Preregister bounded collector/daemon phase attribution, select one supported correction or fixed design, and requalify against unchanged limits before engineering history",
+  "localOnly": true,
+  "backgroundReplay": false,
+  "productViability": "INCOMPLETE_EVIDENCE"
+}

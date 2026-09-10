@@ -1,0 +1,1195 @@
+{
+  "status": "verified",
+  "decision": "R4_NON_GRADLE_CONSUMER_VERIFIED",
+  "cases": [
+    {
+      "command": "legacy-and-owner",
+      "case": "TestOwnedReplayAndIndependentChecker-3517221146",
+      "workflows": 6,
+      "decision": "FIXTURE_VERIFIED",
+      "attempts": [
+        {
+          "id": "r1-000-g0-I",
+          "native": {
+            "pid": 1218592,
+            "startTicks": 41959812,
+            "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-651f5cce1b1c187d-r1-I-2.service",
+            "command": [
+              "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-observer-integration/runs/legacy-and-owner/TestOwnedReplayAndIndependentChecker-3517221146/fixture-runner",
+              "-test.run=TestFixtureChild",
+              "--",
+              "success"
+            ]
+          },
+          "observation": "legacy-v2"
+        },
+        {
+          "id": "r1-000-g0-N",
+          "native": {
+            "pid": 1218564,
+            "startTicks": 41959555,
+            "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-651f5cce1b1c187d-r1-N-1.service",
+            "command": [
+              "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-observer-integration/runs/legacy-and-owner/TestOwnedReplayAndIndependentChecker-3517221146/fixture-runner",
+              "-test.run=TestFixtureChild",
+              "--",
+              "success"
+            ]
+          },
+          "observation": "legacy-v2"
+        },
+        {
+          "id": "r1-001-g0-I",
+          "native": {
+            "pid": 1218676,
+            "startTicks": 41960271,
+            "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-651f5cce1b1c187d-r1-I-3.service",
+            "command": [
+              "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-observer-integration/runs/legacy-and-owner/TestOwnedReplayAndIndependentChecker-3517221146/fixture-runner",
+              "-test.run=TestFixtureChild",
+              "--",
+              "success"
+            ]
+          },
+          "observation": "legacy-v2"
+        },
+        {
+          "id": "r1-001-g0-N",
+          "native": {
+            "pid": 1218706,
+            "startTicks": 41960530,
+            "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-651f5cce1b1c187d-r1-N-4.service",
+            "command": [
+              "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-observer-integration/runs/legacy-and-owner/TestOwnedReplayAndIndependentChecker-3517221146/fixture-runner",
+              "-test.run=TestFixtureChild",
+              "--",
+              "success"
+            ]
+          },
+          "observation": "legacy-v2"
+        },
+        {
+          "id": "r1-002-g0-I",
+          "native": {
+            "pid": 1218775,
+            "startTicks": 41961244,
+            "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-651f5cce1b1c187d-r1-I-6.service",
+            "command": [
+              "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-observer-integration/runs/legacy-and-owner/TestOwnedReplayAndIndependentChecker-3517221146/fixture-runner",
+              "-test.run=TestFixtureChild",
+              "--",
+              "success"
+            ]
+          },
+          "observation": "legacy-v2"
+        },
+        {
+          "id": "r1-002-g0-N",
+          "native": {
+            "pid": 1218752,
+            "startTicks": 41960969,
+            "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-651f5cce1b1c187d-r1-N-5.service",
+            "command": [
+              "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-observer-integration/runs/legacy-and-owner/TestOwnedReplayAndIndependentChecker-3517221146/fixture-runner",
+              "-test.run=TestFixtureChild",
+              "--",
+              "success"
+            ]
+          },
+          "observation": "legacy-v2"
+        }
+      ]
+    },
+    {
+      "command": "observer-suite-final",
+      "case": "TestObservedCheckpointResume-1771530475",
+      "workflows": 4,
+      "decision": "FIXTURE_VERIFIED",
+      "attempts": [
+        {
+          "id": "r1-000-g0-I",
+          "native": {
+            "pid": 1213772,
+            "startTicks": 41920362,
+            "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-ca1a8fbd56727eeb-r1-I-2.service",
+            "command": [
+              "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-observer-integration/runs/observer-suite-final/TestObservedCheckpointResume-1771530475/fixture-runner",
+              "-test.run=TestFixtureChild",
+              "--",
+              "observed"
+            ]
+          },
+          "observation": "complete",
+          "error": "",
+          "accepted": 9,
+          "acknowledged": 9,
+          "pendingRecords": 0,
+          "pendingBytes": 0,
+          "bytes": 23453,
+          "peakPendingRecords": 1,
+          "maxNativeCoverageGapMS": 100.342835,
+          "maxSamplingGapMS": 100.645946,
+          "customerMS": 605.28767,
+          "closeAfterCustomerMS": 450.976997,
+          "observerStartupMS": 52.498503,
+          "observerCloseMS": 47.666742,
+          "helperCPUMS": {
+            "samplerCPUNS": 19.175,
+            "writerCPUNS": 2.598,
+            "heartbeatCPUNS": 4.725
+          }
+        },
+        {
+          "id": "r1-000-g0-N",
+          "native": {
+            "pid": 1213735,
+            "startTicks": 41920080,
+            "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-ca1a8fbd56727eeb-r1-N-1.service",
+            "command": [
+              "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-observer-integration/runs/observer-suite-final/TestObservedCheckpointResume-1771530475/fixture-runner",
+              "-test.run=TestFixtureChild",
+              "--",
+              "observed"
+            ]
+          },
+          "observation": "complete",
+          "error": "",
+          "accepted": 8,
+          "acknowledged": 8,
+          "pendingRecords": 0,
+          "pendingBytes": 0,
+          "bytes": 21443,
+          "peakPendingRecords": 1,
+          "maxNativeCoverageGapMS": 100.379665,
+          "maxSamplingGapMS": 100.383515,
+          "customerMS": 605.006949,
+          "closeAfterCustomerMS": 439.947711,
+          "observerStartupMS": 62.374527,
+          "observerCloseMS": 59.212548,
+          "helperCPUMS": {
+            "samplerCPUNS": 18.649,
+            "writerCPUNS": 2.644,
+            "heartbeatCPUNS": 4.842
+          }
+        },
+        {
+          "id": "r1-001-g0-I",
+          "native": {
+            "pid": 1213847,
+            "startTicks": 41920830,
+            "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-ca1a8fbd56727eeb-r1-I-3.service",
+            "command": [
+              "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-observer-integration/runs/observer-suite-final/TestObservedCheckpointResume-1771530475/fixture-runner",
+              "-test.run=TestFixtureChild",
+              "--",
+              "observed"
+            ]
+          },
+          "observation": "complete",
+          "error": "",
+          "accepted": 7,
+          "acknowledged": 7,
+          "pendingRecords": 0,
+          "pendingBytes": 0,
+          "bytes": 19522,
+          "peakPendingRecords": 1,
+          "maxNativeCoverageGapMS": 100.260295,
+          "maxSamplingGapMS": 100.259975,
+          "customerMS": 604.957698,
+          "closeAfterCustomerMS": 440.134331,
+          "observerStartupMS": 62.643757,
+          "observerCloseMS": 58.747208,
+          "helperCPUMS": {
+            "samplerCPUNS": 16.987,
+            "writerCPUNS": 2.41,
+            "heartbeatCPUNS": 4.496
+          }
+        },
+        {
+          "id": "r1-001-g0-N",
+          "native": {
+            "pid": 1213885,
+            "startTicks": 41921103,
+            "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-ca1a8fbd56727eeb-r1-N-4.service",
+            "command": [
+              "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-observer-integration/runs/observer-suite-final/TestObservedCheckpointResume-1771530475/fixture-runner",
+              "-test.run=TestFixtureChild",
+              "--",
+              "observed"
+            ]
+          },
+          "observation": "complete",
+          "error": "",
+          "accepted": 8,
+          "acknowledged": 8,
+          "pendingRecords": 0,
+          "pendingBytes": 0,
+          "bytes": 21521,
+          "peakPendingRecords": 1,
+          "maxNativeCoverageGapMS": 100.957717,
+          "maxSamplingGapMS": 100.958977,
+          "customerMS": 605.008918,
+          "closeAfterCustomerMS": 475.549115,
+          "observerStartupMS": 52.082782,
+          "observerCloseMS": 47.689641,
+          "helperCPUMS": {
+            "samplerCPUNS": 18.144,
+            "writerCPUNS": 2.514,
+            "heartbeatCPUNS": 4.728
+          }
+        }
+      ]
+    },
+    {
+      "command": "observer-suite-final",
+      "case": "TestObservedDriverDeath-1599571609",
+      "workflows": 3,
+      "decision": "INCOMPLETE_EVIDENCE",
+      "attempts": [
+        {
+          "id": "r1-000-g0-I",
+          "native": {
+            "pid": 1214250,
+            "startTicks": 41921808,
+            "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-f41300639bfdb429-r1-I-2.service",
+            "command": [
+              "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-observer-integration/runs/observer-suite-final/TestObservedDriverDeath-1599571609/fixture-runner",
+              "-test.run=TestFixtureChild",
+              "--",
+              "detached-after-anchor"
+            ]
+          },
+          "observation": "complete",
+          "error": "",
+          "accepted": 1,
+          "acknowledged": 1,
+          "pendingRecords": 0,
+          "pendingBytes": 0,
+          "bytes": 1947,
+          "peakPendingRecords": 1,
+          "maxNativeCoverageGapMS": 4.994441,
+          "maxSamplingGapMS": 0.0,
+          "customerMS": 6.621025,
+          "closeAfterCustomerMS": 616.100025,
+          "observerStartupMS": 74.069543,
+          "observerCloseMS": 58.088927,
+          "helperCPUMS": {
+            "samplerCPUNS": 10.916,
+            "writerCPUNS": 2.064,
+            "heartbeatCPUNS": 2.829
+          }
+        },
+        {
+          "id": "r1-000-g0-N",
+          "native": {
+            "pid": 1214197,
+            "startTicks": 41921610,
+            "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-f41300639bfdb429-r1-N-1.service",
+            "command": [
+              "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-observer-integration/runs/observer-suite-final/TestObservedDriverDeath-1599571609/fixture-runner",
+              "-test.run=TestFixtureChild",
+              "--",
+              "detached-after-anchor"
+            ]
+          },
+          "observation": "complete",
+          "error": "",
+          "accepted": 2,
+          "acknowledged": 2,
+          "pendingRecords": 0,
+          "pendingBytes": 0,
+          "bytes": 3866,
+          "peakPendingRecords": 1,
+          "maxNativeCoverageGapMS": 2.563956,
+          "maxSamplingGapMS": 99.824274,
+          "customerMS": 4.055759,
+          "closeAfterCustomerMS": 440.885364,
+          "observerStartupMS": 73.977693,
+          "observerCloseMS": 57.475514,
+          "helperCPUMS": {
+            "samplerCPUNS": 11.595,
+            "writerCPUNS": 2.065,
+            "heartbeatCPUNS": 3.022
+          }
+        },
+        {
+          "id": "r1-001-g0-I",
+          "native": {
+            "pid": 1214441,
+            "startTicks": 41922164,
+            "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-f41300639bfdb429-r1-I-2.service",
+            "command": [
+              "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-observer-integration/runs/observer-suite-final/TestObservedDriverDeath-1599571609/fixture-runner",
+              "-test.run=TestFixtureChild",
+              "--",
+              "detached-after-anchor"
+            ]
+          },
+          "observation": "incomplete-driver-death"
+        }
+      ]
+    },
+    {
+      "command": "observer-suite-final",
+      "case": "TestObservedFailureStopsReplay-byte-saturation-726965944",
+      "workflows": 1,
+      "decision": "INCOMPLETE_EVIDENCE",
+      "attempts": [
+        {
+          "id": "r1-000-g0-N",
+          "native": {
+            "pid": 1213498,
+            "startTicks": 41918768,
+            "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-4fb1343813000431-r1-N-1.service",
+            "command": [
+              "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-observer-integration/runs/observer-suite-final/TestObservedFailureStopsReplay-byte-saturation-726965944/fixture-runner",
+              "-test.run=TestFixtureChild",
+              "--",
+              "observed"
+            ]
+          },
+          "observation": "failed",
+          "error": "exit status 1\nwriter pending byte limit",
+          "accepted": 0,
+          "acknowledged": 0,
+          "pendingRecords": 0,
+          "pendingBytes": 0,
+          "bytes": 0,
+          "peakPendingRecords": 0
+        }
+      ]
+    },
+    {
+      "command": "observer-suite-final",
+      "case": "TestObservedFailureStopsReplay-drain-timeout-1040328727",
+      "workflows": 1,
+      "decision": "INCOMPLETE_EVIDENCE",
+      "attempts": [
+        {
+          "id": "r1-000-g0-N",
+          "native": {
+            "pid": 1213267,
+            "startTicks": 41917555,
+            "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-bc5b7ee74a1a5399-r1-N-1.service",
+            "command": [
+              "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-observer-integration/runs/observer-suite-final/TestObservedFailureStopsReplay-drain-timeout-1040328727/fixture-runner",
+              "-test.run=TestFixtureChild",
+              "--",
+              "observed"
+            ]
+          },
+          "observation": "failed",
+          "error": "exit status 1\nwriter drain deadline",
+          "accepted": 8,
+          "acknowledged": 2,
+          "pendingRecords": 6,
+          "pendingBytes": 17945,
+          "bytes": 3972,
+          "peakPendingRecords": 6
+        }
+      ]
+    },
+    {
+      "command": "observer-suite-final",
+      "case": "TestObservedFailureStopsReplay-record-saturation-3032598291",
+      "workflows": 1,
+      "decision": "INCOMPLETE_EVIDENCE",
+      "attempts": [
+        {
+          "id": "r1-000-g0-N",
+          "native": {
+            "pid": 1213412,
+            "startTicks": 41918182,
+            "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-e2b87fa60688002d-r1-N-1.service",
+            "command": [
+              "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-observer-integration/runs/observer-suite-final/TestObservedFailureStopsReplay-record-saturation-3032598291/fixture-runner",
+              "-test.run=TestFixtureChild",
+              "--",
+              "observed"
+            ]
+          },
+          "observation": "failed",
+          "error": "exit status 1\nwriter pending record limit",
+          "accepted": 5,
+          "acknowledged": 5,
+          "pendingRecords": 0,
+          "pendingBytes": 0,
+          "bytes": 12946,
+          "peakPendingRecords": 3
+        }
+      ]
+    },
+    {
+      "command": "observer-suite-final",
+      "case": "TestObservedFailureStopsReplay-scan-error-2369866504",
+      "workflows": 1,
+      "decision": "INCOMPLETE_EVIDENCE",
+      "attempts": [
+        {
+          "id": "r1-000-g0-N",
+          "native": {
+            "pid": 1213659,
+            "startTicks": 41919634,
+            "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-abe7f7feea38ffa8-r1-N-1.service",
+            "command": [
+              "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-observer-integration/runs/observer-suite-final/TestObservedFailureStopsReplay-scan-error-2369866504/fixture-runner",
+              "-test.run=TestFixtureChild",
+              "--",
+              "observed"
+            ]
+          },
+          "observation": "failed",
+          "error": "exit status 1\nlstat /sys/fs/cgroup/buildopt-nonexistent-observer-fixture: no such file or directory",
+          "accepted": 0,
+          "acknowledged": 0,
+          "pendingRecords": 0,
+          "pendingBytes": 0,
+          "bytes": 0,
+          "peakPendingRecords": 0
+        }
+      ]
+    },
+    {
+      "command": "observer-suite-final",
+      "case": "TestObservedFailureStopsReplay-short-write-1454871226",
+      "workflows": 1,
+      "decision": "INCOMPLETE_EVIDENCE",
+      "attempts": [
+        {
+          "id": "r1-000-g0-N",
+          "native": {
+            "pid": 1213098,
+            "startTicks": 41916380,
+            "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-4caa2f0daacd13b3-r1-N-1.service",
+            "command": [
+              "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-observer-integration/runs/observer-suite-final/TestObservedFailureStopsReplay-short-write-1454871226/fixture-runner",
+              "-test.run=TestFixtureChild",
+              "--",
+              "observed"
+            ]
+          },
+          "observation": "failed",
+          "error": "exit status 1\nshort write\nshort write",
+          "accepted": 3,
+          "acknowledged": 2,
+          "pendingRecords": 1,
+          "pendingBytes": 1972,
+          "bytes": 4930,
+          "peakPendingRecords": 1
+        }
+      ]
+    },
+    {
+      "command": "observer-suite-final",
+      "case": "TestObservedFailureStopsReplay-total-output-limit-2443055330",
+      "workflows": 1,
+      "decision": "INCOMPLETE_EVIDENCE",
+      "attempts": [
+        {
+          "id": "r1-000-g0-N",
+          "native": {
+            "pid": 1213578,
+            "startTicks": 41919201,
+            "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-da3a593d8ba7d65f-r1-N-1.service",
+            "command": [
+              "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-observer-integration/runs/observer-suite-final/TestObservedFailureStopsReplay-total-output-limit-2443055330/fixture-runner",
+              "-test.run=TestFixtureChild",
+              "--",
+              "observed"
+            ]
+          },
+          "observation": "failed",
+          "error": "exit status 1\nsampler byte limit",
+          "accepted": 0,
+          "acknowledged": 0,
+          "pendingRecords": 0,
+          "pendingBytes": 0,
+          "bytes": 0,
+          "peakPendingRecords": 0
+        }
+      ]
+    },
+    {
+      "command": "observer-suite-final",
+      "case": "TestObservedFailureStopsReplay-writer-error-2642658321",
+      "workflows": 1,
+      "decision": "INCOMPLETE_EVIDENCE",
+      "attempts": [
+        {
+          "id": "r1-000-g0-N",
+          "native": {
+            "pid": 1212989,
+            "startTicks": 41915788,
+            "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-8109d869c189d9c0-r1-N-1.service",
+            "command": [
+              "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-observer-integration/runs/observer-suite-final/TestObservedFailureStopsReplay-writer-error-2642658321/fixture-runner",
+              "-test.run=TestFixtureChild",
+              "--",
+              "observed"
+            ]
+          },
+          "observation": "failed",
+          "error": "exit status 1\ndeliberate writer error\ndeliberate writer error",
+          "accepted": 3,
+          "acknowledged": 2,
+          "pendingRecords": 1,
+          "pendingBytes": 2974,
+          "bytes": 3948,
+          "peakPendingRecords": 1
+        }
+      ]
+    },
+    {
+      "command": "observer-suite-final",
+      "case": "TestObservedFailureStopsReplay-writer-exit-3392083700",
+      "workflows": 1,
+      "decision": "INCOMPLETE_EVIDENCE",
+      "attempts": [
+        {
+          "id": "r1-000-g0-N",
+          "native": {
+            "pid": 1213185,
+            "startTicks": 41916979,
+            "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-b58f025a0afeddbd-r1-N-1.service",
+            "command": [
+              "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-observer-integration/runs/observer-suite-final/TestObservedFailureStopsReplay-writer-exit-3392083700/fixture-runner",
+              "-test.run=TestFixtureChild",
+              "--",
+              "observed"
+            ]
+          },
+          "observation": "failed",
+          "error": "exit status 1\nwriter acknowledgement: EOF\nwriter acknowledgement: EOF",
+          "accepted": 3,
+          "acknowledged": 2,
+          "pendingRecords": 1,
+          "pendingBytes": 1970,
+          "bytes": 3940,
+          "peakPendingRecords": 1
+        }
+      ]
+    },
+    {
+      "command": "observer-suite-final",
+      "case": "TestObservedReplayCLI-4133752857",
+      "workflows": 4,
+      "decision": "FIXTURE_VERIFIED",
+      "attempts": [
+        {
+          "id": "r1-000-g0-I",
+          "native": {
+            "pid": 1214609,
+            "startTicks": 41922876,
+            "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-b5be4cdcaee71628-r1-I-2.service",
+            "command": [
+              "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-observer-integration/runs/observer-suite-final/TestObservedReplayCLI-4133752857/fixture-runner",
+              "-test.run=TestFixtureChild",
+              "--",
+              "observed"
+            ]
+          },
+          "observation": "complete",
+          "error": "",
+          "accepted": 11,
+          "acknowledged": 11,
+          "pendingRecords": 0,
+          "pendingBytes": 0,
+          "bytes": 27277,
+          "peakPendingRecords": 1,
+          "maxNativeCoverageGapMS": 100.854017,
+          "maxSamplingGapMS": 100.854007,
+          "customerMS": 605.119618,
+          "closeAfterCustomerMS": 406.490133,
+          "observerStartupMS": 62.979478,
+          "observerCloseMS": 48.849744,
+          "helperCPUMS": {
+            "samplerCPUNS": 20.381,
+            "writerCPUNS": 2.812,
+            "heartbeatCPUNS": 5.267
+          }
+        },
+        {
+          "id": "r1-000-g0-N",
+          "native": {
+            "pid": 1214570,
+            "startTicks": 41922567,
+            "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-b5be4cdcaee71628-r1-N-1.service",
+            "command": [
+              "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-observer-integration/runs/observer-suite-final/TestObservedReplayCLI-4133752857/fixture-runner",
+              "-test.run=TestFixtureChild",
+              "--",
+              "observed"
+            ]
+          },
+          "observation": "complete",
+          "error": "",
+          "accepted": 8,
+          "acknowledged": 8,
+          "pendingRecords": 0,
+          "pendingBytes": 0,
+          "bytes": 21330,
+          "peakPendingRecords": 1,
+          "maxNativeCoverageGapMS": 100.652926,
+          "maxSamplingGapMS": 100.656536,
+          "customerMS": 604.852268,
+          "closeAfterCustomerMS": 395.647728,
+          "observerStartupMS": 51.923502,
+          "observerCloseMS": 48.522964,
+          "helperCPUMS": {
+            "samplerCPUNS": 18.998,
+            "writerCPUNS": 2.47,
+            "heartbeatCPUNS": 4.81
+          }
+        },
+        {
+          "id": "r1-001-g0-I",
+          "native": {
+            "pid": 1214672,
+            "startTicks": 41923303,
+            "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-b5be4cdcaee71628-r1-I-3.service",
+            "command": [
+              "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-observer-integration/runs/observer-suite-final/TestObservedReplayCLI-4133752857/fixture-runner",
+              "-test.run=TestFixtureChild",
+              "--",
+              "observed"
+            ]
+          },
+          "observation": "complete",
+          "error": "",
+          "accepted": 7,
+          "acknowledged": 7,
+          "pendingRecords": 0,
+          "pendingBytes": 0,
+          "bytes": 19405,
+          "peakPendingRecords": 1,
+          "maxNativeCoverageGapMS": 100.337745,
+          "maxSamplingGapMS": 100.371725,
+          "customerMS": 605.045718,
+          "closeAfterCustomerMS": 484.343816,
+          "observerStartupMS": 73.889253,
+          "observerCloseMS": 58.916979,
+          "helperCPUMS": {
+            "samplerCPUNS": 17.17,
+            "writerCPUNS": 2.335,
+            "heartbeatCPUNS": 4.565
+          }
+        },
+        {
+          "id": "r1-001-g0-N",
+          "native": {
+            "pid": 1214712,
+            "startTicks": 41923580,
+            "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-b5be4cdcaee71628-r1-N-4.service",
+            "command": [
+              "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-observer-integration/runs/observer-suite-final/TestObservedReplayCLI-4133752857/fixture-runner",
+              "-test.run=TestFixtureChild",
+              "--",
+              "observed"
+            ]
+          },
+          "observation": "complete",
+          "error": "",
+          "accepted": 8,
+          "acknowledged": 8,
+          "pendingRecords": 0,
+          "pendingBytes": 0,
+          "bytes": 21311,
+          "peakPendingRecords": 1,
+          "maxNativeCoverageGapMS": 100.865526,
+          "maxSamplingGapMS": 100.869936,
+          "customerMS": 605.213229,
+          "closeAfterCustomerMS": 473.07351,
+          "observerStartupMS": 51.740901,
+          "observerCloseMS": 59.177738,
+          "helperCPUMS": {
+            "samplerCPUNS": 19.533,
+            "writerCPUNS": 2.653,
+            "heartbeatCPUNS": 4.732
+          }
+        }
+      ]
+    },
+    {
+      "command": "observer-suite-final",
+      "case": "TestObservedWriterPauseKeepsCustomerBoundary-2346017480",
+      "workflows": 2,
+      "decision": "FIXTURE_VERIFIED",
+      "attempts": [
+        {
+          "id": "r1-000-g0-I",
+          "native": {
+            "pid": 1212855,
+            "startTicks": 41915071,
+            "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-76ed018ec0643f48-r1-I-2.service",
+            "command": [
+              "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-observer-integration/runs/observer-suite-final/TestObservedWriterPauseKeepsCustomerBoundary-2346017480/fixture-runner",
+              "-test.run=TestFixtureChild",
+              "--",
+              "observed"
+            ]
+          },
+          "observation": "complete",
+          "error": "",
+          "accepted": 8,
+          "acknowledged": 8,
+          "pendingRecords": 0,
+          "pendingBytes": 0,
+          "bytes": 21859,
+          "peakPendingRecords": 1,
+          "maxNativeCoverageGapMS": 100.963887,
+          "maxSamplingGapMS": 100.964467,
+          "customerMS": 605.448069,
+          "closeAfterCustomerMS": 628.767123,
+          "observerStartupMS": 85.23093,
+          "observerCloseMS": 81.419781,
+          "helperCPUMS": {
+            "samplerCPUNS": 18.269,
+            "writerCPUNS": 2.473,
+            "heartbeatCPUNS": 4.568
+          }
+        },
+        {
+          "id": "r1-000-g0-N",
+          "native": {
+            "pid": 1212815,
+            "startTicks": 41914668,
+            "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-76ed018ec0643f48-r1-N-1.service",
+            "command": [
+              "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-observer-integration/runs/observer-suite-final/TestObservedWriterPauseKeepsCustomerBoundary-2346017480/fixture-runner",
+              "-test.run=TestFixtureChild",
+              "--",
+              "observed"
+            ]
+          },
+          "observation": "complete",
+          "error": "",
+          "accepted": 9,
+          "acknowledged": 9,
+          "pendingRecords": 0,
+          "pendingBytes": 0,
+          "bytes": 23840,
+          "peakPendingRecords": 9,
+          "maxNativeCoverageGapMS": 100.317705,
+          "maxSamplingGapMS": 100.609036,
+          "customerMS": 605.028157,
+          "closeAfterCustomerMS": 1174.869043,
+          "observerStartupMS": 73.875214,
+          "observerCloseMS": 671.939764,
+          "helperCPUMS": {
+            "samplerCPUNS": 26.057,
+            "writerCPUNS": 2.519,
+            "heartbeatCPUNS": 8.274
+          }
+        }
+      ]
+    },
+    {
+      "command": "race-delay",
+      "case": "TestObservedWriterPauseKeepsCustomerBoundary-4247775022",
+      "workflows": 2,
+      "decision": "FIXTURE_VERIFIED",
+      "attempts": [
+        {
+          "id": "r1-000-g0-I",
+          "native": {
+            "pid": 1219479,
+            "startTicks": 41967323,
+            "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-7034ed9b8d182c7a-r1-I-2.service",
+            "command": [
+              "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-observer-integration/runs/race-delay/TestObservedWriterPauseKeepsCustomerBoundary-4247775022/fixture-runner",
+              "-test.run=TestFixtureChild",
+              "--",
+              "observed"
+            ]
+          },
+          "observation": "complete",
+          "error": "",
+          "accepted": 18,
+          "acknowledged": 18,
+          "pendingRecords": 0,
+          "pendingBytes": 0,
+          "bytes": 51363,
+          "peakPendingRecords": 1,
+          "maxNativeCoverageGapMS": 100.510086,
+          "maxSamplingGapMS": 100.792887,
+          "customerMS": 1612.944425,
+          "closeAfterCustomerMS": 3007.842269,
+          "observerStartupMS": 75.808238,
+          "observerCloseMS": 2705.388927,
+          "helperCPUMS": {
+            "samplerCPUNS": 70.171,
+            "writerCPUNS": 8.301,
+            "heartbeatCPUNS": 18.17
+          }
+        },
+        {
+          "id": "r1-000-g0-N",
+          "native": {
+            "pid": 1219440,
+            "startTicks": 41966650,
+            "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-7034ed9b8d182c7a-r1-N-1.service",
+            "command": [
+              "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-observer-integration/runs/race-delay/TestObservedWriterPauseKeepsCustomerBoundary-4247775022/fixture-runner",
+              "-test.run=TestFixtureChild",
+              "--",
+              "observed"
+            ]
+          },
+          "observation": "complete",
+          "error": "",
+          "accepted": 18,
+          "acknowledged": 18,
+          "pendingRecords": 0,
+          "pendingBytes": 0,
+          "bytes": 52346,
+          "peakPendingRecords": 18,
+          "maxNativeCoverageGapMS": 100.618537,
+          "maxSamplingGapMS": 100.618667,
+          "customerMS": 1612.967016,
+          "closeAfterCustomerMS": 3305.63321,
+          "observerStartupMS": 86.550124,
+          "observerCloseMS": 2973.85018,
+          "helperCPUMS": {
+            "samplerCPUNS": 71.768,
+            "writerCPUNS": 7.335,
+            "heartbeatCPUNS": 19.833
+          }
+        }
+      ]
+    }
+  ],
+  "finalWorkflows": 29,
+  "finalObservedWorkflows": 23,
+  "legacyWorkflows": 6,
+  "workflowReservations": 81,
+  "workflowStartsProven": 76,
+  "workflowStartsUnknown": 5,
+  "missingNativeReceipts": [
+    {
+      "attempt": "runs/lifecycle-v1/TestObservedFailureStopsReplay-byte-saturation-2800734276/run/attempts/r1-000-g0-N",
+      "sampledIdentities": [],
+      "charged": 1
+    },
+    {
+      "attempt": "runs/lifecycle-v1/TestObservedFailureStopsReplay-scan-error-2535644367/run/attempts/r1-000-g0-N",
+      "sampledIdentities": [],
+      "charged": 1
+    },
+    {
+      "attempt": "runs/lifecycle-v1/TestObservedFailureStopsReplay-short-write-2393873981/run/attempts/r1-000-g0-N",
+      "sampledIdentities": [
+        {
+          "pid": 1195246,
+          "startTicks": 41810444,
+          "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-bd9e5b7ffdfe36f5-r1-N-1.service",
+          "command": [
+            "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-observer-integration/runs/lifecycle-v1/TestObservedFailureStopsReplay-short-write-2393873981/fixture-runner",
+            "-test.run=TestFixtureChild",
+            "--",
+            "observed"
+          ]
+        }
+      ],
+      "charged": 1
+    },
+    {
+      "attempt": "runs/lifecycle-v1/TestObservedFailureStopsReplay-total-output-limit-2547318521/run/attempts/r1-000-g0-N",
+      "sampledIdentities": [],
+      "charged": 1
+    },
+    {
+      "attempt": "runs/lifecycle-v1/TestObservedFailureStopsReplay-writer-error-4284749169/run/attempts/r1-000-g0-N",
+      "sampledIdentities": [],
+      "charged": 1
+    },
+    {
+      "attempt": "runs/lifecycle-v1/TestObservedFailureStopsReplay-writer-exit-3734112068/run/attempts/r1-000-g0-N",
+      "sampledIdentities": [],
+      "charged": 1
+    }
+  ],
+  "workflowCharged": 81,
+  "perCommandAttempts": {
+    "checker-red": 2,
+    "cli-v1": 4,
+    "failure-v2": 8,
+    "legacy-and-owner": 6,
+    "lifecycle-v1": 17,
+    "observer-suite": 21,
+    "observer-suite-final": 21,
+    "race-delay": 2
+  },
+  "observerHelpers": {
+    "sampler": 75,
+    "writer": 75,
+    "heartbeat": 75
+  },
+  "affinityHelperStarts": 9,
+  "gradleStarts": 0,
+  "helperJVMStarts": 0,
+  "closedIdentities": 425,
+  "closedUnits": [
+    "buildopt-replay-016d8831cf1ce24d-r1-N-1.service",
+    "buildopt-replay-044322f455894366-r1-I-2.service",
+    "buildopt-replay-044322f455894366-r1-N-1.service",
+    "buildopt-replay-05b55ad21a97adfa-r1-N-1.service",
+    "buildopt-replay-0c61cd73a6c4a395-r1-N-1.service",
+    "buildopt-replay-2be0549c5aded7ec-r1-N-1.service",
+    "buildopt-replay-33da89b91a18a1ae-r1-I-2.service",
+    "buildopt-replay-33da89b91a18a1ae-r1-I-3.service",
+    "buildopt-replay-33da89b91a18a1ae-r1-N-1.service",
+    "buildopt-replay-33da89b91a18a1ae-r1-N-4.service",
+    "buildopt-replay-3f6c2590e716b55a-r1-N-1.service",
+    "buildopt-replay-41cb7738d9253c43-r1-N-1.service",
+    "buildopt-replay-4caa2f0daacd13b3-r1-N-1.service",
+    "buildopt-replay-4f5249ad753dccf7-r1-N-1.service",
+    "buildopt-replay-4fb1343813000431-r1-N-1.service",
+    "buildopt-replay-5624123871a1f6c6-r1-I-2.service",
+    "buildopt-replay-5624123871a1f6c6-r1-N-1.service",
+    "buildopt-replay-5d211270476ffbb6-r1-N-1.service",
+    "buildopt-replay-617e3072411eb05b-r1-I-2.service",
+    "buildopt-replay-617e3072411eb05b-r1-N-1.service",
+    "buildopt-replay-651f5cce1b1c187d-r1-I-2.service",
+    "buildopt-replay-651f5cce1b1c187d-r1-I-3.service",
+    "buildopt-replay-651f5cce1b1c187d-r1-I-6.service",
+    "buildopt-replay-651f5cce1b1c187d-r1-N-1.service",
+    "buildopt-replay-651f5cce1b1c187d-r1-N-4.service",
+    "buildopt-replay-651f5cce1b1c187d-r1-N-5.service",
+    "buildopt-replay-7034ed9b8d182c7a-r1-I-2.service",
+    "buildopt-replay-7034ed9b8d182c7a-r1-N-1.service",
+    "buildopt-replay-7375b925acdb4271-r1-I-2.service",
+    "buildopt-replay-7375b925acdb4271-r1-I-3.service",
+    "buildopt-replay-7375b925acdb4271-r1-N-1.service",
+    "buildopt-replay-7375b925acdb4271-r1-N-4.service",
+    "buildopt-replay-7566c838f72b24f2-r1-N-1.service",
+    "buildopt-replay-76ed018ec0643f48-r1-I-2.service",
+    "buildopt-replay-76ed018ec0643f48-r1-N-1.service",
+    "buildopt-replay-782c299eb155caf3-r1-N-1.service",
+    "buildopt-replay-8109d869c189d9c0-r1-N-1.service",
+    "buildopt-replay-812643b6152c9eb2-r1-N-1.service",
+    "buildopt-replay-828428024371c662-r1-I-2.service",
+    "buildopt-replay-828428024371c662-r1-I-3.service",
+    "buildopt-replay-828428024371c662-r1-N-1.service",
+    "buildopt-replay-828428024371c662-r1-N-4.service",
+    "buildopt-replay-8c09222bd306d60b-r1-N-1.service",
+    "buildopt-replay-8e5df4544e58ee91-r1-N-1.service",
+    "buildopt-replay-916aa40e58d4a570-r1-N-1.service",
+    "buildopt-replay-9ddb35db719c3d55-r1-N-1.service",
+    "buildopt-replay-a3af681f33e6d21e-r1-I-2.service",
+    "buildopt-replay-a3af681f33e6d21e-r1-I-3.service",
+    "buildopt-replay-a3af681f33e6d21e-r1-N-1.service",
+    "buildopt-replay-a3af681f33e6d21e-r1-N-4.service",
+    "buildopt-replay-abe7f7feea38ffa8-r1-N-1.service",
+    "buildopt-replay-ad1c18764df48f62-r1-I-2.service",
+    "buildopt-replay-ad1c18764df48f62-r1-N-1.service",
+    "buildopt-replay-ae6c0c8a172e2ec6-r1-N-1.service",
+    "buildopt-replay-b58f025a0afeddbd-r1-N-1.service",
+    "buildopt-replay-b5be4cdcaee71628-r1-I-2.service",
+    "buildopt-replay-b5be4cdcaee71628-r1-I-3.service",
+    "buildopt-replay-b5be4cdcaee71628-r1-N-1.service",
+    "buildopt-replay-b5be4cdcaee71628-r1-N-4.service",
+    "buildopt-replay-b7ea3f5848743ba0-r1-N-1.service",
+    "buildopt-replay-bb5fc93c721c7768-r1-N-1.service",
+    "buildopt-replay-bc5b7ee74a1a5399-r1-N-1.service",
+    "buildopt-replay-bd9e5b7ffdfe36f5-r1-N-1.service",
+    "buildopt-replay-bf742a17655445f9-r1-I-2.service",
+    "buildopt-replay-bf742a17655445f9-r1-N-1.service",
+    "buildopt-replay-ca1a8fbd56727eeb-r1-I-2.service",
+    "buildopt-replay-ca1a8fbd56727eeb-r1-I-3.service",
+    "buildopt-replay-ca1a8fbd56727eeb-r1-N-1.service",
+    "buildopt-replay-ca1a8fbd56727eeb-r1-N-4.service",
+    "buildopt-replay-cdda5e3b99283409-r1-N-1.service",
+    "buildopt-replay-ce791c4d0c59f035-r1-N-1.service",
+    "buildopt-replay-da3a593d8ba7d65f-r1-N-1.service",
+    "buildopt-replay-e2b87fa60688002d-r1-N-1.service",
+    "buildopt-replay-e3a5d2e3c1a7e085-r1-N-1.service",
+    "buildopt-replay-f20e58620e72805e-r1-N-1.service",
+    "buildopt-replay-f41300639bfdb429-r1-I-2.service",
+    "buildopt-replay-f41300639bfdb429-r1-N-1.service",
+    "buildopt-replay-fb021188bdd1bc99-r1-N-1.service"
+  ],
+  "commandReceipts": [
+    {
+      "name": "affinity-diagnosis",
+      "exitCode": 1,
+      "wallSeconds": 1.5670292979921214,
+      "checkoutSourceSHA256": "bf7b2177f1d6c9f9442aec33a54eb2101c2783bca93a2e82bc19e3de51799150",
+      "logSHA256": "3aac21cb4423d76b3cbc7403a80481fbb5c62c47612a71dabc6035f67236f6c4"
+    },
+    {
+      "name": "affinity-final",
+      "exitCode": 0,
+      "wallSeconds": 3.3748431119602174,
+      "checkoutSourceSHA256": "268e22edf821bc799c52574421e0977cb9427847227bb4429d1caa132bdadcde",
+      "logSHA256": "ee12bec1dc1dd45a14f8d89ee68dba26d787145677e91e1ec489187b4d1b790d"
+    },
+    {
+      "name": "build-checker-red",
+      "exitCode": 0,
+      "wallSeconds": 0.5650421940372325,
+      "checkoutSourceSHA256": "0b845cf5a9a8cf96cb434c184df7c8b5dd565a350ac5faad62dd0092f16b6cd2",
+      "logSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "build-race",
+      "exitCode": 0,
+      "wallSeconds": 1.3163373169954866,
+      "checkoutSourceSHA256": "00692f6f30878c36d60888b296d3482dd8d03e30f1c53f8850ff4a2e937d69c6",
+      "logSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "build-release",
+      "exitCode": 0,
+      "wallSeconds": 0.6148569119977765,
+      "checkoutSourceSHA256": "00692f6f30878c36d60888b296d3482dd8d03e30f1c53f8850ff4a2e937d69c6",
+      "logSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "build-v2",
+      "exitCode": 0,
+      "wallSeconds": 0.5651713169645518,
+      "checkoutSourceSHA256": "90c49ba5cc3b1ee11e3479aea54b4178a980cb478c2a9d958f2f8e285e83504b",
+      "logSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "build-v3",
+      "exitCode": 0,
+      "wallSeconds": 0.6152488049701788,
+      "checkoutSourceSHA256": "751f3991f97fe099d510d1ea4a0bf729c4122bb74c7ca0cbeaf7d6808512ccef",
+      "logSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "build-v4",
+      "exitCode": 0,
+      "wallSeconds": 0.566066388040781,
+      "checkoutSourceSHA256": "c2aa22a65649de3d336aab8a6c7a8aaca80ffb4854c47a25beb1ba6393a14de4",
+      "logSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "check-counterexamples",
+      "exitCode": 1,
+      "wallSeconds": 0.36430920800194144,
+      "checkoutSourceSHA256": "268e22edf821bc799c52574421e0977cb9427847227bb4429d1caa132bdadcde",
+      "logSHA256": "a1f82e5425a0212ee4d6157aea82fb969a582dc7b58cdebf372de945206a75de"
+    },
+    {
+      "name": "check-counterexamples-v2",
+      "exitCode": 0,
+      "wallSeconds": 0.36429576796945184,
+      "checkoutSourceSHA256": "268e22edf821bc799c52574421e0977cb9427847227bb4429d1caa132bdadcde",
+      "logSHA256": "b29a9057d691e4e7b05e5d5fa3ca3c7f689ccab0d810eb98523a78f2ca35898f"
+    },
+    {
+      "name": "checker-red",
+      "exitCode": 1,
+      "wallSeconds": 7.2292216820060275,
+      "checkoutSourceSHA256": "0b845cf5a9a8cf96cb434c184df7c8b5dd565a350ac5faad62dd0092f16b6cd2",
+      "logSHA256": "a974e78eb1cab714ad51d08d9546ab7ffc934b1d39008dca150e26344c7eeeb6"
+    },
+    {
+      "name": "cli-v1",
+      "exitCode": 0,
+      "wallSeconds": 15.545572049973998,
+      "checkoutSourceSHA256": "90c49ba5cc3b1ee11e3479aea54b4178a980cb478c2a9d958f2f8e285e83504b",
+      "logSHA256": "62df892738bd2a8982955de6070c88f51ded5ff8eecadd45631a06e9d9bfd03a"
+    },
+    {
+      "name": "failure-v2",
+      "exitCode": 0,
+      "wallSeconds": 50.243657175975386,
+      "checkoutSourceSHA256": "c2aa22a65649de3d336aab8a6c7a8aaca80ffb4854c47a25beb1ba6393a14de4",
+      "logSHA256": "f80be12277f687df4dbe18071098b3cd8ca3755b3ac9a347837143a411eb12ef"
+    },
+    {
+      "name": "independent-analysis",
+      "exitCode": 0,
+      "wallSeconds": 0.5648835959727876,
+      "checkoutSourceSHA256": "268e22edf821bc799c52574421e0977cb9427847227bb4429d1caa132bdadcde",
+      "logSHA256": "4d3e57ca68713c29479c14e8a17ed1d75f15f7b9b12364eeb4c831636de33466"
+    },
+    {
+      "name": "legacy-and-owner",
+      "exitCode": 0,
+      "wallSeconds": 24.574676487012766,
+      "checkoutSourceSHA256": "bf7b2177f1d6c9f9442aec33a54eb2101c2783bca93a2e82bc19e3de51799150",
+      "logSHA256": "18309d9f130fa26964a6962a9e5c2f591e1155eff6d07ab156d513553d745146"
+    },
+    {
+      "name": "lifecycle-v1",
+      "exitCode": 1,
+      "wallSeconds": 75.80889607302379,
+      "checkoutSourceSHA256": "751f3991f97fe099d510d1ea4a0bf729c4122bb74c7ca0cbeaf7d6808512ccef",
+      "logSHA256": "edbeb7a054989fb596c8141d34ee940a4e7c0c28b8eb7793f946837f894de709"
+    },
+    {
+      "name": "observer-suite",
+      "exitCode": 0,
+      "wallSeconds": 89.4396678910125,
+      "checkoutSourceSHA256": "6e4cf697c71ae2c200e523a0ebd9b58c651856970047bd6f00393abab5c16724",
+      "logSHA256": "7e1ce17b4eb8b727a08740a6c595a003233f80842f48d6736a6a7ef1afaebbda"
+    },
+    {
+      "name": "observer-suite-final",
+      "exitCode": 1,
+      "wallSeconds": 97.88170139899012,
+      "checkoutSourceSHA256": "00692f6f30878c36d60888b296d3482dd8d03e30f1c53f8850ff4a2e937d69c6",
+      "logSHA256": "cf8e9363327e48d4d556296a5e5154edcd0eee88ec19b900e760b85eecc9022e"
+    },
+    {
+      "name": "owner-cases",
+      "exitCode": 0,
+      "wallSeconds": 5.430515835992992,
+      "checkoutSourceSHA256": "c2aa22a65649de3d336aab8a6c7a8aaca80ffb4854c47a25beb1ba6393a14de4",
+      "logSHA256": "f8851d5de378c79b1a8012719c82a0426e789e7016cc8090afb843e27eac597a"
+    },
+    {
+      "name": "race-delay",
+      "exitCode": 0,
+      "wallSeconds": 18.668905233964324,
+      "checkoutSourceSHA256": "268e22edf821bc799c52574421e0977cb9427847227bb4429d1caa132bdadcde",
+      "logSHA256": "67c54d5e986ad0d7bad5863b9156c16c25aee96a52067b23800fe5ca399330cd"
+    },
+    {
+      "name": "supervisor-red",
+      "exitCode": 1,
+      "wallSeconds": 0.03182549396296963,
+      "checkoutSourceSHA256": "6e4cf697c71ae2c200e523a0ebd9b58c651856970047bd6f00393abab5c16724",
+      "logSHA256": "43447f48a8c4017f871916be87888a49ab2a573b691821da739c68c08ceb5022"
+    },
+    {
+      "name": "unit",
+      "exitCode": 0,
+      "wallSeconds": 2.0712014080490917,
+      "checkoutSourceSHA256": "00692f6f30878c36d60888b296d3482dd8d03e30f1c53f8850ff4a2e937d69c6",
+      "logSHA256": "61f9b55236106614bfc5c9f9933a1bb51b68d65536b41ad8f082adf045a1256c"
+    },
+    {
+      "name": "vet",
+      "exitCode": 0,
+      "wallSeconds": 0.21417628205381334,
+      "checkoutSourceSHA256": "00692f6f30878c36d60888b296d3482dd8d03e30f1c53f8850ff4a2e937d69c6",
+      "logSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "proofWallSeconds": 397.6181009269203,
+  "runtimeProofSourceSHA256": "00692f6f30878c36d60888b296d3482dd8d03e30f1c53f8850ff4a2e937d69c6",
+  "finalCheckoutSourceSHA256": "268e22edf821bc799c52574421e0977cb9427847227bb4429d1caa132bdadcde",
+  "changedAfterRuntimeBuild": [
+    "observer_affinity_test.go"
+  ],
+  "proofReuse": "All replay/runtime source, wrapper and other tests unchanged after the final consuming suite. Only the affinity test corrected its m0 assumption; all its five cases then passed under race. Legacy/race-delay use build-race binary with source 00692f6f; their checkout-source receipt is not the compiled source.",
+  "releaseBinarySHA256": "3686b937f352adc3d3f977c2979bfc0bf9d68981a5ea414d869961396b6be318",
+  "raceBinarySHA256": "1bdef8095125fa2b4878683b63015d2db2c5019b902ea0928dee0a341cbc79b6",
+  "actualOwnerQualified": false,
+  "productValueQualified": false,
+  "cpuScreenStarts": 0,
+  "retainedFailures": [
+    "unsupported observer parser red",
+    "compile extraction imports",
+    "initial cancellation lost six native receipts",
+    "pre-resume/daemon coverage red",
+    "supervisor CPU split red",
+    "affinity m0 assertion",
+    "counterexample restore file mode"
+  ]
+}

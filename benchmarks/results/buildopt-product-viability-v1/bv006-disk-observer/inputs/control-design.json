@@ -1,0 +1,50 @@
+{
+  "schema": "buildopt.disk-observer/control-design/v1",
+  "status": "registered",
+  "atUTC": "2026-09-09T09:33:28.986942+00:00",
+  "variants": {
+    "N": "old supervisor",
+    "I": "corrected supervisor"
+  },
+  "nativeCandidate": "none; both arms same retained native baseline",
+  "warmupsPerVariant": 8,
+  "measuredPerVariant": 8,
+  "ownerRequests": 32,
+  "order": "cycle even N,I; cycle odd I,N; no optional stop or sample exclusion",
+  "metrics": [
+    "native wall",
+    "daemon command wall",
+    "whole supervisor CPU",
+    "daemon sampled CPU",
+    "snapshot coverage/gaps",
+    "same full measured task outcomes",
+    "all failures and research costs"
+  ],
+  "uncertainty": "Report paired old-minus-new means with 95% circular moving-block bootstrap intervals for block lengths2 and4,10000draws,seed20260909. Small8-pair descriptive control; no G0 or C5 qualification, no independence assumption claim.",
+  "minimumMeasuredDaemonCPUCoverage": 0.9,
+  "maximumMeasuredSnapshotGapMS": 500,
+  "requiredSameDaemonPerVariant": true,
+  "sourceVersions": [
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-disk-observer/control/old/source",
+      "sha256": "967167b4d74c2700979b7ed07b1673adce5085dc3d07bd5f7ea964f727e04618"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-disk-observer/control/new/source",
+      "sha256": "c375aec062903b09f5dff0134a81a0dc95edb56ba38f0b4a0ef7f8a144430d5f"
+    }
+  ],
+  "workerVersions": [
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-disk-observer/control/old/control.test",
+      "sha256": "d3ec68871ad499662c742885788e0ea33f855e8573100c351d9bf305b32bc0ee"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-disk-observer/control/new/control.test",
+      "sha256": "1ff5cdb285e358dccdf76aa1701c10e9a14c1b4668865e5f48f79e4a13868e22"
+    }
+  ],
+  "jfr": false,
+  "stop": "One fixed32 after all affected unit/race/integration and8native fixture starts qualify; retain every failure; no owner restart in this allocation",
+  "interpretation": "A faster scan may remain saturated at original polling cadence. Do not infer request CPU/wall savings from static scan cost. Any supported effect belongs to the supervisor only."
+}

@@ -1,0 +1,20 @@
+{
+  "schema": "buildopt.live-observer/seal-audit/v1",
+  "status": "verified",
+  "decision": "LIVE_GAP_OVER_500MS_NOT_REPRODUCED",
+  "BV006Status": "partial",
+  "originalCauseEstablished": false,
+  "readinessQualified": false,
+  "valueQualified": false,
+  "manifest": {
+    "path": "bv006-live-observer/evidence-manifest.json",
+    "sha256": "62e0ba3af1f490a0afdb70c1e5a2649657ba777ac2ea401462f738c50505b478"
+  },
+  "sealedFilesVerified": 216,
+  "originCopiesVerified": 211,
+  "priorSeal": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/benchmarks/results/buildopt-product-viability-v1/bv006-observer-pause-seal-audit.json",
+    "sha256": "28dde7fa14f12b9fd945e5d9a9f94abfd77c6729f1d3f2e6a9ee600a6478562e"
+  },
+  "atUTC": "2026-09-09T12:42:14.405249+00:00"
+}

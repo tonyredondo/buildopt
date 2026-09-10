@@ -1,0 +1,3 @@
+BEFORE gradleExecution=false projectExecution=false gradleAction=false projectAction=false
+AFTER_EXACT_CAPTURE_HOOKS gradleExecution=false projectExecution=false gradleAction=false projectAction=false
+LISTENER_SCOPE_PROOF_COMPLETED actualHooks=true nativeBuildStarts=0

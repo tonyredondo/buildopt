@@ -1,0 +1,37 @@
+{
+  "status": "verified",
+  "observedUTC": "2026-09-08T14:43:00.208787+00:00",
+  "candidateManifestSHA256": "4bad4114a60559e4fd96a9253b9a628bf883711837a2d7791461fd441437179a",
+  "verifiedMatrixObservations": 67,
+  "actualFixtureReportsRehashed": 131,
+  "ownerTests": {
+    "cs-owner-control-tests": {
+      "tests": 9,
+      "nestedGradleStarts": 1,
+      "skipsFailuresErrors": 0
+    },
+    "cs-owner-state-binding-tests": {
+      "tests": 13,
+      "nestedGradleStarts": 1,
+      "skipsFailuresErrors": 0
+    }
+  },
+  "nativeReceipts": 115,
+  "chargedGradleStarts": 121,
+  "actualGradleStartsIncludingNested": 121,
+  "nestedTestKitStarts": 5,
+  "ownerOutputEntries": [
+    50225,
+    50226
+  ],
+  "exactOwnerEntries": 50020,
+  "qualifiedOwnerDifferences": {
+    "compilation metadata": 137,
+    "archive": 62,
+    "manifest": 2,
+    "checkstyle": 3,
+    "rat": 1
+  },
+  "valueClaim": false,
+  "limits": "Reconstructs correctness receipts and counts; exact output semantics come from the separately qualified native comparator. No chronological value runner is qualified by this audit."
+}

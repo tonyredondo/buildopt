@@ -1,0 +1,24 @@
+{
+  "program": "BUILDOPT-VIABILITY-V1",
+  "phase": "BV-001/BV-002 foundation and causal seed audit",
+  "startedUTC": "2026-09-08T08:22:11.920136+00:00",
+  "deadlineUTC": "2026-09-08T14:22:11.920136+00:00",
+  "maxElapsedSeconds": 21600,
+  "maxGradleStarts": 30,
+  "gradleStartsReserved": 5,
+  "gradleStartsObserved": 4,
+  "maxChildSeconds": 1200,
+  "maxNewBytes": 128849018880,
+  "minFreeBytes": 42949672960,
+  "diskAtEntry": {
+    "total": 1171598082048,
+    "used": 289688616960,
+    "free": 881703583744
+  },
+  "preAllocationStaticOrientation": "unmetered; no builds or public Git fetches ran before this allocation",
+  "costClass": "research preparation; not a customer speedup measurement",
+  "checkpointUTC": "2026-09-08T08:53:52.431621+00:00",
+  "newFootprintBytes": 5692815624,
+  "freeBytes": 878165409792,
+  "preparationOnly": true
+}

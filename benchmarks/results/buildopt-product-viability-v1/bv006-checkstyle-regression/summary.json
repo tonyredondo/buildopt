@@ -1,0 +1,41 @@
+{
+  "status": "partial",
+  "executionStatus": "verified",
+  "decision": "REUSE_AND_LOCK_RETENTION_VERIFIED_ORIGINAL_WALLTIME_SPIKE_NOT_REPRODUCED",
+  "nativeBuilds": 7,
+  "pairedNativeBuilds": 6,
+  "completeLiveAndIndependentPairs": 3,
+  "standaloneHelperJVMs": 17,
+  "compilerCommands": 8,
+  "gradleReservations": 14,
+  "programGradleReservations": 748,
+  "programObservedGradleStarts": 622,
+  "realWorkerIdleVerified": true,
+  "actualGradleLockRetentionMechanismVerified": true,
+  "originalSpikeInternalCause": "unresolved: original per-task I/O/GC/daemon wait data absent; fresh daemon ring evicted candidate target",
+  "readinessQualified": false,
+  "valueQualified": false,
+  "productViability": "NOT_ESTABLISHED",
+  "newCustomerPairs": [
+    {
+      "originalOrdinal": 6,
+      "nativeSeconds": 213.061241672,
+      "candidateSeconds": 222.09672946900002,
+      "savingPercent": -4.240793738970982
+    },
+    {
+      "originalOrdinal": 7,
+      "nativeSeconds": 98.184899819,
+      "candidateSeconds": 83.416293024,
+      "savingPercent": 15.041627401184241
+    },
+    {
+      "originalOrdinal": 8,
+      "nativeSeconds": 7.223962373,
+      "candidateSeconds": 7.159110568999999,
+      "savingPercent": 0.897731752346723
+    }
+  ],
+  "nextStep": "Design and prove finalization without a trailing task action, then compare the current and revised optimized paths on whole-request walltime; preserve full correctness and bound the trial before launch.",
+  "captureHooksDoNotSetScopedListenerFlagsInAPIProof": true
+}

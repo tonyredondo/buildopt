@@ -1,0 +1,24 @@
+{
+  "status": "verified",
+  "staticMeans": {
+    "old": {
+      "wallNS": 1901638116.5,
+      "cpuNS": 1938896500
+    },
+    "new": {
+      "wallNS": 1453454817.5,
+      "cpuNS": 1465996500
+    }
+  },
+  "staticSavingPercent": {
+    "wallNS": 23.568274905263763,
+    "cpuNS": 24.390162136039752
+  },
+  "quality": {
+    "minimumMeasuredDaemonCoverage": 0.9611495280760289,
+    "maximumMeasuredSnapshotGapMS": 163.430993,
+    "gaps": 0,
+    "maximumClockMappingSpreadNS": 312791
+  },
+  "decision": "SUPERVISOR_CPU_REDUCTION_NOT_ESTABLISHED"
+}

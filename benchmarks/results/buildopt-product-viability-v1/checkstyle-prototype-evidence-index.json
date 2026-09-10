@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "buildopt.viability/checkstyle-prototype-evidence-index/v1",
+  "status": "verified",
+  "priorIndex": {
+    "path": "checkstyle-evidence-index.json",
+    "sha256": "be4721d5b8fceeee0b6767f076e6a31f82561f38ca1a1e64f934af5d389c2eda"
+  },
+  "entries": [
+    {
+      "path": "checkstyle-prototype/evidence-manifest.json",
+      "sha256": "153de1b429744db39b542469c1c66580d50a650901ab31829f17e75178b9b1f1"
+    },
+    {
+      "path": "checkstyle-prototype/closeout.json",
+      "sha256": "096d6d9e9d1adc3fe0345a0b534df18fb83045f0829d45ce56f372643f82e174"
+    },
+    {
+      "path": "checkstyle-prototype/correctness-decision.json",
+      "sha256": "2a5f1c0540d6e19b2392faa548da95b40215d9d33a7ad7b9bb043205d75f3e16"
+    },
+    {
+      "path": "checkstyle-prototype/candidate-manifest.json",
+      "sha256": "4bad4114a60559e4fd96a9253b9a628bf883711837a2d7791461fd441437179a"
+    },
+    {
+      "path": "checkstyle-prototype/candidate-contract.md",
+      "sha256": "ec15fdb777f002c1a09816ae70de76c0970e2738661c4c54f536ba4fca943eee"
+    },
+    {
+      "path": "checkstyle-prototype/README.md",
+      "sha256": "a63d1903ecd9386c06debf8195337b60db9ef5f9c24e917604fa55b258bf53d5"
+    }
+  ]
+}

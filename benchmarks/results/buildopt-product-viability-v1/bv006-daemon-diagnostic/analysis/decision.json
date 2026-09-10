@@ -1,0 +1,156 @@
+{
+  "status": "verified",
+  "decision": "SUPERVISOR_SCAN_COST_CONFIRMED_VARIABILITY_CAUSE_UNRESOLVED",
+  "phase": "BV-006 diagnostic",
+  "overallBV006Status": "partial",
+  "readinessQualified": false,
+  "valueQualified": false,
+  "ownerRequests": 32,
+  "warmupRequests": 16,
+  "measuredRequests": 16,
+  "summaryMS": {
+    "N": {
+      "nativeMS": {
+        "median": 5390.8132135,
+        "minimum": 4984.002875,
+        "maximum": 5885.559475
+      },
+      "daemonMS": {
+        "median": 5033.0,
+        "minimum": 4621,
+        "maximum": 5496
+      },
+      "supervisorCPUMS": {
+        "median": 5372.796,
+        "minimum": 4947.041,
+        "maximum": 5841.657
+      },
+      "scanCPUMS": {
+        "median": 5371.199500000001,
+        "minimum": 4945.513,
+        "maximum": 5840.039
+      },
+      "scanWallMS": {
+        "median": 5288.824538999999,
+        "minimum": 4881.498852,
+        "maximum": 5783.665364
+      },
+      "maximumScanMS": {
+        "median": 2065.665367,
+        "minimum": 1998.630406,
+        "maximum": 2179.596415
+      },
+      "daemonSampledCPUMS": {
+        "median": 11640.0,
+        "minimum": 9670.0,
+        "maximum": 18760.0
+      },
+      "gcPauseUnionMS": {
+        "median": 207.86503549999998,
+        "minimum": 151.02862,
+        "maximum": 251.373847
+      },
+      "compilationActiveUnionMS": {
+        "median": 1366.6495805,
+        "minimum": 1029.252054,
+        "maximum": 1675.521095
+      },
+      "compilationThreadMS": {
+        "median": 1729.243476,
+        "minimum": 1382.914893,
+        "maximum": 2086.745198
+      },
+      "samplerWallMS": {
+        "median": 65.81947199999999,
+        "minimum": 62.54924,
+        "maximum": 75.690933
+      }
+    },
+    "I": {
+      "nativeMS": {
+        "median": 5296.5790055,
+        "minimum": 5118.486945,
+        "maximum": 5542.509075
+      },
+      "daemonMS": {
+        "median": 4931.0,
+        "minimum": 4760,
+        "maximum": 5184
+      },
+      "supervisorCPUMS": {
+        "median": 5257.3675,
+        "minimum": 5064.617,
+        "maximum": 5471.534
+      },
+      "scanCPUMS": {
+        "median": 5255.8755,
+        "minimum": 5062.509,
+        "maximum": 5469.824
+      },
+      "scanWallMS": {
+        "median": 5194.493104,
+        "minimum": 5015.836229,
+        "maximum": 5440.748054
+      },
+      "maximumScanMS": {
+        "median": 2059.272605,
+        "minimum": 2019.055915,
+        "maximum": 2222.160372
+      },
+      "daemonSampledCPUMS": {
+        "median": 10115.0,
+        "minimum": 9960.0,
+        "maximum": 17750.0
+      },
+      "gcPauseUnionMS": {
+        "median": 222.8104075,
+        "minimum": 86.68106,
+        "maximum": 269.154807
+      },
+      "compilationActiveUnionMS": {
+        "median": 1479.459168,
+        "minimum": 869.449386,
+        "maximum": 2118.942617
+      },
+      "compilationThreadMS": {
+        "median": 1976.317131,
+        "minimum": 988.940802,
+        "maximum": 2435.977788
+      },
+      "samplerWallMS": {
+        "median": 57.860671999999994,
+        "minimum": 53.207036,
+        "maximum": 64.214917
+      }
+    }
+  },
+  "measuredTotalsMS": {
+    "nativeMS": 86024.174631,
+    "daemonMS": 80187,
+    "supervisorCPUMS": 85231.006,
+    "scanCPUMS": 85204.424,
+    "scanWallMS": 84389.508127,
+    "maximumScanMS": 33314.82543,
+    "daemonSampledCPUMS": 199660.0,
+    "gcPauseUnionMS": 3235.692856,
+    "compilationActiveUnionMS": 22291.974311,
+    "compilationThreadMS": 28050.9604,
+    "samplerWallMS": 1004.5874220000001
+  },
+  "minimumMeasuredDaemonCPUCoverage": 0.96318207501034,
+  "maximumMeasuredSnapshotGapMS": 100.895229,
+  "samplerGaps": 0,
+  "maximumClockMappingSpreadNS": 376171,
+  "nextAction": "Qualify a compatible disk-observer correction and a fixed old-versus-new supervisor control before fresh owner timing qualification",
+  "unchangedGates": {
+    "wrapperP95MS": 10,
+    "absoluteCaptureImbalanceMS": 100
+  },
+  "limits": [
+    "CPU work cannot be subtracted from native wall time",
+    "Old seconds-scale deviations were not reproduced by this fixed profiled batch",
+    "No causal native latency or product saving established",
+    "No graph edges recaptured by plain native requests",
+    "No C5 engineering, validation, H3 or other-repository build experiment"
+  ]
+}

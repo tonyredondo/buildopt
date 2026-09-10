@@ -1,0 +1,20 @@
+{
+  "schema": "buildopt.observer-integration/seal-audit/v1",
+  "status": "verified",
+  "decision": "R4_NON_GRADLE_CONSUMER_VERIFIED",
+  "BV006Status": "partial",
+  "readinessQualified": false,
+  "valueQualified": false,
+  "originalCauseEstablished": false,
+  "manifest": {
+    "path": "bv006-observer-integration/evidence-manifest.json",
+    "sha256": "c5ba3cad3e28ba44557e9f1484b09c8f24088084248c9142649b0471eacb7a96"
+  },
+  "sealedFilesVerified": 9817,
+  "originCopiesVerified": 9812,
+  "priorSeal": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/benchmarks/results/buildopt-product-viability-v1/bv006-buffered-observer-seal-audit.json",
+    "sha256": "a515251ef61602b68c810ef7234ab50fe1b6f05b5dbc3e9126f2bb8553912d55"
+  },
+  "atUTC": "2026-09-09T14:20:15.556727+00:00"
+}

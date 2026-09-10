@@ -1,0 +1,12 @@
+{
+  "status": "verified",
+  "objectiveStatus": "partial",
+  "decision": "INCONCLUSIVE_HARNESS_OWNERSHIP_FAILURE",
+  "manifest": {
+    "path": "bv006-walltime-decision/evidence-manifest.json",
+    "sha256": "34735b47c0d743251bfe9c3d6b32cf375f4b529dad2780e7b89037e52db48144"
+  },
+  "sealedFilesVerified": 270,
+  "originCopiesVerified": 266,
+  "atUTC": "2026-09-09T15:49:06.562880+00:00"
+}

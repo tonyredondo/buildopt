@@ -1,0 +1,21 @@
+{
+  "schema": "buildopt.cpu-isolation/seal-audit/v1",
+  "status": "verified",
+  "phaseStatus": "partial",
+  "BV006Status": "partial",
+  "decision": "FAILED_OBSERVATION_QUALITY",
+  "readinessQualified": false,
+  "valueQualified": false,
+  "manifest": {
+    "path": "bv006-cpu-isolation/evidence-manifest.json",
+    "sha256": "a12b834e95ec4d70b103188a30677e32414c4120f226fa9d3e370674256d6243"
+  },
+  "sealedFilesVerified": 5558,
+  "originCopiesVerified": 5553,
+  "priorSeal": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/benchmarks/results/buildopt-product-viability-v1/bv006-disk-observer-seal-audit.json",
+    "sha256": "1c884a788406971c96e5d1f7c8fb5676458d9e258bbbb3a835ee0be1d33e82d5"
+  },
+  "independentAuditSHA256": "7dd8196186b7f249e6d6940c5546c34fdb50b38bc3c60b0859a9b5213f8af1bb",
+  "atUTC": "2026-09-09T11:38:01.892572+00:00"
+}

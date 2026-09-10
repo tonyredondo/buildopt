@@ -1,0 +1,24 @@
+{
+  "previousJarSHA256": "b25b615c2dd18ef567bc686a1b5abf9a56eff55e3515fe1ca05cc5a0e4c5bbcd",
+  "currentJarSHA256": "9aff9ec5a783e058656009d8caa2310fc2beb8839ab403c41685d0ac952f7650",
+  "classes": [
+    {
+      "class": "ContentAwareChecker",
+      "instructionDisassemblyEqual": true,
+      "normalization": "constant-pool reference numbers only; resolved names, instructions, operands and branch targets remain exact"
+    },
+    {
+      "class": "ContentAwareChecker$OrderedEvents",
+      "instructionDisassemblyEqual": true,
+      "normalization": "constant-pool reference numbers only; resolved names, instructions, operands and branch targets remain exact"
+    },
+    {
+      "class": "CheckstyleSuccessState",
+      "instructionDisassemblyEqual": true,
+      "normalization": "constant-pool reference numbers only; resolved names, instructions, operands and branch targets remain exact"
+    }
+  ],
+  "retainedProof": "Earlier core/global-state matrix exercises the exact same per-file algorithm and state codec. Native formatter changed source line layout only.",
+  "bridgeChange": "Additional required implementation-provider identity check in qualifiedRules; native fallback, positive cold/warm/edit and real checker-bytecode regression re-run on current bridge. No existing rule/global-state guard removed.",
+  "limits": "This does not replace the pending actual full owner workflow and final inverse proof."
+}

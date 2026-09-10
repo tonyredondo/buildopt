@@ -1,0 +1,39 @@
+{
+  "status": "verified",
+  "completedUTC": "2026-09-10T01:09:16.897618+00:00",
+  "scope": "Corrected exploratory CPU screen, conditional disjoint history, repairs, resource and deliverable closeout",
+  "decision": "NO_MATERIAL_SIGNAL_IN_DISJOINT_HISTORY",
+  "nativeBuilds": 54,
+  "liveAndIndependentCompletePairs": 27,
+  "allCandidateTaskHistoriesPresent": true,
+  "formalReadinessQualified": false,
+  "productViabilityEstablished": false,
+  "historicalWorkerExclusiveAffinityQualified": false,
+  "allocationClosed": true,
+  "overallProgramStatus": "partial; product viability unproved",
+  "nextInvestigation": "pending; not allocated or scheduled",
+  "repository": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+  "branch": "main",
+  "head": "b76ded08c952ebb386576fafce4ae2d8fdcc09f1",
+  "artifactIndex": {
+    "path": "final-artifacts.json",
+    "sha256": "660219678723d806004cd5b0372f6e865be0cd050edd5f06ecc4a27c37e190f9",
+    "files": 103
+  },
+  "unchangedTestedRepairFiles": 5,
+  "arithmeticAndRunManifestBindingsVerified": true,
+  "sourceAndProcessClosureAudit": "corrected/final/analysis/final-source-audit.json",
+  "storageAudit": "corrected/final/analysis/disk-audit-by-profile-v2.json",
+  "validation": "corrected/final/analysis/final-validation.json",
+  "gitWhitespaceExitCode": 0,
+  "repositoryDocumentationQualified": false,
+  "scopedDocumentationQualified": true,
+  "layoutQualified": true,
+  "preservedLimitations": [
+    "1623 older documentation diagnostics remain; full repository check is not green",
+    "History worker-exclusive affinity failed; native masks passed",
+    "Verification-command legacy counter is not a complete census",
+    "Two measured CPU pairs per profile and engineering history are exploratory, not formal validation",
+    "Historical launch-count unknowns remain in their original scope"
+  ]
+}

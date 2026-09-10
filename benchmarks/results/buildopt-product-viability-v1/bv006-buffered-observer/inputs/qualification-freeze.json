@@ -1,0 +1,14 @@
+[
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/source",
+    "sha256": "39492f94506364772aa0aa173b65291bd27c55c3aa93b348d50e0a17d4d41a95"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+    "sha256": "de23df6b9d6eea93c09961f7b9f479c90a30942b4c16aee90221a6637072a244"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control-race.test",
+    "sha256": "8c9743650249f4aae1416848793e4efe0380c1eb2b35919d6c9336796546aa08"
+  }
+]

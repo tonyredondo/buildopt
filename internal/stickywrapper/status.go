@@ -13,6 +13,7 @@ import (
 
 	"github.com/tonyredondo/buildopt/internal/stickydecision"
 	"github.com/tonyredondo/buildopt/internal/stickyobservation"
+	"github.com/tonyredondo/buildopt/internal/wcncpobserve"
 )
 
 // StatusSchemaVersion identifies the read-only customer status surface. The
@@ -114,24 +115,35 @@ type BindingStatus struct {
 // StatusReport is the common data model for both status and explain. Human
 // output is rendered from this value and JSON is its lossless representation.
 type StatusReport struct {
-	SchemaVersion string            `json:"schemaVersion"`
-	ReportType    string            `json:"reportType"`
-	Repository    string            `json:"repositoryScopeSha256"`
-	Wrapper       WrapperStatus     `json:"wrapper"`
-	Decision      DecisionStatus    `json:"decision"`
-	Observations  ObservationStatus `json:"observations"`
-	Trials        TrialStatus       `json:"trials"`
-	Cache         CacheStatus       `json:"cache"`
-	Economics     EconomicsStatus   `json:"economics"`
-	Fallback      FallbackStatus    `json:"fallback"`
-	Bindings      BindingStatus     `json:"bindings"`
-	Explanation   []string          `json:"explanation"`
+	NativeCorrection *wcncpobserve.Status `json:"nativeCorrection,omitempty"`
+	SchemaVersion    string               `json:"schemaVersion"`
+	ReportType       string               `json:"reportType"`
+	Repository       string               `json:"repositoryScopeSha256"`
+	Wrapper          WrapperStatus        `json:"wrapper"`
+	Decision         DecisionStatus       `json:"decision"`
+	Observations     ObservationStatus    `json:"observations"`
+	Trials           TrialStatus          `json:"trials"`
+	Cache            CacheStatus          `json:"cache"`
+	Economics        EconomicsStatus      `json:"economics"`
+	Fallback         FallbackStatus       `json:"fallback"`
+	Bindings         BindingStatus        `json:"bindings"`
+	Explanation      []string             `json:"explanation"`
 }
 
 // BuildStatus loads committed wrapper state and private ordinary observations
 // without creating or changing any file. It is safe to call from a clean
 // checkout before the first build.
 func BuildStatus(root, reportType string) (StatusReport, error) {
+	return buildStatus(root, reportType, true)
+}
+
+// BuildNativeStatus describes an observation-only invocation. Previous sticky
+// decisions and timing logs cannot grant authority or supply WCNCP economics.
+func BuildNativeStatus(root, reportType string) (StatusReport, error) {
+	return buildStatus(root, reportType, false)
+}
+
+func buildStatus(root, reportType string, includeOrdinary bool) (StatusReport, error) {
 	if reportType != "STATUS" && reportType != "EXPLAIN" {
 		return StatusReport{}, errors.New("status report type is invalid")
 	}
@@ -192,6 +204,12 @@ func BuildStatus(root, reportType string) (StatusReport, error) {
 			RepositoryScope:  scope,
 			UnavailableCause: "No ordinary build observation has been recorded yet.",
 		},
+	}
+
+	if !includeOrdinary {
+		report.Decision.Reason = "Native observation mode retains the requested Gradle workflow."
+		report.Explanation = explainReport(report)
+		return report, report.Validate()
 	}
 
 	if decision, decisionErr := readLocalDecisionStatus(scope); decisionErr != nil {

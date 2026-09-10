@@ -1,0 +1,56 @@
+{
+  "atUTC": "2026-09-09T17:54:04.948486+00:00",
+  "reason": "Superseded candidate after proven shared-task-property map defect. Original profile4 prepared and started one native request; that actual start stays counted.",
+  "directGradleStarts": 1,
+  "observedWrapper": [
+    {
+      "identity": {
+        "pid": 1424970,
+        "startTicks": 43299499,
+        "cpuTicks": 204
+      },
+      "command": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/bin/java -Xmx64m -Xms64m -Dorg.gradle.appname=gradlew -jar /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion/profiles/4/run/r1/N/repo/gradle/wrapper/gradle-wrapper.jar --offline --no-scan --max-workers=4 :server:precommit --continue --no-configuration-cache --build-cache --console=plain --init-script /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/versions/owner-readiness-v5/source/capture.init.gradle --daemon ",
+      "threadMasks": {
+        "0,1,2,3": [
+          1424970,
+          1424981,
+          1424982,
+          1424983,
+          1424984,
+          1424985,
+          1424986,
+          1424987,
+          1424988,
+          1424989,
+          1424990,
+          1424991,
+          1424992,
+          1424993,
+          1424994,
+          1424995,
+          1424996,
+          1424997,
+          1425001,
+          1425002,
+          1425005,
+          1425006,
+          1425018
+        ]
+      }
+    }
+  ],
+  "unitsClosed": [
+    {
+      "unit": "buildopt-replay-9fb468a247541a9a-r1-N-1.service",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-9fb468a247541a9a-r1-N-1.service"
+    }
+  ],
+  "driverTerminationRequested": true,
+  "nativeReceipts": [
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion/profiles/4/run/attempts/r1-000-g0-N/native-finish.json",
+      "sha256": "a7cc9f87c474ff2756abb56e88bb730e37bcda35e3f068d7f631920c8575bf23"
+    }
+  ],
+  "nestedAccounting": "Interrupted runner has no final independent reconstruction; no complete invocation-accounting claim."
+}

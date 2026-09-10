@@ -1,0 +1,169 @@
+--- a/build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareChecker.java
++++ b/build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareChecker.java
+@@ -107,6 +107,12 @@
+             if (admitted && violation == false && errors == 0 && hashes.equals(hashInputs(files))) {
+                 completed.setProperty("identity", request.getProperty("identity"));
+                 completed.setProperty("requestId", request.getProperty("requestId"));
++                // Bind the closed native formatter output before later task actions or listeners can alter it.
++                String report = request.getProperty("report");
++                if (report == null) {
++                    return errors;
++                }
++                completed.setProperty("reportHash", CheckstyleSuccessState.hash(Path.of(report)));
+                 CheckstyleSuccessState.write(stateDirectory.resolve("proposed"), completed);
+             }
+         } catch (IOException e) {
+--- a/build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstyleSuccessHistory.java
++++ b/build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstyleSuccessHistory.java
+@@ -12,8 +12,11 @@
+ import org.gradle.api.Project;
+ import org.gradle.api.Task;
+ import org.gradle.api.plugins.quality.Checkstyle;
++import org.gradle.api.provider.Provider;
+ import org.gradle.api.resources.TextResource;
+ import org.gradle.api.resources.TextResourceFactory;
++import org.gradle.api.services.BuildService;
++import org.gradle.api.services.BuildServiceParameters;
+ 
+ import java.io.File;
+ import java.io.IOException;
+@@ -25,6 +28,7 @@
+ import java.util.Properties;
+ import java.util.TreeMap;
+ import java.util.UUID;
++import java.util.concurrent.ConcurrentHashMap;
+ import java.util.jar.JarFile;
+ 
+ /** Binds native Checkstyle successes to task-local history and the exact admitted owner. */
+@@ -83,17 +87,28 @@
+                 originalConfig.getParentFile().toPath().relativize(state.toPath()).toString().replace(File.separatorChar, '/')
+             );
+         task.setConfig(project.getResources().getText().fromFile(adaptedConfig));
+-        task.doFirst(new Prepare(state, originalConfig, project.getGradle().getGradleVersion(), project.getResources().getText()));
+-        task.doLast(new Commit(state, originalConfig, project.getGradle().getGradleVersion()));
++        Provider<Finalizer> finalizer = project.getGradle()
++            .getSharedServices()
++            .registerIfAbsent("buildopt-checkstyle-finalization", Finalizer.class, spec -> {});
++        task.usesService(finalizer);
++        // Keep native worker completion as the final task action; publish after all service users finish.
++        task.doFirst(
++            new Prepare(state, originalConfig, project.getGradle().getGradleVersion(), project.getResources().getText(), finalizer)
++        );
+     }
+ 
+     /** Invalidate the previous commit before the worker starts, so cancellation cannot publish partial state. */
+-    private record Prepare(File directory, File originalConfig, String gradleVersion, TextResourceFactory textResources)
+-        implements
+-            Action<Task> {
++    private record Prepare(
++        File directory,
++        File originalConfig,
++        String gradleVersion,
++        TextResourceFactory textResources,
++        Provider<Finalizer> finalizer
++    ) implements Action<Task> {
+         @Override
+         public void execute(Task value) {
+             Checkstyle task = (Checkstyle) value;
++            finalizer.get().register(task, new Commit(task.getPath(), directory, originalConfig, gradleVersion));
+             Path state = directory.toPath();
+             try {
+                 Properties previous = CheckstyleSuccessState.read(state.resolve("success"));
+@@ -117,6 +132,7 @@
+                 request.setProperty("stateRoot", state.toAbsolutePath().normalize().toString());
+                 request.setProperty("identity", fingerprint);
+                 request.setProperty("requestId", UUID.randomUUID().toString());
++                request.setProperty("report", report.getAbsolutePath());
+                 CheckstyleSuccessState.write(state.resolve("request"), request);
+             } catch (IOException e) {
+                 // The original is already a declared configDirectory input. Both configurations
+@@ -124,6 +140,21 @@
+                 nativeFallback(task, textResources, originalConfig);
+                 task.getLogger().info("Checkstyle success history unavailable; using native checking", e);
+             }
++        }
++    }
++
++    /** Gradle closes this service after its last task finishes and before the build ends. */
++    public abstract static class Finalizer implements BuildService<BuildServiceParameters.None>, AutoCloseable {
++        private final Map<Task, Commit> pending = new ConcurrentHashMap<>();
++
++        private void register(Task task, Commit commit) {
++            pending.put(task, commit);
++        }
++
++        @Override
++        public void close() {
++            pending.forEach((task, commit) -> commit.execute(task));
++            pending.clear();
+         }
+     }
+ 
+@@ -147,7 +178,12 @@
+         identity.put("stateRoot", state.toAbsolutePath().normalize().toString());
+         identity.put("gradle", gradleVersion);
+         identity.put("config", task.getConfig().asString());
+-        for (Class<?> type : new Class<?>[] { CheckstyleSuccessHistory.class, Prepare.class, Commit.class, Context.class }) {
++        for (Class<?> type : new Class<?>[] {
++            CheckstyleSuccessHistory.class,
++            Prepare.class,
++            Commit.class,
++            Context.class,
++            Finalizer.class }) {
+             String resource = "/" + type.getName().replace('.', '/') + ".class";
+             try (var input = type.getResourceAsStream(resource)) {
+                 if (input == null) {
+@@ -245,10 +281,16 @@
+         return true;
+     }
+ 
+-    /** Commit only after native worker completion and all requested reports have been written. */
+-    private record Commit(File directory, File originalConfig, String gradleVersion) implements Action<Task> {
++    /** Commit only the completed task's matching native report; skipped or failed tasks cannot publish history. */
++    private record Commit(String taskPath, File directory, File originalConfig, String gradleVersion) implements Action<Task> {
+         @Override
+         public void execute(Task value) {
++            if (taskPath.equals(value.getPath()) == false
++                || value.getState().getExecuted() == false
++                || value.getState().getSkipped()
++                || value.getState().getFailure() != null) {
++                return;
++            }
+             Path state = directory.toPath();
+             try {
+                 Properties request = CheckstyleSuccessState.read(state.resolve("request"));
+@@ -262,7 +304,9 @@
+                         return;
+                     }
+                     Path report = task.getReports().getXml().getOutputLocation().get().getAsFile().toPath();
+-                    proposed.setProperty("reportHash", CheckstyleSuccessState.hash(report));
++                    if (CheckstyleSuccessState.hash(report).equals(proposed.getProperty("reportHash")) == false) {
++                        return;
++                    }
+                     CheckstyleSuccessState.write(state.resolve("success"), proposed);
+                 }
+                 Files.deleteIfExists(state.resolve("request"));
+--- a/build-tools-internal/src/test/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareCheckerTests.java
++++ b/build-tools-internal/src/test/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareCheckerTests.java
+@@ -157,6 +157,7 @@
+         tree.addChild(new DefaultConfiguration("AvoidStarImport"));
+         tree.addChild(new DefaultConfiguration("UnusedImports"));
+         configuration.addChild(tree);
++        Path report = temporary.newFile().toPath();
+         RootModule checker = candidate ? new ContentAwareChecker() : new Checker();
+         if (candidate) {
+             Properties request = new Properties();
+@@ -165,12 +166,12 @@
+             request.setProperty("stateRoot", state.toAbsolutePath().normalize().toString());
+             request.setProperty("identity", "engine-test-only; Gradle admission is tested separately");
+             request.setProperty("requestId", "current-request");
++            request.setProperty("report", report.toString());
+             CheckstyleSuccessState.write(state.resolve("request"), request);
+             Files.deleteIfExists(state.resolve("proposed"));
+             configuration.addProperty("buildoptStateDirectory", state.toString());
+         }
+         ProcessingObserver.FILES.get().clear();
+-        Path report = temporary.newFile().toPath();
+         int errors;
+         try {
+             checker.setModuleClassLoader(getClass().getClassLoader());

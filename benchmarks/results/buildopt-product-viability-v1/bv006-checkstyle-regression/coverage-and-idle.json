@@ -1,0 +1,197 @@
+{
+  "status": "verified coverage and worker idle intervals",
+  "attempts": [
+    {
+      "attempt": "r1-000-g0-I",
+      "daemonPID": 2231994,
+      "requestDaemonCoverage": {
+        "containerComplete": true,
+        "coveredSeconds": 0.0,
+        "requestedSeconds": 221.882845696,
+        "fullyCovered": false
+      },
+      "gaps": [
+        {
+          "task": ":server:checkstyleInternalClusterTest",
+          "afterAdapterGapSeconds": 28.354141935,
+          "daemonCoverage": {
+            "containerComplete": true,
+            "coveredSeconds": 0.0,
+            "requestedSeconds": 28.354140928,
+            "fullyCovered": false
+          },
+          "workerCoverage": {
+            "containerComplete": true,
+            "coveredSeconds": 28.354140928,
+            "requestedSeconds": 28.354140928,
+            "fullyCovered": true
+          }
+        },
+        {
+          "task": ":server:checkstyleTest",
+          "afterAdapterGapSeconds": 66.740830673,
+          "daemonCoverage": {
+            "containerComplete": true,
+            "coveredSeconds": 0.0,
+            "requestedSeconds": 66.74083072,
+            "fullyCovered": false
+          },
+          "workerCoverage": {
+            "containerComplete": true,
+            "coveredSeconds": 66.74083072,
+            "requestedSeconds": 66.74083072,
+            "fullyCovered": true
+          }
+        },
+        {
+          "task": ":server:checkstyleMain",
+          "afterAdapterGapSeconds": 54.760118205,
+          "daemonCoverage": {
+            "containerComplete": true,
+            "coveredSeconds": 0.0,
+            "requestedSeconds": 54.760118016,
+            "fullyCovered": false
+          },
+          "workerCoverage": {
+            "containerComplete": true,
+            "coveredSeconds": 54.760118016,
+            "requestedSeconds": 54.760118016,
+            "fullyCovered": true
+          }
+        }
+      ]
+    },
+    {
+      "attempt": "r1-000-g0-N",
+      "daemonPID": 2223445,
+      "requestDaemonCoverage": {
+        "containerComplete": true,
+        "coveredSeconds": 0.0,
+        "requestedSeconds": 212.97010304,
+        "fullyCovered": false
+      },
+      "gaps": []
+    },
+    {
+      "attempt": "r1-001-g0-I",
+      "daemonPID": 2231994,
+      "requestDaemonCoverage": {
+        "containerComplete": true,
+        "coveredSeconds": 0.0,
+        "requestedSeconds": 83.236116992,
+        "fullyCovered": false
+      },
+      "gaps": [
+        {
+          "task": ":server:checkstyleTest",
+          "afterAdapterGapSeconds": 42.908340772,
+          "daemonCoverage": {
+            "containerComplete": true,
+            "coveredSeconds": 0.0,
+            "requestedSeconds": 42.908339968,
+            "fullyCovered": false
+          },
+          "workerCoverage": {
+            "containerComplete": true,
+            "coveredSeconds": 42.908339968,
+            "requestedSeconds": 42.908339968,
+            "fullyCovered": true
+          },
+          "workerIdleStartUTC": "2026-09-10T05:41:14.122577644Z",
+          "workerIdleEndUTC": "2026-09-10T05:42:01.641360642Z",
+          "workerIdleAfterAdapterSeconds": 0.040864,
+          "workerIdleThroughGapSeconds": 42.867475968,
+          "workerIdleThread": "/127.0.0.1:36570 to /127.0.0.1:41107 workers",
+          "workerIdleStack": [
+            "jdk.internal.misc.Unsafe.park:-1",
+            "java.util.concurrent.locks.LockSupport.park:371",
+            "java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block:519",
+            "java.util.concurrent.ForkJoinPool.unmanagedBlock:3780",
+            "java.util.concurrent.ForkJoinPool.managedBlock:3725",
+            "java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await:1746",
+            "org.gradle.internal.remote.internal.hub.queue.EndPointQueue.take:49",
+            "org.gradle.internal.remote.internal.hub.MessageHub$Handler.run:403",
+            "org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute:65",
+            "org.gradle.internal.concurrent.AbstractManagedExecutor$1.run:47",
+            "java.util.concurrent.ThreadPoolExecutor.runWorker:1144",
+            "java.util.concurrent.ThreadPoolExecutor$Worker.run:642",
+            "java.lang.Thread.runWith:1596",
+            "java.lang.Thread.run:1583"
+          ]
+        },
+        {
+          "task": ":server:checkstyleMain",
+          "afterAdapterGapSeconds": 40.184612491,
+          "daemonCoverage": {
+            "containerComplete": true,
+            "coveredSeconds": 0.0,
+            "requestedSeconds": 40.184612096,
+            "fullyCovered": false
+          },
+          "workerCoverage": {
+            "containerComplete": true,
+            "coveredSeconds": 40.184612096,
+            "requestedSeconds": 40.184612096,
+            "fullyCovered": true
+          },
+          "workerIdleStartUTC": "2026-09-10T05:41:16.782934509Z",
+          "workerIdleEndUTC": "2026-09-10T05:42:01.486170456Z",
+          "workerIdleAfterAdapterSeconds": 0.04511104,
+          "workerIdleThroughGapSeconds": 40.139501056,
+          "workerIdleThread": "/127.0.0.1:34444 to /127.0.0.1:33001 workers",
+          "workerIdleStack": [
+            "jdk.internal.misc.Unsafe.park:-1",
+            "java.util.concurrent.locks.LockSupport.park:371",
+            "java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block:519",
+            "java.util.concurrent.ForkJoinPool.unmanagedBlock:3780",
+            "java.util.concurrent.ForkJoinPool.managedBlock:3725",
+            "java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await:1746",
+            "org.gradle.internal.remote.internal.hub.queue.EndPointQueue.take:49",
+            "org.gradle.internal.remote.internal.hub.MessageHub$Handler.run:403",
+            "org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute:65",
+            "org.gradle.internal.concurrent.AbstractManagedExecutor$1.run:47",
+            "java.util.concurrent.ThreadPoolExecutor.runWorker:1144",
+            "java.util.concurrent.ThreadPoolExecutor$Worker.run:642",
+            "java.lang.Thread.runWith:1596",
+            "java.lang.Thread.run:1583"
+          ]
+        }
+      ]
+    },
+    {
+      "attempt": "r1-001-g0-N",
+      "daemonPID": 2223445,
+      "requestDaemonCoverage": {
+        "containerComplete": true,
+        "coveredSeconds": 24.103035966,
+        "requestedSeconds": 98.087506944,
+        "fullyCovered": false
+      },
+      "gaps": []
+    },
+    {
+      "attempt": "r1-002-g0-I",
+      "daemonPID": 2231994,
+      "requestDaemonCoverage": {
+        "containerComplete": true,
+        "coveredSeconds": 7.061370112,
+        "requestedSeconds": 7.061370112,
+        "fullyCovered": true
+      },
+      "gaps": []
+    },
+    {
+      "attempt": "r1-002-g0-N",
+      "daemonPID": 2223445,
+      "requestDaemonCoverage": {
+        "containerComplete": true,
+        "coveredSeconds": 7.13781504,
+        "requestedSeconds": 7.13781504,
+        "fullyCovered": true
+      },
+      "gaps": []
+    }
+  ],
+  "causalScope": "Exact Gradle retention branch and controlled real-service mechanism verified separately; measured native post-adapter gaps and worker-idle coverage support attribution, but daemon stacks for the candidate gap were evicted.",
+  "originalSpikeInnerCause": "unresolved: original request lacks I/O/JFR capture; fresh replay does not recreate cache/daemon age"
+}

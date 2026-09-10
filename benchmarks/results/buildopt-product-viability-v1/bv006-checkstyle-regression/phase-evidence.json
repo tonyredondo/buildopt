@@ -1,0 +1,2210 @@
+[
+  {
+    "attempt": "r1-000-g0-I",
+    "originalOrdinal": 6,
+    "arm": "I",
+    "nativeSeconds": 221.882845666,
+    "customerEnvelopeSeconds": 222.096729469,
+    "startUTC": "2026-09-10T05:34:06.735582Z",
+    "endUTC": "2026-09-10T05:37:48.618428Z",
+    "adapterTasks": [
+      {
+        "task": ":server:checkstyleInternalClusterTest",
+        "inputFiles": 554,
+        "reusedFiles": 0,
+        "processedFiles": 554,
+        "adapterSeconds": 20.153616464,
+        "engineSeconds": 19.913521887,
+        "prepareSeconds": 0.020021897,
+        "commitSeconds": 0.033513676,
+        "afterAdapterBeforeCommitSeconds": 28.354141935,
+        "taskSeconds": 52.910994944,
+        "workerPID": 2233036,
+        "adapterEndUTC": "2026-09-10T05:35:38.004107Z",
+        "commitStartUTC": "2026-09-10T05:36:06.358248Z"
+      },
+      {
+        "task": ":server:checkstyleTest",
+        "inputFiles": 2825,
+        "reusedFiles": 0,
+        "processedFiles": 2825,
+        "adapterSeconds": 62.343248995,
+        "engineSeconds": 61.934186691,
+        "prepareSeconds": 0.039050511,
+        "commitSeconds": 0.061718505,
+        "afterAdapterBeforeCommitSeconds": 66.740830673,
+        "taskSeconds": 139.491421952,
+        "workerPID": 2233245,
+        "adapterEndUTC": "2026-09-10T05:36:28.212229Z",
+        "commitStartUTC": "2026-09-10T05:37:34.953060Z"
+      },
+      {
+        "task": ":server:checkstyleMain",
+        "inputFiles": 4960,
+        "reusedFiles": 0,
+        "processedFiles": 4960,
+        "adapterSeconds": 70.583490711,
+        "engineSeconds": 69.891011,
+        "prepareSeconds": 0.016511968,
+        "commitSeconds": 0.09197812,
+        "afterAdapterBeforeCommitSeconds": 54.760118205,
+        "taskSeconds": 141.282418176,
+        "workerPID": 2233129,
+        "adapterEndUTC": "2026-09-10T05:36:40.390546Z",
+        "commitStartUTC": "2026-09-10T05:37:35.150664Z"
+      }
+    ],
+    "tasks": {
+      ":server:extractForeignApiJar": {
+        "identity": ":server:extractForeignApiJar",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:35:12.847893118Z",
+        "endUTC": "2026-09-10T05:35:12.926418101Z",
+        "seconds": 0.078525184
+      },
+      ":server:generateTransportVersionManifest": {
+        "identity": ":server:generateTransportVersionManifest",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:35:12.990565561Z",
+        "endUTC": "2026-09-10T05:35:13.148203808Z",
+        "seconds": 0.157637888
+      },
+      ":server:generateModulesList": {
+        "identity": ":server:generateModulesList",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:35:13.228959376Z",
+        "endUTC": "2026-09-10T05:35:13.261613352Z",
+        "seconds": 0.032653824
+      },
+      ":server:generatePluginsList": {
+        "identity": ":server:generatePluginsList",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:35:13.320934320Z",
+        "endUTC": "2026-09-10T05:35:13.373383272Z",
+        "seconds": 0.052449024
+      },
+      ":server:processTestResources": {
+        "identity": ":server:processTestResources",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:35:13.380031208Z",
+        "endUTC": "2026-09-10T05:35:13.474554538Z",
+        "seconds": 0.09452288
+      },
+      ":server:processInternalClusterTestResources": {
+        "identity": ":server:processInternalClusterTestResources",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:35:13.475416450Z",
+        "endUTC": "2026-09-10T05:35:13.479427749Z",
+        "seconds": 0.004011008
+      },
+      ":server:copyCheckstyleConf": {
+        "identity": ":server:copyCheckstyleConf",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:35:13.480237651Z",
+        "endUTC": "2026-09-10T05:35:13.482766917Z",
+        "seconds": 0.002528768
+      },
+      ":server:dependencyLicenses": {
+        "identity": ":server:dependencyLicenses",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:35:18.782619085Z",
+        "endUTC": "2026-09-10T05:35:19.194709152Z",
+        "seconds": 0.412090112
+      },
+      ":server:forbiddenApisResources": {
+        "identity": ":server:forbiddenApisResources",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:35:19.197893289Z",
+        "endUTC": "2026-09-10T05:35:19.226124615Z",
+        "seconds": 0.028231168
+      },
+      ":server:licenseHeaders": {
+        "identity": ":server:licenseHeaders",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:35:19.227472888Z",
+        "endUTC": "2026-09-10T05:35:24.052495798Z",
+        "seconds": 4.825022976
+      },
+      ":server:compileJava": {
+        "identity": ":server:compileJava",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:35:24.057456740Z",
+        "endUTC": "2026-09-10T05:36:05.712151514Z",
+        "seconds": 41.654694912
+      },
+      ":server:generateTestBuildInfo": {
+        "identity": ":server:generateTestBuildInfo",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:36:05.714132608Z",
+        "endUTC": "2026-09-10T05:36:06.178519511Z",
+        "seconds": 0.464387072
+      },
+      ":server:processResources": {
+        "identity": ":server:processResources",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:36:06.179761094Z",
+        "endUTC": "2026-09-10T05:36:06.357053715Z",
+        "seconds": 0.177292032
+      },
+      ":server:classes": {
+        "identity": ":server:classes",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:36:06.357896007Z",
+        "endUTC": "2026-09-10T05:36:06.358000998Z",
+        "seconds": 0.000103936
+      },
+      ":server:checkstyleInternalClusterTest": {
+        "identity": ":server:checkstyleInternalClusterTest",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:35:13.483716239Z",
+        "endUTC": "2026-09-10T05:36:06.394711241Z",
+        "seconds": 52.910994944
+      },
+      ":server:filepermissions": {
+        "identity": ":server:filepermissions",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:36:06.395406402Z",
+        "endUTC": "2026-09-10T05:36:06.542445126Z",
+        "seconds": 0.147038976
+      },
+      ":server:forbiddenApisMain": {
+        "identity": ":server:forbiddenApisMain",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:36:06.543462328Z",
+        "endUTC": "2026-09-10T05:36:12.998311059Z",
+        "seconds": 6.454849024
+      },
+      ":server:forbiddenPatterns": {
+        "identity": ":server:forbiddenPatterns",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:36:08.387260903Z",
+        "endUTC": "2026-09-10T05:36:15.437846135Z",
+        "seconds": 7.050586112
+      },
+      ":server:splitPackagesAudit": {
+        "identity": ":server:splitPackagesAudit",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:36:15.439459439Z",
+        "endUTC": "2026-09-10T05:36:15.838783699Z",
+        "seconds": 0.399323904
+      },
+      ":server:spotlessJava": {
+        "identity": ":server:spotlessJava",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:36:15.711130252Z",
+        "endUTC": "2026-09-10T05:36:52.044890986Z",
+        "seconds": 36.33376
+      },
+      ":server:compileTestJava": {
+        "identity": ":server:compileTestJava",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:36:52.045541317Z",
+        "endUTC": "2026-09-10T05:37:23.770758990Z",
+        "seconds": 31.725216768
+      },
+      ":server:testClasses": {
+        "identity": ":server:testClasses",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:37:23.771679442Z",
+        "endUTC": "2026-09-10T05:37:23.771765103Z",
+        "seconds": 8.6016e-05
+      },
+      ":server:compileInternalClusterTestJava": {
+        "identity": ":server:compileInternalClusterTestJava",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:37:23.772423074Z",
+        "endUTC": "2026-09-10T05:37:33.906043197Z",
+        "seconds": 10.133620224
+      },
+      ":server:internalClusterTestClasses": {
+        "identity": ":server:internalClusterTestClasses",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:37:33.906902768Z",
+        "endUTC": "2026-09-10T05:37:33.906989989Z",
+        "seconds": 8.704e-05
+      },
+      ":server:jarHell": {
+        "identity": ":server:jarHell",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:37:34.251566538Z",
+        "endUTC": "2026-09-10T05:37:34.623412346Z",
+        "seconds": 0.371846144
+      },
+      ":server:spotlessJavaCheck": {
+        "identity": ":server:spotlessJavaCheck",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:37:34.662306540Z",
+        "endUTC": "2026-09-10T05:37:34.663399523Z",
+        "seconds": 0.001092864
+      },
+      ":server:checkstyleTest": {
+        "identity": ":server:checkstyleTest",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:35:15.536591209Z",
+        "endUTC": "2026-09-10T05:37:35.028013605Z",
+        "seconds": 139.491421952
+      },
+      ":server:checkstyleMain": {
+        "identity": ":server:checkstyleMain",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:35:13.975982666Z",
+        "endUTC": "2026-09-10T05:37:35.258400096Z",
+        "seconds": 141.282418176
+      },
+      ":server:checkstyle": {
+        "identity": ":server:checkstyle",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:37:35.260394950Z",
+        "endUTC": "2026-09-10T05:37:35.260476940Z",
+        "seconds": 8.2176e-05
+      },
+      ":server:thirdPartyAuditResources": {
+        "identity": ":server:thirdPartyAuditResources",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:37:35.260772071Z",
+        "endUTC": "2026-09-10T05:37:35.276560925Z",
+        "seconds": 0.015788032
+      },
+      ":server:forbiddenApisInternalClusterTest": {
+        "identity": ":server:forbiddenApisInternalClusterTest",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:37:33.907724240Z",
+        "endUTC": "2026-09-10T05:37:35.787986057Z",
+        "seconds": 1.880262144
+      },
+      ":server:internalClusterTestTestingConventions": {
+        "identity": ":server:internalClusterTestTestingConventions",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:37:34.663904874Z",
+        "endUTC": "2026-09-10T05:37:35.827254362Z",
+        "seconds": 1.163350016
+      },
+      ":server:testTestingConventions": {
+        "identity": ":server:testTestingConventions",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:37:35.029145098Z",
+        "endUTC": "2026-09-10T05:37:36.673929341Z",
+        "seconds": 1.644783872
+      },
+      ":server:forbiddenApisTest": {
+        "identity": ":server:forbiddenApisTest",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:37:34.161375422Z",
+        "endUTC": "2026-09-10T05:37:37.329802985Z",
+        "seconds": 3.168427008
+      },
+      ":server:loggerUsageCheck": {
+        "identity": ":server:loggerUsageCheck",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:37:34.624093117Z",
+        "endUTC": "2026-09-10T05:37:38.381062327Z",
+        "seconds": 3.756969216
+      },
+      ":server:thirdPartyAudit": {
+        "identity": ":server:thirdPartyAudit",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:37:35.277296857Z",
+        "endUTC": "2026-09-10T05:37:40.885964319Z",
+        "seconds": 5.608667904
+      },
+      ":server:forbiddenApis": {
+        "identity": ":server:forbiddenApis",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:37:40.886337950Z",
+        "endUTC": "2026-09-10T05:37:40.886401750Z",
+        "seconds": 6.4e-05
+      },
+      ":server:testingConventions": {
+        "identity": ":server:testingConventions",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:37:40.886622540Z",
+        "endUTC": "2026-09-10T05:37:40.886664910Z",
+        "seconds": 4.1984e-05
+      },
+      ":server:validateModule": {
+        "identity": ":server:validateModule",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:37:40.886971121Z",
+        "endUTC": "2026-09-10T05:37:40.975957224Z",
+        "seconds": 0.088986112
+      },
+      ":server:generatePomFileForElasticPublication": {
+        "identity": ":server:generatePomFileForElasticPublication",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:37:40.976454885Z",
+        "endUTC": "2026-09-10T05:37:41.117822281Z",
+        "seconds": 0.141367808
+      },
+      ":server:validateElasticPom": {
+        "identity": ":server:validateElasticPom",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:37:41.118681093Z",
+        "endUTC": "2026-09-10T05:37:41.139164718Z",
+        "seconds": 0.020483072
+      },
+      ":server:validatePom": {
+        "identity": ":server:validatePom",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:37:41.139638739Z",
+        "endUTC": "2026-09-10T05:37:41.139759249Z",
+        "seconds": 0.000121088
+      },
+      ":server:collectTransportVersionReferences": {
+        "identity": ":server:collectTransportVersionReferences",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:37:41.140102060Z",
+        "endUTC": "2026-09-10T05:37:41.457295557Z",
+        "seconds": 0.31719296
+      },
+      ":server:validateTransportVersionReferences": {
+        "identity": ":server:validateTransportVersionReferences",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:37:41.458016459Z",
+        "endUTC": "2026-09-10T05:37:41.471726698Z",
+        "seconds": 0.013709824
+      },
+      ":server:jar": {
+        "identity": ":server:jar",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:37:41.472164329Z",
+        "endUTC": "2026-09-10T05:37:42.921797860Z",
+        "seconds": 1.44963328
+      },
+      ":server:validateTransportVersionResources": {
+        "identity": ":server:validateTransportVersionResources",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:37:43.657490613Z",
+        "endUTC": "2026-09-10T05:37:47.235914094Z",
+        "seconds": 3.578424064
+      },
+      ":server:precommit": {
+        "identity": ":server:precommit",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:37:47.236404655Z",
+        "endUTC": "2026-09-10T05:37:47.236487655Z",
+        "seconds": 8.2944e-05
+      }
+    },
+    "processTotals": [
+      {
+        "pid": 2231858,
+        "role": "supervisor",
+        "observedCPUSeconds": 217.8,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 364544,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2231864,
+        "role": "other",
+        "observedCPUSeconds": 1.9,
+        "observedReadBytes": 32768,
+        "observedWriteBytes": 311296,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2231994,
+        "role": "daemon",
+        "observedCPUSeconds": 670.88,
+        "observedReadBytes": 17788928,
+        "observedWriteBytes": 2379333632,
+        "observedMajorFaults": 3
+      },
+      {
+        "pid": 2232391,
+        "role": "other",
+        "observedCPUSeconds": 0.0,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2233009,
+        "role": "other-worker",
+        "observedCPUSeconds": 2.84,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 36864,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2233036,
+        "role": "checkstyle-worker",
+        "observedCPUSeconds": 31.89,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 331776,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2233129,
+        "role": "checkstyle-worker",
+        "observedCPUSeconds": 122.75,
+        "observedReadBytes": 4096,
+        "observedWriteBytes": 2891776,
+        "observedMajorFaults": 1
+      },
+      {
+        "pid": 2233155,
+        "role": "other-worker",
+        "observedCPUSeconds": 3.07,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 16384,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2233180,
+        "role": "other-worker",
+        "observedCPUSeconds": 9.19,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 446464,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2233245,
+        "role": "checkstyle-worker",
+        "observedCPUSeconds": 96.79,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 1691648,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2233361,
+        "role": "other-worker",
+        "observedCPUSeconds": 3.7,
+        "observedReadBytes": 12288,
+        "observedWriteBytes": 114688,
+        "observedMajorFaults": 1
+      },
+      {
+        "pid": 2233393,
+        "role": "other-worker",
+        "observedCPUSeconds": 2.98,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 24576,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2233547,
+        "role": "other-worker",
+        "observedCPUSeconds": 3.27,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 57344,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2233613,
+        "role": "other",
+        "observedCPUSeconds": 3.69,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 28672,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2234869,
+        "role": "other",
+        "observedCPUSeconds": 7.65,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2234933,
+        "role": "other",
+        "observedCPUSeconds": 5.08,
+        "observedReadBytes": 331776,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2235046,
+        "role": "other",
+        "observedCPUSeconds": 0.0,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2235047,
+        "role": "other",
+        "observedCPUSeconds": 0.0,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2235048,
+        "role": "other",
+        "observedCPUSeconds": 0.0,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      }
+    ]
+  },
+  {
+    "attempt": "r1-000-g0-N",
+    "originalOrdinal": 6,
+    "arm": "N",
+    "nativeSeconds": 212.970103475,
+    "customerEnvelopeSeconds": 213.061241672,
+    "startUTC": "2026-09-10T05:21:11.110137Z",
+    "endUTC": "2026-09-10T05:24:44.080240Z",
+    "adapterTasks": [],
+    "nativeEngineTasks": [
+      {
+        "task": ":server:checkstyleInternalClusterTest",
+        "inputFiles": 554,
+        "engineSeconds": 20.295944861,
+        "taskSeconds": 24.337707008,
+        "workerPID": 2224191,
+        "engineStartUTC": "2026-09-10T05:22:20.375242Z",
+        "engineEndUTC": "2026-09-10T05:22:40.671186Z",
+        "afterEngineSeconds": 0.076616192
+      },
+      {
+        "task": ":server:checkstyleTest",
+        "inputFiles": 2825,
+        "engineSeconds": 53.900639055,
+        "taskSeconds": 63.791951872,
+        "workerPID": 2224378,
+        "engineStartUTC": "2026-09-10T05:22:28.275250Z",
+        "engineEndUTC": "2026-09-10T05:23:22.175889Z",
+        "afterEngineSeconds": 0.068708096
+      },
+      {
+        "task": ":server:checkstyleMain",
+        "inputFiles": 4960,
+        "engineSeconds": 69.272222011,
+        "taskSeconds": 84.492988928,
+        "workerPID": 2224255,
+        "engineStartUTC": "2026-09-10T05:22:32.078394Z",
+        "engineEndUTC": "2026-09-10T05:23:41.350616Z",
+        "afterEngineSeconds": 0.105459968
+      }
+    ],
+    "tasks": {
+      ":server:extractForeignApiJar": {
+        "identity": ":server:extractForeignApiJar",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:22:15.785420894Z",
+        "endUTC": "2026-09-10T05:22:15.845868862Z",
+        "seconds": 0.060448
+      },
+      ":server:generateTransportVersionManifest": {
+        "identity": ":server:generateTransportVersionManifest",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:22:15.930664849Z",
+        "endUTC": "2026-09-10T05:22:16.053572239Z",
+        "seconds": 0.122907904
+      },
+      ":server:generateModulesList": {
+        "identity": ":server:generateModulesList",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:22:16.156009885Z",
+        "endUTC": "2026-09-10T05:22:16.183255970Z",
+        "seconds": 0.02724608
+      },
+      ":server:generatePluginsList": {
+        "identity": ":server:generatePluginsList",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:22:16.184506222Z",
+        "endUTC": "2026-09-10T05:22:16.190799812Z",
+        "seconds": 0.006293248
+      },
+      ":server:processTestResources": {
+        "identity": ":server:processTestResources",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:22:16.192235924Z",
+        "endUTC": "2026-09-10T05:22:16.388609443Z",
+        "seconds": 0.196374016
+      },
+      ":server:processInternalClusterTestResources": {
+        "identity": ":server:processInternalClusterTestResources",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:22:16.389128604Z",
+        "endUTC": "2026-09-10T05:22:16.400363492Z",
+        "seconds": 0.011235072
+      },
+      ":server:copyCheckstyleConf": {
+        "identity": ":server:copyCheckstyleConf",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:22:16.401116503Z",
+        "endUTC": "2026-09-10T05:22:16.409163776Z",
+        "seconds": 0.008047104
+      },
+      ":server:dependencyLicenses": {
+        "identity": ":server:dependencyLicenses",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:22:21.285899023Z",
+        "endUTC": "2026-09-10T05:22:21.617122651Z",
+        "seconds": 0.33122304
+      },
+      ":server:forbiddenApisResources": {
+        "identity": ":server:forbiddenApisResources",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:22:21.618000032Z",
+        "endUTC": "2026-09-10T05:22:21.628403929Z",
+        "seconds": 0.010402816
+      },
+      ":server:licenseHeaders": {
+        "identity": ":server:licenseHeaders",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:22:21.632651296Z",
+        "endUTC": "2026-09-10T05:22:25.447760066Z",
+        "seconds": 3.81510912
+      },
+      ":server:checkstyleInternalClusterTest": {
+        "identity": ":server:checkstyleInternalClusterTest",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:22:16.410095148Z",
+        "endUTC": "2026-09-10T05:22:40.747802640Z",
+        "seconds": 24.337707008
+      },
+      ":server:compileJava": {
+        "identity": ":server:compileJava",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:22:25.448634478Z",
+        "endUTC": "2026-09-10T05:22:58.862270591Z",
+        "seconds": 33.413636352
+      },
+      ":server:generateTestBuildInfo": {
+        "identity": ":server:generateTestBuildInfo",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:22:58.864359215Z",
+        "endUTC": "2026-09-10T05:22:59.536621392Z",
+        "seconds": 0.672262144
+      },
+      ":server:processResources": {
+        "identity": ":server:processResources",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:22:59.537584394Z",
+        "endUTC": "2026-09-10T05:22:59.816612105Z",
+        "seconds": 0.279027968
+      },
+      ":server:classes": {
+        "identity": ":server:classes",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:22:59.817385566Z",
+        "endUTC": "2026-09-10T05:22:59.817477146Z",
+        "seconds": 9.1904e-05
+      },
+      ":server:filepermissions": {
+        "identity": ":server:filepermissions",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:22:59.817872957Z",
+        "endUTC": "2026-09-10T05:22:59.929651208Z",
+        "seconds": 0.111778816
+      },
+      ":server:forbiddenApisMain": {
+        "identity": ":server:forbiddenApisMain",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:22:59.930588759Z",
+        "endUTC": "2026-09-10T05:23:06.355545347Z",
+        "seconds": 6.424957184
+      },
+      ":server:forbiddenPatterns": {
+        "identity": ":server:forbiddenPatterns",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:23:01.750129101Z",
+        "endUTC": "2026-09-10T05:23:08.738618938Z",
+        "seconds": 6.98848896
+      },
+      ":server:splitPackagesAudit": {
+        "identity": ":server:splitPackagesAudit",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:23:08.739066108Z",
+        "endUTC": "2026-09-10T05:23:08.976117991Z",
+        "seconds": 0.237051136
+      },
+      ":server:checkstyleTest": {
+        "identity": ":server:checkstyleTest",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:22:18.452645444Z",
+        "endUTC": "2026-09-10T05:23:22.244597259Z",
+        "seconds": 63.791951872
+      },
+      ":server:checkstyleMain": {
+        "identity": ":server:checkstyleMain",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:22:16.963087716Z",
+        "endUTC": "2026-09-10T05:23:41.456076391Z",
+        "seconds": 84.492988928
+      },
+      ":server:spotlessJava": {
+        "identity": ":server:spotlessJava",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:23:08.796622511Z",
+        "endUTC": "2026-09-10T05:23:45.805600189Z",
+        "seconds": 37.00897792
+      },
+      ":server:compileTestJava": {
+        "identity": ":server:compileTestJava",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:23:45.806213940Z",
+        "endUTC": "2026-09-10T05:24:18.176776255Z",
+        "seconds": 32.370563072
+      },
+      ":server:testClasses": {
+        "identity": ":server:testClasses",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:24:18.177667006Z",
+        "endUTC": "2026-09-10T05:24:18.177764666Z",
+        "seconds": 9.7024e-05
+      },
+      ":server:compileInternalClusterTestJava": {
+        "identity": ":server:compileInternalClusterTestJava",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:24:18.178389957Z",
+        "endUTC": "2026-09-10T05:24:28.428296509Z",
+        "seconds": 10.2499072
+      },
+      ":server:internalClusterTestClasses": {
+        "identity": ":server:internalClusterTestClasses",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:24:28.429111590Z",
+        "endUTC": "2026-09-10T05:24:28.429195960Z",
+        "seconds": 8.3968e-05
+      },
+      ":server:checkstyle": {
+        "identity": ":server:checkstyle",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:24:28.429411851Z",
+        "endUTC": "2026-09-10T05:24:28.429458511Z",
+        "seconds": 4.7104e-05
+      },
+      ":server:jarHell": {
+        "identity": ":server:jarHell",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:24:28.868204655Z",
+        "endUTC": "2026-09-10T05:24:29.254876146Z",
+        "seconds": 0.386671872
+      },
+      ":server:spotlessJavaCheck": {
+        "identity": ":server:spotlessJavaCheck",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:24:29.310834015Z",
+        "endUTC": "2026-09-10T05:24:29.313388220Z",
+        "seconds": 0.002554112
+      },
+      ":server:thirdPartyAuditResources": {
+        "identity": ":server:thirdPartyAuditResources",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:24:29.637663290Z",
+        "endUTC": "2026-09-10T05:24:29.640724125Z",
+        "seconds": 0.003060992
+      },
+      ":server:internalClusterTestTestingConventions": {
+        "identity": ":server:internalClusterTestTestingConventions",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:24:29.313905400Z",
+        "endUTC": "2026-09-10T05:24:30.400315754Z",
+        "seconds": 1.08641024
+      },
+      ":server:forbiddenApisInternalClusterTest": {
+        "identity": ":server:forbiddenApisInternalClusterTest",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:24:28.430125312Z",
+        "endUTC": "2026-09-10T05:24:30.424421313Z",
+        "seconds": 1.994296064
+      },
+      ":server:testTestingConventions": {
+        "identity": ":server:testTestingConventions",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:24:29.586848929Z",
+        "endUTC": "2026-09-10T05:24:32.185582390Z",
+        "seconds": 2.598733824
+      },
+      ":server:forbiddenApisTest": {
+        "identity": ":server:forbiddenApisTest",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:24:28.781767496Z",
+        "endUTC": "2026-09-10T05:24:32.185647180Z",
+        "seconds": 3.403880192
+      },
+      ":server:loggerUsageCheck": {
+        "identity": ":server:loggerUsageCheck",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:24:29.255341606Z",
+        "endUTC": "2026-09-10T05:24:33.054583664Z",
+        "seconds": 3.799241984
+      },
+      ":server:thirdPartyAudit": {
+        "identity": ":server:thirdPartyAudit",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:24:29.641356726Z",
+        "endUTC": "2026-09-10T05:24:36.785730262Z",
+        "seconds": 7.14437376
+      },
+      ":server:forbiddenApis": {
+        "identity": ":server:forbiddenApis",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:24:36.786246962Z",
+        "endUTC": "2026-09-10T05:24:36.786330612Z",
+        "seconds": 8.3968e-05
+      },
+      ":server:testingConventions": {
+        "identity": ":server:testingConventions",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:24:36.786542083Z",
+        "endUTC": "2026-09-10T05:24:36.786588633Z",
+        "seconds": 4.608e-05
+      },
+      ":server:validateModule": {
+        "identity": ":server:validateModule",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:24:36.786941293Z",
+        "endUTC": "2026-09-10T05:24:36.875152475Z",
+        "seconds": 0.0882112
+      },
+      ":server:generatePomFileForElasticPublication": {
+        "identity": ":server:generatePomFileForElasticPublication",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:24:36.875624046Z",
+        "endUTC": "2026-09-10T05:24:36.945283947Z",
+        "seconds": 0.06965888
+      },
+      ":server:validateElasticPom": {
+        "identity": ":server:validateElasticPom",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:24:36.946122929Z",
+        "endUTC": "2026-09-10T05:24:36.963241716Z",
+        "seconds": 0.017119232
+      },
+      ":server:validatePom": {
+        "identity": ":server:validatePom",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:24:36.963697157Z",
+        "endUTC": "2026-09-10T05:24:36.963802147Z",
+        "seconds": 0.000105216
+      },
+      ":server:collectTransportVersionReferences": {
+        "identity": ":server:collectTransportVersionReferences",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:24:36.964099468Z",
+        "endUTC": "2026-09-10T05:24:37.282538278Z",
+        "seconds": 0.318439168
+      },
+      ":server:validateTransportVersionReferences": {
+        "identity": ":server:validateTransportVersionReferences",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:24:37.283254720Z",
+        "endUTC": "2026-09-10T05:24:37.296879861Z",
+        "seconds": 0.013625088
+      },
+      ":server:jar": {
+        "identity": ":server:jar",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:24:37.297402412Z",
+        "endUTC": "2026-09-10T05:24:38.759762558Z",
+        "seconds": 1.46236032
+      },
+      ":server:validateTransportVersionResources": {
+        "identity": ":server:validateTransportVersionResources",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:24:39.505737315Z",
+        "endUTC": "2026-09-10T05:24:42.456966428Z",
+        "seconds": 2.951228928
+      },
+      ":server:precommit": {
+        "identity": ":server:precommit",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:24:42.457458809Z",
+        "endUTC": "2026-09-10T05:24:42.457555749Z",
+        "seconds": 9.7024e-05
+      }
+    },
+    "processTotals": [
+      {
+        "pid": 2223310,
+        "role": "supervisor",
+        "observedCPUSeconds": 208.34,
+        "observedReadBytes": 49152,
+        "observedWriteBytes": 352256,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2223316,
+        "role": "other",
+        "observedCPUSeconds": 1.86,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 163840,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2223445,
+        "role": "daemon",
+        "observedCPUSeconds": 658.74,
+        "observedReadBytes": 12374016,
+        "observedWriteBytes": 2346987520,
+        "observedMajorFaults": 7
+      },
+      {
+        "pid": 2224164,
+        "role": "other-worker",
+        "observedCPUSeconds": 2.18,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 4096,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2224191,
+        "role": "checkstyle-worker",
+        "observedCPUSeconds": 31.25,
+        "observedReadBytes": 12288,
+        "observedWriteBytes": 155648,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2224255,
+        "role": "checkstyle-worker",
+        "observedCPUSeconds": 124.1,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 5484544,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2224295,
+        "role": "other-worker",
+        "observedCPUSeconds": 3.76,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 16384,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2224360,
+        "role": "other-worker",
+        "observedCPUSeconds": 8.88,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 520192,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2224378,
+        "role": "checkstyle-worker",
+        "observedCPUSeconds": 87.71,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 774144,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2224485,
+        "role": "other-worker",
+        "observedCPUSeconds": 3.07,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 24576,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2224572,
+        "role": "other-worker",
+        "observedCPUSeconds": 5.04,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 40960,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2224606,
+        "role": "other",
+        "observedCPUSeconds": 0.0,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2224633,
+        "role": "other-worker",
+        "observedCPUSeconds": 2.78,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 24576,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2224759,
+        "role": "other-worker",
+        "observedCPUSeconds": 3.15,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 45056,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2225798,
+        "role": "other",
+        "observedCPUSeconds": 0.0,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2225863,
+        "role": "other",
+        "observedCPUSeconds": 2.73,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2226039,
+        "role": "other",
+        "observedCPUSeconds": 4.69,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      }
+    ]
+  },
+  {
+    "attempt": "r1-001-g0-I",
+    "originalOrdinal": 7,
+    "arm": "I",
+    "nativeSeconds": 83.236116679,
+    "customerEnvelopeSeconds": 83.413478869,
+    "startUTC": "2026-09-10T05:40:38.550155Z",
+    "endUTC": "2026-09-10T05:42:01.786272Z",
+    "adapterTasks": [
+      {
+        "task": ":server:checkstyleTest",
+        "inputFiles": 2825,
+        "reusedFiles": 2819,
+        "processedFiles": 6,
+        "adapterSeconds": 2.234872766,
+        "engineSeconds": 1.764735345,
+        "prepareSeconds": 0.031767394,
+        "commitSeconds": 0.04039182,
+        "afterAdapterBeforeCommitSeconds": 42.908340772,
+        "taskSeconds": 51.759392,
+        "workerPID": 2238031,
+        "adapterEndUTC": "2026-09-10T05:41:14.081713Z",
+        "commitStartUTC": "2026-09-10T05:41:56.990053Z"
+      },
+      {
+        "task": ":server:checkstyleMain",
+        "inputFiles": 4959,
+        "reusedFiles": 4954,
+        "processedFiles": 5,
+        "adapterSeconds": 1.650501243,
+        "engineSeconds": 1.272521957,
+        "prepareSeconds": 0.030978272,
+        "commitSeconds": 0.043706947,
+        "afterAdapterBeforeCommitSeconds": 40.184612491,
+        "taskSeconds": 51.903916032,
+        "workerPID": 2238005,
+        "adapterEndUTC": "2026-09-10T05:41:16.737823Z",
+        "commitStartUTC": "2026-09-10T05:41:56.922435Z"
+      }
+    ],
+    "tasks": {
+      ":server:compileJava": {
+        "identity": ":server:compileJava",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:40:44.185345222Z",
+        "endUTC": "2026-09-10T05:41:05.034604480Z",
+        "seconds": 20.849259008
+      },
+      ":server:generateTestBuildInfo": {
+        "identity": ":server:generateTestBuildInfo",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:41:05.035549282Z",
+        "endUTC": "2026-09-10T05:41:05.061634725Z",
+        "seconds": 0.02608512
+      },
+      ":server:classes": {
+        "identity": ":server:classes",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:41:05.066794485Z",
+        "endUTC": "2026-09-10T05:41:05.066858835Z",
+        "seconds": 6.4e-05
+      },
+      ":server:checkstyleInternalClusterTest": {
+        "identity": ":server:checkstyleInternalClusterTest",
+        "outcome": "UP-TO-DATE",
+        "action": false,
+        "startUTC": "2026-09-10T05:41:05.070919623Z",
+        "endUTC": "2026-09-10T05:41:05.072797987Z",
+        "seconds": 0.001878272
+      },
+      ":server:filepermissions": {
+        "identity": ":server:filepermissions",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:41:05.395048654Z",
+        "endUTC": "2026-09-10T05:41:05.796611750Z",
+        "seconds": 0.401563136
+      },
+      ":server:forbiddenApisMain": {
+        "identity": ":server:forbiddenApisMain",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:41:05.801223710Z",
+        "endUTC": "2026-09-10T05:41:10.107034368Z",
+        "seconds": 4.305810944
+      },
+      ":server:forbiddenPatterns": {
+        "identity": ":server:forbiddenPatterns",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:41:06.298338708Z",
+        "endUTC": "2026-09-10T05:41:11.718771469Z",
+        "seconds": 5.420432896
+      },
+      ":server:licenseHeaders": {
+        "identity": ":server:licenseHeaders",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:41:11.721060813Z",
+        "endUTC": "2026-09-10T05:41:13.920936280Z",
+        "seconds": 2.199876096
+      },
+      ":server:compileTestJava": {
+        "identity": ":server:compileTestJava",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:41:13.921702612Z",
+        "endUTC": "2026-09-10T05:41:47.283093379Z",
+        "seconds": 33.361391104
+      },
+      ":server:testClasses": {
+        "identity": ":server:testClasses",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:41:47.283894660Z",
+        "endUTC": "2026-09-10T05:41:47.283986131Z",
+        "seconds": 9.216e-05
+      },
+      ":server:compileInternalClusterTestJava": {
+        "identity": ":server:compileInternalClusterTestJava",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:41:47.284570002Z",
+        "endUTC": "2026-09-10T05:41:56.394435606Z",
+        "seconds": 9.10986496
+      },
+      ":server:internalClusterTestClasses": {
+        "identity": ":server:internalClusterTestClasses",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:41:56.394882847Z",
+        "endUTC": "2026-09-10T05:41:56.394964427Z",
+        "seconds": 8.192e-05
+      },
+      ":server:jarHell": {
+        "identity": ":server:jarHell",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:41:56.538758952Z",
+        "endUTC": "2026-09-10T05:41:56.884413185Z",
+        "seconds": 0.345654784
+      },
+      ":server:checkstyleMain": {
+        "identity": ":server:checkstyleMain",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:41:05.073194858Z",
+        "endUTC": "2026-09-10T05:41:56.977110038Z",
+        "seconds": 51.903916032
+      },
+      ":server:checkstyleTest": {
+        "identity": ":server:checkstyleTest",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:41:05.281093245Z",
+        "endUTC": "2026-09-10T05:41:57.040485324Z",
+        "seconds": 51.759392
+      },
+      ":server:checkstyle": {
+        "identity": ":server:checkstyle",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:41:57.043956061Z",
+        "endUTC": "2026-09-10T05:41:57.044080061Z",
+        "seconds": 0.00012416
+      },
+      ":server:splitPackagesAudit": {
+        "identity": ":server:splitPackagesAudit",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:41:56.977730200Z",
+        "endUTC": "2026-09-10T05:41:57.052774968Z",
+        "seconds": 0.07504384
+      },
+      ":server:forbiddenApisInternalClusterTest": {
+        "identity": ":server:forbiddenApisInternalClusterTest",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:41:56.395605869Z",
+        "endUTC": "2026-09-10T05:41:58.060085819Z",
+        "seconds": 1.66448
+      },
+      ":server:spotlessJava": {
+        "identity": ":server:spotlessJava",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:41:57.044786682Z",
+        "endUTC": "2026-09-10T05:41:58.519489047Z",
+        "seconds": 1.474703104
+      },
+      ":server:spotlessJavaCheck": {
+        "identity": ":server:spotlessJavaCheck",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:41:58.520231188Z",
+        "endUTC": "2026-09-10T05:41:58.520877109Z",
+        "seconds": 0.000645888
+      },
+      ":server:validateModule": {
+        "identity": ":server:validateModule",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:41:58.625799447Z",
+        "endUTC": "2026-09-10T05:41:58.777738667Z",
+        "seconds": 0.151939072
+      },
+      ":server:generatePomFileForElasticPublication": {
+        "identity": ":server:generatePomFileForElasticPublication",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:41:58.778362958Z",
+        "endUTC": "2026-09-10T05:41:58.814365669Z",
+        "seconds": 0.036002816
+      },
+      ":server:internalClusterTestTestingConventions": {
+        "identity": ":server:internalClusterTestTestingConventions",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:41:58.524236666Z",
+        "endUTC": "2026-09-10T05:41:59.046600438Z",
+        "seconds": 0.52236416
+      },
+      ":server:collectTransportVersionReferences": {
+        "identity": ":server:collectTransportVersionReferences",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:41:58.816280363Z",
+        "endUTC": "2026-09-10T05:41:59.239831700Z",
+        "seconds": 0.423551232
+      },
+      ":server:testTestingConventions": {
+        "identity": ":server:testTestingConventions",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:41:58.570194437Z",
+        "endUTC": "2026-09-10T05:41:59.976758285Z",
+        "seconds": 1.406564096
+      },
+      ":server:forbiddenApisTest": {
+        "identity": ":server:forbiddenApisTest",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:41:56.448668484Z",
+        "endUTC": "2026-09-10T05:42:00.086994363Z",
+        "seconds": 3.638326016
+      },
+      ":server:jar": {
+        "identity": ":server:jar",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:41:59.245726481Z",
+        "endUTC": "2026-09-10T05:42:00.926617001Z",
+        "seconds": 1.680890624
+      },
+      ":server:forbiddenApis": {
+        "identity": ":server:forbiddenApis",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:42:00.927438283Z",
+        "endUTC": "2026-09-10T05:42:00.927559983Z",
+        "seconds": 0.000120832
+      },
+      ":server:testingConventions": {
+        "identity": ":server:testingConventions",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:42:00.927824443Z",
+        "endUTC": "2026-09-10T05:42:00.927876464Z",
+        "seconds": 5.1968e-05
+      },
+      ":server:loggerUsageCheck": {
+        "identity": ":server:loggerUsageCheck",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:41:56.885109987Z",
+        "endUTC": "2026-09-10T05:42:01.202706296Z",
+        "seconds": 4.317597184
+      },
+      ":server:precommit": {
+        "identity": ":server:precommit",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:42:01.286885212Z",
+        "endUTC": "2026-09-10T05:42:01.286938982Z",
+        "seconds": 5.2736e-05
+      }
+    },
+    "processTotals": [
+      {
+        "pid": 2231858,
+        "role": "supervisor",
+        "observedCPUSeconds": 80.02,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 311296,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2231994,
+        "role": "daemon",
+        "observedCPUSeconds": 255.71,
+        "observedReadBytes": 32768,
+        "observedWriteBytes": 1279094784,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2233009,
+        "role": "other-worker",
+        "observedCPUSeconds": 0.25,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2233155,
+        "role": "other-worker",
+        "observedCPUSeconds": 0.24,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2233180,
+        "role": "other-worker",
+        "observedCPUSeconds": 0.21,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2233361,
+        "role": "other-worker",
+        "observedCPUSeconds": 0.21,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2233393,
+        "role": "other-worker",
+        "observedCPUSeconds": 0.21,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2233547,
+        "role": "other-worker",
+        "observedCPUSeconds": 0.22,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2233613,
+        "role": "other-worker",
+        "observedCPUSeconds": 0.21,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2237621,
+        "role": "other",
+        "observedCPUSeconds": 0.51,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2238005,
+        "role": "checkstyle-worker",
+        "observedCPUSeconds": 17.22,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 2899968,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2238031,
+        "role": "checkstyle-worker",
+        "observedCPUSeconds": 11.98,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 1671168,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2238500,
+        "role": "other",
+        "observedCPUSeconds": 0.0,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2238530,
+        "role": "other",
+        "observedCPUSeconds": 5.47,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      }
+    ]
+  },
+  {
+    "attempt": "r1-001-g0-N",
+    "originalOrdinal": 7,
+    "arm": "N",
+    "nativeSeconds": 98.087507275,
+    "customerEnvelopeSeconds": 98.184899819,
+    "startUTC": "2026-09-10T05:43:14.699845Z",
+    "endUTC": "2026-09-10T05:44:52.787352Z",
+    "adapterTasks": [],
+    "nativeEngineTasks": [
+      {
+        "task": ":server:checkstyleTest",
+        "inputFiles": 2825,
+        "engineSeconds": 49.257615704,
+        "taskSeconds": 55.804080128,
+        "workerPID": 2239566,
+        "engineStartUTC": "2026-09-10T05:43:47.960316Z",
+        "engineEndUTC": "2026-09-10T05:44:37.217931Z",
+        "afterEngineSeconds": 0.060205056
+      },
+      {
+        "task": ":server:checkstyleMain",
+        "inputFiles": 4959,
+        "engineSeconds": 60.052591276,
+        "taskSeconds": 70.268542976,
+        "workerPID": 2239541,
+        "engineStartUTC": "2026-09-10T05:43:51.434168Z",
+        "engineEndUTC": "2026-09-10T05:44:51.486759Z",
+        "afterEngineSeconds": 0.062712064
+      }
+    ],
+    "tasks": {
+      ":server:compileJava": {
+        "identity": ":server:compileJava",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:43:20.276964326Z",
+        "endUTC": "2026-09-10T05:43:41.142994807Z",
+        "seconds": 20.86603008
+      },
+      ":server:generateTestBuildInfo": {
+        "identity": ":server:generateTestBuildInfo",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:43:41.144376610Z",
+        "endUTC": "2026-09-10T05:43:41.266178044Z",
+        "seconds": 0.121801728
+      },
+      ":server:classes": {
+        "identity": ":server:classes",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:43:41.271731125Z",
+        "endUTC": "2026-09-10T05:43:41.271820225Z",
+        "seconds": 8.9088e-05
+      },
+      ":server:checkstyleInternalClusterTest": {
+        "identity": ":server:checkstyleInternalClusterTest",
+        "outcome": "UP-TO-DATE",
+        "action": false,
+        "startUTC": "2026-09-10T05:43:41.278580088Z",
+        "endUTC": "2026-09-10T05:43:41.280525262Z",
+        "seconds": 0.001945088
+      },
+      ":server:filepermissions": {
+        "identity": ":server:filepermissions",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:43:41.574658247Z",
+        "endUTC": "2026-09-10T05:43:41.794904261Z",
+        "seconds": 0.220246272
+      },
+      ":server:forbiddenApisMain": {
+        "identity": ":server:forbiddenApisMain",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:43:41.827570754Z",
+        "endUTC": "2026-09-10T05:43:46.122024464Z",
+        "seconds": 4.294454016
+      },
+      ":server:forbiddenPatterns": {
+        "identity": ":server:forbiddenPatterns",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:43:42.210724410Z",
+        "endUTC": "2026-09-10T05:43:48.311167667Z",
+        "seconds": 6.10044288
+      },
+      ":server:licenseHeaders": {
+        "identity": ":server:licenseHeaders",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:43:48.311964649Z",
+        "endUTC": "2026-09-10T05:43:50.132125261Z",
+        "seconds": 1.820160768
+      },
+      ":server:splitPackagesAudit": {
+        "identity": ":server:splitPackagesAudit",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:43:50.132742693Z",
+        "endUTC": "2026-09-10T05:43:50.275846597Z",
+        "seconds": 0.143104
+      },
+      ":server:spotlessJava": {
+        "identity": ":server:spotlessJava",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:43:50.149793765Z",
+        "endUTC": "2026-09-10T05:43:51.364455215Z",
+        "seconds": 1.214661888
+      },
+      ":server:compileTestJava": {
+        "identity": ":server:compileTestJava",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:43:51.366750200Z",
+        "endUTC": "2026-09-10T05:44:33.930213487Z",
+        "seconds": 42.563462912
+      },
+      ":server:testClasses": {
+        "identity": ":server:testClasses",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:44:33.931869050Z",
+        "endUTC": "2026-09-10T05:44:33.932034410Z",
+        "seconds": 0.00016512
+      },
+      ":server:checkstyleTest": {
+        "identity": ":server:checkstyleTest",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:43:41.474056444Z",
+        "endUTC": "2026-09-10T05:44:37.278136213Z",
+        "seconds": 55.804080128
+      },
+      ":server:compileInternalClusterTestJava": {
+        "identity": ":server:compileInternalClusterTestJava",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:44:33.933083402Z",
+        "endUTC": "2026-09-10T05:44:44.097166334Z",
+        "seconds": 10.164082944
+      },
+      ":server:internalClusterTestClasses": {
+        "identity": ":server:internalClusterTestClasses",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:44:44.097822985Z",
+        "endUTC": "2026-09-10T05:44:44.097918785Z",
+        "seconds": 9.6e-05
+      },
+      ":server:jarHell": {
+        "identity": ":server:jarHell",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:44:44.243052810Z",
+        "endUTC": "2026-09-10T05:44:44.702945961Z",
+        "seconds": 0.459892992
+      },
+      ":server:spotlessJavaCheck": {
+        "identity": ":server:spotlessJavaCheck",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:44:44.750690732Z",
+        "endUTC": "2026-09-10T05:44:44.751054392Z",
+        "seconds": 0.000364032
+      },
+      ":server:validateModule": {
+        "identity": ":server:validateModule",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:44:44.928444839Z",
+        "endUTC": "2026-09-10T05:44:45.094479593Z",
+        "seconds": 0.1660352
+      },
+      ":server:generatePomFileForElasticPublication": {
+        "identity": ":server:generatePomFileForElasticPublication",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:44:45.094944284Z",
+        "endUTC": "2026-09-10T05:44:45.133485807Z",
+        "seconds": 0.038541056
+      },
+      ":server:forbiddenApisInternalClusterTest": {
+        "identity": ":server:forbiddenApisInternalClusterTest",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:44:44.098626066Z",
+        "endUTC": "2026-09-10T05:44:45.906107921Z",
+        "seconds": 1.807481088
+      },
+      ":server:internalClusterTestTestingConventions": {
+        "identity": ":server:internalClusterTestTestingConventions",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:44:44.751539543Z",
+        "endUTC": "2026-09-10T05:44:46.205458068Z",
+        "seconds": 1.453918976
+      },
+      ":server:collectTransportVersionReferences": {
+        "identity": ":server:collectTransportVersionReferences",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:44:45.135607501Z",
+        "endUTC": "2026-09-10T05:44:46.311930659Z",
+        "seconds": 1.176322816
+      },
+      ":server:testTestingConventions": {
+        "identity": ":server:testTestingConventions",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:44:44.851839083Z",
+        "endUTC": "2026-09-10T05:44:47.173047180Z",
+        "seconds": 2.321208064
+      },
+      ":server:forbiddenApisTest": {
+        "identity": ":server:forbiddenApisTest",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:44:44.149385583Z",
+        "endUTC": "2026-09-10T05:44:47.708115743Z",
+        "seconds": 3.55873024
+      },
+      ":server:jar": {
+        "identity": ":server:jar",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:44:46.315210786Z",
+        "endUTC": "2026-09-10T05:44:48.491511156Z",
+        "seconds": 2.176301056
+      },
+      ":server:forbiddenApis": {
+        "identity": ":server:forbiddenApis",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:44:48.492661579Z",
+        "endUTC": "2026-09-10T05:44:48.492786149Z",
+        "seconds": 0.000124928
+      },
+      ":server:testingConventions": {
+        "identity": ":server:testingConventions",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:44:48.493086639Z",
+        "endUTC": "2026-09-10T05:44:48.493141219Z",
+        "seconds": 5.4784e-05
+      },
+      ":server:loggerUsageCheck": {
+        "identity": ":server:loggerUsageCheck",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:44:44.703397462Z",
+        "endUTC": "2026-09-10T05:44:49.368091816Z",
+        "seconds": 4.664694016
+      },
+      ":server:checkstyleMain": {
+        "identity": ":server:checkstyleMain",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:43:41.280928893Z",
+        "endUTC": "2026-09-10T05:44:51.549471043Z",
+        "seconds": 70.268542976
+      },
+      ":server:checkstyle": {
+        "identity": ":server:checkstyle",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:44:51.549811994Z",
+        "endUTC": "2026-09-10T05:44:51.549868894Z",
+        "seconds": 5.7088e-05
+      },
+      ":server:precommit": {
+        "identity": ":server:precommit",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:44:51.550069695Z",
+        "endUTC": "2026-09-10T05:44:51.550111625Z",
+        "seconds": 4.1984e-05
+      }
+    },
+    "processTotals": [
+      {
+        "pid": 2223310,
+        "role": "supervisor",
+        "observedCPUSeconds": 94.47,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 577536,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2223445,
+        "role": "daemon",
+        "observedCPUSeconds": 279.75,
+        "observedReadBytes": 28602368,
+        "observedWriteBytes": 1310687232,
+        "observedMajorFaults": 1
+      },
+      {
+        "pid": 2224164,
+        "role": "other-worker",
+        "observedCPUSeconds": 0.36,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2224295,
+        "role": "other-worker",
+        "observedCPUSeconds": 0.35,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2224360,
+        "role": "other-worker",
+        "observedCPUSeconds": 0.31,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2224485,
+        "role": "other-worker",
+        "observedCPUSeconds": 0.31,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2224572,
+        "role": "other-worker",
+        "observedCPUSeconds": 0.29,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2224633,
+        "role": "other-worker",
+        "observedCPUSeconds": 0.32,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2224759,
+        "role": "other-worker",
+        "observedCPUSeconds": 0.3,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2239217,
+        "role": "other",
+        "observedCPUSeconds": 1.04,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 32768,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2239541,
+        "role": "checkstyle-worker",
+        "observedCPUSeconds": 117.67,
+        "observedReadBytes": 4096,
+        "observedWriteBytes": 1798144,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2239566,
+        "role": "checkstyle-worker",
+        "observedCPUSeconds": 88.06,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 1097728,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2240356,
+        "role": "other",
+        "observedCPUSeconds": 8.12,
+        "observedReadBytes": 4096,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      }
+    ]
+  },
+  {
+    "attempt": "r1-002-g0-I",
+    "originalOrdinal": 8,
+    "arm": "I",
+    "nativeSeconds": 7.061369913,
+    "customerEnvelopeSeconds": 7.156425625,
+    "startUTC": "2026-09-10T05:49:06.956452Z",
+    "endUTC": "2026-09-10T05:49:14.017822Z",
+    "adapterTasks": [],
+    "tasks": {
+      ":server:checkstyleInternalClusterTest": {
+        "identity": ":server:checkstyleInternalClusterTest",
+        "outcome": "UP-TO-DATE",
+        "action": false,
+        "startUTC": "2026-09-10T05:49:12.434645995Z",
+        "endUTC": "2026-09-10T05:49:12.436200398Z",
+        "seconds": 0.001554944
+      },
+      ":server:checkstyleMain": {
+        "identity": ":server:checkstyleMain",
+        "outcome": "UP-TO-DATE",
+        "action": false,
+        "startUTC": "2026-09-10T05:49:12.438917823Z",
+        "endUTC": "2026-09-10T05:49:12.448823311Z",
+        "seconds": 0.009906176
+      },
+      ":server:checkstyleTest": {
+        "identity": ":server:checkstyleTest",
+        "outcome": "UP-TO-DATE",
+        "action": false,
+        "startUTC": "2026-09-10T05:49:12.460514682Z",
+        "endUTC": "2026-09-10T05:49:12.463641028Z",
+        "seconds": 0.003126784
+      },
+      ":server:checkstyle": {
+        "identity": ":server:checkstyle",
+        "outcome": "UP-TO-DATE",
+        "action": false,
+        "startUTC": "2026-09-10T05:49:12.463811268Z",
+        "endUTC": "2026-09-10T05:49:12.463858248Z",
+        "seconds": 4.7104e-05
+      },
+      ":server:generatePomFileForElasticPublication": {
+        "identity": ":server:generatePomFileForElasticPublication",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:49:12.646477659Z",
+        "endUTC": "2026-09-10T05:49:12.655634465Z",
+        "seconds": 0.009156864
+      }
+    },
+    "processTotals": [
+      {
+        "pid": 2231858,
+        "role": "supervisor",
+        "observedCPUSeconds": 5.99,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 81920,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2231994,
+        "role": "daemon",
+        "observedCPUSeconds": 24.15,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 10702848,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2233009,
+        "role": "other-worker",
+        "observedCPUSeconds": 0.01,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2233155,
+        "role": "other-worker",
+        "observedCPUSeconds": 0.02,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2233180,
+        "role": "other-worker",
+        "observedCPUSeconds": 0.02,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2233361,
+        "role": "other-worker",
+        "observedCPUSeconds": 0.02,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2233393,
+        "role": "other-worker",
+        "observedCPUSeconds": 0.02,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2233547,
+        "role": "other-worker",
+        "observedCPUSeconds": 0.01,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2233613,
+        "role": "other-worker",
+        "observedCPUSeconds": 0.02,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2243343,
+        "role": "other",
+        "observedCPUSeconds": 0.26,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      }
+    ]
+  },
+  {
+    "attempt": "r1-002-g0-N",
+    "originalOrdinal": 8,
+    "arm": "N",
+    "nativeSeconds": 7.137815316,
+    "customerEnvelopeSeconds": 7.223962373,
+    "startUTC": "2026-09-10T05:48:26.113708Z",
+    "endUTC": "2026-09-10T05:48:33.251523Z",
+    "adapterTasks": [],
+    "nativeEngineTasks": [],
+    "tasks": {
+      ":server:checkstyleInternalClusterTest": {
+        "identity": ":server:checkstyleInternalClusterTest",
+        "outcome": "UP-TO-DATE",
+        "action": false,
+        "startUTC": "2026-09-10T05:48:31.619368453Z",
+        "endUTC": "2026-09-10T05:48:31.623150540Z",
+        "seconds": 0.003781888
+      },
+      ":server:checkstyleMain": {
+        "identity": ":server:checkstyleMain",
+        "outcome": "UP-TO-DATE",
+        "action": false,
+        "startUTC": "2026-09-10T05:48:31.646076452Z",
+        "endUTC": "2026-09-10T05:48:31.654670357Z",
+        "seconds": 0.008594176
+      },
+      ":server:checkstyleTest": {
+        "identity": ":server:checkstyleTest",
+        "outcome": "UP-TO-DATE",
+        "action": false,
+        "startUTC": "2026-09-10T05:48:31.655580879Z",
+        "endUTC": "2026-09-10T05:48:31.660352688Z",
+        "seconds": 0.00477184
+      },
+      ":server:checkstyle": {
+        "identity": ":server:checkstyle",
+        "outcome": "UP-TO-DATE",
+        "action": false,
+        "startUTC": "2026-09-10T05:48:31.660636738Z",
+        "endUTC": "2026-09-10T05:48:31.660696598Z",
+        "seconds": 6.016e-05
+      },
+      ":server:generatePomFileForElasticPublication": {
+        "identity": ":server:generatePomFileForElasticPublication",
+        "outcome": "EXECUTED",
+        "action": true,
+        "startUTC": "2026-09-10T05:48:31.925268730Z",
+        "endUTC": "2026-09-10T05:48:31.934905107Z",
+        "seconds": 0.00963712
+      }
+    },
+    "processTotals": [
+      {
+        "pid": 2223310,
+        "role": "supervisor",
+        "observedCPUSeconds": 5.99,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 86016,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2223445,
+        "role": "daemon",
+        "observedCPUSeconds": 27.2,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 9605120,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2224164,
+        "role": "other-worker",
+        "observedCPUSeconds": 0.02,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2224295,
+        "role": "other-worker",
+        "observedCPUSeconds": 0.02,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2224360,
+        "role": "other-worker",
+        "observedCPUSeconds": 0.03,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2224485,
+        "role": "other-worker",
+        "observedCPUSeconds": 0.02,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2224572,
+        "role": "other-worker",
+        "observedCPUSeconds": 0.03,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2224633,
+        "role": "other-worker",
+        "observedCPUSeconds": 0.02,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2224759,
+        "role": "other-worker",
+        "observedCPUSeconds": 0.02,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 0,
+        "observedMajorFaults": 0
+      },
+      {
+        "pid": 2242802,
+        "role": "other",
+        "observedCPUSeconds": 0.65,
+        "observedReadBytes": 0,
+        "observedWriteBytes": 16384,
+        "observedMajorFaults": 0
+      }
+    ]
+  }
+]

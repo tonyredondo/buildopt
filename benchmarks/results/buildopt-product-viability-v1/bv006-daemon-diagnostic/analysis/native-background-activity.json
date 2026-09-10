@@ -1,0 +1,1385 @@
+{
+  "scope": "Descriptive sampled stacks and clipped events; sampled counts are not CPU fractions and concurrent GC duration is not pause time",
+  "rows": [
+    {
+      "sequence": 17,
+      "arm": "N",
+      "nativeMS": 5381.831439,
+      "daemonSampledCPUMS": 12940.0,
+      "executionSampleThreads": {
+        "Daemon worker Thread 2": 35,
+        "included builds": 1,
+        "build event listener": 2,
+        "gradle-enterprise-worker-8": 39,
+        "Resource Usage Collector NetworkSpeed": 1,
+        "Execution worker Thread 4": 3,
+        "Execution worker Thread 5": 7,
+        "Execution worker Thread 2": 3,
+        "included builds Thread 2": 4,
+        "Execution worker": 2,
+        "Execution worker Thread 6": 2,
+        "Execution worker Thread 7": 2
+      },
+      "nativeMethodSampleThreads": {
+        "process reaper (pid 853850)": 13,
+        "/127.0.0.1:34145 to /127.0.0.1:53580 workers Thread 5": 13,
+        "process reaper (pid 853904)": 13,
+        "process reaper (pid 853981)": 13,
+        "/127.0.0.1:39201 to /127.0.0.1:56176 workers Thread 5": 13,
+        "/127.0.0.1:41825 to /127.0.0.1:34648 workers Thread 5": 14,
+        "process reaper (pid 854058)": 14,
+        "/127.0.0.1:37113 to /127.0.0.1:49970 workers Thread 5": 14,
+        "Handler for socket connection from /127.0.0.1:33585 to /127.0.0.1:33160": 13,
+        "Incoming local TCP Connector on port 33585": 13,
+        "File lock request listener": 13,
+        "File watcher server": 13,
+        "process reaper (pid 853603)": 13,
+        "/127.0.0.1:36631 to /127.0.0.1:37276 workers Thread 5": 13,
+        "process reaper (pid 853677)": 13,
+        "/127.0.0.1:43493 to /127.0.0.1:34804 workers Thread 5": 13,
+        "process reaper (pid 853712)": 13,
+        "/127.0.0.1:36333 to /127.0.0.1:39576 workers Thread 5": 13,
+        "Cache worker for Build Output Cleanup Cache (/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-daemon-diagnostic/owner-02/run/r1/N/repo/.gradle/buildOutputCleanup)": 1,
+        "Execution worker Thread 7": 1,
+        "included builds Thread 2": 1
+      },
+      "gradleEnterpriseTop3FrameOccurrences": [
+        [
+          "com/google/common/collect/RegularImmutableMap.get",
+          24
+        ],
+        [
+          "org/gradle/api/internal/tasks/BaseFilePropertyVisitState.visitEntry",
+          11
+        ],
+        [
+          "java/lang/String.encodeUTF8",
+          5
+        ],
+        [
+          "java/lang/String.encode",
+          5
+        ],
+        [
+          "java/lang/String.getBytes",
+          5
+        ],
+        [
+          "java/util/HashMap.computeIfAbsent",
+          4
+        ]
+      ],
+      "GCEvents": [
+        {
+          "name": "G1New",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 103.761471,
+          "overlapMS": 103.761471
+        },
+        {
+          "name": "G1New",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 78.401301,
+          "overlapMS": 78.401301
+        },
+        {
+          "name": "G1Old",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 3658.727878,
+          "overlapMS": 1605.125856
+        }
+      ],
+      "daemonWorkerWaitUnionMS": {
+        "jdk.ThreadPark": 1687.979532,
+        "jdk.FileRead": 24.298367
+      }
+    },
+    {
+      "sequence": 18,
+      "arm": "I",
+      "nativeMS": 5118.486945,
+      "daemonSampledCPUMS": 10010.0,
+      "executionSampleThreads": {
+        "Daemon worker": 34,
+        "Execution worker Thread 3": 1,
+        "gradle-enterprise-worker-8": 35,
+        "Resource Usage Collector Processes": 1,
+        "Execution worker": 2,
+        "Execution worker Thread 2": 2,
+        "included builds Thread 2": 3,
+        "Execution worker Thread 6": 7,
+        "Execution worker Thread 7": 2,
+        "Execution worker Thread 5": 3,
+        "Execution worker Thread 4": 2
+      },
+      "nativeMethodSampleThreads": {
+        "process reaper (pid 856080)": 14,
+        "/127.0.0.1:45107 to /127.0.0.1:46108 workers Thread 5": 14,
+        "/127.0.0.1:42183 to /127.0.0.1:48826 workers Thread 5": 14,
+        "/127.0.0.1:36603 to /127.0.0.1:41158 workers Thread 5": 14,
+        "Handler for socket connection from /127.0.0.1:42015 to /127.0.0.1:40636": 14,
+        "Incoming local TCP Connector on port 42015": 14,
+        "File lock request listener": 14,
+        "File watcher server": 14,
+        "process reaper (pid 855730)": 14,
+        "/127.0.0.1:44109 to /127.0.0.1:38450 workers Thread 5": 14,
+        "process reaper (pid 855822)": 14,
+        "/127.0.0.1:43321 to /127.0.0.1:53524 workers Thread 5": 14,
+        "process reaper (pid 855920)": 14,
+        "/127.0.0.1:37001 to /127.0.0.1:53906 workers Thread 5": 14,
+        "process reaper (pid 856019)": 14,
+        "process reaper (pid 856203)": 13,
+        "gradle-enterprise-worker-8": 2,
+        "Daemon worker": 1,
+        "Execution worker": 1
+      },
+      "gradleEnterpriseTop3FrameOccurrences": [
+        [
+          "com/google/common/collect/RegularImmutableMap.get",
+          18
+        ],
+        [
+          "org/gradle/api/internal/tasks/BaseFilePropertyVisitState.visitEntry",
+          8
+        ],
+        [
+          "java/util/HashMap.computeIfAbsent",
+          7
+        ],
+        [
+          "com/gradle/scan/plugin/internal/c/o/a.a",
+          7
+        ],
+        [
+          "com/gradle/scan/plugin/internal/c/x/a/f.a",
+          6
+        ],
+        [
+          "com/gradle/scan/agent/serialization/scan/serializer/kryo/fc.a",
+          3
+        ]
+      ],
+      "GCEvents": [
+        {
+          "name": "G1New",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 62.914304,
+          "overlapMS": 62.914304
+        },
+        {
+          "name": "G1New",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 126.525859,
+          "overlapMS": 126.525859
+        }
+      ],
+      "daemonWorkerWaitUnionMS": {
+        "jdk.ThreadPark": 1352.828758
+      }
+    },
+    {
+      "sequence": 19,
+      "arm": "I",
+      "nativeMS": 5542.509075,
+      "daemonSampledCPUMS": 17750.0,
+      "executionSampleThreads": {
+        "Daemon worker": 34,
+        "Resource Usage Collector Memory": 1,
+        "gradle-enterprise-worker-9": 36,
+        "Resource Usage Collector Processes": 1,
+        "Execution worker Thread 2": 6,
+        "Execution worker Thread 6": 5,
+        "Execution worker Thread 4": 8,
+        "Execution worker Thread 7": 3,
+        "included builds Thread 2": 1,
+        "Execution worker": 6,
+        "Execution worker Thread 5": 3
+      },
+      "nativeMethodSampleThreads": {
+        "Daemon worker": 1,
+        "File lock request listener": 16,
+        "File watcher server": 16,
+        "process reaper (pid 855730)": 16,
+        "/127.0.0.1:44109 to /127.0.0.1:38450 workers Thread 5": 16,
+        "process reaper (pid 855822)": 16,
+        "/127.0.0.1:43321 to /127.0.0.1:53524 workers Thread 5": 16,
+        "process reaper (pid 855920)": 15,
+        "/127.0.0.1:37001 to /127.0.0.1:53906 workers Thread 5": 15,
+        "process reaper (pid 856019)": 15,
+        "process reaper (pid 856203)": 15,
+        "process reaper (pid 856080)": 15,
+        "/127.0.0.1:45107 to /127.0.0.1:46108 workers Thread 5": 15,
+        "/127.0.0.1:42183 to /127.0.0.1:48826 workers Thread 5": 15,
+        "/127.0.0.1:36603 to /127.0.0.1:41158 workers Thread 5": 15,
+        "Handler for socket connection from /127.0.0.1:42015 to /127.0.0.1:46926": 15,
+        "Incoming local TCP Connector on port 42015": 15
+      },
+      "gradleEnterpriseTop3FrameOccurrences": [
+        [
+          "com/google/common/collect/RegularImmutableMap.get",
+          22
+        ],
+        [
+          "org/gradle/api/internal/tasks/BaseFilePropertyVisitState.visitEntry",
+          12
+        ],
+        [
+          "com/gradle/scan/plugin/internal/c/o/a.a",
+          5
+        ],
+        [
+          "com/gradle/scan/plugin/internal/c/x/a/f.a",
+          4
+        ],
+        [
+          "com/google/common/collect/AbstractIndexedListIterator.next",
+          4
+        ],
+        [
+          "java/security/MessageDigest$Delegate.engineUpdate",
+          3
+        ]
+      ],
+      "GCEvents": [
+        {
+          "name": "G1New",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 82.890413,
+          "overlapMS": 82.890413
+        },
+        {
+          "name": "G1New",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 102.834064,
+          "overlapMS": 102.834064
+        },
+        {
+          "name": "G1Old",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 3920.407355,
+          "overlapMS": 3920.407355
+        }
+      ],
+      "daemonWorkerWaitUnionMS": {
+        "jdk.ThreadPark": 1467.918205
+      }
+    },
+    {
+      "sequence": 20,
+      "arm": "N",
+      "nativeMS": 5385.541183,
+      "daemonSampledCPUMS": 9680.0,
+      "executionSampleThreads": {
+        "Asynchronous log dispatcher for DefaultDaemonConnection: socket connection from /127.0.0.1:33585 to /127.0.0.1:40724": 2,
+        "Build operations": 1,
+        "Daemon worker Thread 2": 41,
+        "gradle-enterprise-worker-9": 35,
+        "Execution worker": 5,
+        "Execution worker Thread 2": 4,
+        "Execution worker Thread 3": 1,
+        "Execution worker Thread 4": 4,
+        "Execution worker Thread 6": 2,
+        "Execution worker Thread 5": 3,
+        "Execution worker Thread 7": 1,
+        "included builds Thread 2": 1,
+        "Resource Usage Collector Processes": 1
+      },
+      "nativeMethodSampleThreads": {
+        "/127.0.0.1:37113 to /127.0.0.1:49970 workers Thread 5": 14,
+        "Handler for socket connection from /127.0.0.1:33585 to /127.0.0.1:40724": 14,
+        "Incoming local TCP Connector on port 33585": 14,
+        "File lock request listener": 14,
+        "File watcher server": 14,
+        "process reaper (pid 853603)": 13,
+        "/127.0.0.1:36631 to /127.0.0.1:37276 workers Thread 5": 13,
+        "process reaper (pid 853677)": 13,
+        "/127.0.0.1:43493 to /127.0.0.1:34804 workers Thread 5": 13,
+        "process reaper (pid 853712)": 13,
+        "/127.0.0.1:36333 to /127.0.0.1:39576 workers Thread 5": 13,
+        "process reaper (pid 853850)": 13,
+        "/127.0.0.1:34145 to /127.0.0.1:53580 workers Thread 5": 13,
+        "process reaper (pid 853904)": 13,
+        "process reaper (pid 853981)": 13,
+        "/127.0.0.1:39201 to /127.0.0.1:56176 workers Thread 5": 13,
+        "/127.0.0.1:41825 to /127.0.0.1:34648 workers Thread 5": 13,
+        "process reaper (pid 854058)": 13,
+        "Daemon worker Thread 2": 1,
+        "gradle-enterprise-worker-9": 1
+      },
+      "gradleEnterpriseTop3FrameOccurrences": [
+        [
+          "com/google/common/collect/RegularImmutableMap.get",
+          14
+        ],
+        [
+          "org/gradle/api/internal/tasks/BaseFilePropertyVisitState.visitEntry",
+          9
+        ],
+        [
+          "com/gradle/scan/plugin/internal/c/o/a.a",
+          6
+        ],
+        [
+          "com/gradle/scan/plugin/internal/c/x/a/f.a",
+          6
+        ],
+        [
+          "org/gradle/internal/snapshot/FileSystemLeafSnapshot.accept",
+          4
+        ],
+        [
+          "org/gradle/internal/snapshot/DirectorySnapshot.lambda$accept$0",
+          4
+        ]
+      ],
+      "GCEvents": [
+        {
+          "name": "G1New",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 36.031577,
+          "overlapMS": 36.031577
+        },
+        {
+          "name": "G1New",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 117.904285,
+          "overlapMS": 117.904285
+        }
+      ],
+      "daemonWorkerWaitUnionMS": {
+        "jdk.ThreadPark": 1381.873457
+      }
+    },
+    {
+      "sequence": 21,
+      "arm": "N",
+      "nativeMS": 5854.515172,
+      "daemonSampledCPUMS": 18500.0,
+      "executionSampleThreads": {
+        "Daemon worker Thread 2": 36,
+        "gradle-enterprise-worker-10": 40,
+        "Execution worker Thread 4": 6,
+        "Resource Usage Collector Processes": 2,
+        "Execution worker Thread 2": 5,
+        "Execution worker Thread 3": 3,
+        "Execution worker Thread 6": 3,
+        "included builds Thread 2": 4,
+        "Execution worker Thread 7": 7,
+        "Execution worker Thread 5": 3,
+        "Execution worker": 5,
+        "build event listener": 1
+      },
+      "nativeMethodSampleThreads": {
+        "/127.0.0.1:41825 to /127.0.0.1:34648 workers Thread 5": 15,
+        "process reaper (pid 854058)": 15,
+        "/127.0.0.1:37113 to /127.0.0.1:49970 workers Thread 5": 15,
+        "Handler for socket connection from /127.0.0.1:33585 to /127.0.0.1:34984": 15,
+        "Incoming local TCP Connector on port 33585": 15,
+        "File lock request listener": 15,
+        "File watcher server": 14,
+        "process reaper (pid 853603)": 14,
+        "/127.0.0.1:36631 to /127.0.0.1:37276 workers Thread 5": 14,
+        "process reaper (pid 853677)": 14,
+        "/127.0.0.1:43493 to /127.0.0.1:34804 workers Thread 5": 14,
+        "process reaper (pid 853712)": 14,
+        "/127.0.0.1:36333 to /127.0.0.1:39576 workers Thread 5": 14,
+        "process reaper (pid 853850)": 14,
+        "/127.0.0.1:34145 to /127.0.0.1:53580 workers Thread 5": 14,
+        "process reaper (pid 853904)": 14,
+        "process reaper (pid 853981)": 14,
+        "/127.0.0.1:39201 to /127.0.0.1:56176 workers Thread 5": 14,
+        "Execution worker Thread 7": 1,
+        "gradle-enterprise-worker-10": 2
+      },
+      "gradleEnterpriseTop3FrameOccurrences": [
+        [
+          "com/google/common/collect/RegularImmutableMap.get",
+          24
+        ],
+        [
+          "org/gradle/api/internal/tasks/BaseFilePropertyVisitState.visitEntry",
+          11
+        ],
+        [
+          "com/gradle/scan/plugin/internal/c/o/a.a",
+          6
+        ],
+        [
+          "com/gradle/scan/plugin/internal/c/x/a/f.a",
+          6
+        ],
+        [
+          "java/util/HashMap.computeIfAbsent",
+          5
+        ],
+        [
+          "org/gradle/internal/fingerprint/impl/IgnoredPathFileSystemLocationFingerprint.appendToHasher",
+          3
+        ]
+      ],
+      "GCEvents": [
+        {
+          "name": "G1New",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 90.941769,
+          "overlapMS": 90.941769
+        },
+        {
+          "name": "G1New",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 110.168716,
+          "overlapMS": 110.168716
+        },
+        {
+          "name": "G1Old",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 4196.443941,
+          "overlapMS": 4196.443941
+        }
+      ],
+      "daemonWorkerWaitUnionMS": {
+        "jdk.ThreadPark": 1660.888945
+      }
+    },
+    {
+      "sequence": 22,
+      "arm": "I",
+      "nativeMS": 5139.60586,
+      "daemonSampledCPUMS": 10090.0,
+      "executionSampleThreads": {
+        "Daemon worker": 32,
+        "gradle-enterprise-worker-10": 37,
+        "Resource Usage Collector Processes": 1,
+        "Execution worker Thread 4": 4,
+        "Execution worker Thread 5": 2,
+        "Execution worker Thread 6": 4,
+        "Execution worker Thread 2": 4,
+        "Execution worker Thread 7": 4,
+        "Execution worker Thread 3": 1,
+        "included builds Thread 2": 2
+      },
+      "nativeMethodSampleThreads": {
+        "/127.0.0.1:36603 to /127.0.0.1:41158 workers Thread 5": 14,
+        "Handler for socket connection from /127.0.0.1:42015 to /127.0.0.1:33360": 14,
+        "Incoming local TCP Connector on port 42015": 14,
+        "File lock request listener": 14,
+        "File watcher server": 14,
+        "process reaper (pid 855730)": 14,
+        "/127.0.0.1:44109 to /127.0.0.1:38450 workers Thread 5": 14,
+        "process reaper (pid 855822)": 14,
+        "/127.0.0.1:43321 to /127.0.0.1:53524 workers Thread 5": 14,
+        "process reaper (pid 855920)": 14,
+        "/127.0.0.1:37001 to /127.0.0.1:53906 workers Thread 5": 14,
+        "process reaper (pid 856019)": 14,
+        "process reaper (pid 856203)": 14,
+        "process reaper (pid 856080)": 14,
+        "/127.0.0.1:45107 to /127.0.0.1:46108 workers Thread 5": 13,
+        "/127.0.0.1:42183 to /127.0.0.1:48826 workers Thread 5": 13,
+        "gradle-enterprise-worker-10": 1,
+        "Daemon worker": 1,
+        "Execution worker Thread 5": 1
+      },
+      "gradleEnterpriseTop3FrameOccurrences": [
+        [
+          "com/google/common/collect/RegularImmutableMap.get",
+          16
+        ],
+        [
+          "org/gradle/api/internal/tasks/BaseFilePropertyVisitState.visitEntry",
+          8
+        ],
+        [
+          "com/gradle/scan/plugin/internal/c/o/a.a",
+          6
+        ],
+        [
+          "com/gradle/scan/plugin/internal/c/x/a/f.a",
+          6
+        ],
+        [
+          "java/security/MessageDigest$Delegate.engineUpdate",
+          6
+        ],
+        [
+          "java/security/MessageDigest.update",
+          6
+        ]
+      ],
+      "GCEvents": [
+        {
+          "name": "G1New",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 78.962685,
+          "overlapMS": 78.962685
+        },
+        {
+          "name": "G1New",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 113.122404,
+          "overlapMS": 113.122404
+        },
+        {
+          "name": "G1New",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 77.069718,
+          "overlapMS": 77.069718
+        },
+        {
+          "name": "G1Old",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 4348.178587,
+          "overlapMS": 382.612846
+        }
+      ],
+      "daemonWorkerWaitUnionMS": {
+        "jdk.ThreadPark": 1478.622415
+      }
+    },
+    {
+      "sequence": 23,
+      "arm": "I",
+      "nativeMS": 5332.381754,
+      "daemonSampledCPUMS": 9980.0,
+      "executionSampleThreads": {
+        "Daemon worker": 39,
+        "Execution worker Thread 5": 1,
+        "Execution worker Thread 4": 3,
+        "gradle-enterprise-worker-11": 35,
+        "Resource Usage Collector Processes": 2,
+        "Execution worker Thread 2": 6,
+        "Execution worker Thread 7": 4,
+        "Execution worker Thread 3": 1,
+        "included builds Thread 2": 1,
+        "Execution worker Thread 6": 3,
+        "Execution worker": 2
+      },
+      "nativeMethodSampleThreads": {
+        "/127.0.0.1:45107 to /127.0.0.1:46108 workers Thread 5": 15,
+        "/127.0.0.1:42183 to /127.0.0.1:48826 workers Thread 5": 15,
+        "/127.0.0.1:36603 to /127.0.0.1:41158 workers Thread 5": 15,
+        "Handler for socket connection from /127.0.0.1:42015 to /127.0.0.1:56676": 15,
+        "Incoming local TCP Connector on port 42015": 15,
+        "File lock request listener": 15,
+        "File watcher server": 15,
+        "process reaper (pid 855730)": 15,
+        "/127.0.0.1:44109 to /127.0.0.1:38450 workers Thread 5": 15,
+        "process reaper (pid 855822)": 15,
+        "/127.0.0.1:43321 to /127.0.0.1:53524 workers Thread 5": 15,
+        "process reaper (pid 855920)": 15,
+        "/127.0.0.1:37001 to /127.0.0.1:53906 workers Thread 5": 15,
+        "process reaper (pid 856019)": 15,
+        "process reaper (pid 856203)": 15,
+        "process reaper (pid 856080)": 14,
+        "Daemon worker": 1,
+        "Execution worker Thread 2": 1,
+        "gradle-enterprise-worker-11": 1
+      },
+      "gradleEnterpriseTop3FrameOccurrences": [
+        [
+          "java/util/HashMap.computeIfAbsent",
+          9
+        ],
+        [
+          "com/google/common/collect/RegularImmutableMap.get",
+          8
+        ],
+        [
+          "com/gradle/scan/plugin/internal/c/o/a.a",
+          7
+        ],
+        [
+          "com/gradle/scan/plugin/internal/c/x/a/f.a",
+          5
+        ],
+        [
+          "org/gradle/api/internal/tasks/BaseFilePropertyVisitState.visitEntry",
+          5
+        ],
+        [
+          "com/gradle/scan/plugin/internal/j/h.b",
+          3
+        ]
+      ],
+      "GCEvents": [
+        {
+          "name": "G1New",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 86.68106,
+          "overlapMS": 86.68106
+        }
+      ],
+      "daemonWorkerWaitUnionMS": {
+        "jdk.ThreadPark": 1319.943238
+      }
+    },
+    {
+      "sequence": 24,
+      "arm": "N",
+      "nativeMS": 4984.002875,
+      "daemonSampledCPUMS": 9670.0,
+      "executionSampleThreads": {
+        "Daemon worker Thread 2": 26,
+        "Execution worker Thread 7": 3,
+        "gradle-enterprise-worker-11": 35,
+        "Resource Usage Collector Processes": 2,
+        "included builds Thread 2": 1,
+        "Execution worker": 1,
+        "Execution worker Thread 6": 2,
+        "Execution worker Thread 4": 8,
+        "Asynchronous log dispatcher for DefaultDaemonConnection: socket connection from /127.0.0.1:33585 to /127.0.0.1:59736": 1,
+        "Execution worker Thread 5": 2,
+        "Execution worker Thread 2": 1
+      },
+      "nativeMethodSampleThreads": {
+        "process reaper (pid 853712)": 12,
+        "/127.0.0.1:36333 to /127.0.0.1:39576 workers Thread 5": 12,
+        "process reaper (pid 853850)": 12,
+        "/127.0.0.1:34145 to /127.0.0.1:53580 workers Thread 5": 12,
+        "process reaper (pid 853904)": 12,
+        "process reaper (pid 853981)": 12,
+        "/127.0.0.1:39201 to /127.0.0.1:56176 workers Thread 5": 12,
+        "/127.0.0.1:41825 to /127.0.0.1:34648 workers Thread 5": 12,
+        "process reaper (pid 854058)": 12,
+        "/127.0.0.1:37113 to /127.0.0.1:49970 workers Thread 5": 12,
+        "Handler for socket connection from /127.0.0.1:33585 to /127.0.0.1:59736": 12,
+        "Incoming local TCP Connector on port 33585": 12,
+        "File lock request listener": 12,
+        "File watcher server": 12,
+        "process reaper (pid 853603)": 12,
+        "/127.0.0.1:36631 to /127.0.0.1:37276 workers Thread 5": 12,
+        "process reaper (pid 853677)": 12,
+        "/127.0.0.1:43493 to /127.0.0.1:34804 workers Thread 5": 12,
+        "gradle-enterprise-worker-11": 1,
+        "Daemon worker Thread 2": 1
+      },
+      "gradleEnterpriseTop3FrameOccurrences": [
+        [
+          "com/google/common/collect/RegularImmutableMap.get",
+          12
+        ],
+        [
+          "java/util/HashMap.computeIfAbsent",
+          6
+        ],
+        [
+          "com/gradle/scan/plugin/internal/c/j/a/e$a.a",
+          5
+        ],
+        [
+          "org/gradle/api/internal/tasks/BaseFilePropertyVisitState.visitEntry",
+          5
+        ],
+        [
+          "com/gradle/scan/plugin/internal/c/o/a.a",
+          5
+        ],
+        [
+          "java/lang/String.encodeUTF8",
+          5
+        ]
+      ],
+      "GCEvents": [
+        {
+          "name": "G1New",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 97.935288,
+          "overlapMS": 97.935288
+        },
+        {
+          "name": "G1New",
+          "cause": "GCLocker Initiated GC",
+          "durationMS": 119.485093,
+          "overlapMS": 119.485093
+        }
+      ],
+      "daemonWorkerWaitUnionMS": {
+        "jdk.ThreadPark": 1456.583228
+      }
+    },
+    {
+      "sequence": 25,
+      "arm": "N",
+      "nativeMS": 5885.559475,
+      "daemonSampledCPUMS": 18760.0,
+      "executionSampleThreads": {
+        "Daemon worker Thread 2": 34,
+        "Build operations Thread 5": 1,
+        "gradle-enterprise-worker-12": 50,
+        "Execution worker Thread 5": 4,
+        "Execution worker Thread 7": 8,
+        "Execution worker": 5,
+        "Execution worker Thread 2": 5,
+        "Execution worker Thread 6": 2,
+        "build event listener": 1,
+        "Cache worker for Build Output Cleanup Cache (/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-daemon-diagnostic/owner-02/run/r1/N/repo/.gradle/buildOutputCleanup)": 1,
+        "Execution worker Thread 3": 2,
+        "included builds Thread 2": 3,
+        "Execution worker Thread 4": 3,
+        "Resource Usage Collector Processes": 1
+      },
+      "nativeMethodSampleThreads": {
+        "File watcher server": 15,
+        "process reaper (pid 853603)": 15,
+        "/127.0.0.1:36631 to /127.0.0.1:37276 workers Thread 5": 15,
+        "process reaper (pid 853677)": 15,
+        "/127.0.0.1:43493 to /127.0.0.1:34804 workers Thread 5": 15,
+        "process reaper (pid 853712)": 14,
+        "/127.0.0.1:36333 to /127.0.0.1:39576 workers Thread 5": 14,
+        "process reaper (pid 853850)": 14,
+        "/127.0.0.1:34145 to /127.0.0.1:53580 workers Thread 5": 14,
+        "process reaper (pid 853904)": 14,
+        "process reaper (pid 853981)": 14,
+        "/127.0.0.1:39201 to /127.0.0.1:56176 workers Thread 5": 14,
+        "/127.0.0.1:41825 to /127.0.0.1:34648 workers Thread 5": 14,
+        "process reaper (pid 854058)": 14,
+        "/127.0.0.1:37113 to /127.0.0.1:49970 workers Thread 5": 14,
+        "Handler for socket connection from /127.0.0.1:33585 to /127.0.0.1:56922": 14,
+        "Incoming local TCP Connector on port 33585": 14,
+        "File lock request listener": 14,
+        "Resource Usage Collector NetworkSpeed": 1,
+        "Resource Usage Collector Processes": 1,
+        "Daemon worker Thread 2": 1,
+        "gradle-enterprise-worker-12": 1
+      },
+      "gradleEnterpriseTop3FrameOccurrences": [
+        [
+          "com/google/common/collect/RegularImmutableMap.get",
+          12
+        ],
+        [
+          "java/lang/String.encodeUTF8",
+          9
+        ],
+        [
+          "java/lang/String.encode",
+          9
+        ],
+        [
+          "java/lang/String.getBytes",
+          9
+        ],
+        [
+          "java/util/HashMap.computeIfAbsent",
+          7
+        ],
+        [
+          "com/gradle/scan/plugin/internal/c/o/a.a",
+          6
+        ]
+      ],
+      "GCEvents": [
+        {
+          "name": "G1New",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 97.971638,
+          "overlapMS": 97.971638
+        },
+        {
+          "name": "G1New",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 92.614999,
+          "overlapMS": 92.614999
+        },
+        {
+          "name": "G1Old",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 4953.852074,
+          "overlapMS": 4490.098998
+        }
+      ],
+      "daemonWorkerWaitUnionMS": {
+        "jdk.ThreadPark": 1794.107785
+      }
+    },
+    {
+      "sequence": 26,
+      "arm": "I",
+      "nativeMS": 5501.705887,
+      "daemonSampledCPUMS": 14380.0,
+      "executionSampleThreads": {
+        "Execution worker": 6,
+        "Daemon worker": 28,
+        "gradle-enterprise-worker-12": 48,
+        "Execution worker Thread 4": 2,
+        "Execution worker Thread 2": 2,
+        "included builds Thread 2": 8,
+        "Execution worker Thread 5": 4,
+        "Execution worker Thread 6": 3,
+        "Execution worker Thread 7": 1,
+        "Execution worker Thread 3": 1
+      },
+      "nativeMethodSampleThreads": {
+        "process reaper (pid 856019)": 15,
+        "process reaper (pid 856203)": 15,
+        "process reaper (pid 856080)": 15,
+        "/127.0.0.1:45107 to /127.0.0.1:46108 workers Thread 5": 15,
+        "/127.0.0.1:42183 to /127.0.0.1:48826 workers Thread 5": 15,
+        "/127.0.0.1:36603 to /127.0.0.1:41158 workers Thread 5": 15,
+        "Handler for socket connection from /127.0.0.1:42015 to /127.0.0.1:36268": 15,
+        "Incoming local TCP Connector on port 42015": 15,
+        "Daemon worker": 1,
+        "File lock request listener": 15,
+        "File watcher server": 15,
+        "process reaper (pid 855730)": 15,
+        "/127.0.0.1:44109 to /127.0.0.1:38450 workers Thread 5": 15,
+        "process reaper (pid 855822)": 14,
+        "/127.0.0.1:43321 to /127.0.0.1:53524 workers Thread 5": 14,
+        "process reaper (pid 855920)": 14,
+        "/127.0.0.1:37001 to /127.0.0.1:53906 workers Thread 5": 14,
+        "Asynchronous log dispatcher for DefaultDaemonConnection: socket connection from /127.0.0.1:42015 to /127.0.0.1:36268": 1,
+        "gradle-enterprise-worker-12": 2
+      },
+      "gradleEnterpriseTop3FrameOccurrences": [
+        [
+          "com/google/common/collect/RegularImmutableMap.get",
+          20
+        ],
+        [
+          "org/gradle/api/internal/tasks/BaseFilePropertyVisitState.visitEntry",
+          10
+        ],
+        [
+          "java/util/HashMap.computeIfAbsent",
+          9
+        ],
+        [
+          "com/gradle/scan/plugin/internal/c/o/a.a",
+          9
+        ],
+        [
+          "com/gradle/scan/plugin/internal/c/x/a/f.a",
+          8
+        ],
+        [
+          "java/security/MessageDigest$Delegate.engineUpdate",
+          5
+        ]
+      ],
+      "GCEvents": [
+        {
+          "name": "G1New",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 101.901329,
+          "overlapMS": 101.901329
+        },
+        {
+          "name": "G1New",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 154.032587,
+          "overlapMS": 154.032587
+        },
+        {
+          "name": "G1Old",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 4908.130619,
+          "overlapMS": 1893.706304
+        }
+      ],
+      "daemonWorkerWaitUnionMS": {
+        "jdk.ThreadPark": 1799.421673
+      }
+    },
+    {
+      "sequence": 27,
+      "arm": "I",
+      "nativeMS": 5286.720966,
+      "daemonSampledCPUMS": 10140.0,
+      "executionSampleThreads": {
+        "Daemon worker": 33,
+        "Develocity resource usage": 1,
+        "gradle-enterprise-worker-13": 33,
+        "Memory manager": 1,
+        "Execution worker Thread 6": 6,
+        "Execution worker Thread 7": 4,
+        "build event listener": 1,
+        "included builds Thread 2": 3,
+        "Execution worker Thread 2": 3,
+        "Execution worker Thread 3": 3,
+        "Execution worker Thread 4": 1,
+        "Execution worker Thread 5": 1,
+        "Execution worker": 1
+      },
+      "nativeMethodSampleThreads": {
+        "/127.0.0.1:44109 to /127.0.0.1:38450 workers Thread 5": 15,
+        "process reaper (pid 855822)": 15,
+        "/127.0.0.1:43321 to /127.0.0.1:53524 workers Thread 5": 15,
+        "process reaper (pid 855920)": 14,
+        "/127.0.0.1:37001 to /127.0.0.1:53906 workers Thread 5": 14,
+        "process reaper (pid 856019)": 14,
+        "process reaper (pid 856203)": 14,
+        "process reaper (pid 856080)": 14,
+        "/127.0.0.1:45107 to /127.0.0.1:46108 workers Thread 5": 14,
+        "/127.0.0.1:42183 to /127.0.0.1:48826 workers Thread 5": 14,
+        "/127.0.0.1:36603 to /127.0.0.1:41158 workers Thread 5": 14,
+        "Handler for socket connection from /127.0.0.1:42015 to /127.0.0.1:50882": 14,
+        "Develocity resource usage": 1,
+        "Incoming local TCP Connector on port 42015": 14,
+        "File lock request listener": 14,
+        "File watcher server": 14,
+        "process reaper (pid 855730)": 14,
+        "Memory manager": 1,
+        "Daemon worker": 1,
+        "Execution worker": 1,
+        "gradle-enterprise-worker-13": 1
+      },
+      "gradleEnterpriseTop3FrameOccurrences": [
+        [
+          "com/google/common/collect/RegularImmutableMap.get",
+          8
+        ],
+        [
+          "org/gradle/api/internal/tasks/BaseFilePropertyVisitState.visitEntry",
+          4
+        ],
+        [
+          "org/gradle/internal/hash/Hashing$MessageDigestHasher.putString",
+          3
+        ],
+        [
+          "org/gradle/internal/hash/Hashing$DefaultHasher.putString",
+          3
+        ],
+        [
+          "org/gradle/internal/fingerprint/impl/DefaultFileSystemLocationFingerprint.appendToHasher",
+          3
+        ],
+        [
+          "com/gradle/scan/agent/serialization/scan/serializer/kryo/d.a",
+          3
+        ]
+      ],
+      "GCEvents": [
+        {
+          "name": "G1New",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 110.330356,
+          "overlapMS": 110.330356
+        },
+        {
+          "name": "G1New",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 124.458873,
+          "overlapMS": 124.458873
+        }
+      ],
+      "daemonWorkerWaitUnionMS": {
+        "jdk.ThreadPark": 1460.424869
+      }
+    },
+    {
+      "sequence": 28,
+      "arm": "N",
+      "nativeMS": 5413.339155,
+      "daemonSampledCPUMS": 10160.0,
+      "executionSampleThreads": {
+        "Daemon worker Thread 2": 31,
+        "gradle-enterprise-worker-13": 31,
+        "Execution worker Thread 5": 4,
+        "Execution worker Thread 4": 2,
+        "Execution worker Thread 6": 6,
+        "included builds Thread 2": 2,
+        "Execution worker Thread 7": 3,
+        "Execution worker": 3,
+        "Execution worker Thread 2": 3,
+        "Cache worker for Build Output Cleanup Cache (/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-daemon-diagnostic/owner-02/run/r1/N/repo/.gradle/buildOutputCleanup)": 1
+      },
+      "nativeMethodSampleThreads": {
+        "/127.0.0.1:39201 to /127.0.0.1:56176 workers Thread 5": 14,
+        "/127.0.0.1:41825 to /127.0.0.1:34648 workers Thread 5": 14,
+        "process reaper (pid 854058)": 14,
+        "/127.0.0.1:37113 to /127.0.0.1:49970 workers Thread 5": 14,
+        "Handler for socket connection from /127.0.0.1:33585 to /127.0.0.1:48498": 13,
+        "Incoming local TCP Connector on port 33585": 13,
+        "File lock request listener": 13,
+        "File watcher server": 13,
+        "process reaper (pid 853603)": 13,
+        "/127.0.0.1:36631 to /127.0.0.1:37276 workers Thread 5": 13,
+        "process reaper (pid 853677)": 13,
+        "/127.0.0.1:43493 to /127.0.0.1:34804 workers Thread 5": 13,
+        "process reaper (pid 853712)": 13,
+        "/127.0.0.1:36333 to /127.0.0.1:39576 workers Thread 5": 13,
+        "process reaper (pid 853850)": 13,
+        "/127.0.0.1:34145 to /127.0.0.1:53580 workers Thread 5": 13,
+        "process reaper (pid 853904)": 13,
+        "process reaper (pid 853981)": 13,
+        "gradle-enterprise-worker-13": 3
+      },
+      "gradleEnterpriseTop3FrameOccurrences": [
+        [
+          "com/google/common/collect/RegularImmutableMap.get",
+          14
+        ],
+        [
+          "org/gradle/api/internal/tasks/BaseFilePropertyVisitState.visitEntry",
+          7
+        ],
+        [
+          "com/gradle/scan/agent/serialization/scan/serializer/kryo/d.a",
+          4
+        ],
+        [
+          "com/gradle/scan/plugin/internal/c/o/a.a",
+          4
+        ],
+        [
+          "com/gradle/scan/plugin/internal/c/x/a/f.a",
+          4
+        ],
+        [
+          "java/util/HashMap.computeIfAbsent",
+          3
+        ]
+      ],
+      "GCEvents": [
+        {
+          "name": "G1New",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 62.782583,
+          "overlapMS": 62.782583
+        },
+        {
+          "name": "G1New",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 139.308132,
+          "overlapMS": 139.308132
+        }
+      ],
+      "daemonWorkerWaitUnionMS": {
+        "jdk.ThreadPark": 1519.572294
+      }
+    },
+    {
+      "sequence": 29,
+      "arm": "N",
+      "nativeMS": 5263.622197,
+      "daemonSampledCPUMS": 14110.0,
+      "executionSampleThreads": {
+        "Daemon worker Thread 2": 23,
+        "gradle-enterprise-worker-14": 40,
+        "Resource Usage Collector Processes": 1,
+        "Execution worker Thread 6": 3,
+        "included builds Thread 2": 4,
+        "Execution worker": 4,
+        "Execution worker Thread 4": 5,
+        "Execution worker Thread 2": 3,
+        "build event listener": 2,
+        "Execution worker Thread 5": 3,
+        "Execution worker Thread 7": 3,
+        "Execution worker Thread 3": 2
+      },
+      "nativeMethodSampleThreads": {
+        "/127.0.0.1:37113 to /127.0.0.1:49970 workers Thread 5": 13,
+        "Handler for socket connection from /127.0.0.1:33585 to /127.0.0.1:47806": 13,
+        "process reaper (pid 853677)": 13,
+        "/127.0.0.1:43493 to /127.0.0.1:34804 workers Thread 5": 13,
+        "process reaper (pid 853712)": 13,
+        "/127.0.0.1:36333 to /127.0.0.1:39576 workers Thread 5": 13,
+        "process reaper (pid 853850)": 13,
+        "/127.0.0.1:34145 to /127.0.0.1:53580 workers Thread 5": 13,
+        "process reaper (pid 853904)": 13,
+        "process reaper (pid 853981)": 13,
+        "/127.0.0.1:39201 to /127.0.0.1:56176 workers Thread 5": 13,
+        "/127.0.0.1:41825 to /127.0.0.1:34648 workers Thread 5": 13,
+        "process reaper (pid 854058)": 13,
+        "Incoming local TCP Connector on port 33585": 13,
+        "File lock request listener": 13,
+        "File watcher server": 13,
+        "process reaper (pid 853603)": 12,
+        "/127.0.0.1:36631 to /127.0.0.1:37276 workers Thread 5": 12,
+        "gradle-enterprise-worker-14": 4
+      },
+      "gradleEnterpriseTop3FrameOccurrences": [
+        [
+          "com/google/common/collect/RegularImmutableMap.get",
+          14
+        ],
+        [
+          "com/gradle/scan/plugin/internal/c/x/a/f.a",
+          9
+        ],
+        [
+          "com/gradle/scan/plugin/internal/c/o/a.a",
+          8
+        ],
+        [
+          "org/gradle/api/internal/tasks/BaseFilePropertyVisitState.visitEntry",
+          7
+        ],
+        [
+          "java/util/HashMap.computeIfAbsent",
+          7
+        ],
+        [
+          "com/gradle/scan/agent/serialization/scan/serializer/kryo/d.a",
+          3
+        ]
+      ],
+      "GCEvents": [
+        {
+          "name": "G1New",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 151.02862,
+          "overlapMS": 151.02862
+        },
+        {
+          "name": "G1Old",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 5451.527278,
+          "overlapMS": 2450.577048
+        }
+      ],
+      "daemonWorkerWaitUnionMS": {
+        "jdk.ThreadPark": 1543.225068
+      }
+    },
+    {
+      "sequence": 30,
+      "arm": "I",
+      "nativeMS": 5306.437045,
+      "daemonSampledCPUMS": 13190.0,
+      "executionSampleThreads": {
+        "Daemon worker": 36,
+        "Resource Usage Collector Processes": 1,
+        "gradle-enterprise-worker-14": 48,
+        "Execution worker Thread 3": 2,
+        "Execution worker Thread 7": 6,
+        "included builds Thread 2": 3,
+        "Execution worker Thread 5": 4,
+        "Execution worker Thread 2": 3,
+        "Execution worker Thread 6": 2,
+        "Execution worker": 2,
+        "Execution worker Thread 4": 1,
+        "Cache worker for Build Output Cleanup Cache (/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-daemon-diagnostic/owner-02/run/r1/I/repo/.gradle/buildOutputCleanup)": 1
+      },
+      "nativeMethodSampleThreads": {
+        "/127.0.0.1:43321 to /127.0.0.1:53524 workers Thread 5": 15,
+        "process reaper (pid 855920)": 15,
+        "/127.0.0.1:37001 to /127.0.0.1:53906 workers Thread 5": 15,
+        "process reaper (pid 856019)": 15,
+        "process reaper (pid 856203)": 15,
+        "process reaper (pid 856080)": 15,
+        "/127.0.0.1:45107 to /127.0.0.1:46108 workers Thread 5": 15,
+        "/127.0.0.1:42183 to /127.0.0.1:48826 workers Thread 5": 15,
+        "/127.0.0.1:36603 to /127.0.0.1:41158 workers Thread 5": 15,
+        "Handler for socket connection from /127.0.0.1:42015 to /127.0.0.1:58038": 15,
+        "Incoming local TCP Connector on port 42015": 15,
+        "File lock request listener": 14,
+        "File watcher server": 14,
+        "process reaper (pid 855730)": 14,
+        "/127.0.0.1:44109 to /127.0.0.1:38450 workers Thread 5": 14,
+        "process reaper (pid 855822)": 14,
+        "Daemon worker": 1
+      },
+      "gradleEnterpriseTop3FrameOccurrences": [
+        [
+          "com/google/common/collect/RegularImmutableMap.get",
+          20
+        ],
+        [
+          "org/gradle/api/internal/tasks/BaseFilePropertyVisitState.visitEntry",
+          10
+        ],
+        [
+          "com/gradle/scan/plugin/internal/c/o/a.a",
+          7
+        ],
+        [
+          "org/gradle/internal/hash/Hashing$MessageDigestHasher.putString",
+          6
+        ],
+        [
+          "org/gradle/internal/hash/Hashing$DefaultHasher.putString",
+          6
+        ],
+        [
+          "org/gradle/internal/fingerprint/impl/DefaultFileSystemLocationFingerprint.appendToHasher",
+          6
+        ]
+      ],
+      "GCEvents": [
+        {
+          "name": "G1New",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 158.093741,
+          "overlapMS": 158.093741
+        },
+        {
+          "name": "G1Old",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 5541.930119,
+          "overlapMS": 2089.382361
+        }
+      ],
+      "daemonWorkerWaitUnionMS": {
+        "jdk.ThreadPark": 1634.191513
+      }
+    },
+    {
+      "sequence": 31,
+      "arm": "I",
+      "nativeMS": 5231.830359,
+      "daemonSampledCPUMS": 9960.0,
+      "executionSampleThreads": {
+        "Daemon worker": 39,
+        "gradle-enterprise-worker-15": 34,
+        "Resource Usage Collector Processes": 1,
+        "included builds Thread 2": 7,
+        "Execution worker Thread 4": 1,
+        "Execution worker Thread 5": 4,
+        "Execution worker Thread 7": 2,
+        "Execution worker": 2,
+        "Execution worker Thread 2": 2,
+        "Execution worker Thread 6": 2,
+        "Execution worker Thread 3": 2
+      },
+      "nativeMethodSampleThreads": {
+        "Handler for socket connection from /127.0.0.1:42015 to /127.0.0.1:57628": 14,
+        "Incoming local TCP Connector on port 42015": 14,
+        "File lock request listener": 14,
+        "File watcher server": 14,
+        "process reaper (pid 855730)": 14,
+        "/127.0.0.1:44109 to /127.0.0.1:38450 workers Thread 5": 14,
+        "process reaper (pid 855822)": 14,
+        "/127.0.0.1:43321 to /127.0.0.1:53524 workers Thread 5": 14,
+        "process reaper (pid 855920)": 14,
+        "/127.0.0.1:37001 to /127.0.0.1:53906 workers Thread 5": 14,
+        "process reaper (pid 856019)": 14,
+        "process reaper (pid 856203)": 14,
+        "process reaper (pid 856080)": 14,
+        "/127.0.0.1:45107 to /127.0.0.1:46108 workers Thread 5": 14,
+        "/127.0.0.1:42183 to /127.0.0.1:48826 workers Thread 5": 14,
+        "/127.0.0.1:36603 to /127.0.0.1:41158 workers Thread 5": 13,
+        "Daemon worker": 2,
+        "Execution worker Thread 2": 1,
+        "included builds Thread 2": 1,
+        "gradle-enterprise-worker-15": 2
+      },
+      "gradleEnterpriseTop3FrameOccurrences": [
+        [
+          "com/google/common/collect/RegularImmutableMap.get",
+          8
+        ],
+        [
+          "com/gradle/scan/plugin/internal/c/o/a.a",
+          6
+        ],
+        [
+          "com/gradle/scan/plugin/internal/c/x/a/f.a",
+          6
+        ],
+        [
+          "org/gradle/api/internal/tasks/BaseFilePropertyVisitState.visitEntry",
+          5
+        ],
+        [
+          "java/util/HashMap.computeIfAbsent",
+          4
+        ],
+        [
+          "com/gradle/scan/agent/serialization/scan/serializer/kryo/d.a",
+          3
+        ]
+      ],
+      "GCEvents": [
+        {
+          "name": "G1New",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 109.847698,
+          "overlapMS": 109.847698
+        },
+        {
+          "name": "G1New",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 130.269235,
+          "overlapMS": 130.269235
+        }
+      ],
+      "daemonWorkerWaitUnionMS": {
+        "jdk.ThreadPark": 1494.300655
+      }
+    },
+    {
+      "sequence": 32,
+      "arm": "N",
+      "nativeMS": 5396.085244,
+      "daemonSampledCPUMS": 10340.0,
+      "executionSampleThreads": {
+        "Daemon worker Thread 2": 43,
+        "Execution worker Thread 7": 4,
+        "gradle-enterprise-worker-15": 41,
+        "Execution worker Thread 2": 4,
+        "Execution worker Thread 3": 6,
+        "included builds Thread 2": 4,
+        "Execution worker Thread 5": 2,
+        "Execution worker Thread 6": 2,
+        "Asynchronous log dispatcher for DefaultDaemonConnection: socket connection from /127.0.0.1:33585 to /127.0.0.1:35654": 1,
+        "Execution worker Thread 4": 1
+      },
+      "nativeMethodSampleThreads": {
+        "/127.0.0.1:37113 to /127.0.0.1:49970 workers Thread 5": 14,
+        "Handler for socket connection from /127.0.0.1:33585 to /127.0.0.1:35654": 13,
+        "Incoming local TCP Connector on port 33585": 13,
+        "File lock request listener": 13,
+        "File watcher server": 13,
+        "process reaper (pid 853603)": 13,
+        "/127.0.0.1:36631 to /127.0.0.1:37276 workers Thread 5": 13,
+        "process reaper (pid 853677)": 13,
+        "/127.0.0.1:43493 to /127.0.0.1:34804 workers Thread 5": 13,
+        "process reaper (pid 853712)": 13,
+        "/127.0.0.1:36333 to /127.0.0.1:39576 workers Thread 5": 13,
+        "process reaper (pid 853850)": 13,
+        "/127.0.0.1:34145 to /127.0.0.1:53580 workers Thread 5": 13,
+        "process reaper (pid 853904)": 13,
+        "process reaper (pid 853981)": 13,
+        "/127.0.0.1:39201 to /127.0.0.1:56176 workers Thread 5": 13,
+        "/127.0.0.1:41825 to /127.0.0.1:34648 workers Thread 5": 13,
+        "process reaper (pid 854058)": 13,
+        "Daemon worker Thread 2": 1,
+        "Asynchronous log dispatcher for DefaultDaemonConnection: socket connection from /127.0.0.1:33585 to /127.0.0.1:35654": 1
+      },
+      "gradleEnterpriseTop3FrameOccurrences": [
+        [
+          "com/google/common/collect/RegularImmutableMap.get",
+          20
+        ],
+        [
+          "org/gradle/api/internal/tasks/BaseFilePropertyVisitState.visitEntry",
+          10
+        ],
+        [
+          "com/gradle/scan/plugin/internal/c/o/a.a",
+          5
+        ],
+        [
+          "com/gradle/scan/plugin/internal/c/x/a/f.a",
+          5
+        ],
+        [
+          "java/lang/String.encodeUTF8",
+          5
+        ],
+        [
+          "java/lang/String.encode",
+          5
+        ]
+      ],
+      "GCEvents": [
+        {
+          "name": "G1New",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 99.404741,
+          "overlapMS": 99.404741
+        },
+        {
+          "name": "G1New",
+          "cause": "G1 Evacuation Pause",
+          "durationMS": 151.969106,
+          "overlapMS": 151.969106
+        }
+      ],
+      "daemonWorkerWaitUnionMS": {
+        "jdk.ThreadPark": 1376.242972
+      }
+    }
+  ]
+}

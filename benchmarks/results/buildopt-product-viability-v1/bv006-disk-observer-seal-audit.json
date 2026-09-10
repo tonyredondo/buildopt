@@ -1,0 +1,21 @@
+{
+  "schema": "buildopt.disk-observer/seal-audit/v1",
+  "status": "verified",
+  "phaseStatus": "verified",
+  "BV006Status": "partial",
+  "decision": "SUPERVISOR_CPU_REDUCTION_NOT_ESTABLISHED",
+  "readinessQualified": false,
+  "valueQualified": false,
+  "manifest": {
+    "path": "bv006-disk-observer/evidence-manifest.json",
+    "sha256": "234838f2e762246478312aabf747a9730baf1539ce6c657271ead96055e76b58"
+  },
+  "sealedFilesVerified": 5625,
+  "originCopiesVerified": 5620,
+  "priorSeal": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/benchmarks/results/buildopt-product-viability-v1/bv006-daemon-diagnostic-seal-audit.json",
+    "sha256": "6e12d868a0b4da8a7acbe6ec78470451748a6cd16378d7060172b5e4f8040ce1"
+  },
+  "independentAuditSHA256": "2a6bc7c5dce482112f55e34686eb0038515174f2b06cd0465c71a2e904a41b31",
+  "atUTC": "2026-09-09T10:23:21.068365+00:00"
+}

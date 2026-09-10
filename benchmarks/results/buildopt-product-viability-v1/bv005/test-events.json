@@ -1,0 +1,864 @@
+{
+  "schema": "buildopt.viability/replay-test-events/v1",
+  "events": [
+    {
+      "label": "adversarial-final-01",
+      "test": "TestTypedFailuresAndNativeFallback/mismatch",
+      "action": "pass",
+      "elapsedSeconds": 8.11
+    },
+    {
+      "label": "adversarial-final-01",
+      "test": "TestTypedFailuresAndNativeFallback/native-failure",
+      "action": "pass",
+      "elapsedSeconds": 24.25
+    },
+    {
+      "label": "adversarial-final-01",
+      "test": "TestTypedFailuresAndNativeFallback/unavailable",
+      "action": "pass",
+      "elapsedSeconds": 22.1
+    },
+    {
+      "label": "adversarial-final-01",
+      "test": "TestTypedFailuresAndNativeFallback/no-action",
+      "action": "pass",
+      "elapsedSeconds": 21.77
+    },
+    {
+      "label": "adversarial-final-01",
+      "test": "TestTypedFailuresAndNativeFallback/fallback",
+      "action": "pass",
+      "elapsedSeconds": 20.87
+    },
+    {
+      "label": "adversarial-final-01",
+      "test": "TestTypedFailuresAndNativeFallback",
+      "action": "pass",
+      "elapsedSeconds": 97.1
+    },
+    {
+      "label": "adversarial-final-01",
+      "test": "TestDriftStopsBeforeNextChild/source",
+      "action": "pass",
+      "elapsedSeconds": 7
+    },
+    {
+      "label": "adversarial-final-01",
+      "test": "TestDriftStopsBeforeNextChild/patch",
+      "action": "pass",
+      "elapsedSeconds": 10.65
+    },
+    {
+      "label": "adversarial-final-01",
+      "test": "TestDriftStopsBeforeNextChild/runtime",
+      "action": "pass",
+      "elapsedSeconds": 7.55
+    },
+    {
+      "label": "adversarial-final-01",
+      "test": "TestDriftStopsBeforeNextChild/package",
+      "action": "pass",
+      "elapsedSeconds": 7.41
+    },
+    {
+      "label": "adversarial-final-01",
+      "test": "TestDriftStopsBeforeNextChild/future-state",
+      "action": "pass",
+      "elapsedSeconds": 6.06
+    },
+    {
+      "label": "adversarial-final-01",
+      "test": "TestDriftStopsBeforeNextChild/shared-state",
+      "action": "pass",
+      "elapsedSeconds": 6.08
+    },
+    {
+      "label": "adversarial-final-01",
+      "test": "TestDriftStopsBeforeNextChild",
+      "action": "pass",
+      "elapsedSeconds": 44.76
+    },
+    {
+      "label": "boundaries-01",
+      "test": "TestAllocationStopsAndDetachedChild/workflow-limit",
+      "action": "pass",
+      "elapsedSeconds": 9.74
+    },
+    {
+      "label": "boundaries-01",
+      "test": "TestAllocationStopsAndDetachedChild/disk-before-start",
+      "action": "pass",
+      "elapsedSeconds": 2.16
+    },
+    {
+      "label": "boundaries-01",
+      "test": "TestAllocationStopsAndDetachedChild/detached-and-timeout",
+      "action": "pass",
+      "elapsedSeconds": 4.67
+    },
+    {
+      "label": "boundaries-01",
+      "test": "TestAllocationStopsAndDetachedChild",
+      "action": "pass",
+      "elapsedSeconds": 16.56
+    },
+    {
+      "label": "boundaries-01",
+      "test": "TestRawEvidenceTampering/native-duration",
+      "action": "pass",
+      "elapsedSeconds": 0.02
+    },
+    {
+      "label": "boundaries-01",
+      "test": "TestRawEvidenceTampering/output-bytes",
+      "action": "pass",
+      "elapsedSeconds": 0.02
+    },
+    {
+      "label": "boundaries-01",
+      "test": "TestRawEvidenceTampering/hidden-preparation",
+      "action": "pass",
+      "elapsedSeconds": 0.01
+    },
+    {
+      "label": "boundaries-01",
+      "test": "TestRawEvidenceTampering/normalization",
+      "action": "pass",
+      "elapsedSeconds": 0.02
+    },
+    {
+      "label": "boundaries-01",
+      "test": "TestRawEvidenceTampering/hidden-retry",
+      "action": "pass",
+      "elapsedSeconds": 0.05
+    },
+    {
+      "label": "boundaries-01",
+      "test": "TestRawEvidenceTampering",
+      "action": "pass",
+      "elapsedSeconds": 15.76
+    },
+    {
+      "label": "core-final-01",
+      "test": "TestFullHorizonDoesNotStopAtNegativeValue",
+      "action": "pass",
+      "elapsedSeconds": 35.9
+    },
+    {
+      "label": "core-final-01",
+      "test": "TestExternalPreparationIsChargedExactlyOnce",
+      "action": "pass",
+      "elapsedSeconds": 13.01
+    },
+    {
+      "label": "core-final-01",
+      "test": "TestQualifiedProjectionAndSemanticCounterexample",
+      "action": "pass",
+      "elapsedSeconds": 6
+    },
+    {
+      "label": "core-final-01",
+      "test": "TestOwnedReplayAndIndependentChecker/positive-summary",
+      "action": "pass",
+      "elapsedSeconds": 0.07
+    },
+    {
+      "label": "core-final-01",
+      "test": "TestOwnedReplayAndIndependentChecker/payback",
+      "action": "pass",
+      "elapsedSeconds": 0.07
+    },
+    {
+      "label": "core-final-01",
+      "test": "TestOwnedReplayAndIndependentChecker/duration",
+      "action": "pass",
+      "elapsedSeconds": 0.07
+    },
+    {
+      "label": "core-final-01",
+      "test": "TestOwnedReplayAndIndependentChecker",
+      "action": "pass",
+      "elapsedSeconds": 14.44
+    },
+    {
+      "label": "core-final-01",
+      "test": "TestTwoFreshReplicationsReverseOrder",
+      "action": "pass",
+      "elapsedSeconds": 22.54
+    },
+    {
+      "label": "drift-01",
+      "test": "TestDriftStopsBeforeNextChild/source",
+      "action": "pass",
+      "elapsedSeconds": 6.52
+    },
+    {
+      "label": "drift-01",
+      "test": "TestDriftStopsBeforeNextChild/patch",
+      "action": "pass",
+      "elapsedSeconds": 9.3
+    },
+    {
+      "label": "drift-01",
+      "test": "TestDriftStopsBeforeNextChild/runtime",
+      "action": "pass",
+      "elapsedSeconds": 9.06
+    },
+    {
+      "label": "drift-01",
+      "test": "TestDriftStopsBeforeNextChild/package",
+      "action": "pass",
+      "elapsedSeconds": 9.04
+    },
+    {
+      "label": "drift-01",
+      "test": "TestDriftStopsBeforeNextChild/future-state",
+      "action": "pass",
+      "elapsedSeconds": 7.34
+    },
+    {
+      "label": "drift-01",
+      "test": "TestDriftStopsBeforeNextChild/shared-state",
+      "action": "pass",
+      "elapsedSeconds": 6.86
+    },
+    {
+      "label": "drift-01",
+      "test": "TestDriftStopsBeforeNextChild",
+      "action": "pass",
+      "elapsedSeconds": 48.12
+    },
+    {
+      "label": "driver-death-01",
+      "test": "TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost",
+      "action": "pass",
+      "elapsedSeconds": 5.8
+    },
+    {
+      "label": "driver-death-diagnostic-01",
+      "test": "TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost",
+      "action": "pass",
+      "elapsedSeconds": 8.91
+    },
+    {
+      "label": "driver-death-diagnostic-01",
+      "test": "TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost",
+      "action": "pass",
+      "elapsedSeconds": 6.59
+    },
+    {
+      "label": "driver-death-diagnostic-01",
+      "test": "TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost",
+      "action": "pass",
+      "elapsedSeconds": 12.03
+    },
+    {
+      "label": "driver-death-diagnostic-01",
+      "test": "TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost",
+      "action": "pass",
+      "elapsedSeconds": 11.03
+    },
+    {
+      "label": "driver-death-diagnostic-01",
+      "test": "TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost",
+      "action": "pass",
+      "elapsedSeconds": 10
+    },
+    {
+      "label": "driver-death-final-01",
+      "test": "TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost",
+      "action": "pass",
+      "elapsedSeconds": 7.04
+    },
+    {
+      "label": "driver-death-final-01",
+      "test": "TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost",
+      "action": "pass",
+      "elapsedSeconds": 6.25
+    },
+    {
+      "label": "driver-death-final-01",
+      "test": "TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost",
+      "action": "pass",
+      "elapsedSeconds": 9.12
+    },
+    {
+      "label": "driver-death-final-01",
+      "test": "TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost",
+      "action": "pass",
+      "elapsedSeconds": 9.61
+    },
+    {
+      "label": "driver-death-final-01",
+      "test": "TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost",
+      "action": "pass",
+      "elapsedSeconds": 9.62
+    },
+    {
+      "label": "foundation-tests-01",
+      "test": "TestStrictContract/missing",
+      "action": "pass",
+      "elapsedSeconds": 0
+    },
+    {
+      "label": "foundation-tests-01",
+      "test": "TestStrictContract/unknown",
+      "action": "pass",
+      "elapsedSeconds": 0
+    },
+    {
+      "label": "foundation-tests-01",
+      "test": "TestStrictContract/duplicate",
+      "action": "pass",
+      "elapsedSeconds": 0
+    },
+    {
+      "label": "foundation-tests-01",
+      "test": "TestStrictContract/null",
+      "action": "pass",
+      "elapsedSeconds": 0
+    },
+    {
+      "label": "foundation-tests-01",
+      "test": "TestStrictContract/trailing",
+      "action": "pass",
+      "elapsedSeconds": 0
+    },
+    {
+      "label": "foundation-tests-01",
+      "test": "TestStrictContract/mode",
+      "action": "pass",
+      "elapsedSeconds": 0
+    },
+    {
+      "label": "foundation-tests-01",
+      "test": "TestStrictContract/adaptive",
+      "action": "pass",
+      "elapsedSeconds": 0
+    },
+    {
+      "label": "foundation-tests-01",
+      "test": "TestStrictContract/version",
+      "action": "pass",
+      "elapsedSeconds": 0
+    },
+    {
+      "label": "foundation-tests-01",
+      "test": "TestStrictContract/ordinal",
+      "action": "pass",
+      "elapsedSeconds": 0.01
+    },
+    {
+      "label": "foundation-tests-01",
+      "test": "TestStrictContract/parent",
+      "action": "pass",
+      "elapsedSeconds": 0.01
+    },
+    {
+      "label": "foundation-tests-01",
+      "test": "TestStrictContract/duplicate#01",
+      "action": "pass",
+      "elapsedSeconds": 0
+    },
+    {
+      "label": "foundation-tests-01",
+      "test": "TestStrictContract/tree",
+      "action": "pass",
+      "elapsedSeconds": 0.01
+    },
+    {
+      "label": "foundation-tests-01",
+      "test": "TestStrictContract/future",
+      "action": "pass",
+      "elapsedSeconds": 0
+    },
+    {
+      "label": "foundation-tests-01",
+      "test": "TestStrictContract/shared-cache",
+      "action": "pass",
+      "elapsedSeconds": 0
+    },
+    {
+      "label": "foundation-tests-01",
+      "test": "TestStrictContract/unqualified-normalizer",
+      "action": "pass",
+      "elapsedSeconds": 0
+    },
+    {
+      "label": "foundation-tests-01",
+      "test": "TestStrictContract/warm-retry",
+      "action": "pass",
+      "elapsedSeconds": 0
+    },
+    {
+      "label": "foundation-tests-01",
+      "test": "TestStrictContract",
+      "action": "pass",
+      "elapsedSeconds": 0.08
+    },
+    {
+      "label": "foundation-tests-01",
+      "test": "TestExactPatchAndSource",
+      "action": "pass",
+      "elapsedSeconds": 0.05
+    },
+    {
+      "label": "foundation-tests-01",
+      "test": "TestEconomicsGoldenAndForgeryInputs",
+      "action": "pass",
+      "elapsedSeconds": 0
+    },
+    {
+      "label": "foundation-tests-01",
+      "test": "TestNoActionIncompleteAndNativeFailure",
+      "action": "pass",
+      "elapsedSeconds": 0
+    },
+    {
+      "label": "foundation-tests-01",
+      "test": "TestPaybackMustSurviveAndNegativeDoesNotStop",
+      "action": "pass",
+      "elapsedSeconds": 0
+    },
+    {
+      "label": "foundation-tests-01",
+      "test": "TestQuantileAndBootstrapDeterministic",
+      "action": "pass",
+      "elapsedSeconds": 0
+    },
+    {
+      "label": "gradle-lifecycles-02",
+      "test": "TestGradleNestedTestKitAccounting",
+      "action": "pass",
+      "elapsedSeconds": 24.98
+    },
+    {
+      "label": "gradle-lifecycles-02",
+      "test": "TestGradlePersistentNoActionReplay",
+      "action": "pass",
+      "elapsedSeconds": 27.35
+    },
+    {
+      "label": "gradle-lifecycles-02",
+      "test": "TestGradleNativeUpToDateAndCacheRestore",
+      "action": "pass",
+      "elapsedSeconds": 31.57
+    },
+    {
+      "label": "gradle-overhead-01",
+      "test": "TestGradleSymmetricCaptureOverhead",
+      "action": "pass",
+      "elapsedSeconds": 30.73
+    },
+    {
+      "label": "gradle-persistent-01",
+      "test": "TestGradlePersistentNoActionReplay",
+      "action": "pass",
+      "elapsedSeconds": 41.11
+    },
+    {
+      "label": "gradle-testkit-01",
+      "test": "TestGradleNestedTestKitAccounting",
+      "action": "pass",
+      "elapsedSeconds": 25.91
+    },
+    {
+      "label": "historical-contracts-01",
+      "test": "TestCLIRejectsUngatedExecutionAndBudgetReset",
+      "action": "pass",
+      "elapsedSeconds": 0
+    },
+    {
+      "label": "historical-contracts-01",
+      "test": "TestProtocolDriftRefuses",
+      "action": "pass",
+      "elapsedSeconds": 0
+    },
+    {
+      "label": "historical-contracts-01",
+      "test": "TestBudgetNeverPromotesMissingOrHistoricalEvidence",
+      "action": "pass",
+      "elapsedSeconds": 0
+    },
+    {
+      "label": "historical-contracts-01",
+      "test": "TestProvenanceRuntimePreservesOldContractsAndRejectsMissingApproval/schema",
+      "action": "pass",
+      "elapsedSeconds": 0
+    },
+    {
+      "label": "historical-contracts-01",
+      "test": "TestProvenanceRuntimePreservesOldContractsAndRejectsMissingApproval/contract",
+      "action": "pass",
+      "elapsedSeconds": 0
+    },
+    {
+      "label": "historical-contracts-01",
+      "test": "TestProvenanceRuntimePreservesOldContractsAndRejectsMissingApproval/root",
+      "action": "pass",
+      "elapsedSeconds": 0
+    },
+    {
+      "label": "historical-contracts-01",
+      "test": "TestProvenanceRuntimePreservesOldContractsAndRejectsMissingApproval/seed",
+      "action": "pass",
+      "elapsedSeconds": 0
+    },
+    {
+      "label": "historical-contracts-01",
+      "test": "TestProvenanceRuntimePreservesOldContractsAndRejectsMissingApproval/decision",
+      "action": "pass",
+      "elapsedSeconds": 0
+    },
+    {
+      "label": "historical-contracts-01",
+      "test": "TestProvenanceRuntimePreservesOldContractsAndRejectsMissingApproval",
+      "action": "pass",
+      "elapsedSeconds": 0
+    },
+    {
+      "label": "limits-recovery-final-01",
+      "test": "TestAllocationStopsAndDetachedChild/workflow-limit",
+      "action": "pass",
+      "elapsedSeconds": 7.77
+    },
+    {
+      "label": "limits-recovery-final-01",
+      "test": "TestAllocationStopsAndDetachedChild/disk-before-start",
+      "action": "pass",
+      "elapsedSeconds": 0.32
+    },
+    {
+      "label": "limits-recovery-final-01",
+      "test": "TestAllocationStopsAndDetachedChild/detached-and-timeout",
+      "action": "pass",
+      "elapsedSeconds": 3.73
+    },
+    {
+      "label": "limits-recovery-final-01",
+      "test": "TestAllocationStopsAndDetachedChild",
+      "action": "pass",
+      "elapsedSeconds": 11.81
+    },
+    {
+      "label": "limits-recovery-final-01",
+      "test": "TestRawEvidenceTampering/native-duration",
+      "action": "pass",
+      "elapsedSeconds": 0.02
+    },
+    {
+      "label": "limits-recovery-final-01",
+      "test": "TestRawEvidenceTampering/output-bytes",
+      "action": "pass",
+      "elapsedSeconds": 0.02
+    },
+    {
+      "label": "limits-recovery-final-01",
+      "test": "TestRawEvidenceTampering/hidden-preparation",
+      "action": "pass",
+      "elapsedSeconds": 0.01
+    },
+    {
+      "label": "limits-recovery-final-01",
+      "test": "TestRawEvidenceTampering/normalization",
+      "action": "pass",
+      "elapsedSeconds": 0.02
+    },
+    {
+      "label": "limits-recovery-final-01",
+      "test": "TestRawEvidenceTampering/missing-maintenance",
+      "action": "pass",
+      "elapsedSeconds": 0.04
+    },
+    {
+      "label": "limits-recovery-final-01",
+      "test": "TestRawEvidenceTampering/rebound-duration-forgery",
+      "action": "pass",
+      "elapsedSeconds": 0.02
+    },
+    {
+      "label": "limits-recovery-final-01",
+      "test": "TestRawEvidenceTampering/hidden-retry",
+      "action": "pass",
+      "elapsedSeconds": 0.05
+    },
+    {
+      "label": "limits-recovery-final-01",
+      "test": "TestRawEvidenceTampering",
+      "action": "pass",
+      "elapsedSeconds": 10.37
+    },
+    {
+      "label": "limits-recovery-final-01",
+      "test": "TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost",
+      "action": "fail",
+      "elapsedSeconds": 5.63
+    },
+    {
+      "label": "limits-recovery-final-01",
+      "test": "TestCheckpointResumeAndCrashRecovery/verified-pair",
+      "action": "pass",
+      "elapsedSeconds": 14.45
+    },
+    {
+      "label": "limits-recovery-final-01",
+      "test": "TestCheckpointResumeAndCrashRecovery/after-receipt",
+      "action": "pass",
+      "elapsedSeconds": 20.65
+    },
+    {
+      "label": "limits-recovery-final-01",
+      "test": "TestCheckpointResumeAndCrashRecovery/before-receipt",
+      "action": "pass",
+      "elapsedSeconds": 25.17
+    },
+    {
+      "label": "limits-recovery-final-01",
+      "test": "TestCheckpointResumeAndCrashRecovery/sealed-pair-without-checkpoint",
+      "action": "pass",
+      "elapsedSeconds": 14.64
+    },
+    {
+      "label": "limits-recovery-final-01",
+      "test": "TestCheckpointResumeAndCrashRecovery/warm-session-loss",
+      "action": "pass",
+      "elapsedSeconds": 6.64
+    },
+    {
+      "label": "limits-recovery-final-01",
+      "test": "TestCheckpointResumeAndCrashRecovery",
+      "action": "pass",
+      "elapsedSeconds": 81.56
+    },
+    {
+      "label": "owned-replay-01",
+      "test": "TestOwnedReplayAndIndependentChecker/positive-summary",
+      "action": "pass",
+      "elapsedSeconds": 0.03
+    },
+    {
+      "label": "owned-replay-01",
+      "test": "TestOwnedReplayAndIndependentChecker/payback",
+      "action": "pass",
+      "elapsedSeconds": 0.03
+    },
+    {
+      "label": "owned-replay-01",
+      "test": "TestOwnedReplayAndIndependentChecker/duration",
+      "action": "pass",
+      "elapsedSeconds": 0.03
+    },
+    {
+      "label": "owned-replay-01",
+      "test": "TestOwnedReplayAndIndependentChecker",
+      "action": "pass",
+      "elapsedSeconds": 0.8
+    },
+    {
+      "label": "primary-boundary-01",
+      "test": "TestOwnedReplayAndIndependentChecker/positive-summary",
+      "action": "pass",
+      "elapsedSeconds": 0.05
+    },
+    {
+      "label": "primary-boundary-01",
+      "test": "TestOwnedReplayAndIndependentChecker/payback",
+      "action": "pass",
+      "elapsedSeconds": 0.05
+    },
+    {
+      "label": "primary-boundary-01",
+      "test": "TestOwnedReplayAndIndependentChecker/duration",
+      "action": "pass",
+      "elapsedSeconds": 0.05
+    },
+    {
+      "label": "primary-boundary-01",
+      "test": "TestOwnedReplayAndIndependentChecker",
+      "action": "pass",
+      "elapsedSeconds": 24.94
+    },
+    {
+      "label": "projection-and-horizon-01",
+      "test": "TestFullHorizonDoesNotStopAtNegativeValue",
+      "action": "fail",
+      "elapsedSeconds": 3.59
+    },
+    {
+      "label": "projection-and-horizon-01",
+      "test": "TestQualifiedProjectionAndSemanticCounterexample",
+      "action": "fail",
+      "elapsedSeconds": 3.77
+    },
+    {
+      "label": "projection-and-horizon-02",
+      "test": "TestFullHorizonDoesNotStopAtNegativeValue",
+      "action": "pass",
+      "elapsedSeconds": 39.1
+    },
+    {
+      "label": "projection-and-horizon-02",
+      "test": "TestQualifiedProjectionAndSemanticCounterexample",
+      "action": "pass",
+      "elapsedSeconds": 6.97
+    },
+    {
+      "label": "recovery-01",
+      "test": "TestCheckpointResumeAndCrashRecovery/verified-pair",
+      "action": "pass",
+      "elapsedSeconds": 21.76
+    },
+    {
+      "label": "recovery-01",
+      "test": "TestCheckpointResumeAndCrashRecovery/after-receipt",
+      "action": "pass",
+      "elapsedSeconds": 24.92
+    },
+    {
+      "label": "recovery-01",
+      "test": "TestCheckpointResumeAndCrashRecovery/before-receipt",
+      "action": "pass",
+      "elapsedSeconds": 25.44
+    },
+    {
+      "label": "recovery-01",
+      "test": "TestCheckpointResumeAndCrashRecovery/warm-session-loss",
+      "action": "pass",
+      "elapsedSeconds": 6.05
+    },
+    {
+      "label": "recovery-01",
+      "test": "TestCheckpointResumeAndCrashRecovery",
+      "action": "pass",
+      "elapsedSeconds": 78.17
+    },
+    {
+      "label": "recovery-01",
+      "test": "TestOwnedReplayAndIndependentChecker/positive-summary",
+      "action": "pass",
+      "elapsedSeconds": 0.05
+    },
+    {
+      "label": "recovery-01",
+      "test": "TestOwnedReplayAndIndependentChecker/payback",
+      "action": "pass",
+      "elapsedSeconds": 0.05
+    },
+    {
+      "label": "recovery-01",
+      "test": "TestOwnedReplayAndIndependentChecker/duration",
+      "action": "pass",
+      "elapsedSeconds": 0.05
+    },
+    {
+      "label": "recovery-01",
+      "test": "TestOwnedReplayAndIndependentChecker",
+      "action": "pass",
+      "elapsedSeconds": 21.85
+    },
+    {
+      "label": "recovery-accounting-02",
+      "test": "TestExternalPreparationIsChargedExactlyOnce",
+      "action": "pass",
+      "elapsedSeconds": 14.5
+    },
+    {
+      "label": "recovery-accounting-02",
+      "test": "TestCheckpointResumeAndCrashRecovery/verified-pair",
+      "action": "pass",
+      "elapsedSeconds": 21.48
+    },
+    {
+      "label": "recovery-accounting-02",
+      "test": "TestCheckpointResumeAndCrashRecovery/after-receipt",
+      "action": "pass",
+      "elapsedSeconds": 25.87
+    },
+    {
+      "label": "recovery-accounting-02",
+      "test": "TestCheckpointResumeAndCrashRecovery/before-receipt",
+      "action": "pass",
+      "elapsedSeconds": 19.72
+    },
+    {
+      "label": "recovery-accounting-02",
+      "test": "TestCheckpointResumeAndCrashRecovery/sealed-pair-without-checkpoint",
+      "action": "pass",
+      "elapsedSeconds": 7.97
+    },
+    {
+      "label": "recovery-accounting-02",
+      "test": "TestCheckpointResumeAndCrashRecovery/warm-session-loss",
+      "action": "pass",
+      "elapsedSeconds": 3.26
+    },
+    {
+      "label": "recovery-accounting-02",
+      "test": "TestCheckpointResumeAndCrashRecovery",
+      "action": "pass",
+      "elapsedSeconds": 78.3
+    },
+    {
+      "label": "recovery-accounting-02",
+      "test": "TestOwnedReplayAndIndependentChecker/positive-summary",
+      "action": "pass",
+      "elapsedSeconds": 0.07
+    },
+    {
+      "label": "recovery-accounting-02",
+      "test": "TestOwnedReplayAndIndependentChecker/payback",
+      "action": "pass",
+      "elapsedSeconds": 0.07
+    },
+    {
+      "label": "recovery-accounting-02",
+      "test": "TestOwnedReplayAndIndependentChecker/duration",
+      "action": "pass",
+      "elapsedSeconds": 0.07
+    },
+    {
+      "label": "recovery-accounting-02",
+      "test": "TestOwnedReplayAndIndependentChecker",
+      "action": "pass",
+      "elapsedSeconds": 12.62
+    },
+    {
+      "label": "typed-failures-01",
+      "test": "TestTypedFailuresAndNativeFallback/mismatch",
+      "action": "pass",
+      "elapsedSeconds": 6.95
+    },
+    {
+      "label": "typed-failures-01",
+      "test": "TestTypedFailuresAndNativeFallback/native-failure",
+      "action": "pass",
+      "elapsedSeconds": 20.3
+    },
+    {
+      "label": "typed-failures-01",
+      "test": "TestTypedFailuresAndNativeFallback/unavailable",
+      "action": "pass",
+      "elapsedSeconds": 21.55
+    },
+    {
+      "label": "typed-failures-01",
+      "test": "TestTypedFailuresAndNativeFallback/no-action",
+      "action": "pass",
+      "elapsedSeconds": 19.84
+    },
+    {
+      "label": "typed-failures-01",
+      "test": "TestTypedFailuresAndNativeFallback/fallback",
+      "action": "pass",
+      "elapsedSeconds": 19.67
+    },
+    {
+      "label": "typed-failures-01",
+      "test": "TestTypedFailuresAndNativeFallback",
+      "action": "pass",
+      "elapsedSeconds": 88.32
+    }
+  ],
+  "skippedTests": []
+}

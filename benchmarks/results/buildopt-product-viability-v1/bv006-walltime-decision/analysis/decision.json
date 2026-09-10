@@ -1,0 +1,180 @@
+{
+  "schema": "buildopt.walltime-decision/result/v1",
+  "evidenceStatus": "verified",
+  "objectiveStatus": "partial",
+  "decision": "INCONCLUSIVE_HARNESS_OWNERSHIP_FAILURE",
+  "steps": {
+    "W1": "verified",
+    "W2": "partial",
+    "W3": "deferred"
+  },
+  "W1": {
+    "status": "verified",
+    "decision": "COLD_DIAGNOSTIC_CLOSED_WITH_FAILURE",
+    "gradleReserved": 2,
+    "gradleActual": 1,
+    "helperJVMReserved": 4,
+    "helperJVMActual": 0,
+    "rows": [
+      {
+        "attempt": "r1-000-g0-N",
+        "nativeExit": 0,
+        "nativeOutcome": "EXITED",
+        "nativeMS": 206323.304156,
+        "nativeIdentity": {
+          "pid": 1249096,
+          "startTicks": 42195395,
+          "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-f9ba25cfe73d3cc1-r1-N-1.service",
+          "command": [
+            "/bin/sh",
+            "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-walltime-decision/cold/run/r1/N/repo/gradlew",
+            "--offline",
+            "--no-scan",
+            "--max-workers=8",
+            ":server:precommit",
+            "--continue",
+            "--no-configuration-cache",
+            "--build-cache",
+            "--console=plain",
+            "--init-script",
+            "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/versions/owner-readiness-v5/source/capture.init.gradle",
+            "--daemon"
+          ]
+        },
+        "daemonSamples": 2058,
+        "firstDaemonGapMS": 615.789834,
+        "lastDaemonGapMS": 7.639284,
+        "maxDaemonCoverageGapMS": 615.789834,
+        "diagnosticCoverageQualified": false,
+        "samplerRows": 2066,
+        "observerError": "",
+        "persistenceError": "",
+        "pendingRecords": 0,
+        "pendingBytes": 0
+      }
+    ],
+    "unloadedUnits": [
+      "buildopt-replay-f9ba25cfe73d3cc1-r1-N-1.service"
+    ],
+    "driverExit": 1,
+    "formalReadinessQualified": false,
+    "walltimeScreenAdmitted": "Under the approved independent timing amendment; this diagnostic is not relabeled as passed",
+    "atUTC": "2026-09-09T14:48:52.535429+00:00"
+  },
+  "W2": {
+    "schema": "buildopt.cpu-screen/failure/v1",
+    "evidenceStatus": "verified",
+    "screenStatus": "partial",
+    "decision": "INCONCLUSIVE_HARNESS_OWNERSHIP_FAILURE",
+    "profile": 8,
+    "gradleReserved": 12,
+    "gradleActual": 2,
+    "metadataJVMActual": 0,
+    "runnerActualGradleStarts": 2,
+    "runnerUnknownGradleReservations": 1,
+    "runnerNestedStarts": 0,
+    "attempts": [
+      {
+        "attempt": "r1-000-g0-I",
+        "arm": "I",
+        "originalOrdinal": 15,
+        "warmup": true,
+        "nativeMS": 333912.462904,
+        "requestMS": 334323.339843,
+        "researchCaptureMS": 607494.669317,
+        "exitCode": -1,
+        "signal": 9,
+        "outcome": "OWNERSHIP_OR_LIMIT_FAILURE",
+        "error": "read /proc/1282075/cgroup: no such process",
+        "native": {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-screen/profiles/8/run/attempts/r1-000-g0-I/native-finish.json",
+          "sha256": "3e4d6e8d79610a96efde52a3c4cfc6621db20e6e383b58dd938693ae3f8680f2"
+        }
+      },
+      {
+        "attempt": "r1-000-g0-N",
+        "arm": "N",
+        "originalOrdinal": 15,
+        "warmup": true,
+        "nativeMS": 202400.593043,
+        "requestMS": 202698.157937,
+        "researchCaptureMS": 561140.383288,
+        "exitCode": 0,
+        "signal": 0,
+        "outcome": "EXITED",
+        "error": "",
+        "native": {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-screen/profiles/8/run/attempts/r1-000-g0-N/native-finish.json",
+          "sha256": "ed6e309ca3f4d01abdad84f893be28970180cc1e9caba542218bb91c7518eb69"
+        }
+      }
+    ],
+    "measuredPairs": 0,
+    "completedComparableWarmupPairs": 0,
+    "customerSavingMS": null,
+    "customerSavingPercent": null,
+    "materialSignalEstablished": false,
+    "candidateRejectedForValue": false,
+    "profilesNotLaunched": [
+      4,
+      2
+    ],
+    "independentHistoryStarts": 0,
+    "validationOrdinalsConsumed": 0,
+    "diagnosticQualityQualified": false,
+    "readinessQualified": false,
+    "valueQualified": false,
+    "interpretation": "Supervisor aborted the candidate warmup on ESRCH reading a disappearing process. Failed or incomplete warmups cannot supply paired value evidence. This does not establish a candidate correctness failure or an actual process escape.",
+    "sourceFinding": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-isolation/control/source/process_linux.go",
+      "sha256": "b68121779ace8dafc7a863210e2bae334602f7850217be224d27de27f1363bf4",
+      "processIdentityLines": "50-87",
+      "cgroupEnumerationLines": "94-143",
+      "observation": "processIdentity propagates cgroup read errors; cgroupProcesses skips os.IsNotExist only; the observed ESRCH error propagates to the ownership watchdog"
+    },
+    "closedIdentities": 87,
+    "unloadedUnits": [
+      "buildopt-replay-6cc236ec0bec0a3e-r1-N-1.service",
+      "buildopt-replay-6cc236ec0bec0a3e-r1-I-2.service"
+    ],
+    "researchCostsNS": 1771412000458,
+    "rawResult": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-screen/profiles/8/run/result.json",
+      "sha256": "54dc454363dec6b67a86be8dc56d732e2e709c574ea871f67e524cb9b7ce4e92"
+    },
+    "receipt": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-screen/receipts/profile-8-end.json",
+      "sha256": "321aaa8b9d15b33f888a75678e6846bb3b7b3fbfdf8fbe8bfb2ae90e4d149372"
+    },
+    "atUTC": "2026-09-09T15:30:30.725976+00:00"
+  },
+  "W3": {
+    "investmentDecision": "DEFER_PENDING_VALID_WALLTIME_EVIDENCE",
+    "reason": "No measured comparable pair; independent history, replication and adaptation prerequisites are not met. Candidate viability remains unresolved.",
+    "independentHistoryStarts": 0,
+    "adaptiveImplementationStarted": false
+  },
+  "gradleReserved": 14,
+  "gradleActual": 3,
+  "helperJVMReserved": 16,
+  "helperJVMActual": 0,
+  "knownUnlaunchedReservedCapacity": 11,
+  "programGradleReserved": 660,
+  "programGradleActual": 550,
+  "priorUncertaintiesRetained": "29 older nested starts and older possible metadata JVM; five unresolved early R4 non-Gradle launches remain in their original ledger",
+  "candidateRetired": false,
+  "formalG0Passed": false,
+  "formalG3Passed": false,
+  "futureValidationOrdinalsConsumed": 0,
+  "correctionAttempts": 0,
+  "nextAction": "Resolve and prove the ESRCH ownership-reader case with a bounded local reproduction before any newly registered native screen. Preserve real escapes, malformed identity, permission errors and PID reuse rejection. Do not resume this failed frozen allocation or add more observer work under it.",
+  "atUTC": "2026-09-09T15:30:30.726303+00:00",
+  "directMainLaunchIdentitiesObserved": 3,
+  "runnerUnknownGradleReservations": {
+    "cold": 1,
+    "screen": 1
+  },
+  "nativeInvocationCompletenessQualified": false,
+  "newNestedStartCountEstablished": false,
+  "invocationAccounting": "All three top-level Gradle launches have native PID and completion receipts. Both raw runner results retain one unknown reservation after failed observation/unfinished daemon evidence. These flags are retained; complete nested-invocation accounting is not claimed. No extra launch is inferred from the flags."
+}

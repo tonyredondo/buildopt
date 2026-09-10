@@ -1,5 +1,11 @@
 # One-command POC onboarding roadmap
 
+> **Research disposition: RETAINED foundation; historical roadmap (2026-09-08).**
+> Preserve the implemented onboarding and its proof. The roadmap below does
+> not schedule new research. Consult the
+> [research status register](../research-status.md) and
+> [current tracker](./buildopt-product-viability-v1-tracker.md) for next work.
+
 > **Successor note:** this roadmap delivered the installed `buildopt optimize`
 > foundation but did not prove generic longitudinal value. The active
 > experiment is now the

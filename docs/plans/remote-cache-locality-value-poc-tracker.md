@@ -1,5 +1,11 @@
 # Remote Cache Locality Value POC Tracker
 
+> **Research disposition: HISTORICAL; closed research (2026-09-08).**
+> Original outcomes and evidence are preserved below. Old phase instructions
+> and unchecked boxes do not reopen this route. Use the
+> [research status register](../research-status.md) and
+> [current tracker](./buildopt-product-viability-v1-tracker.md) for new work.
+
 **Status:** closed — `STOP_REMOTE_CACHE_LOCALITY_VALUE_POC`<br>
 **Current block:** none; all six blocks are resolved<br>
 **Terminal outcomes:** `QUALIFY_REMOTE_CACHE_LOCALITY_PRODUCT` or

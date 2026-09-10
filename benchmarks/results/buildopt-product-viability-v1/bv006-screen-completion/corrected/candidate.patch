@@ -1,0 +1,814 @@
+diff --git a/build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstylePrecommitPlugin.java b/build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstylePrecommitPlugin.java
+--- a/build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstylePrecommitPlugin.java
++++ b/build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstylePrecommitPlugin.java
+@@ -42,10 +42,15 @@
+         File checkstyleDir = new File(project.getBuildDir(), "checkstyle");
+         File checkstyleSuppressions = new File(checkstyleDir, "checkstyle_suppressions.xml");
+         File checkstyleConf = new File(checkstyleDir, "checkstyle.xml");
++        File contentAwareConf = new File(project.getBuildDir(), "checkstyle-content-aware.xml");
++        boolean contentAware = project.getPath().equals(":server");
+         TaskProvider<CopyCheckStyleConfTask> copyCheckstyleConf = project.getTasks()
+             .register("copyCheckstyleConf", CopyCheckStyleConfTask.class);
+         // configure inputs and outputs so up to date works properly
+         copyCheckstyleConf.configure(t -> t.getOutputs().files(checkstyleSuppressions, checkstyleConf));
++        if (contentAware) {
++            copyCheckstyleConf.configure(t -> t.getOutputs().file(contentAwareConf));
++        }
+         if ("jar".equals(checkstyleConfUrl.getProtocol())) {
+             try {
+                 JarURLConnection jarURLConnection = (JarURLConnection) checkstyleConfUrl.openConnection();
+@@ -79,6 +84,16 @@
+                 } catch (IOException e) {
+                     throw new UncheckedIOException(e);
+                 }
++                if (contentAware) {
++                    try {
++                        Files.writeString(
++                            contentAwareConf.toPath(),
++                            CheckstyleSuccessHistory.adapt(Files.readString(checkstyleConf.toPath()))
++                        );
++                    } catch (IOException e) {
++                        throw new UncheckedIOException(e);
++                    }
++                }
+             }
+         }));
+ 
+@@ -106,6 +121,9 @@
+             t.dependsOn(copyCheckstyleConf);
+             t.getMaxHeapSize().set("1g");
+             t.reports(r -> r.getHtml().getRequired().set(false));
++            if (contentAware) {
++                CheckstyleSuccessHistory.install(project, t, checkstyleConf, contentAwareConf);
++            }
+         });
+ 
+         // Configure checkstyle tasks with an empty classpath to improve build avoidance.
+diff --git a/build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/CheckstyleSuccessState.java b/build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/CheckstyleSuccessState.java
+--- /dev/null
++++ b/build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/CheckstyleSuccessState.java
+@@ -0,0 +1,94 @@
++/*
++ * Copyright Elasticsearch B.V. and/or licensed to Elasticsearch B.V. under one
++ * or more contributor license agreements. Licensed under the "Elastic License
++ * 2.0"; you may not use this file except in compliance with the "Elastic License
++ * 2.0".
++ */
++
++package org.elasticsearch.gradle.internal.checkstyle;
++
++import java.io.ByteArrayInputStream;
++import java.io.ByteArrayOutputStream;
++import java.io.IOException;
++import java.io.InputStream;
++import java.nio.charset.StandardCharsets;
++import java.nio.file.Files;
++import java.nio.file.Path;
++import java.nio.file.StandardCopyOption;
++import java.security.MessageDigest;
++import java.security.NoSuchAlgorithmException;
++import java.util.HexFormat;
++import java.util.Properties;
++
++/** Local success metadata, never a replacement for a requested Checkstyle report. */
++public final class CheckstyleSuccessState {
++    private static final int MAX_STATE_BYTES = 32 * 1024 * 1024;
++
++    private CheckstyleSuccessState() {}
++
++    /** Treat missing, corrupt or interrupted metadata as absent history. */
++    public static Properties read(Path path) throws IOException {
++        if (Files.isRegularFile(path) == false || Files.size(path) > MAX_STATE_BYTES) {
++            return new Properties();
++        }
++        byte[] bytes = Files.readAllBytes(path);
++        if (bytes.length < 65 || bytes[64] != '\n') {
++            return new Properties();
++        }
++        byte[] payload = java.util.Arrays.copyOfRange(bytes, 65, bytes.length);
++        if (hash(payload).equals(new String(bytes, 0, 64, StandardCharsets.US_ASCII)) == false) {
++            return new Properties();
++        }
++        Properties result = new Properties();
++        try (InputStream input = new ByteArrayInputStream(payload)) {
++            result.load(input);
++        } catch (IllegalArgumentException e) {
++            return new Properties();
++        }
++        return "1".equals(result.getProperty("version")) ? result : new Properties();
++    }
++
++    /** Publish one complete record atomically; an interrupted temporary file is never read. */
++    public static void write(Path path, Properties properties) throws IOException {
++        properties.setProperty("version", "1");
++        ByteArrayOutputStream payload = new ByteArrayOutputStream();
++        properties.store(payload, null);
++        byte[] bytes = payload.toByteArray();
++        Files.createDirectories(path.getParent());
++        Path temporary = Files.createTempFile(path.getParent(), ".success-", ".tmp");
++        try {
++            try (var output = Files.newOutputStream(temporary)) {
++                output.write((hash(bytes) + "\n").getBytes(StandardCharsets.US_ASCII));
++                output.write(bytes);
++            }
++            Files.move(temporary, path, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
++        } finally {
++            Files.deleteIfExists(temporary);
++        }
++    }
++
++    /** Hash bytes, rather than timestamps, including directory paths when used by the caller. */
++    public static String hash(Path file) throws IOException {
++        MessageDigest digest = digest();
++        try (InputStream input = Files.newInputStream(file)) {
++            byte[] buffer = new byte[65536];
++            for (int length; (length = input.read(buffer)) != -1;) {
++                digest.update(buffer, 0, length);
++            }
++        }
++        return HexFormat.of().formatHex(digest.digest());
++    }
++
++    /** Return the same digest for metadata and actual file content. */
++    public static String hash(byte[] bytes) {
++        return HexFormat.of().formatHex(digest().digest(bytes));
++    }
++
++    private static MessageDigest digest() {
++        try {
++            return MessageDigest.getInstance("SHA-256");
++        } catch (NoSuchAlgorithmException e) {
++            throw new IllegalStateException(e);
++        }
++    }
++}
+diff --git a/build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareChecker.java b/build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareChecker.java
+--- /dev/null
++++ b/build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareChecker.java
+@@ -0,0 +1,193 @@
++/*
++ * Copyright Elasticsearch B.V. and/or licensed to Elasticsearch B.V. under one
++ * or more contributor license agreements. Licensed under the "Elastic License
++ * 2.0"; you may not use this file except in compliance with the "Elastic License
++ * 2.0".
++ */
++
++package org.elasticsearch.gradle.internal.checkstyle;
++
++import com.puppycrawl.tools.checkstyle.Checker;
++import com.puppycrawl.tools.checkstyle.DefaultConfiguration;
++import com.puppycrawl.tools.checkstyle.api.AuditEvent;
++import com.puppycrawl.tools.checkstyle.api.AuditListener;
++import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
++import com.puppycrawl.tools.checkstyle.api.Configuration;
++import com.puppycrawl.tools.checkstyle.api.RootModule;
++
++import java.io.File;
++import java.io.IOException;
++import java.nio.file.Files;
++import java.nio.file.Path;
++import java.util.ArrayList;
++import java.util.HashMap;
++import java.util.HashSet;
++import java.util.List;
++import java.util.Map;
++import java.util.Properties;
++import java.util.Set;
++
++/**
++ * Reuses content-bound successes for the qualified source-only rule set. The native Checker
++ * owns parsing, filtering, diagnostics and formatting. Replayed successes contain no violations;
++ * their native audit events retain every report entry in the current input enumeration order.
++ */
++public final class ContentAwareChecker implements RootModule {
++    private final Checker checker = new Checker();
++    private final List<AuditListener> listeners = new ArrayList<>();
++    private final Set<String> reusable = new HashSet<>();
++    private final Properties completed = new Properties();
++    private List<File> inputs = List.of();
++    private Map<String, String> hashes = Map.of();
++    private Path stateDirectory;
++    private int cursor;
++    private boolean violation;
++
++    /** Use the native module factory and classloader, including all owner checks. */
++    @Override
++    public void setModuleClassLoader(ClassLoader classLoader) {
++        checker.setModuleClassLoader(classLoader);
++    }
++
++    /** Strip only the adapter property; every native property, message and child is retained. */
++    @Override
++    public void configure(Configuration configuration) throws CheckstyleException {
++        DefaultConfiguration nativeConfiguration = new DefaultConfiguration("Checker");
++        for (String property : configuration.getPropertyNames()) {
++            if ("buildoptStateDirectory".equals(property)) {
++                stateDirectory = Path.of(configuration.getProperty(property)).toAbsolutePath().normalize();
++            } else {
++                nativeConfiguration.addProperty(property, configuration.getProperty(property));
++            }
++        }
++        configuration.getMessages().forEach(nativeConfiguration::addMessage);
++        for (Configuration child : configuration.getChildren()) {
++            nativeConfiguration.addChild(child);
++        }
++        checker.configure(nativeConfiguration);
++        checker.addListener(new OrderedEvents());
++    }
++
++    /** The Ant task still supplies its ordinary XML, console and severity listeners. */
++    @Override
++    public void addListener(AuditListener listener) {
++        listeners.add(listener);
++    }
++
++    /** Never publish successes after an error, exception, incomplete report or unsupported request. */
++    @Override
++    public int process(List<File> files) throws CheckstyleException {
++        inputs = List.copyOf(files);
++        cursor = 0;
++        violation = false;
++        reusable.clear();
++        completed.clear();
++        Properties request = new Properties();
++        boolean admitted = false;
++        try {
++            if (stateDirectory != null) {
++                request = CheckstyleSuccessState.read(stateDirectory.resolve("request"));
++            }
++            admitted = "true".equals(request.getProperty("admitted")) && stateDirectory.toString().equals(request.getProperty("stateRoot"));
++            hashes = admitted ? hashInputs(files) : Map.of();
++        } catch (IOException e) {
++            // Metadata and hash preparation must not replace the native file/error path.
++            admitted = false;
++            hashes = Map.of();
++        }
++        for (Map.Entry<String, String> entry : hashes.entrySet()) {
++            if (entry.getValue().equals(request.getProperty("file:" + entry.getKey()))) {
++                reusable.add(entry.getKey());
++            }
++        }
++        List<File> changed = files.stream().filter(file -> reusable.contains(file.getAbsolutePath()) == false).toList();
++        int errors = checker.process(changed);
++        try {
++            // The auditFinished callback has already closed all native formatters here.
++            if (admitted && violation == false && errors == 0 && hashes.equals(hashInputs(files))) {
++                completed.setProperty("identity", request.getProperty("identity"));
++                completed.setProperty("requestId", request.getProperty("requestId"));
++                CheckstyleSuccessState.write(stateDirectory.resolve("proposed"), completed);
++            }
++        } catch (IOException e) {
++            // A completed native result remains valid when optional local history cannot be saved.
++        }
++        return errors;
++    }
++
++    /** Release the same native resources even when checking throws. */
++    @Override
++    public void destroy() {
++        checker.destroy();
++        listeners.clear();
++    }
++
++    private static Map<String, String> hashInputs(List<File> files) throws IOException {
++        Map<String, String> result = new HashMap<>();
++        for (File file : files) {
++            // Missing/unreadable input is processed by Checker, preserving its native error path.
++            if (Files.isRegularFile(file.toPath()) && Files.isReadable(file.toPath())) {
++                result.put(file.getAbsolutePath(), CheckstyleSuccessState.hash(file.toPath()));
++            }
++        }
++        return result;
++    }
++
++    private void replayBefore(String next) {
++        while (cursor < inputs.size()) {
++            String path = inputs.get(cursor).getAbsolutePath();
++            if (path.equals(next)) {
++                cursor++;
++                break;
++            }
++            cursor++;
++            if (reusable.contains(path)) {
++                AuditEvent event = new AuditEvent(checker, path);
++                listeners.forEach(listener -> listener.fileStarted(event));
++                listeners.forEach(listener -> listener.fileFinished(event));
++                completed.setProperty("file:" + path, hashes.get(path));
++            }
++        }
++    }
++
++    /** Forward actual native events and insert only previously proven empty file entries. */
++    private final class OrderedEvents implements AuditListener {
++        @Override
++        public void auditStarted(AuditEvent event) {
++            listeners.forEach(listener -> listener.auditStarted(event));
++        }
++
++        @Override
++        public void auditFinished(AuditEvent event) {
++            replayBefore(null);
++            listeners.forEach(listener -> listener.auditFinished(event));
++        }
++
++        @Override
++        public void fileStarted(AuditEvent event) {
++            replayBefore(event.getFileName());
++            listeners.forEach(listener -> listener.fileStarted(event));
++        }
++
++        @Override
++        public void fileFinished(AuditEvent event) {
++            String hash = hashes.get(event.getFileName());
++            if (hash != null) {
++                completed.setProperty("file:" + event.getFileName(), hash);
++            }
++            listeners.forEach(listener -> listener.fileFinished(event));
++        }
++
++        @Override
++        public void addError(AuditEvent event) {
++            violation = true;
++            listeners.forEach(listener -> listener.addError(event));
++        }
++
++        @Override
++        public void addException(AuditEvent event, Throwable throwable) {
++            violation = true;
++            listeners.forEach(listener -> listener.addException(event, throwable));
++        }
++    }
++}
+diff --git a/build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstyleSuccessHistory.java b/build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstyleSuccessHistory.java
+--- /dev/null
++++ b/build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstyleSuccessHistory.java
+@@ -0,0 +1,275 @@
++/*
++ * Copyright Elasticsearch B.V. and/or licensed to Elasticsearch B.V. under one
++ * or more contributor license agreements. Licensed under the "Elastic License
++ * 2.0"; you may not use this file except in compliance with the "Elastic License
++ * 2.0".
++ */
++
++package org.elasticsearch.gradle.internal.precommit;
++
++import org.elasticsearch.gradle.internal.checkstyle.CheckstyleSuccessState;
++import org.gradle.api.Action;
++import org.gradle.api.Project;
++import org.gradle.api.Task;
++import org.gradle.api.plugins.quality.Checkstyle;
++import org.gradle.api.resources.TextResource;
++import org.gradle.api.resources.TextResourceFactory;
++
++import java.io.File;
++import java.io.IOException;
++import java.nio.charset.StandardCharsets;
++import java.nio.file.Files;
++import java.nio.file.Path;
++import java.util.LinkedHashMap;
++import java.util.Map;
++import java.util.Properties;
++import java.util.TreeMap;
++import java.util.UUID;
++import java.util.jar.JarFile;
++
++/** Binds native Checkstyle successes to task-local history and the exact admitted owner. */
++public final class CheckstyleSuccessHistory {
++    private static final String ORIGINAL_ROOT = "<module name=\"Checker\">";
++    private static final String ADAPTED_ROOT = "<module name=\"org.elasticsearch.gradle.internal.checkstyle.ContentAwareChecker\">\n"
++        + "  <property name=\"buildoptStateDirectory\" value=\"${config_loc}/${buildopt_state}\" />";
++    private static final String CONFIG_HASH = "51d4149c0e631af64016e63f14d5467a7d4f0022d2b4c6a6c5cc2398ad62a81f";
++    private static final String ENGINE_HASH = "4d00e3ec50b757dd340468fd1a4eb23f2a73ac39bb30d4d379922bcf73545261";
++    private static final Map<String, String> RULE_HASHES = Map.of(
++        "SnippetLengthCheck$LineItr.class",
++        "8d643af4d8dbfe04814cc6c6cc81c29718b3a76c4115ae48d9b47da4e9230e2a",
++        "SnippetLengthCheck.class",
++        "290d3d27676f9e3fdaa3786f4e2b3df8f415a6083a767a6a61fa571ecaa7007b",
++        "StringFormattingCheck.class",
++        "a0ebe385159c060c15b20089802d62a07253581aec7b0b7936ae854e117730ec",
++        "SwitchBetweenCheck.class",
++        "1c9e5a427e8c1e4e3327a66ccadc2988071d5994352f00f6199b24ebecd7794c"
++    );
++
++    private static final Map<String, String> ENGINE_DEPENDENCIES = Map.ofEntries(
++        Map.entry("checkstyle-13.11.0.jar", "4d00e3ec50b757dd340468fd1a4eb23f2a73ac39bb30d4d379922bcf73545261"),
++        Map.entry("picocli-4.7.7.jar", "f86e30fffd10d2b13b8caa8d4b237a7ee61f2ffccf5b1941de718b765d235bf8"),
++        Map.entry("antlr4-runtime-4.13.2.jar", "dd3e8a13a2d669bf84fb8d834de35ce4875f27157698d206241ec8488aadcaf7"),
++        Map.entry("commons-beanutils-1.11.0.jar", "9e44ba68ec9a3f21286fa2a8bbb003b735c0f69101bb43144b79f4f8aaa74709"),
++        Map.entry("guava-33.6.0-jre.jar", "dc573e1fca4fd5454f4a5fd3d7da2df03002876a4175bafc14a95980dd7713b3"),
++        Map.entry("reflections-0.10.2.jar", "938a2d08fe54050d7610b944d8ddc3a09355710d9e6be0aac838dbc04e9a2825"),
++        Map.entry("slf4j-simple-2.0.18.jar", "8268bd018a5709b07209e0d8ca6221a37584ba1bc12ba985b8335a82c648bdd0"),
++        Map.entry("Saxon-HE-12.9.jar", "8f3a9216a537367132293eacbba9df062eace8f8b16a184af59e2e4839d4cd41"),
++        Map.entry("commons-collections-3.2.2.jar", "eeeae917917144a68a741d4c0dff66aa5c5c5fd85593ff217bced3fc8ca783b8"),
++        Map.entry("javassist-3.28.0-GA.jar", "57d0a9e9286f82f4eaa851125186997f811befce0e2060ff0a15a77f5a9dd9a7"),
++        Map.entry("jsr305-3.0.2.jar", "766ad2a0783f2687962c8ad74ceecc38a28b9f72a2d085ee438b7813e928d0c7"),
++        Map.entry("xmlresolver-5.3.3.jar", "1fe4d5b92f708dcdb82dbce12919e0171e6b5ca62c6dca6220483625098feb5f"),
++        Map.entry("xmlresolver-5.3.3-data.jar", "b0c487ad2f3e558be8d829c916d2458d10aca6a5bafa7a4d0524b70845e48a5c"),
++        Map.entry("jcl-over-slf4j-2.0.17.jar", "affd06771589ebfe454bb11315a4f466ecaa135b95f3e7939534cf1d2fd7064c"),
++        Map.entry("slf4j-api-2.0.17.jar", "7b751d952061954d5abfed7181c1f645d336091b679891591d63329c622eb832"),
++        Map.entry("failureaccess-1.0.3.jar", "cbfc3906b19b8f55dd7cfd6dfe0aa4532e834250d7f080bd8d211a3e246b59cb")
++    );
++
++    private CheckstyleSuccessHistory() {}
++
++    /** Generate a Gradle-only configuration; the original XML remains usable by IDEs. */
++    public static String adapt(String original) {
++        return original.replace(ORIGINAL_ROOT, ADAPTED_ROOT);
++    }
++
++    /** Retain the native task type, source, checking classpath, dependencies and reports. */
++    public static void install(Project project, Checkstyle task, File originalConfig, File adaptedConfig) {
++        File state = new File(project.getRootDir(), ".gradle/buildopt-checkstyle/server/" + task.getName());
++        task.getLocalState().register(state);
++        // Gradle conventions share this map between tasks; the state reference is task-local.
++        task.setConfigProperties(new LinkedHashMap<>(task.getConfigProperties()));
++        task.getConfigProperties()
++            .put(
++                "buildopt_state",
++                originalConfig.getParentFile().toPath().relativize(state.toPath()).toString().replace(File.separatorChar, '/')
++            );
++        task.setConfig(project.getResources().getText().fromFile(adaptedConfig));
++        task.doFirst(new Prepare(state, originalConfig, project.getGradle().getGradleVersion(), project.getResources().getText()));
++        task.doLast(new Commit(state, originalConfig, project.getGradle().getGradleVersion()));
++    }
++
++    /** Invalidate the previous commit before the worker starts, so cancellation cannot publish partial state. */
++    private record Prepare(File directory, File originalConfig, String gradleVersion, TextResourceFactory textResources)
++        implements
++            Action<Task> {
++        @Override
++        public void execute(Task value) {
++            Checkstyle task = (Checkstyle) value;
++            Path state = directory.toPath();
++            try {
++                Properties previous = CheckstyleSuccessState.read(state.resolve("success"));
++                Files.deleteIfExists(state.resolve("success"));
++                Files.deleteIfExists(state.resolve("proposed"));
++                Files.deleteIfExists(state.resolve("request"));
++                Context context = context(task, state, originalConfig, gradleVersion);
++                boolean admitted = context.admitted();
++                if (admitted == false) {
++                    nativeFallback(task, textResources, originalConfig);
++                    return;
++                }
++                String fingerprint = context.identity();
++                File report = task.getReports().getXml().getOutputLocation().get().getAsFile();
++                boolean reuse = admitted
++                    && fingerprint.equals(previous.getProperty("identity"))
++                    && Files.isRegularFile(report.toPath())
++                    && CheckstyleSuccessState.hash(report.toPath()).equals(previous.getProperty("reportHash"));
++                Properties request = reuse ? previous : new Properties();
++                request.setProperty("admitted", Boolean.toString(admitted));
++                request.setProperty("stateRoot", state.toAbsolutePath().normalize().toString());
++                request.setProperty("identity", fingerprint);
++                request.setProperty("requestId", UUID.randomUUID().toString());
++                CheckstyleSuccessState.write(state.resolve("request"), request);
++            } catch (IOException e) {
++                // The original is already a declared configDirectory input. Both configurations
++                // request identical rules and reports; this branch only removes success reuse.
++                nativeFallback(task, textResources, originalConfig);
++                task.getLogger().info("Checkstyle success history unavailable; using native checking", e);
++            }
++        }
++    }
++
++    /** Bypass the adapter itself on unsupported engines, retaining any caller-supplied native rules. */
++    private static void nativeFallback(Checkstyle task, TextResourceFactory resources, File originalConfig) {
++        String configured = task.getConfig().asString();
++        if (configured.contains(ADAPTED_ROOT)) {
++            String nativeText = configured.replace(ADAPTED_ROOT, ORIGINAL_ROOT);
++            TextResource original = resources.fromFile(originalConfig);
++            task.setConfig(nativeText.equals(original.asString()) ? original : resources.fromString(nativeText));
++        } else if (configured.contains("org.elasticsearch.gradle.internal.checkstyle.ContentAwareChecker")) {
++            throw new org.gradle.api.GradleException("Unsupported modification of generated Checkstyle adapter configuration");
++        }
++    }
++
++    private record Context(String identity, boolean admitted) {}
++
++    /** Recompute before and after checking so changing global inputs cannot publish misleading history. */
++    private static Context context(Checkstyle task, Path state, File originalConfig, String gradleVersion) throws IOException {
++        TreeMap<String, String> identity = new TreeMap<>();
++        identity.put("stateRoot", state.toAbsolutePath().normalize().toString());
++        identity.put("gradle", gradleVersion);
++        identity.put("config", task.getConfig().asString());
++        for (Class<?> type : new Class<?>[] { CheckstyleSuccessHistory.class, Prepare.class, Commit.class, Context.class }) {
++            String resource = "/" + type.getName().replace('.', '/') + ".class";
++            try (var input = type.getResourceAsStream(resource)) {
++                if (input == null) {
++                    throw new IOException("Missing Checkstyle history implementation: " + resource);
++                }
++                identity.put("historyImplementation:" + type.getName(), CheckstyleSuccessState.hash(input.readAllBytes()));
++            }
++        }
++        task.getConfigProperties().forEach((key, item) -> identity.put("property:" + key, item.toString()));
++        Path java = task.getJavaLauncher().get().getExecutablePath().getAsFile().toPath();
++        identity.put("java", java.toString());
++        identity.put("javaHash", CheckstyleSuccessState.hash(java));
++        identity.put("release", CheckstyleSuccessState.hash(java.getParent().getParent().resolve("release")));
++        String expectedStateBinding = originalConfig.getParentFile().toPath().relativize(state).toString().replace(File.separatorChar, '/');
++        boolean admitted = gradleVersion.equals("9.7.1")
++            && task.getJavaLauncher().get().getMetadata().getLanguageVersion().asInt() == 21
++            && expectedStateBinding.equals(task.getConfigProperties().get("buildopt_state"))
++            && task.getConfigDirectory()
++                .get()
++                .getAsFile()
++                .toPath()
++                .toAbsolutePath()
++                .normalize()
++                .equals(originalConfig.getParentFile().toPath().toAbsolutePath().normalize())
++            && CheckstyleSuccessState.hash(originalConfig.toPath()).equals(CONFIG_HASH)
++            && task.getConfig().asString().equals(adapt(Files.readString(originalConfig.toPath())))
++            && task.getClasspath().isEmpty()
++            && task.getReports().getXml().getRequired().get()
++            && task.getReports().getHtml().getRequired().get() == false
++            && task.getReports().getSarif().getRequired().get() == false;
++        boolean engine = false;
++        boolean rules = false;
++        int ordinal = 0;
++        for (File file : task.getCheckstyleClasspath()) {
++            String hash = file.isFile() ? CheckstyleSuccessState.hash(file.toPath()) : "unsupported directory";
++            identity.put("classpath:" + ordinal++, file.getAbsolutePath() + "=" + hash);
++            engine |= hash.equals(ENGINE_HASH);
++            if (file.isFile() && file.getName().equals("build-conventions.jar")) {
++                admitted &= rules == false;
++                rules = qualifiedRules(file);
++            } else {
++                admitted &= hash.equals(ENGINE_DEPENDENCIES.get(file.getName()));
++            }
++        }
++        admitted &= engine && rules;
++        Path configDirectory = task.getConfigDirectory().get().getAsFile().toPath();
++        try (var files = Files.walk(configDirectory)) {
++            for (Path file : files.filter(Files::isRegularFile).sorted().toList()) {
++                identity.put("configFile:" + configDirectory.relativize(file), CheckstyleSuccessState.hash(file));
++            }
++        }
++        File report = task.getReports().getXml().getOutputLocation().get().getAsFile();
++        identity.put("report", report.getAbsolutePath());
++        // Length prefixes avoid ambiguous identities for arbitrary property values and paths.
++        StringBuilder text = new StringBuilder();
++        identity.forEach((key, item) -> text.append(key.length()).append(':').append(key).append(item.length()).append(':').append(item));
++        String fingerprint = CheckstyleSuccessState.hash(text.toString().getBytes(StandardCharsets.UTF_8));
++        return new Context(fingerprint, admitted);
++    }
++
++    private static boolean qualifiedRules(File file) throws IOException {
++        try (JarFile jar = new JarFile(file)) {
++            for (String name : new String[] {
++                "ContentAwareChecker.class",
++                "ContentAwareChecker$OrderedEvents.class",
++                "CheckstyleSuccessState.class" }) {
++                String path = "org/elasticsearch/gradle/internal/checkstyle/" + name;
++                var member = jar.getJarEntry(path);
++                if (member == null) {
++                    return false;
++                }
++                try (
++                    var expected = CheckstyleSuccessHistory.class.getResourceAsStream("/" + path);
++                    var actual = jar.getInputStream(member)
++                ) {
++                    if (expected == null
++                        || CheckstyleSuccessState.hash(expected.readAllBytes())
++                            .equals(CheckstyleSuccessState.hash(actual.readAllBytes())) == false) {
++                        return false;
++                    }
++                }
++            }
++            for (Map.Entry<String, String> entry : RULE_HASHES.entrySet()) {
++                var member = jar.getJarEntry("org/elasticsearch/gradle/internal/checkstyle/" + entry.getKey());
++                if (member == null) {
++                    return false;
++                }
++                try (var input = jar.getInputStream(member)) {
++                    if (CheckstyleSuccessState.hash(input.readAllBytes()).equals(entry.getValue()) == false) {
++                        return false;
++                    }
++                }
++            }
++        }
++        return true;
++    }
++
++    /** Commit only after native worker completion and all requested reports have been written. */
++    private record Commit(File directory, File originalConfig, String gradleVersion) implements Action<Task> {
++        @Override
++        public void execute(Task value) {
++            Path state = directory.toPath();
++            try {
++                Properties request = CheckstyleSuccessState.read(state.resolve("request"));
++                Properties proposed = CheckstyleSuccessState.read(state.resolve("proposed"));
++                if (request.getProperty("requestId") != null
++                    && request.getProperty("requestId").equals(proposed.getProperty("requestId"))
++                    && request.getProperty("identity").equals(proposed.getProperty("identity"))) {
++                    Checkstyle task = (Checkstyle) value;
++                    Context after = context(task, state, originalConfig, gradleVersion);
++                    if (after.admitted() == false || after.identity().equals(request.getProperty("identity")) == false) {
++                        return;
++                    }
++                    Path report = task.getReports().getXml().getOutputLocation().get().getAsFile().toPath();
++                    proposed.setProperty("reportHash", CheckstyleSuccessState.hash(report));
++                    CheckstyleSuccessState.write(state.resolve("success"), proposed);
++                }
++                Files.deleteIfExists(state.resolve("request"));
++                Files.deleteIfExists(state.resolve("proposed"));
++            } catch (IOException e) {
++                value.getLogger().info("Checkstyle success history was not committed", e);
++            }
++        }
++    }
++}
+diff --git a/build-tools-internal/src/test/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareCheckerTests.java b/build-tools-internal/src/test/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareCheckerTests.java
+--- /dev/null
++++ b/build-tools-internal/src/test/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareCheckerTests.java
+@@ -0,0 +1,190 @@
++/*
++ * Copyright Elasticsearch B.V. and/or licensed to Elasticsearch B.V. under one
++ * or more contributor license agreements. Licensed under the "Elastic License
++ * 2.0"; you may not use this file except in compliance with the "Elastic License
++ * 2.0".
++ */
++
++package org.elasticsearch.gradle.internal.checkstyle;
++
++import com.puppycrawl.tools.checkstyle.AbstractAutomaticBean;
++import com.puppycrawl.tools.checkstyle.Checker;
++import com.puppycrawl.tools.checkstyle.DefaultConfiguration;
++import com.puppycrawl.tools.checkstyle.XMLLogger;
++import com.puppycrawl.tools.checkstyle.api.AbstractFileSetCheck;
++import com.puppycrawl.tools.checkstyle.api.FileText;
++import com.puppycrawl.tools.checkstyle.api.RootModule;
++
++import org.junit.Rule;
++import org.junit.Test;
++import org.junit.rules.TemporaryFolder;
++
++import java.io.File;
++import java.nio.file.Files;
++import java.nio.file.Path;
++import java.nio.file.attribute.FileTime;
++import java.util.ArrayList;
++import java.util.List;
++import java.util.Properties;
++
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertFalse;
++import static org.junit.Assert.assertTrue;
++
++/** Real-engine regression tests; the observation check counts work without replacing any native rule. */
++public class ContentAwareCheckerTests {
++    @Rule
++    public TemporaryFolder temporary = new TemporaryFolder();
++
++    /** Observe actual FileSetCheck processing independently of success metadata and replayed report events. */
++    public static class ProcessingObserver extends AbstractFileSetCheck {
++        private static final ThreadLocal<List<String>> FILES = ThreadLocal.withInitial(ArrayList::new);
++
++        @Override
++        protected void processFiltered(File file, FileText text) {
++            FILES.get().add(file.getName());
++        }
++    }
++
++    @Test
++    public void testContentReuseRetainsOrderedXmlIncludingExcludedFiles() throws Exception {
++        Path source = temporary.newFolder("sources").toPath();
++        Path state = temporary.newFolder("state").toPath();
++        File a = source.resolve("A.java").toFile();
++        File b = source.resolve("B.java").toFile();
++        File module = source.resolve("module-info.java").toFile();
++        Files.writeString(a.toPath(), "public class A {}\n");
++        Files.writeString(b.toPath(), "public class B {}\n");
++        Files.writeString(module.toPath(), "module example {}\n");
++        List<File> files = List.of(b, module, a);
++        Run nativeCold = run(false, state, files, new Properties());
++        Run cold = run(true, state, files, new Properties());
++        assertEquals(nativeCold.xml(), cold.xml());
++        assertEquals(List.of("B.java", "A.java"), cold.processed());
++        Run warm = run(true, state, files, cold.success());
++        assertEquals(nativeCold.xml(), warm.xml());
++        assertTrue(warm.processed().isEmpty());
++        Files.writeString(a.toPath(), "public class A { int value; }\n");
++        Run nativeEdit = run(false, state, files, new Properties());
++        Run edit = run(true, state, files, warm.success());
++        assertEquals(nativeEdit.xml(), edit.xml());
++        assertEquals(List.of("A.java"), edit.processed());
++        // A content change with the same timestamp must still reach the actual checker.
++        FileTime time = Files.getLastModifiedTime(a.toPath());
++        Files.writeString(a.toPath(), "import java.util.*;\npublic class A {}\n");
++        Files.setLastModifiedTime(a.toPath(), time);
++        Run nativeFailure = run(false, state, files, new Properties());
++        Run failure = run(true, state, files, edit.success());
++        assertEquals(nativeFailure.xml(), failure.xml());
++        assertEquals(nativeFailure.errors(), failure.errors());
++        assertTrue(failure.errors() > 0);
++        assertTrue(failure.success().isEmpty());
++    }
++
++    @Test
++    public void testFailuresNeverBecomeTrustedHistory() throws Exception {
++        Path state = temporary.newFolder("state").toPath();
++        File a = temporary.newFile("A.java");
++        File b = temporary.newFile("B.java");
++        List<File> files = List.of(a, b);
++        Files.writeString(a.toPath(), "import java.util.*;\npublic class A {}\n");
++        Files.writeString(b.toPath(), "import java.io.*;\npublic class B {}\n");
++        Run failed = run(true, state, files, new Properties());
++        assertEquals(2, failed.errors());
++        assertTrue(failed.success().isEmpty());
++        Files.writeString(a.toPath(), "public class A {}\n");
++        Run partial = run(true, state, files, failed.success());
++        assertEquals(1, partial.errors());
++        assertEquals(List.of("A.java", "B.java"), partial.processed());
++        assertEquals(run(false, state, files, new Properties()).xml(), partial.xml());
++        Files.writeString(b.toPath(), "public class B {}\n");
++        Run fixed = run(true, state, files, partial.success());
++        assertEquals(0, fixed.errors());
++        assertEquals(List.of("A.java", "B.java"), fixed.processed());
++        assertFalse(fixed.success().isEmpty());
++    }
++
++    @Test
++    public void testAddDeleteRenameAndEmptyInput() throws Exception {
++        Path state = temporary.newFolder("state").toPath();
++        File a = temporary.newFile("A.java");
++        Files.writeString(a.toPath(), "public class A {}\n");
++        Run initial = run(true, state, List.of(a), new Properties());
++        File b = temporary.newFile("B.java");
++        Files.writeString(b.toPath(), "public class B {}\n");
++        Run added = run(true, state, List.of(a, b), initial.success());
++        assertEquals(List.of("B.java"), added.processed());
++        assertEquals(run(false, state, List.of(a, b), new Properties()).xml(), added.xml());
++        Run deleted = run(true, state, List.of(b), added.success());
++        assertTrue(deleted.processed().isEmpty());
++        assertEquals(run(false, state, List.of(b), new Properties()).xml(), deleted.xml());
++        File renamed = temporary.newFolder("renamed").toPath().resolve("B.java").toFile();
++        Files.move(b.toPath(), renamed.toPath());
++        Run moved = run(true, state, List.of(renamed), deleted.success());
++        assertEquals(List.of("B.java"), moved.processed());
++        Run empty = run(true, state, List.of(), moved.success());
++        assertEquals(run(false, state, List.of(), new Properties()).xml(), empty.xml());
++        Run restored = run(true, state, List.of(renamed), empty.success());
++        assertEquals(List.of("B.java"), restored.processed());
++    }
++
++    @Test
++    public void testCorruptAndInterruptedMetadataAreNotHistory() throws Exception {
++        Path state = temporary.newFolder("state").toPath();
++        Path committed = state.resolve("success");
++        Properties success = new Properties();
++        success.setProperty("file:example", "value");
++        CheckstyleSuccessState.write(committed, success);
++        assertEquals("value", CheckstyleSuccessState.read(committed).getProperty("file:example"));
++        Files.writeString(state.resolve(".success-interrupted.tmp"), "unfinished");
++        assertEquals("value", CheckstyleSuccessState.read(committed).getProperty("file:example"));
++        Files.writeString(committed, "broken");
++        assertTrue(CheckstyleSuccessState.read(committed).isEmpty());
++        Files.delete(committed);
++        assertTrue(CheckstyleSuccessState.read(committed).isEmpty());
++    }
++
++    private record Run(int errors, String xml, List<String> processed, Properties success) {}
++
++    private Run run(boolean candidate, Path state, List<File> files, Properties previous) throws Exception {
++        DefaultConfiguration configuration = new DefaultConfiguration("Checker");
++        configuration.addProperty("charset", "UTF-8");
++        DefaultConfiguration exclusion = new DefaultConfiguration("BeforeExecutionExclusionFileFilter");
++        exclusion.addProperty("fileNamePattern", "module\\-info\\.java$");
++        configuration.addChild(exclusion);
++        configuration.addChild(new DefaultConfiguration(ProcessingObserver.class.getName()));
++        DefaultConfiguration tree = new DefaultConfiguration("TreeWalker");
++        tree.addChild(new DefaultConfiguration("AvoidStarImport"));
++        tree.addChild(new DefaultConfiguration("UnusedImports"));
++        configuration.addChild(tree);
++        RootModule checker = candidate ? new ContentAwareChecker() : new Checker();
++        if (candidate) {
++            Properties request = new Properties();
++            request.putAll(previous);
++            request.setProperty("admitted", "true");
++            request.setProperty("stateRoot", state.toAbsolutePath().normalize().toString());
++            request.setProperty("identity", "engine-test-only; Gradle admission is tested separately");
++            request.setProperty("requestId", "current-request");
++            CheckstyleSuccessState.write(state.resolve("request"), request);
++            Files.deleteIfExists(state.resolve("proposed"));
++            configuration.addProperty("buildoptStateDirectory", state.toString());
++        }
++        ProcessingObserver.FILES.get().clear();
++        Path report = temporary.newFile().toPath();
++        int errors;
++        try {
++            checker.setModuleClassLoader(getClass().getClassLoader());
++            checker.configure(configuration);
++            checker.addListener(new XMLLogger(Files.newOutputStream(report), AbstractAutomaticBean.OutputStreamOptions.CLOSE));
++            errors = checker.process(files);
++        } finally {
++            checker.destroy();
++        }
++        return new Run(
++            errors,
++            Files.readString(report),
++            List.copyOf(ProcessingObserver.FILES.get()),
++            candidate ? CheckstyleSuccessState.read(state.resolve("proposed")) : new Properties()
++        );
++    }
++}

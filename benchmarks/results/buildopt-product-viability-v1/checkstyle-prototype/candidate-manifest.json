@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "buildopt.viability/checkstyle-candidate/v1",
+  "repository": "https://github.com/elastic/elasticsearch.git",
+  "proofRevision": "22d6425e9a44ec9e1aedc2785f4478b8019c851a",
+  "scope": ":server native Checkstyle tasks, XML-only, exact engine/rules and Gradle 9.7.1 / Java 21",
+  "files": [
+    {
+      "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstylePrecommitPlugin.java",
+      "mode": 420,
+      "preimageSHA256": "4bcb596e7d09d08cdcf8ea1c94472421c223769c5e139c200f16dddc3e301015",
+      "postimageSHA256": "b68ff283db91915c84a0792343971843798305aee5374a7dfc6a896e501dcd8d"
+    },
+    {
+      "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/CheckstyleSuccessState.java",
+      "mode": 420,
+      "preimageSHA256": null,
+      "postimageSHA256": "d8a314167c7bc933463ccdb6e33e78045f807b6a104c66a0f26fe0d2c8ed1ae5"
+    },
+    {
+      "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareChecker.java",
+      "mode": 420,
+      "preimageSHA256": null,
+      "postimageSHA256": "ef4788dc5bc4dd59390e019f76cd62d320a43b9fba4764aac814567959240200"
+    },
+    {
+      "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstyleSuccessHistory.java",
+      "mode": 420,
+      "preimageSHA256": null,
+      "postimageSHA256": "47ef64a13b72b1aa45b23068614c1308a42ab73dfbffd625f8051c925f1c8157"
+    },
+    {
+      "path": "build-tools-internal/src/test/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareCheckerTests.java",
+      "mode": 420,
+      "preimageSHA256": null,
+      "postimageSHA256": "307ac5e3c50e46a98c72d2f220a70325ae61b9409a1baa2eee71795367e0802f"
+    }
+  ],
+  "prerequisites": {
+    "gradle/wrapper/gradle-wrapper.properties": "d0bebe8133babb74ab29a31ee6616c56ef8985fc801e1fd16c61b5ed2189e907",
+    "build-tools-internal/src/main/resources/checkstyle.xml": "51d4149c0e631af64016e63f14d5467a7d4f0022d2b4c6a6c5cc2398ad62a81f",
+    "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/SnippetLengthCheck.java": "e921f57b903c4c9cbe3fe45ccbcb242e9ed8ae50f50938447ad3e3a90356abd4",
+    "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/StringFormattingCheck.java": "2db1debd76815b776f935a542839274ed52381aaa73b00e4488f000a4d74f28f",
+    "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/SwitchBetweenCheck.java": "b2fb9c6e49d5b92c4936175875256169fe96d67b780590bcc58a6a473470af40"
+  },
+  "patchSHA256": "573efea098bc5d3269697641046d6d376797556912c2b6b58aa8bdbbb51b2429",
+  "inverseSHA256": "d2daff29115402cffa17624296c09f302a80fae80fc7a263616ac864e2536ea1",
+  "nativeBaselineSeparate": true
+}

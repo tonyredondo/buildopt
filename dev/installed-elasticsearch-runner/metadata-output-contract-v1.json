@@ -1,0 +1,2283 @@
+{
+  "schemaVersion": "buildopt.eic/metadata-output-contract/v1",
+  "acceptedProposalSha256": "afd73e4d204c6b634de1943379aa2e97bfc29182024551e20e9b9b257017b731",
+  "sourceRevision": "16bd5bc5355ac7c6ad736f8a6f93281b24a05ab7",
+  "gradleVersion": "9.7.1",
+  "dateContractSha256": "156bc82fc75d2283b13548813d5e67741d9f6f54cbc15ec7404d717def36b46f",
+  "compilerSelectors": [
+    {
+      "path": "client/client-benchmark-noop-api-plugin/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":client:client-benchmark-noop-api-plugin:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "client/rest/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":client:rest:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "client/sniffer/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":client:sniffer:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/arrow/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:arrow:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/cli-terminal/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:cli-terminal:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/cli-terminal/build/tmp/compileMain22Java/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:cli-terminal:compileMain22Java",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/cli/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:cli:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/columnar/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:columnar:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/core/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:core:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/dissect/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:dissect:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/entitlement/asm-provider/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:entitlement:asm-provider:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/entitlement/bridge/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:entitlement:bridge:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/entitlement/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:entitlement:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/entitlement/build/tmp/compileMain25Java/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:entitlement:compileMain25Java",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/entitlement/build/tmp/compileMain26Java/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:entitlement:compileMain26Java",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/entitlement/build/tmp/compileMain27Java/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:entitlement:compileMain27Java",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/entitlement/qa/entitled-plugin/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:entitlement:qa:entitled-plugin:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/entitlement/qa/entitlement-test-plugin/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:entitlement:qa:entitlement-test-plugin:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/exponential-histogram/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:exponential-histogram:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/exponential-histogram/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:exponential-histogram:compileTestJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/foreign-adapter/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:foreign-adapter:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/foreign-adapter/build/tmp/compileMain22Java/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:foreign-adapter:compileMain22Java",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/foreign-library/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:foreign-library:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/foreign-library/processor/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:foreign-library:processor:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/geo/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:geo:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/gpu-codec/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:gpu-codec:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/grok/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:grok:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/h3/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:h3:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/ip-location-api/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:ip-location-api:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/logging/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:logging:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/lucene-store/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:lucene-store:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/lz4/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:lz4:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/native/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:native:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/native/build/tmp/processForeignAnnotations/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:native:processForeignAnnotations",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/plugin-analysis-api/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:plugin-analysis-api:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/plugin-api/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:plugin-api:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/simdvec/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:simdvec:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/simdvec/build/tmp/processForeignAnnotations/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:simdvec:processForeignAnnotations",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/ssl-config/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:ssl-config:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/swisshash/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:swisshash:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/tdigest/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:tdigest:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/user-agent-api/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:user-agent-api:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/web-utils/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:web-utils:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/workload-identity-aws/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:workload-identity-aws:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/x-content/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:x-content:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "libs/x-content/impl/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":libs:x-content:impl:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/aggregations/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:aggregations:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/analysis-common/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:analysis-common:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/apm/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:apm:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/bitmap/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:bitmap:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/data-streams/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:data-streams:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/dot-prefix-validation/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:dot-prefix-validation:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/health-shards-availability/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:health-shards-availability:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/ingest-attachment/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:ingest-attachment:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/ingest-common/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:ingest-common:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/ingest-ip-location/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:ingest-ip-location:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/ingest-otel/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:ingest-otel:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/ip-location/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:ip-location:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/kibana/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:kibana:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/lang-expression/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:lang-expression:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/lang-mustache/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:lang-mustache:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/lang-painless/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:lang-painless:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/lang-painless/spi/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:lang-painless:spi:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/legacy-geo/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:legacy-geo:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/mapper-extras/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:mapper-extras:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/parent-join/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:parent-join:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/percolator/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:percolator:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/rank-eval/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:rank-eval:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/reindex-management/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:reindex-management:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/reindex/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:reindex:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/repository-azure/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:repository-azure:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/repository-gcs/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:repository-gcs:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/repository-s3/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:repository-s3:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/repository-url/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:repository-url:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/rest-root/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:rest-root:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/runtime-fields-common/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:runtime-fields-common:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/streams/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:streams:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/systemd/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:systemd:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/transport-netty4/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:transport-netty4:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/user-agent/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:user-agent:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/workload-identity/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:workload-identity:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "modules/workload-identity/spi/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":modules:workload-identity:spi:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "plugins/analysis-icu/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":plugins:analysis-icu:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "plugins/analysis-kuromoji/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":plugins:analysis-kuromoji:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "plugins/analysis-nori/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":plugins:analysis-nori:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "plugins/analysis-phonetic/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":plugins:analysis-phonetic:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "plugins/analysis-smartcn/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":plugins:analysis-smartcn:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "plugins/analysis-stempel/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":plugins:analysis-stempel:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "plugins/analysis-ukrainian/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":plugins:analysis-ukrainian:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "plugins/discovery-azure-classic/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":plugins:discovery-azure-classic:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "plugins/discovery-ec2/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":plugins:discovery-ec2:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "plugins/discovery-gce/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":plugins:discovery-gce:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "plugins/mapper-annotated-text/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":plugins:mapper-annotated-text:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "plugins/mapper-murmur3/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":plugins:mapper-murmur3:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "plugins/mapper-size/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":plugins:mapper-size:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "plugins/repository-hdfs/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":plugins:repository-hdfs:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "plugins/store-smb/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":plugins:store-smb:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "qa/logging-spi/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":qa:logging-spi:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "qa/system-indices/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":qa:system-indices:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "server/build/tmp/compileInternalClusterTestJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":server:compileInternalClusterTestJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "server/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":server:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "server/build/tmp/compileTestJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":server:compileTestJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "test/external-modules/apm-integration/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":test:external-modules:test-apm-integration:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "test/external-modules/delayed-aggs/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":test:external-modules:test-delayed-aggs:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "test/external-modules/die-with-dignity/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":test:external-modules:test-die-with-dignity:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "test/external-modules/error-query/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":test:external-modules:test-error-query:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "test/external-modules/esql-heap-attack/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":test:external-modules:test-esql-heap-attack:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "test/external-modules/jvm-crash/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":test:external-modules:test-jvm-crash:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "test/external-modules/latency-simulating-directory/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":test:external-modules:test-latency-simulating-directory:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "test/external-modules/multi-project/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":test:external-modules:test-multi-project:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "test/external-modules/otel-filter-plugin/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":test:external-modules:test-otel-filter-plugin:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "test/framework/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":test:framework:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "test/logger-usage/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":test:logger-usage:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "test/test-clusters/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":test:test-clusters:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/extras/plugins/microsoft-graph-authz/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:extras:plugins:microsoft-graph-authz:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/extras/plugins/microsoft-graph-authz/kiota-merged/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "absent",
+      "owners": [
+        {
+          "identity": ":x-pack:extras:plugins:microsoft-graph-authz:kiota-merged:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/libs/es-opensaml-security-api/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:libs:es-opensaml-security-api:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/analytics/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:analytics:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/apm-data/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:apm-data:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/async-search/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:async-search:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/async/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:async:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/autoscaling/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:autoscaling:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/blob-cache/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:blob-cache:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/ccr/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:ccr:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/core/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:core:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/core/template-resources/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:core:template-resources:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/deprecation/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:deprecation:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/deprecation/qa/common/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:deprecation:qa:common:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/deprecation/qa/deprecation-plugin/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:deprecation:qa:deprecation-plugin:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/deprecation/qa/early-deprecation-plugin/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:deprecation:qa:early-deprecation-plugin:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/diskbbq/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:diskbbq:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/dlm-frozen-transition/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:dlm-frozen-transition:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/downsample/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:downsample:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/encryption/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:encryption:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/encryption/qa/encryption-spi-extension/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:encryption:qa:encryption-spi-extension:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/encryption/spi/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:encryption:spi:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/enrich/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:enrich:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/ent-search/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:ent-search:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/eql/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:eql:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql-core/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:esql-core:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql-datasource-azure/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:esql-datasource-azure:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql-datasource-brotli/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:esql-datasource-brotli:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql-datasource-bzip2/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:esql-datasource-bzip2:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql-datasource-compression-libs/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:esql-datasource-compression-libs:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql-datasource-csv/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:esql-datasource-csv:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql-datasource-gcs/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:esql-datasource-gcs:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql-datasource-grpc/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:esql-datasource-grpc:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql-datasource-gzip/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:esql-datasource-gzip:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql-datasource-http/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:esql-datasource-http:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql-datasource-iceberg/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:esql-datasource-iceberg:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql-datasource-lz4/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:esql-datasource-lz4:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql-datasource-ndjson/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:esql-datasource-ndjson:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql-datasource-netty-commons/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:esql-datasource-netty-commons:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql-datasource-orc/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:esql-datasource-orc:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql-datasource-parquet/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:esql-datasource-parquet:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql-datasource-s3/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:esql-datasource-s3:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql-datasource-snappy/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:esql-datasource-snappy:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql-datasource-zstd/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:esql-datasource-zstd:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:esql:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql/compute/ann/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:esql:compute:ann:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql/compute/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:esql:compute:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql/compute/gen/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:esql:compute:gen:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql/function/math/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:esql:function:math:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/fleet/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:fleet:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/frozen-indices/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:frozen-indices:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/geoip-enterprise-downloader/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:geoip-enterprise-downloader:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/gpu/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:gpu:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/graph/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:graph:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/identity-provider/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:identity-provider:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/ilm/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:ilm:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/inference/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:inference:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/inference/qa/test-service-plugin/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:inference:qa:test-service-plugin:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/kql/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:kql:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/logsdb/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:logsdb:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/logstash/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:logstash:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/mapper-aggregate-metric/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:mapper-aggregate-metric:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/mapper-constant-keyword/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:mapper-constant-keyword:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/mapper-counted-keyword/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:mapper-counted-keyword:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/mapper-unsigned-long/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:mapper-unsigned-long:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/mapper-version/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:mapper-version:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/migrate/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:migrate:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/ml-package-loader/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:ml-package-loader:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/ml/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:ml:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/monitoring/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:monitoring:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/old-lucene-versions/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:old-lucene-versions:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/otel-data/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:otel-data:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/profiling/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:profiling:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/prometheus/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:prometheus:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/ql/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:ql:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/rank-rrf/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:rank-rrf:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/rank-vectors/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:rank-vectors:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/redact/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:redact:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/repositories-metering-api/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:repositories-metering-api:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/rollup/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:rollup:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/search-business-rules/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:search-business-rules:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/searchable-snapshots/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:searchable-snapshots:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/secure-settings/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:secure-settings:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/security/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:security:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/security/qa/operator-privileges-tests/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:security:qa:operator-privileges-tests:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/security/qa/rcs-extension/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:security:qa:rcs-extension:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/security/qa/secondary-auth-actions/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:security:qa:secondary-auth-actions:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/security/qa/security-basic/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:security:qa:security-basic:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/security/qa/ssl-extension/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:security:qa:ssl-extension:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/shutdown/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:shutdown:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/slm/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:slm:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/snapshot-based-recoveries/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:snapshot-based-recoveries:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/snapshot-repo-test-kit/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:snapshot-repo-test-kit:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/spatial/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:spatial:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/sql/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:sql:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/sql/sql-action/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:sql:sql-action:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/sql/sql-proto/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:sql:sql-proto:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/stack/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:stack:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/stateless-health-shards-availability/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:stateless-health-shards-availability:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/stateless-master-failover/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:stateless-master-failover:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/stateless-no-wait-for-active-shards/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:stateless-no-wait-for-active-shards:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/stateless-sigterm/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:stateless-sigterm:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/stateless/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:stateless:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/text-structure/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:text-structure:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/transform/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:transform:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/vector-tile/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:vector-tile:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/voting-only-node/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:voting-only-node:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/watcher/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:watcher:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/wildcard/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:wildcard:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/write-load-forecaster/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:plugin:write-load-forecaster:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/qa/security-example-spi-extension/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:qa:security-example-spi-extension:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/qa/security-implicit-privileges-extension/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:qa:security-implicit-privileges-extension:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/test/deprecated-query/build/tmp/compileJava/previous-compilation-data.bin",
+      "type": "file",
+      "owners": [
+        {
+          "identity": ":x-pack:test:deprecated-query:compileJava",
+          "class": "org.gradle.api.tasks.compile.JavaCompile_Decorated"
+        }
+      ]
+    }
+  ],
+  "licenseReport": {
+    "path": "server/build/reports/licenseHeaders/rat.xml",
+    "owner": ":server:licenseHeaders"
+  }
+}

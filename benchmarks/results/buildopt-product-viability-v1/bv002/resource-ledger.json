@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "buildopt.viability/research-cost/v1",
+  "phase": "BV-001/BV-002 foundation and seed audit",
+  "chargedGradleStarts": 31,
+  "actualGradleInvocations": 30,
+  "nestedGradleStarts": 0,
+  "initialMaxStarts": 30,
+  "continuationMaxStarts": 31,
+  "continuation": "continuation-allocation.json; one additional start explicitly declared before the no-CC continuation under the standing user budget authorization",
+  "nativePrefix": {
+    "outerStarts": 21,
+    "commandSecondsIncludingAnchor": 538.7480257500429,
+    "commandSecondsTransitionsOnly": 516.9789008260705,
+    "unitCPUSeconds": 2205.309,
+    "unitElapsedSeconds": 735.712,
+    "unitScope": "Entire systemd unit: native JVMs, client, source inventory and trace-analysis driver; not isolated JVM CPU",
+    "unitMemoryPeakReported": "28.6G",
+    "unitMemorySwapPeakReported": "26.6M",
+    "resourceSource": "native-prefix-unit-journal.log"
+  },
+  "failedAndSetupAttempts": "All three owner attempts, CC storage, failed new-daemon CC reuse and earlier BV-001 attempts retained. The first owner dependency-copy correction failed; the complete dependency-cache copy succeeded. No H1 code correction attempted.",
+  "researchDurationSecondsSinceAllocation": 5667.515988,
+  "activeEngineerTime": "not measured",
+  "preAllocationOrientation": "unmetered; no builds or public Git fetches before allocation",
+  "foundationCPUOtherThanNativePrefix": "not fully measured; see individual prerequisite receipts",
+  "network": "BV-002 dependency provisioning copied local immutable dependencies with zero network transfer. Earlier Git fetch wire bytes were not measured. No uploads or scan publication.",
+  "stateFootprintBytes": 13041234303,
+  "freeBytes": 874463686656,
+  "customerOrProductSavingClaim": false
+}

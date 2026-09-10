@@ -53,6 +53,14 @@ public final class PatchAutopilotRecipeRegistry {
                     Risk.LOW,
                     "EXACT_BYTES",
                     Inverse.EXACT_MODIFY_ONLY,
+                    true),
+            new Definition(
+                    ReviewedNativePatchJavaRecipe.ELASTICSEARCH_FORBIDDEN_PATTERNS_RECIPE_ID,
+                    ReviewedNativePatchJavaRecipe.RECIPE_VERSION,
+                    "DIGEST_BOUND_REVIEWED_JAVA_SOURCE",
+                    Risk.LOW,
+                    "EXACT_BYTES",
+                    Inverse.EXACT_MODIFY_ONLY,
                     true));
 
     private PatchAutopilotRecipeRegistry() {

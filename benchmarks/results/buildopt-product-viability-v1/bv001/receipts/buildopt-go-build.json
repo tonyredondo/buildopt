@@ -1,0 +1,41 @@
+{
+  "job": "buildopt-go-build",
+  "step": "BV-001",
+  "kind": "PREPARATION_ONLY",
+  "command": [
+    "/home/tonyredondo/repos/github/tonyredondo/buildopt/dev/run",
+    "--toolchain",
+    "go",
+    "--",
+    "go",
+    "build",
+    "-mod=readonly",
+    "./cmd/..."
+  ],
+  "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+  "startedUTC": "2026-09-08T08:26:04.204616+00:00",
+  "gradleStartsReserved": 0,
+  "log": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/logs/buildopt-go-build.log",
+  "status": "finished",
+  "wrapperPid": 3374509,
+  "invocation": [
+    "/home/tonyredondo/repos/github/tonyredondo/buildopt/dev/run",
+    "--toolchain",
+    "go",
+    "--",
+    "go",
+    "build",
+    "-mod=readonly",
+    "./cmd/..."
+  ],
+  "unit": null,
+  "childPid": 3374512,
+  "exitCode": 0,
+  "stopReason": null,
+  "completedUTC": "2026-09-08T08:26:08.205917+00:00",
+  "elapsedSeconds": 4.000970750988927,
+  "directChildCPUSeconds": 15.876365999999999,
+  "cpuScope": "direct child tree",
+  "logBytes": 0,
+  "logSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

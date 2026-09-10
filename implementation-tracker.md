@@ -1,5 +1,13 @@
 # Gradle Build Optimization — Implementation Tracker
 
+> **Retained implementation ledger; historical research phases.** The status
+> and phase labels below describe the closed programs recorded here. Current
+> research is [Product Viability v1](./docs/plans/buildopt-product-viability-v1.md),
+> with its own [execution tracker](./docs/plans/buildopt-product-viability-v1-tracker.md).
+> Consult the [research status register](./docs/research-status.md) before
+> acting on an old pending block. Existing RFC decisions and executable
+> contracts remain unchanged by this notice.
+
 **Overall status:** `SOURCE_BOUND_CONFIGURATION_INPUT_CORRECTIONS_STOPPED` — the exact SBIC route closes below its fixed diagnostic-binding breadth gate<br>
 **Current phase:** `SBIC-006` is complete; 3/3 starts are conclusive but only 1/3 families bind, so materiality, candidates, and timing are not authorized<br>
 **POC functional target:** produce positive cumulative wall-time value against optimized native Gradle across chronological customer-requested builds, including every wrapper, observation, trial, cache, fallback and action cost<br>

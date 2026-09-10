@@ -1,5 +1,11 @@
 # Configuration-Input Native Corrections POC
 
+> **Research disposition: HISTORICAL; closed research (2026-09-08).**
+> Original outcomes and evidence are preserved below. Old phase instructions
+> and unchecked boxes do not reopen this route. Use the
+> [research status register](../research-status.md) and
+> [current tracker](./buildopt-product-viability-v1-tracker.md) for new work.
+
 **Overall:** `STOP_STRICT_DIAGNOSTIC_BUDGET_CANNOT_COMPLETE_COHORT`<br>
 **Current block:** `CINC-003` is complete and terminal<br>
 **Dependent blocks:** `CINC-004..007` are `NOT_AUTHORIZED`

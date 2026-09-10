@@ -146,7 +146,7 @@ func TestBuildObservationMatchesCentralWireContract(t *testing.T) {
 	}
 	getenv := func(key string) string { return values[key] }
 	exit := 0
-	record := buildObservation("example/repository", strings.Repeat("b", 64), getenv, dir, []string{"build"}, []string{"build"}, wcncpobserve.PassthroughResult{Child: wcncpobserve.ChildResult{Outcome: "SUCCESS", ExitCode: &exit}})
+	record := wcncpobserve.BuildObservation("example/repository", strings.Repeat("b", 64), getenv, dir, []string{"build"}, []string{"build"}, wcncpobserve.PassthroughResult{Child: wcncpobserve.ChildResult{Outcome: "SUCCESS", ExitCode: &exit}})
 	raw, err := json.Marshal(record)
 	if err != nil {
 		t.Fatal(err)
@@ -158,7 +158,7 @@ func TestBuildObservationMatchesCentralWireContract(t *testing.T) {
 		t.Fatalf("complete controlled record = %+v", record)
 	}
 	values["WCNCP_JDK_SHA256"] = ""
-	incomplete := buildObservation("example/repository", strings.Repeat("b", 64), getenv, dir, []string{"build"}, []string{"build"}, wcncpobserve.PassthroughResult{Child: wcncpobserve.ChildResult{Outcome: "SUCCESS", ExitCode: &exit}})
+	incomplete := wcncpobserve.BuildObservation("example/repository", strings.Repeat("b", 64), getenv, dir, []string{"build"}, []string{"build"}, wcncpobserve.PassthroughResult{Child: wcncpobserve.ChildResult{Outcome: "SUCCESS", ExitCode: &exit}})
 	if incomplete.Completeness != "INCOMPLETE" || incomplete.Authority.ProspectiveGateInput {
 		t.Fatalf("missing binding gained prospective authority: %+v", incomplete)
 	}

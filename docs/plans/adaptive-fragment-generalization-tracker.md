@@ -1,5 +1,11 @@
 # Adaptive Fragment Generalization POC Tracker
 
+> **Research disposition: HISTORICAL; closed research (2026-09-08).**
+> Original outcomes and evidence are preserved below. Old phase instructions
+> and unchecked boxes do not reopen this route. Use the
+> [research status register](../research-status.md) and
+> [current tracker](./buildopt-product-viability-v1-tracker.md) for new work.
+
 **Status:** `COMPLETE — STOP_ADAPTIVE_FRAGMENT_POC`<br>
 **Current block:** `NONE — terminal decision recorded`<br>
 **Decision baseline:** the current whole-profile hypothesis remains

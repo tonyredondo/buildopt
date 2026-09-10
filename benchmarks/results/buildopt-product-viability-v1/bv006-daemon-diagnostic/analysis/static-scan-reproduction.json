@@ -1,0 +1,42 @@
+{
+  "cancelledBeforeTraversalNS": 12180,
+  "freeSpaceProbeNS": 12080,
+  "helperJVMStarts": 0,
+  "nativeStarts": 0,
+  "scans": [
+    {
+      "begin": {
+        "ns": 400891254421191,
+        "utc": "2026-09-09T08:52:45.446961164Z",
+        "boot": "6b02acec-6ec1-412f-a388-1f6ba2e7d1f3"
+      },
+      "bytes": 10955491091,
+      "cpuNS": 1848653000,
+      "end": {
+        "ns": 400893072701424,
+        "utc": "2026-09-09T08:52:47.265248267Z",
+        "boot": "6b02acec-6ec1-412f-a388-1f6ba2e7d1f3"
+      },
+      "iteration": 0,
+      "wallNS": 1818280233
+    },
+    {
+      "begin": {
+        "ns": 400893072729824,
+        "utc": "2026-09-09T08:52:47.265266167Z",
+        "boot": "6b02acec-6ec1-412f-a388-1f6ba2e7d1f3"
+      },
+      "bytes": 10955491091,
+      "cpuNS": 1849779000,
+      "end": {
+        "ns": 400894890593725,
+        "utc": "2026-09-09T08:52:49.083139778Z",
+        "boot": "6b02acec-6ec1-412f-a388-1f6ba2e7d1f3"
+      },
+      "iteration": 1,
+      "wallNS": 1817863901
+    }
+  ],
+  "scope": "Static reproduction of observer CPU work; no native latency control or corrected observer qualification",
+  "status": "verified"
+}

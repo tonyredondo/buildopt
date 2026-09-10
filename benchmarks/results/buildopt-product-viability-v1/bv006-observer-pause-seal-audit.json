@@ -1,0 +1,21 @@
+{
+  "schema": "buildopt.observer-pause/seal-audit/v1",
+  "status": "verified",
+  "phaseStatus": "verified bounded negative reproduction",
+  "BV006Status": "partial",
+  "decision": "ORIGINAL_PAUSE_NOT_REPRODUCED",
+  "originalCauseEstablished": false,
+  "readinessQualified": false,
+  "valueQualified": false,
+  "manifest": {
+    "path": "bv006-observer-pause/evidence-manifest.json",
+    "sha256": "c09e569f6371d97dd4b568706d63ac21e36c5f17757575a7e8961a7a8f3a043c"
+  },
+  "sealedFilesVerified": 63,
+  "originCopiesVerified": 58,
+  "priorSeal": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/benchmarks/results/buildopt-product-viability-v1/bv006-cpu-isolation-seal-audit.json",
+    "sha256": "266b41b6aff8a0f13b60ff79738ebbdcc1494e85204dd84a09a69507bf00715b"
+  },
+  "atUTC": "2026-09-09T12:00:33.535293+00:00"
+}

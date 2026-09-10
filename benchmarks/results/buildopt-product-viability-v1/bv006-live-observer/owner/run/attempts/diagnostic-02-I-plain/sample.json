@@ -1,0 +1,89 @@
+{
+  "arm": "I",
+  "begin": {
+    "ns": 413952144695109,
+    "utc": "2026-09-09T12:30:26.337242272Z",
+    "boot": "6b02acec-6ec1-412f-a388-1f6ba2e7d1f3"
+  },
+  "builds": [
+    {
+      "buildId": "0670432b-2fb9-430f-99fc-7416ba10171f",
+      "pid": 1119440,
+      "daemonUid": "484fdda5-f585-426b-a91d-6732817bf6f3",
+      "javaHome": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155",
+      "clientWorkingDirectory": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-live-observer/owner/run/r1/I/repo",
+      "receivedTimeMs": 1788957027394,
+      "commandStartTimeMs": 1788957027394,
+      "executionStartTimeMs": 1788957027405,
+      "executionEndTimeMs": 1788957246241,
+      "commandFinishTimeMs": 1788957246245,
+      "log": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-live-observer/owner/run/attempts/diagnostic-02-I-plain/daemon-logs/000/daemon-1119440.out.log",
+        "sha256": "b44b365658a5985493aaba529eb7843be0529a8611291ccb2a3ba5ab60938229"
+      }
+    }
+  ],
+  "cycle": 0,
+  "daemon": {
+    "pid": 1119440,
+    "startTicks": 41395267,
+    "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-a9bb165269e02538-r1-I-2.service",
+    "command": [
+      "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/bin/java",
+      "--add-opens=java.base/java.lang=ALL-UNNAMED",
+      "--add-opens=java.base/java.lang.invoke=ALL-UNNAMED",
+      "--add-opens=java.base/java.util=ALL-UNNAMED",
+      "--add-opens=java.prefs/java.util.prefs=ALL-UNNAMED",
+      "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+      "--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
+      "--add-opens=java.base/java.nio.charset=ALL-UNNAMED",
+      "--add-opens=java.base/java.net=ALL-UNNAMED",
+      "--add-opens=java.base/java.util.concurrent=ALL-UNNAMED",
+      "--add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED",
+      "--add-opens=java.xml/javax.xml.namespace=ALL-UNNAMED",
+      "--add-opens=java.base/java.time=ALL-UNNAMED",
+      "-XX:+HeapDumpOnOutOfMemoryError",
+      "-Xss2m",
+      "--add-exports",
+      "jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
+      "--add-exports",
+      "jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED",
+      "--add-exports",
+      "jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED",
+      "--add-exports",
+      "jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED",
+      "--add-exports",
+      "jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+      "--add-opens",
+      "java.base/java.time=ALL-UNNAMED",
+      "-Dfile.encoding=UTF-8",
+      "-Duser.country",
+      "-Duser.language=en",
+      "-Duser.variant",
+      "-cp",
+      "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-live-observer/owner/run/r1/I/gradle/wrapper/dists/gradle-9.7.1-bin/1w1c7tv4s851m17nbqdsro2tv/gradle-9.7.1/lib/gradle-daemon-main-9.7.1.jar",
+      "-javaagent:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-live-observer/owner/run/r1/I/gradle/wrapper/dists/gradle-9.7.1-bin/1w1c7tv4s851m17nbqdsro2tv/gradle-9.7.1/lib/agents/gradle-instrumentation-agent-9.7.1.jar",
+      "org.gradle.launcher.daemon.bootstrap.GradleDaemon",
+      "9.7.1"
+    ]
+  },
+  "end": {
+    "ns": 414172511929554,
+    "utc": "2026-09-09T12:34:06.704475387Z",
+    "boot": "6b02acec-6ec1-412f-a388-1f6ba2e7d1f3"
+  },
+  "jfrActive": false,
+  "logs": [
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-live-observer/owner/run/attempts/diagnostic-02-I-plain/daemon-logs/000/daemon-1119440.out.log",
+      "sha256": "b44b365658a5985493aaba529eb7843be0529a8611291ccb2a3ba5ab60938229"
+    }
+  ],
+  "native": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-live-observer/owner/run/attempts/diagnostic-02-I-plain/native-finish.json",
+    "sha256": "a61f82be281f50851f22b806afb3c5ab3cc09efb779cd6a4e8fc4c0fa3173603"
+  },
+  "schema": "buildopt.daemon-diagnostic/sample/v1",
+  "sequence": 2,
+  "warmup": true
+}

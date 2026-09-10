@@ -1,0 +1,38 @@
+{
+  "schema": "buildopt.live-observer/two-start-design/v1",
+  "createdUTC": "2026-09-09T12:16:17.554940+00:00",
+  "requests": 2,
+  "arms": [
+    "N",
+    "I"
+  ],
+  "cycles": 1,
+  "cold": true,
+  "nativeCPU": "0-7",
+  "nativeWorkers": 8,
+  "supervisorCPU": {
+    "N": "0-7",
+    "I": "8"
+  },
+  "externalHeartbeatCPU": "10",
+  "samplerCadenceMS": 100,
+  "heartbeatCadenceMS": 10,
+  "pauseCriterionMS": 500,
+  "candidate": "none",
+  "qualifiesReadiness": false,
+  "qualifiesValue": false,
+  "qualification": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-live-observer/analysis/qualification.json",
+    "sha256": "d595130d09134d60ad181d2425ce693c5502d7cfe4d2790ceb8cfed10634d2c5"
+  },
+  "source": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-live-observer/control/source",
+    "sha256": "bf6d519d3a046dffd66c64776b018fcf37f30020f95c8e1e9b4c0f594f025616"
+  },
+  "executable": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-live-observer/control/control.test",
+    "sha256": "3441e60612d777f8cd9df9eb56a885a74018732527b88414dcc25851bb52a317"
+  },
+  "limits": "Two total starts including failed/preparation builds; no replacement; no hidden helper JVM; 900s/request;2700s owner wall;phase bounds retained",
+  "coldScope": "Compare complete cold N/I native task outcomes and source; warm 1326-row outcome reference is not a cold acceptance target"
+}

@@ -1,0 +1,7 @@
+ok  	github.com/tonyredondo/buildopt/dev/history-replay	1.331s
+.........
+----------------------------------------------------------------------
+Ran 9 tests in 2.058s
+
+OK
+Historical replay --unit qualification passed; no public history executed

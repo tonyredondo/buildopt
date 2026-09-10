@@ -176,6 +176,21 @@ func parseStickyAccessToken(
 	config stickywrapper.Config,
 	now time.Time,
 ) (centralIssuedTokenDocument, []byte, error) {
+	document, token, err := parseStickyAccessTokenWithCapabilities(raw, config, now)
+	if err != nil {
+		return document, token, err
+	}
+	if !centralHasCapability(document.Capabilities, sharedcache.CentralCacheRead) ||
+		!centralHasCapability(document.Capabilities, sharedcache.CentralStateRead) {
+		clear(token)
+		return centralIssuedTokenDocument{}, nil, errors.New("wrapper access token requires CACHE_READ and STATE_READ")
+	}
+	return document, token, nil
+}
+
+// Observation-only credentials need state capabilities without cache authority.
+func parseStickyAccessTokenWithCapabilities(raw string, config stickywrapper.Config, now time.Time,
+	required ...sharedcache.CentralCapability) (centralIssuedTokenDocument, []byte, error) {
 	var document centralIssuedTokenDocument
 	if decodeCentralStrictJSON([]byte(raw), &document) != nil ||
 		document.SchemaVersion != "buildopt.central/access-token/v1" ||
@@ -193,10 +208,13 @@ func parseStickyAccessToken(
 		!expiresAt.After(issuedAt) || !now.Before(expiresAt) {
 		return centralIssuedTokenDocument{}, nil, errors.New("wrapper access token time binding is invalid or expired")
 	}
-	if !stickyCapabilitiesCanonical(document.Capabilities) ||
-		!centralHasCapability(document.Capabilities, sharedcache.CentralCacheRead) ||
-		!centralHasCapability(document.Capabilities, sharedcache.CentralStateRead) {
-		return centralIssuedTokenDocument{}, nil, errors.New("wrapper access token requires CACHE_READ and STATE_READ")
+	if !stickyCapabilitiesCanonical(document.Capabilities) {
+		return centralIssuedTokenDocument{}, nil, errors.New("wrapper access token capabilities are not canonical")
+	}
+	for _, capability := range required {
+		if !centralHasCapability(document.Capabilities, capability) {
+			return centralIssuedTokenDocument{}, nil, fmt.Errorf("wrapper access token requires %s", capability)
+		}
 	}
 	token, err := base64.RawURLEncoding.DecodeString(document.Token)
 	if err != nil || len(token) != sharedcache.CentralTokenBytes ||

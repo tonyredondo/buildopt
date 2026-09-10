@@ -1620,3 +1620,28 @@ func wcncpCASFingerprint(request WCNCPCASRequest) (string, error) {
 func CanonicalWCNCPValue(value any) ([]byte, string, error) {
 	return canonicalStateValue(value)
 }
+
+// hasWCNCPObservation reads one indexed, scope-bound observation and verifies
+// its stored bytes. It supplies observing status before a manifest head exists;
+// object presence never authorizes validation, application, or an owner decision.
+func (storage *Storage) hasWCNCPObservation(ctx context.Context, scope string) (bool, error) {
+	finish, err := storage.beginOperation()
+	if err != nil {
+		return false, err
+	}
+	var digest string
+	err = storage.state.database.QueryRowContext(ctx, `SELECT blob_digest FROM wcncp_objects
+WHERE repository_scope_sha256 = ? AND kind = ? LIMIT 1`, scope, WCNCPKindObservation).Scan(&digest)
+	finish()
+	if errors.Is(err, sql.ErrNoRows) {
+		return false, nil
+	}
+	if err != nil {
+		return false, err
+	}
+	file, err := storage.OpenWCNCPObject(ctx, scope, WCNCPKindObservation, strings.TrimPrefix(digest, digestPrefix))
+	if err != nil {
+		return false, err
+	}
+	return true, file.Close()
+}

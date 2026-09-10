@@ -1,0 +1,4 @@
+ACTUAL_INSTALLER task=:server:checkstyleMain independentState=true ownerPropertyPreserved=true actionsPreserved=true
+ACTUAL_INSTALLER task=:server:checkstyleTest independentState=true ownerPropertyPreserved=true actionsPreserved=true
+ACTUAL_INSTALLER task=:server:checkstyleInternalClusterTest independentState=true ownerPropertyPreserved=true actionsPreserved=true
+ACTUAL_INSTALLER_PROOF_VERIFIED Gradle=Gradle 9.7.1 wrong-task-edit-isolated=true immutable-caller-map-preserved=true

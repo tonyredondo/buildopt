@@ -1,0 +1,42 @@
+{
+  "schema": "buildopt.history-replay/owner-qualification/v1",
+  "decision": "OWNER_OUTPUT_POLICY_QUALIFIED",
+  "comparatorSHA256": "673d46a076ecb8bc2afa0fbd2e64c526b631cea66b31ae543a6a51f35d55171e",
+  "readersSHA256": "4e7a2360b3255f6ed4f4cd56c45ddf197e8892d25fe18f709daa7ee90b68c0e1",
+  "cases": [
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/receipts/owner-adversarial-04-end.json",
+      "sha256": "617f102e765982fc7c3a5fb016d5196b58a0303766415b42c7f579a604fb2359"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/logs/owner-adversarial-04.jsonl",
+      "sha256": "7505e03e6c25c7d861b267cc08f8b81242735fcb72d1c76c60d85e59aa221725"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/receipts/owner-reader-binding-end.json",
+      "sha256": "4ab963361dbd36b86e4a5a97100cf27edcc8e3f7420cf294adf7aed5f6a94792"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/reader-requalification-v5-02/retained-c5-result.json",
+      "sha256": "7289780d2670700b1a347580f8ac23bec8cca5d102329afc48083c055c6bb71a"
+    }
+  ],
+  "nativeReuse": [
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/reader-requalification-v5-02/native-reuse-000-result.json",
+      "sha256": "07af235db6e005458daf228d00bf883853d939b99eecea12223139b0ec1abd5e"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/reader-requalification-v5-02/native-reuse-001-result.json",
+      "sha256": "4edd998deb64f076f983ee048b7aa4aef5bdfd1a08bf98d9bcdfa1a7baa428fa"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/reader-requalification-v5-02/producer-date-audit.json",
+      "sha256": "bd216a02f2b74a5bb3fdfe1a9a6c29ac21cdc1459ac70071de2883105322e50f"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/receipts/native-calibration-04-independent-check-end.json",
+      "sha256": "9c3c44b0bde6f761e64c6195eef1b9ef5ae15635ea33ede4fb4a064074d6e006"
+    }
+  ]
+}

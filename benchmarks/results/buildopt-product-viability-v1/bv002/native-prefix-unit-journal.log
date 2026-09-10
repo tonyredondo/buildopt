@@ -1,0 +1,2 @@
+2026-09-08T11:31:09+02:00 omarchy systemd[1386]: Started [systemd-run] /usr/bin/python3 /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv002/run_native_prefix_nocc.py.
+2026-09-08T11:43:25+02:00 omarchy systemd[1386]: buildopt-bv1-bv002-native-prefix-nocc.service: Consumed 36min 45.309s CPU time over 12min 15.712s wall clock time, 28.6G memory peak, 26.6M memory swap peak.

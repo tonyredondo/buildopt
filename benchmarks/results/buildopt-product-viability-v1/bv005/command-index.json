@@ -1,0 +1,883 @@
+{
+  "schema": "buildopt.viability/replay-commands/v1",
+  "commands": [
+    {
+      "label": "adversarial-final-01",
+      "exitCode": 0,
+      "receipt": {
+        "path": "receipts/adversarial-final-01-end.json",
+        "sha256": "0430f055d3d09d106e97d0cb62753f7094fee9f07600111108592a2c2a14495c"
+      },
+      "log": {
+        "path": "logs/adversarial-final-01.jsonl",
+        "sha256": "0bc8e810f1660a18bf88a6f24faad52428e4ff95d09898ea002b8661886b8a88"
+      },
+      "inputHashesCaptured": true,
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "test",
+        "-mod=readonly",
+        "-tags=replay_integration",
+        "./dev/history-replay",
+        "-run",
+        "^(TestTypedFailuresAndNativeFallback|TestDriftStopsBeforeNextChild)$",
+        "-json",
+        "-count=1",
+        "-timeout=160s"
+      ]
+    },
+    {
+      "label": "archive-final-01",
+      "exitCode": 0,
+      "receipt": {
+        "path": "receipts/archive-final-01-end.json",
+        "sha256": "c8faa5fad2ec45d6d59210ac715ecf330be6223d3e831c1f1f166201ba0ab489"
+      },
+      "log": {
+        "path": "logs/archive-final-01.jsonl",
+        "sha256": "8068fba31c2d1e977613678d452bf63868c50a0c405d905d3f17fefb17187b99"
+      },
+      "inputHashesCaptured": true,
+      "command": [
+        "python3",
+        ".tools/state/buildopt-product-viability-v1/bv005/verify-archives.py"
+      ]
+    },
+    {
+      "label": "boundaries-01",
+      "exitCode": 0,
+      "receipt": {
+        "path": "receipts/boundaries-01-end.json",
+        "sha256": "8bc4675a17c00b1d4958698f94f22e4f5a7974f5175956e72c39e44a5462a707"
+      },
+      "log": {
+        "path": "logs/boundaries-01.jsonl",
+        "sha256": "bc443ddc6c3101368185a85152ce289456a5c2865ef9cf77724509b170c497d1"
+      },
+      "inputHashesCaptured": false,
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "test",
+        "-mod=readonly",
+        "-tags=replay_integration",
+        "./dev/history-replay",
+        "-run",
+        "^(TestAllocationStopsAndDetachedChild|TestRawEvidenceTampering)$",
+        "-json",
+        "-count=1",
+        "-timeout=160s"
+      ]
+    },
+    {
+      "label": "build-all-01",
+      "exitCode": 0,
+      "receipt": {
+        "path": "receipts/build-all-01-end.json",
+        "sha256": "6add09b392823be295f733b94d0e4c411c9b650a463075c8fd1c54cdc74e848c"
+      },
+      "log": {
+        "path": "logs/build-all-01.jsonl",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "inputHashesCaptured": true,
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "build",
+        "-mod=readonly",
+        "./..."
+      ]
+    },
+    {
+      "label": "build-cli-01",
+      "exitCode": 0,
+      "receipt": {
+        "path": "receipts/build-cli-01-end.json",
+        "sha256": "ecea69ef6240211dd2c3833c12253580cad0e3f68b00bece86a9016d88be092b"
+      },
+      "log": {
+        "path": "logs/build-cli-01.jsonl",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "inputHashesCaptured": true,
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "build",
+        "-mod=readonly",
+        "-trimpath",
+        "-o",
+        ".tools/state/buildopt-product-viability-v1/bv005/bin/history-replay",
+        "./dev/history-replay"
+      ]
+    },
+    {
+      "label": "core-final-01",
+      "exitCode": 0,
+      "receipt": {
+        "path": "receipts/core-final-01-end.json",
+        "sha256": "e0cce5bc0bc8bbc6a6cf900c2999b1a22919a05d0c9bacd750ad42ef172f1742"
+      },
+      "log": {
+        "path": "logs/core-final-01.jsonl",
+        "sha256": "dfd1df553a644374131da866de27f1e567ada57be9b0bdec4545b8f6d21ba4bb"
+      },
+      "inputHashesCaptured": true,
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "test",
+        "-mod=readonly",
+        "-tags=replay_integration",
+        "./dev/history-replay",
+        "-run",
+        "^(TestOwnedReplayAndIndependentChecker|TestTwoFreshReplicationsReverseOrder|TestExternalPreparationIsChargedExactlyOnce|TestQualifiedProjectionAndSemanticCounterexample|TestFullHorizonDoesNotStopAtNegativeValue)$",
+        "-json",
+        "-count=1",
+        "-timeout=160s"
+      ]
+    },
+    {
+      "label": "documentation-final-01",
+      "exitCode": 1,
+      "receipt": {
+        "path": "receipts/documentation-final-01-end.json",
+        "sha256": "0e4bb8e26b086c3446b9176eb32de3e748e34b525540b19eeb0148a430520212"
+      },
+      "log": {
+        "path": "logs/documentation-final-01.jsonl",
+        "sha256": "9d05f7dca9b9f26a24260f521dad3d8b2cd9048c22d28887d1d4ad1bb17a0c17"
+      },
+      "inputHashesCaptured": true,
+      "command": [
+        "./dev/check-documentation"
+      ]
+    },
+    {
+      "label": "documentation-final-02",
+      "exitCode": 0,
+      "receipt": {
+        "path": "receipts/documentation-final-02-end.json",
+        "sha256": "811d906a5607af49d3211ac3e247f7099c7a1c2df8c37f844ab50cc290ba5a18"
+      },
+      "log": {
+        "path": "logs/documentation-final-02.jsonl",
+        "sha256": "057e070a5a92b3369c9e79a992b1b5add5ce7364b8fc6a7ce135dae38c2770c6"
+      },
+      "inputHashesCaptured": true,
+      "command": [
+        "./dev/check-documentation"
+      ]
+    },
+    {
+      "label": "documentation-final-03",
+      "exitCode": 0,
+      "receipt": {
+        "path": "receipts/documentation-final-03-end.json",
+        "sha256": "373cdf036d9caa381b8d0e9f31893f42e40a67ef5ac22753473c5739ab22914d"
+      },
+      "log": {
+        "path": "logs/documentation-final-03.jsonl",
+        "sha256": "3f88f7a0f2f216599e1b53207de8a9e049ebc0cd95d619fd868ead5064da6ba2"
+      },
+      "inputHashesCaptured": true,
+      "command": [
+        "./dev/check-documentation"
+      ]
+    },
+    {
+      "label": "documented-build-final-01",
+      "exitCode": 0,
+      "receipt": {
+        "path": "receipts/documented-build-final-01-end.json",
+        "sha256": "b4f2224619af07ceb341836d7cda5fe8498a18a5c5a0995bc52c0a539e59ae8c"
+      },
+      "log": {
+        "path": "logs/documented-build-final-01.jsonl",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "inputHashesCaptured": true,
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "build",
+        "-mod=readonly",
+        "-o",
+        ".tools/state/buildopt-product-viability-v1/bv005/bin/documented-history-replay",
+        "github.com/tonyredondo/buildopt/dev/history-replay"
+      ]
+    },
+    {
+      "label": "drift-01",
+      "exitCode": 0,
+      "receipt": {
+        "path": "receipts/drift-01-end.json",
+        "sha256": "cde82bb6166d732ffe06d8371e04d40ac1f2139925d812e79822a7fd2dcf9a9e"
+      },
+      "log": {
+        "path": "logs/drift-01.jsonl",
+        "sha256": "ec265be991d18dc03763702d139fc6a63a5e61f35a3a8e0b9dfaf638cd1939c4"
+      },
+      "inputHashesCaptured": false,
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "test",
+        "-mod=readonly",
+        "-tags=replay_integration",
+        "./dev/history-replay",
+        "-run",
+        "^TestDriftStopsBeforeNextChild$",
+        "-json",
+        "-count=1",
+        "-timeout=160s"
+      ]
+    },
+    {
+      "label": "driver-death-01",
+      "exitCode": 0,
+      "receipt": {
+        "path": "receipts/driver-death-01-end.json",
+        "sha256": "a32cbc1e7e895994ee3a25f8e2db7c86fc99bbbb40719a9b5641011a12d22499"
+      },
+      "log": {
+        "path": "logs/driver-death-01.jsonl",
+        "sha256": "9820cb27028ba76887b17604b32fb1a08a52e44347842bb92232992bef979b78"
+      },
+      "inputHashesCaptured": true,
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "test",
+        "-mod=readonly",
+        "-tags=replay_integration",
+        "./dev/history-replay",
+        "-run",
+        "^TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost$",
+        "-json",
+        "-count=1",
+        "-timeout=70s"
+      ]
+    },
+    {
+      "label": "driver-death-diagnostic-01",
+      "exitCode": 0,
+      "receipt": {
+        "path": "receipts/driver-death-diagnostic-01-end.json",
+        "sha256": "3e97decec3a95f3b2e9f92ba466e9a921ca694a2f8d96eee3d269038ee390e02"
+      },
+      "log": {
+        "path": "logs/driver-death-diagnostic-01.jsonl",
+        "sha256": "41482f24bfba7ed658c117b58de28e4936bc9324839cb17ceda4bd2b545dd77a"
+      },
+      "inputHashesCaptured": true,
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "test",
+        "-mod=readonly",
+        "-json",
+        "-tags=replay_integration",
+        "./dev/history-replay",
+        "-run",
+        "^TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost$",
+        "-count=5",
+        "-timeout=80s"
+      ]
+    },
+    {
+      "label": "driver-death-final-01",
+      "exitCode": 0,
+      "receipt": {
+        "path": "receipts/driver-death-final-01-end.json",
+        "sha256": "5cca2f1432c07e47c5a30ba58f5bbccc7739eb9f4cf25da4a45980d4bdef9720"
+      },
+      "log": {
+        "path": "logs/driver-death-final-01.jsonl",
+        "sha256": "797451be080e2f6c4d9e5ef0faa27b2a7a217c8d9dc34c8fb4c94a9eabe3fb49"
+      },
+      "inputHashesCaptured": true,
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "test",
+        "-mod=readonly",
+        "-json",
+        "-tags=replay_integration",
+        "./dev/history-replay",
+        "-run",
+        "^TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost$",
+        "-count=5",
+        "-timeout=80s"
+      ]
+    },
+    {
+      "label": "foundation-tests-01",
+      "exitCode": 0,
+      "receipt": {
+        "path": "receipts/foundation-tests-01.json",
+        "sha256": "bce4d5c233cfe2dd26c14aa6b61eb961167d872ed91ba32e968dc82e6f16de45"
+      },
+      "log": {
+        "path": "logs/foundation-tests-01.jsonl",
+        "sha256": "cafe2144ffefcbdc185da22052fc36666a4472f0b1bf8b948767b15ed40896cb"
+      },
+      "inputHashesCaptured": false,
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "test",
+        "-mod=readonly",
+        "./dev/history-replay",
+        "-json",
+        "-count=1",
+        "-timeout=120s"
+      ]
+    },
+    {
+      "label": "gradle-lifecycles-02",
+      "exitCode": 0,
+      "receipt": {
+        "path": "receipts/gradle-lifecycles-02-end.json",
+        "sha256": "fa5f1eee5099c20b03c973e306d28a99e31af3598ffd2eee06f1157159a5040d"
+      },
+      "log": {
+        "path": "logs/gradle-lifecycles-02.jsonl",
+        "sha256": "4f810460d61b903e667a30019ab9e9126ea0d9a4f43a11a3bbf6f1678d607fe9"
+      },
+      "inputHashesCaptured": true,
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "test",
+        "-mod=readonly",
+        "-tags=replay_integration,replay_gradle",
+        "./dev/history-replay",
+        "-run",
+        "^(TestGradleNativeUpToDateAndCacheRestore|TestGradlePersistentNoActionReplay|TestGradleNestedTestKitAccounting)$",
+        "-json",
+        "-count=1",
+        "-timeout=160s"
+      ]
+    },
+    {
+      "label": "gradle-overhead-01",
+      "exitCode": 0,
+      "receipt": {
+        "path": "receipts/gradle-overhead-01-end.json",
+        "sha256": "60c5bb329bcb18059c0c7efa38fdf772922a40af6a3a3f5bd61d4268f2308213"
+      },
+      "log": {
+        "path": "logs/gradle-overhead-01.jsonl",
+        "sha256": "dfe19d62cfd41a40c66aad4da282024cc4436104d03a99df9e4d1b88a9dd71ae"
+      },
+      "inputHashesCaptured": true,
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "test",
+        "-mod=readonly",
+        "-tags=replay_integration,replay_gradle",
+        "./dev/history-replay",
+        "-run",
+        "^TestGradleSymmetricCaptureOverhead$",
+        "-json",
+        "-count=1",
+        "-timeout=160s"
+      ]
+    },
+    {
+      "label": "gradle-persistent-01",
+      "exitCode": 0,
+      "receipt": {
+        "path": "receipts/gradle-persistent-01.json",
+        "sha256": "6260bcadf08f0a355c0c017d6d56ae0c0618075246d28d6caa450eab3a7fbf4c"
+      },
+      "log": {
+        "path": "logs/gradle-persistent-01.jsonl",
+        "sha256": "1431e9cffc8cce22c682b3e7e658bbd8f6b19ce18c70ae3a56d27f2129890c04"
+      },
+      "inputHashesCaptured": false,
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "test",
+        "-mod=readonly",
+        "-tags=replay_integration,replay_gradle",
+        "./dev/history-replay",
+        "-run",
+        "^TestGradlePersistentNoActionReplay$",
+        "-json",
+        "-count=1",
+        "-timeout=160s"
+      ]
+    },
+    {
+      "label": "gradle-testkit-01",
+      "exitCode": 0,
+      "receipt": {
+        "path": "receipts/gradle-testkit-01.json",
+        "sha256": "6f0b799d3f534c769d33992b9dd0bec76805c2c8c81000848e91e3ad37276282"
+      },
+      "log": {
+        "path": "logs/gradle-testkit-01.jsonl",
+        "sha256": "fb9f5c1cdc160bcebe973bdf43f4c572a8260637d93ed947cea8c09c2e6a0ada"
+      },
+      "inputHashesCaptured": false,
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "test",
+        "-mod=readonly",
+        "-tags=replay_integration,replay_gradle",
+        "./dev/history-replay",
+        "-run",
+        "^TestGradleNestedTestKitAccounting$",
+        "-json",
+        "-count=1",
+        "-timeout=160s"
+      ]
+    },
+    {
+      "label": "historical-contracts-01",
+      "exitCode": 0,
+      "receipt": {
+        "path": "receipts/historical-contracts-01-end.json",
+        "sha256": "51f75b0629a97a5180b664e6b193c0a6e22c0c4a06a72c0194c6127990e14cac"
+      },
+      "log": {
+        "path": "logs/historical-contracts-01.jsonl",
+        "sha256": "ceef30386c69a1a40a2c72b1222b1aef985905a0f65a3a81188e5e8152733eb1"
+      },
+      "inputHashesCaptured": true,
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "test",
+        "-mod=readonly",
+        "./dev/installed-elasticsearch-runner",
+        "-run",
+        "^(TestCLIRejectsUngatedExecutionAndBudgetReset|TestProtocolDriftRefuses|TestProvenanceRuntimePreservesOldContractsAndRejectsMissingApproval|TestBudgetNeverPromotesMissingOrHistoricalEvidence)$",
+        "-json",
+        "-count=1",
+        "-timeout=70s"
+      ]
+    },
+    {
+      "label": "layout-final-01",
+      "exitCode": 0,
+      "receipt": {
+        "path": "receipts/layout-final-01-end.json",
+        "sha256": "a1125f060c314b27096d346aac409a0a3c0d53cdbb04627e9ab7aed74084df67"
+      },
+      "log": {
+        "path": "logs/layout-final-01.jsonl",
+        "sha256": "ae9a03d9879d850dda5df13249ab3038e20a5880ffa3273833750522cf4695e6"
+      },
+      "inputHashesCaptured": true,
+      "command": [
+        "./dev/check-layout"
+      ]
+    },
+    {
+      "label": "limits-recovery-final-01",
+      "exitCode": 1,
+      "receipt": {
+        "path": "receipts/limits-recovery-final-01-end.json",
+        "sha256": "6095cfa8c88134965f07aa47c08821bc8a3dde7ad1ef9a8880dc41349dd312fd"
+      },
+      "log": {
+        "path": "logs/limits-recovery-final-01.jsonl",
+        "sha256": "54e97212fdab7080d386ba3a5c270d737a41c0bc02e4eea03c81cf8195747cd8"
+      },
+      "inputHashesCaptured": true,
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "test",
+        "-mod=readonly",
+        "-tags=replay_integration",
+        "./dev/history-replay",
+        "-run",
+        "^(TestAllocationStopsAndDetachedChild|TestRawEvidenceTampering|TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost|TestCheckpointResumeAndCrashRecovery)$",
+        "-json",
+        "-count=1",
+        "-timeout=160s"
+      ]
+    },
+    {
+      "label": "owned-replay-01",
+      "exitCode": 0,
+      "receipt": {
+        "path": "receipts/owned-replay-01.json",
+        "sha256": "c38c7f72547bf3b1afe42e63a0e073f70c3012f7578e95e0b95d88844b32c772"
+      },
+      "log": {
+        "path": "logs/owned-replay-01.jsonl",
+        "sha256": "f1e206d93be4fd1017045da4622a80d2e7b6981e3560cbeeaa20b5b042028476"
+      },
+      "inputHashesCaptured": false,
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "test",
+        "-mod=readonly",
+        "./dev/history-replay",
+        "-run",
+        "^TestOwnedReplayAndIndependentChecker$",
+        "-json",
+        "-count=1",
+        "-timeout=120s"
+      ]
+    },
+    {
+      "label": "primary-boundary-01",
+      "exitCode": 0,
+      "receipt": {
+        "path": "receipts/primary-boundary-01.json",
+        "sha256": "9c92aec432ed4595daa287a4f4f55667c6e6cc23fc58caa2b06bbaa217a01485"
+      },
+      "log": {
+        "path": "logs/primary-boundary-01.jsonl",
+        "sha256": "e45dfd1c73dcc06447510abe349fc26e947af12cbe4393efcaff5e9797025144"
+      },
+      "inputHashesCaptured": false,
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "test",
+        "-mod=readonly",
+        "./dev/history-replay",
+        "-run",
+        "^TestOwnedReplayAndIndependentChecker$",
+        "-json",
+        "-count=1",
+        "-timeout=90s"
+      ]
+    },
+    {
+      "label": "projection-and-horizon-01",
+      "exitCode": 1,
+      "receipt": {
+        "path": "receipts/projection-and-horizon-01-end.json",
+        "sha256": "87ea471a651a4acaa650cd7ca10253c06d4cc11731ad7797c1791b3d8e797188"
+      },
+      "log": {
+        "path": "logs/projection-and-horizon-01.jsonl",
+        "sha256": "4a4384230a6bc01fa4d440c8a61977485535432ba63d17c7d01f3e95dcdfc433"
+      },
+      "inputHashesCaptured": false,
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "test",
+        "-mod=readonly",
+        "-tags=replay_integration",
+        "./dev/history-replay",
+        "-run",
+        "^(TestQualifiedProjectionAndSemanticCounterexample|TestFullHorizonDoesNotStopAtNegativeValue)$",
+        "-json",
+        "-count=1",
+        "-timeout=160s"
+      ]
+    },
+    {
+      "label": "projection-and-horizon-02",
+      "exitCode": 0,
+      "receipt": {
+        "path": "receipts/projection-and-horizon-02-end.json",
+        "sha256": "938e8cf1e41e8348ec725248373388a928afe6164b758e9fdf595dfefed70215"
+      },
+      "log": {
+        "path": "logs/projection-and-horizon-02.jsonl",
+        "sha256": "c3f5d3f499fa6c7bb839ff1c6e07cc486edc6e72511550266713ee0a12cdffd9"
+      },
+      "inputHashesCaptured": false,
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "test",
+        "-mod=readonly",
+        "-tags=replay_integration",
+        "./dev/history-replay",
+        "-run",
+        "^(TestQualifiedProjectionAndSemanticCounterexample|TestFullHorizonDoesNotStopAtNegativeValue)$",
+        "-json",
+        "-count=1",
+        "-timeout=160s"
+      ]
+    },
+    {
+      "label": "recovery-01",
+      "exitCode": 0,
+      "receipt": {
+        "path": "receipts/recovery-01.json",
+        "sha256": "aa2e2e55bd18d5b4d9d4b238153421aa2d45f1c0ebc151807cdb95372624ddc4"
+      },
+      "log": {
+        "path": "logs/recovery-01.jsonl",
+        "sha256": "d8572cff009084ce74939cc1a2edfa1f06cc7c5df695f6f352c416ed1908b7d0"
+      },
+      "inputHashesCaptured": false,
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "test",
+        "-mod=readonly",
+        "./dev/history-replay",
+        "-run",
+        "^TestOwnedReplayAndIndependentChecker$|^TestCheckpointResumeAndCrashRecovery$",
+        "-json",
+        "-count=1",
+        "-timeout=150s"
+      ]
+    },
+    {
+      "label": "recovery-accounting-02",
+      "exitCode": 0,
+      "receipt": {
+        "path": "receipts/recovery-accounting-02-end.json",
+        "sha256": "2cea57053e90b5e001cc27a82ed94443f5f51ec191b7a21d456242d8c8382f21"
+      },
+      "log": {
+        "path": "logs/recovery-accounting-02.jsonl",
+        "sha256": "73f5d3a78740f8bd5e2bdd8fe75c2515d01e25e6073102575275bd9b5a14f6f1"
+      },
+      "inputHashesCaptured": true,
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "test",
+        "-mod=readonly",
+        "-tags=replay_integration",
+        "./dev/history-replay",
+        "-run",
+        "^(TestCheckpointResumeAndCrashRecovery|TestOwnedReplayAndIndependentChecker|TestExternalPreparationIsChargedExactlyOnce)$",
+        "-json",
+        "-count=1",
+        "-timeout=160s"
+      ]
+    },
+    {
+      "label": "standalone-check-resume-01",
+      "exitCode": 1,
+      "receipt": {
+        "path": "receipts/standalone-check-resume-01-end.json",
+        "sha256": "8b8c1e5f586f935154f867bfbf18dca239ddeff4ee42e8da08c7285411beda3b"
+      },
+      "log": {
+        "path": "logs/standalone-check-resume-01.jsonl",
+        "sha256": "b721da29ab159ad4c8a979e03854104fb0d22a628be8bdc97781f8dd992ba645"
+      },
+      "inputHashesCaptured": true,
+      "command": [
+        "python3",
+        "-"
+      ]
+    },
+    {
+      "label": "standalone-cli-01",
+      "exitCode": 0,
+      "receipt": {
+        "path": "receipts/standalone-cli-01-end.json",
+        "sha256": "aa79a4fd458ba63498baab5335de86e0867b8992c95c394ce02a81a15eba471f"
+      },
+      "log": {
+        "path": "logs/standalone-cli-01.jsonl",
+        "sha256": "cbe11d5c8be3b34a94d3854e83d9c21d597f3af890381843c14edecc3728308d"
+      },
+      "inputHashesCaptured": true,
+      "command": [
+        ".tools/state/buildopt-product-viability-v1/bv005/bin/history-replay",
+        "run",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv005/standalone-cli/manifest.json"
+      ]
+    },
+    {
+      "label": "standalone-cli-02",
+      "exitCode": 1,
+      "receipt": {
+        "path": "receipts/standalone-cli-02-end.json",
+        "sha256": "23e13592a16b95904ac9a5758d0af54feac535a86b519770852910d6352040d5"
+      },
+      "log": {
+        "path": "logs/standalone-cli-02.jsonl",
+        "sha256": "30f3a40780fc50ffb13a431c98b68c4a5ea838fd650cf5cbf7866c67e63bc929"
+      },
+      "inputHashesCaptured": true,
+      "command": [
+        "python3",
+        "-"
+      ]
+    },
+    {
+      "label": "standalone-cli-03",
+      "exitCode": 0,
+      "receipt": {
+        "path": "receipts/standalone-cli-03-end.json",
+        "sha256": "75cf8f9eedb5d2508132c15019e8f83cf7ac83f1271dd94f1d98cecaba8fe95a"
+      },
+      "log": {
+        "path": "logs/standalone-cli-03.jsonl",
+        "sha256": "ddaa9a085a7b1c0faaec2836add5c5559d9f24ae00f013cddf09703846de710b"
+      },
+      "inputHashesCaptured": true,
+      "command": [
+        "python3",
+        ".tools/state/buildopt-product-viability-v1/bv005/standalone-cli-check.py",
+        "standalone-cli-03"
+      ]
+    },
+    {
+      "label": "tracker-final-01",
+      "exitCode": 0,
+      "receipt": {
+        "path": "receipts/tracker-final-01-end.json",
+        "sha256": "31693c3527f4504fd2aafbcb7c2cbe53aae4d382516d82f85fdf5e8a8f1a1077"
+      },
+      "log": {
+        "path": "logs/tracker-final-01.jsonl",
+        "sha256": "6e5d559539423b8b228c5cfbc3eaa04a593ef3aeb584603fe484a9a47fbc3bc9"
+      },
+      "inputHashesCaptured": true,
+      "command": [
+        "./dev/check-tracker-consistency"
+      ]
+    },
+    {
+      "label": "typed-failures-01",
+      "exitCode": 0,
+      "receipt": {
+        "path": "receipts/typed-failures-01-end.json",
+        "sha256": "d0882a0c3bd0324e760a1409152cb2c449eda49faa92dae32a32cd5701b43504"
+      },
+      "log": {
+        "path": "logs/typed-failures-01.jsonl",
+        "sha256": "89c04a3e88e8d7e95b3a1cba3e713837a1abfeed13ccc4099d5c38fcef18dd7b"
+      },
+      "inputHashesCaptured": false,
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "test",
+        "-mod=readonly",
+        "-tags=replay_integration",
+        "./dev/history-replay",
+        "-run",
+        "^TestTypedFailuresAndNativeFallback$",
+        "-json",
+        "-count=1",
+        "-timeout=160s"
+      ]
+    },
+    {
+      "label": "unit-final-01",
+      "exitCode": 0,
+      "receipt": {
+        "path": "receipts/unit-final-01-end.json",
+        "sha256": "c177168a8baf4b69c2bcc9f39270982706978a60fda41eb6f51ec29673d136c7"
+      },
+      "log": {
+        "path": "logs/unit-final-01.jsonl",
+        "sha256": "bf22ead3f94c1628c0bf88454046170c7ca162e091c6b38201ca3b9bbd17c00b"
+      },
+      "inputHashesCaptured": true,
+      "command": [
+        "./dev/check-history-replay",
+        "--unit"
+      ]
+    },
+    {
+      "label": "unit-final-02",
+      "exitCode": 0,
+      "receipt": {
+        "path": "receipts/unit-final-02-end.json",
+        "sha256": "9deb2b8093be454d8ec42ba94b45082d41ca90668d9591918677d43e62822ad3"
+      },
+      "log": {
+        "path": "logs/unit-final-02.jsonl",
+        "sha256": "2001ce8b89f6f2952de4c858a229709a59849f6725c61060279e9d531683a48f"
+      },
+      "inputHashesCaptured": true,
+      "command": [
+        "./dev/check-history-replay",
+        "--unit"
+      ]
+    }
+  ],
+  "note": "Portable copies retain exact original receipt/log bytes and their observed absolute paths. The initial six receipts predate full source hash capture; current final production proof is selected in qualification.json. Failed commands remain failed."
+}

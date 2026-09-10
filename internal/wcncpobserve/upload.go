@@ -82,6 +82,19 @@ func RepositoryScopeSHA256(repositoryScope string) string {
 // Endpoint resolves a WCNCP resource below an HTTPS backend origin. Plain
 // HTTP is accepted only for an explicit loopback development server.
 func Endpoint(baseURL, repositoryScope, resource string) (string, error) {
+	if repositoryScope == "" {
+		return "", ErrObservationInvalid
+	}
+	return EndpointForScope(baseURL, RepositoryScopeSHA256(repositoryScope), resource)
+}
+
+// EndpointForScope preserves the opaque repository identity bound by an issued
+// central token. Installed wrappers use the existing domain-separated scope;
+// standalone WCNCP callers retain Endpoint's original scope derivation.
+func EndpointForScope(baseURL, scopeSHA256, resource string) (string, error) {
+	if !hexDigestPattern.MatchString(scopeSHA256) {
+		return "", ErrObservationInvalid
+	}
 	parsed, err := url.Parse(baseURL)
 	if err != nil || parsed.User != nil || parsed.RawQuery != "" || parsed.Fragment != "" || parsed.Host == "" {
 		return "", ErrObservationInvalid
@@ -90,10 +103,10 @@ func Endpoint(baseURL, repositoryScope, resource string) (string, error) {
 	if parsed.Scheme != "https" && !(parsed.Scheme == "http" && (hostname == "127.0.0.1" || hostname == "::1" || hostname == "localhost")) {
 		return "", ErrObservationInvalid
 	}
-	if repositoryScope == "" || resource == "" || strings.HasPrefix(resource, "/") || strings.Contains(resource, "..") || strings.ContainsAny(resource, "?#") {
+	if resource == "" || strings.HasPrefix(resource, "/") || strings.Contains(resource, "..") || strings.ContainsAny(resource, "?#") {
 		return "", ErrObservationInvalid
 	}
-	parsed.Path = strings.TrimRight(parsed.Path, "/") + "/api/v1/repositories/" + RepositoryScopeSHA256(repositoryScope) + "/wcncp/" + resource
+	parsed.Path = strings.TrimRight(parsed.Path, "/") + "/api/v1/repositories/" + scopeSHA256 + "/wcncp/" + resource
 	return parsed.String(), nil
 }
 

@@ -1,5 +1,11 @@
 # Build Optimization Performance Findings and Next Steps
 
+> **Research disposition: HISTORICAL evidence (2026-09-08).** Original
+> findings, limits and outcomes are preserved below. Old recommendations and
+> successor instructions are scoped to that campaign. Use the
+> [research status register](../research-status.md) and
+> [current tracker](../plans/buildopt-product-viability-v1-tracker.md) for new work.
+
 ## Current Executive Summary
 
 - **CNC native admission now closes negatively with complete evidence.**

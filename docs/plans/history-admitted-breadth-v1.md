@@ -1,5 +1,11 @@
 # History-Admitted Breadth v1 Tracker
 
+> **Research disposition: HISTORICAL; closed research (2026-09-08).**
+> Original outcomes and evidence are preserved below. Old phase instructions
+> and unchecked boxes do not reopen this route. Use the
+> [research status register](../research-status.md) and
+> [current tracker](./buildopt-product-viability-v1-tracker.md) for new work.
+
 **Status:** closed — path-only admission rejected<br>
 **Current block:** `HAB-004`
 

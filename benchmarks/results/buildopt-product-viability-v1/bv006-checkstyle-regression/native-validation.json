@@ -1,0 +1,416 @@
+{
+  "allThreeCandidateTaskStatesVerified": true,
+  "measuredReusableFiles": 7773,
+  "analyzer": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-regression/analyze-fixed.py",
+    "sha256": "4ff18fd7f8e4ebeac57fc73830d75f79f8785459cc4fa4272dc593881cca64b2"
+  },
+  "schema": "buildopt.cpu-screen/profile/v1",
+  "status": "verified",
+  "profile": "fixed",
+  "workers": 8,
+  "gradleActual": 6,
+  "metadataJVMActual": 6,
+  "metadataAccounting": "Live and independent reconstruction both completed with equal per-pair metadata count; two comparator passes, no third pass",
+  "warmupBuilds": 2,
+  "measuredPairs": 2,
+  "pairs": [
+    {
+      "localOrdinal": 0,
+      "originalOrdinal": 6,
+      "commit": "b653442570bc16718c8b75b6bd318dd98e5599b8",
+      "warmup": true,
+      "ownerOutputEquivalent": true,
+      "N": {
+        "attempt": "r1-000-g0-N",
+        "nativeMS": 212970.103475,
+        "customerMS": 213061.241672,
+        "ownedServiceCPUMS": 1170862.219,
+        "supervisorCPUMS": 209220.746,
+        "daemonPID": 2223445,
+        "observedDaemonSpanMS": 211015.747669,
+        "maximumDaemonGapMS": 2003.859956,
+        "checkstyle": [
+          {
+            "task": ":server:checkstyleInternalClusterTest",
+            "outcome": "EXECUTED",
+            "action": true,
+            "wallMS": 24337.70704269409
+          },
+          {
+            "task": ":server:checkstyleTest",
+            "outcome": "EXECUTED",
+            "action": true,
+            "wallMS": 63791.95189476013
+          },
+          {
+            "task": ":server:checkstyleMain",
+            "outcome": "EXECUTED",
+            "action": true,
+            "wallMS": 84492.98882484436
+          }
+        ],
+        "candidateSuccessState": [],
+        "requestMS": 213061.241672,
+        "outsideRequestCustomerMS": 0.0,
+        "outsideRequestCustomerCosts": []
+      },
+      "I": {
+        "attempt": "r1-000-g0-I",
+        "nativeMS": 221882.845666,
+        "customerMS": 222096.729469,
+        "ownedServiceCPUMS": 1199507.685,
+        "supervisorCPUMS": 218319.516,
+        "daemonPID": 2231994,
+        "observedDaemonSpanMS": 220301.652099,
+        "maximumDaemonGapMS": 3213.253494,
+        "checkstyle": [
+          {
+            "task": ":server:checkstyleInternalClusterTest",
+            "outcome": "EXECUTED",
+            "action": true,
+            "wallMS": 52910.99500656128
+          },
+          {
+            "task": ":server:checkstyleTest",
+            "outcome": "EXECUTED",
+            "action": true,
+            "wallMS": 139491.4219379425
+          },
+          {
+            "task": ":server:checkstyleMain",
+            "outcome": "EXECUTED",
+            "action": true,
+            "wallMS": 141282.41801261902
+          }
+        ],
+        "candidateSuccessState": [
+          {
+            "task": ":server:checkstyleInternalClusterTest",
+            "taskExecuted": true,
+            "files": 554,
+            "contextIdentity": "67625fc582bc3502dd6ad1a0070f62a9db2db0050ec08f82f40cfe25e73c3df8",
+            "inferredReusableFiles": 0,
+            "reuseInference": "same context and earlier complete success/report retained by runner; execution counts come from task records"
+          },
+          {
+            "task": ":server:checkstyleMain",
+            "taskExecuted": true,
+            "files": 4959,
+            "contextIdentity": "cdf05e5715e8aa783a6e65ff8446bd1c01a800209519a25b2ea107a1af65b49f",
+            "inferredReusableFiles": 0,
+            "reuseInference": "same context and earlier complete success/report retained by runner; execution counts come from task records"
+          },
+          {
+            "task": ":server:checkstyleTest",
+            "taskExecuted": true,
+            "files": 2825,
+            "contextIdentity": "96bd8eb1f0673ab877b968949decc87d8a658e53594d3af0fd3f647293412503",
+            "inferredReusableFiles": 0,
+            "reuseInference": "same context and earlier complete success/report retained by runner; execution counts come from task records"
+          }
+        ],
+        "requestMS": 222096.729469,
+        "outsideRequestCustomerMS": 0.0,
+        "outsideRequestCustomerCosts": []
+      },
+      "customerSavingMS": -9035.487797000009,
+      "customerSavingPercent": -4.240793738970982
+    },
+    {
+      "localOrdinal": 1,
+      "originalOrdinal": 7,
+      "commit": "3a00a9167b54dc298e015cf92ef692d6ddacab77",
+      "warmup": false,
+      "ownerOutputEquivalent": true,
+      "I": {
+        "attempt": "r1-001-g0-I",
+        "nativeMS": 83236.116679,
+        "customerMS": 83416.293024,
+        "ownedServiceCPUMS": 382437.524,
+        "supervisorCPUMS": 81465.184,
+        "daemonPID": 2231994,
+        "observedDaemonSpanMS": 81674.854857,
+        "maximumDaemonGapMS": 1011.933608,
+        "checkstyle": [
+          {
+            "task": ":server:checkstyleInternalClusterTest",
+            "outcome": "UP-TO-DATE",
+            "action": false,
+            "wallMS": 1.8780231475830078
+          },
+          {
+            "task": ":server:checkstyleMain",
+            "outcome": "EXECUTED",
+            "action": true,
+            "wallMS": 51903.915882110596
+          },
+          {
+            "task": ":server:checkstyleTest",
+            "outcome": "EXECUTED",
+            "action": true,
+            "wallMS": 51759.39202308655
+          }
+        ],
+        "candidateSuccessState": [
+          {
+            "task": ":server:checkstyleInternalClusterTest",
+            "taskExecuted": false,
+            "files": 554,
+            "contextIdentity": "67625fc582bc3502dd6ad1a0070f62a9db2db0050ec08f82f40cfe25e73c3df8",
+            "inferredReusableFiles": 0,
+            "reuseInference": "same context and earlier complete success/report retained by runner; execution counts come from task records"
+          },
+          {
+            "task": ":server:checkstyleMain",
+            "taskExecuted": true,
+            "files": 4958,
+            "contextIdentity": "cdf05e5715e8aa783a6e65ff8446bd1c01a800209519a25b2ea107a1af65b49f",
+            "inferredReusableFiles": 4954,
+            "reuseInference": "same context and earlier complete success/report retained by runner; execution counts come from task records"
+          },
+          {
+            "task": ":server:checkstyleTest",
+            "taskExecuted": true,
+            "files": 2825,
+            "contextIdentity": "96bd8eb1f0673ab877b968949decc87d8a658e53594d3af0fd3f647293412503",
+            "inferredReusableFiles": 2819,
+            "reuseInference": "same context and earlier complete success/report retained by runner; execution counts come from task records"
+          }
+        ],
+        "requestMS": 83413.478869,
+        "outsideRequestCustomerMS": 2.814155,
+        "outsideRequestCustomerCosts": [
+          "r1-001-I-inverse"
+        ]
+      },
+      "N": {
+        "attempt": "r1-001-g0-N",
+        "nativeMS": 98087.507275,
+        "customerMS": 98184.899819,
+        "ownedServiceCPUMS": 597108.409,
+        "supervisorCPUMS": 95470.403,
+        "daemonPID": 2223445,
+        "observedDaemonSpanMS": 96975.303942,
+        "maximumDaemonGapMS": 1121.031772,
+        "checkstyle": [
+          {
+            "task": ":server:checkstyleInternalClusterTest",
+            "outcome": "UP-TO-DATE",
+            "action": false,
+            "wallMS": 1.9450187683105469
+          },
+          {
+            "task": ":server:checkstyleTest",
+            "outcome": "EXECUTED",
+            "action": true,
+            "wallMS": 55804.08000946045
+          },
+          {
+            "task": ":server:checkstyleMain",
+            "outcome": "EXECUTED",
+            "action": true,
+            "wallMS": 70268.54300498962
+          }
+        ],
+        "candidateSuccessState": [],
+        "requestMS": 98184.899819,
+        "outsideRequestCustomerMS": 0.0,
+        "outsideRequestCustomerCosts": []
+      },
+      "customerSavingMS": 14768.606795,
+      "customerSavingPercent": 15.041627401184241
+    },
+    {
+      "localOrdinal": 2,
+      "originalOrdinal": 8,
+      "commit": "a48778e0c3fcd8c0e1eef8eea0b61b5656a20d67",
+      "warmup": false,
+      "ownerOutputEquivalent": true,
+      "N": {
+        "attempt": "r1-002-g0-N",
+        "nativeMS": 7137.815316,
+        "customerMS": 7223.962373,
+        "ownedServiceCPUMS": 36523.742000000086,
+        "supervisorCPUMS": 6970.816,
+        "daemonPID": 2223445,
+        "observedDaemonSpanMS": 6045.191729,
+        "maximumDaemonGapMS": 1010.448909,
+        "checkstyle": [
+          {
+            "task": ":server:checkstyleInternalClusterTest",
+            "outcome": "UP-TO-DATE",
+            "action": false,
+            "wallMS": 3.782033920288086
+          },
+          {
+            "task": ":server:checkstyleMain",
+            "outcome": "UP-TO-DATE",
+            "action": false,
+            "wallMS": 8.594036102294922
+          },
+          {
+            "task": ":server:checkstyleTest",
+            "outcome": "UP-TO-DATE",
+            "action": false,
+            "wallMS": 4.771947860717773
+          }
+        ],
+        "candidateSuccessState": [],
+        "requestMS": 7223.962373,
+        "outsideRequestCustomerMS": 0.0,
+        "outsideRequestCustomerCosts": []
+      },
+      "I": {
+        "attempt": "r1-002-g0-I",
+        "nativeMS": 7061.369913,
+        "customerMS": 7159.1105689999995,
+        "ownedServiceCPUMS": 35064.731000000145,
+        "supervisorCPUMS": 6896.664,
+        "daemonPID": 2231994,
+        "observedDaemonSpanMS": 6046.206696,
+        "maximumDaemonGapMS": 1010.447018,
+        "checkstyle": [
+          {
+            "task": ":server:checkstyleInternalClusterTest",
+            "outcome": "UP-TO-DATE",
+            "action": false,
+            "wallMS": 1.5549659729003906
+          },
+          {
+            "task": ":server:checkstyleMain",
+            "outcome": "UP-TO-DATE",
+            "action": false,
+            "wallMS": 9.90605354309082
+          },
+          {
+            "task": ":server:checkstyleTest",
+            "outcome": "UP-TO-DATE",
+            "action": false,
+            "wallMS": 3.126859664916992
+          }
+        ],
+        "candidateSuccessState": [
+          {
+            "task": ":server:checkstyleInternalClusterTest",
+            "taskExecuted": false,
+            "files": 554,
+            "contextIdentity": "67625fc582bc3502dd6ad1a0070f62a9db2db0050ec08f82f40cfe25e73c3df8",
+            "inferredReusableFiles": 0,
+            "reuseInference": "same context and earlier complete success/report retained by runner; execution counts come from task records"
+          },
+          {
+            "task": ":server:checkstyleMain",
+            "taskExecuted": false,
+            "files": 4958,
+            "contextIdentity": "cdf05e5715e8aa783a6e65ff8446bd1c01a800209519a25b2ea107a1af65b49f",
+            "inferredReusableFiles": 0,
+            "reuseInference": "same context and earlier complete success/report retained by runner; execution counts come from task records"
+          },
+          {
+            "task": ":server:checkstyleTest",
+            "taskExecuted": false,
+            "files": 2825,
+            "contextIdentity": "96bd8eb1f0673ab877b968949decc87d8a658e53594d3af0fd3f647293412503",
+            "inferredReusableFiles": 0,
+            "reuseInference": "same context and earlier complete success/report retained by runner; execution counts come from task records"
+          }
+        ],
+        "requestMS": 7156.425625,
+        "outsideRequestCustomerMS": 2.684944,
+        "outsideRequestCustomerCosts": [
+          "r1-002-I-inverse"
+        ]
+      },
+      "customerSavingMS": 64.85180400000081,
+      "customerSavingPercent": 0.897731752346723
+    }
+  ],
+  "summary": {
+    "customerMS": {
+      "baselineMeanMS": 52704.431096,
+      "candidateMeanMS": 45287.7017965,
+      "pairedMeanSavingMS": 7416.729299500001,
+      "pairedMedianSavingMS": 7416.729299500001,
+      "savingPercent": 14.07230691095135,
+      "minimumPairedSavingMS": 64.85180400000081,
+      "maximumPairedSavingMS": 14768.606795,
+      "individualDeltasMS": [
+        14768.606795,
+        64.85180400000081
+      ]
+    },
+    "nativeMS": {
+      "baselineMeanMS": 52612.6612955,
+      "candidateMeanMS": 45148.743296,
+      "pairedMeanSavingMS": 7463.917999499999,
+      "pairedMedianSavingMS": 7463.917999499999,
+      "savingPercent": 14.186543344726022,
+      "minimumPairedSavingMS": 76.44540299999971,
+      "maximumPairedSavingMS": 14851.390595999997,
+      "individualDeltasMS": [
+        14851.390595999997,
+        76.44540299999971
+      ]
+    },
+    "ownedServiceCPUMS": {
+      "baselineMeanMS": 316816.07550000004,
+      "candidateMeanMS": 208751.12750000006,
+      "pairedMeanSavingMS": 108064.94799999997,
+      "pairedMedianSavingMS": 108064.94799999997,
+      "savingPercent": 34.109679513405865,
+      "minimumPairedSavingMS": 1459.0109999999404,
+      "maximumPairedSavingMS": 214670.885,
+      "individualDeltasMS": [
+        214670.885,
+        1459.0109999999404
+      ]
+    },
+    "supervisorCPUMS": {
+      "baselineMeanMS": 51220.609500000006,
+      "candidateMeanMS": 44180.924,
+      "pairedMeanSavingMS": 7039.685500000006,
+      "pairedMedianSavingMS": 7039.685500000006,
+      "savingPercent": 13.743853438526548,
+      "minimumPairedSavingMS": 74.15200000000004,
+      "maximumPairedSavingMS": 14005.219000000012,
+      "individualDeltasMS": [
+        14005.219000000012,
+        74.15200000000004
+      ]
+    }
+  },
+  "masks": {
+    "observerThreads": 20946,
+    "nativeThreads": 1006286,
+    "nativeProcesses": 22045,
+    "preExecWorkerThreads": 0,
+    "preExecObservations": [],
+    "workerAffinityObservations": [],
+    "nativeThreadAffinityVerified": true,
+    "workerExclusiveAffinityVerified": true,
+    "strictAllTimeAffinityQualified": true,
+    "nativeAndRunningWorkerAffinityVerified": true
+  },
+  "baselineCheckstyleActions": 2,
+  "materialSignal": false,
+  "diagnosticQualityQualified": false,
+  "decision": "DIAGNOSTIC_ONLY_NO_VALUE_GATE",
+  "readinessQualified": false,
+  "valueQualified": false,
+  "limits": [
+    "Exploratory pairs; no interval or precision claim",
+    "Diagnostic starts fresh at original6; original cache and daemon age are not reconstructed",
+    "Symmetric worker instrumentation can alter timing; no performance confirmation",
+    "Isolated observer CPU is additional research resource; total service CPU includes it",
+    "Selection targets the observed regression; no new value or product gate",
+    "Affinity observations are reported separately; instrumentation prevents performance qualification even when masks pass"
+  ],
+  "rawResult": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-regression/profiles/fixed/run/result.json",
+    "sha256": "14b8f2d910e2beb2a65f3e086a1ba60f9a6e2156c2ab54c07d499239a3a8b3db"
+  },
+  "economicMaterialSignal": false,
+  "cpuIsolationQualified": true,
+  "observationDecision": "WORKER_EXCLUSIVE_AFFINITY_PASSED"
+}

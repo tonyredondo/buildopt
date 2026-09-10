@@ -1,0 +1,11 @@
+{
+  "status": "partial",
+  "jdkExitCode": 0,
+  "helperWrapperExitCode": 1,
+  "reason": "Standard JFR JSON expanded past1GiB per-file wrapper bound",
+  "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-daemon-diagnostic/logs/owner-N-jfr-print.out",
+  "bytes": 1099930425,
+  "sha256": "3fe40ace65ecd587f0a901419b44dcd6a7220b2b2b3f7dc88d2b6262d126646f",
+  "retainedLocally": true,
+  "next": "Qualified compact representation of the same unchanged recordings; no new recording or native request"
+}

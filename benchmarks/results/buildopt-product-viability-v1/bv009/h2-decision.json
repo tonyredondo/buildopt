@@ -1,0 +1,134 @@
+{
+  "schemaVersion": "buildopt.viability/h2-admission-decision/v1",
+  "step": "BV-009",
+  "status": "verified",
+  "outcome": "NO_ADMITTED_INVALIDATION_REPAIR",
+  "scope": "Read-only admission analysis of the same completed 20-transition native prefix; no H2 implementation or Gradle experiment",
+  "candidatesExamined": 2,
+  "sourcePins": [
+    {
+      "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/ElasticsearchJavaModulePathPlugin.java",
+      "sha256": "f64db5674761220959291292e6f702d2552fc8b10dd8c20b1292f7a8f24c73da"
+    },
+    {
+      "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstylePrecommitPlugin.java",
+      "sha256": "4bcb596e7d09d08cdcf8ea1c94472421c223769c5e139c200f16dddc3e301015"
+    },
+    {
+      "path": "build-tools-internal/src/main/resources/checkstyle.xml",
+      "sha256": "51d4149c0e631af64016e63f14d5467a7d4f0022d2b4c6a6c5cc2398ad62a81f"
+    }
+  ],
+  "observations": [
+    {
+      "id": "H2-MODULE-INPUT",
+      "question": "Is an over-broad, unnormalized module-path input causing avoidable compiler invalidation?",
+      "observedProperty": "options.compilerArgumentProviders.module-compile-path-arg-provider$0.modulePath",
+      "source": "ElasticsearchJavaModulePathPlugin.java:176, @CompileClasspath",
+      "nativeControl": {
+        "ordinal": 19,
+        "changedSource": "CreateIndexCapabilities.java: new private constant and static initializer logic",
+        "esqlCompileOutcome": {
+          "incremental": false,
+          "actionable": true,
+          "skipMessage": "UP-TO-DATE",
+          "originBuildInvocationId": "uc26ah2vjrhwzdc5krcxeuo4ye",
+          "originBuildCacheKeyBytes": "x3SnvxOo4MssZG3UsTBkKA==",
+          "originExecutionTime": 10816,
+          "cachingDisabledReasonMessage": null,
+          "cachingDisabledReasonCategory": null,
+          "skipReasonMessage": null,
+          "upToDateMessages": []
+        },
+        "coreCompileOutcome": {
+          "incremental": false,
+          "actionable": true,
+          "skipMessage": "UP-TO-DATE",
+          "originBuildInvocationId": "rb6smt643vfrvexc2bziukymaa",
+          "originBuildCacheKeyBytes": "CMOMz/8JdRf8lr+kMXOlkA==",
+          "originExecutionTime": 185,
+          "cachingDisabledReasonMessage": null,
+          "cachingDisabledReasonCategory": null,
+          "skipReasonMessage": null,
+          "upToDateMessages": []
+        }
+      },
+      "decision": "NOT_ADMITTED_ALREADY_NORMALIZED",
+      "reason": "The declared module path already uses compile-ABI normalization; the actual body/private-constant change at ordinal 19 leaves downstream module compilers up-to-date. Other cited executions include real changed/removed class API inputs.",
+      "limit": "This does not prove all internal compiler rebuild work is minimal. Native task incremental=false alone does not establish a different correct source intervention."
+    },
+    {
+      "id": "H2-CHECKSTYLE-INPUT",
+      "question": "Does unrelated compiled classpath churn unnecessarily rerun source lint?",
+      "source": "CheckstylePrecommitPlugin.java: explicitly empty classpath; Checkstyle input source remains complete",
+      "nativeTransitions": [
+        {
+          "ordinal": 18,
+          "task": ":server:checkstyleMain",
+          "milliseconds": 11,
+          "result": {
+            "incremental": false,
+            "actionable": true,
+            "skipMessage": "UP-TO-DATE",
+            "originBuildInvocationId": "s4ixr5p265akpgbdsa6dyxn4iy",
+            "originBuildCacheKeyBytes": "z8E0vgD/xs+DyOs/TMoPow==",
+            "originExecutionTime": 70053,
+            "cachingDisabledReasonMessage": null,
+            "cachingDisabledReasonCategory": null,
+            "skipReasonMessage": null,
+            "upToDateMessages": []
+          }
+        },
+        {
+          "ordinal": 19,
+          "task": ":server:checkstyleMain",
+          "milliseconds": 49909,
+          "result": {
+            "incremental": false,
+            "actionable": true,
+            "skipMessage": null,
+            "originBuildInvocationId": null,
+            "originBuildCacheKeyBytes": null,
+            "originExecutionTime": null,
+            "cachingDisabledReasonMessage": null,
+            "cachingDisabledReasonCategory": null,
+            "skipReasonMessage": null,
+            "upToDateMessages": [
+              "Input property 'source' file /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/worktrees/elasticsearch-native/server/src/main/java/org/elasticsearch/rest/action/admin/indices/CreateIndexCapabilities.java has changed."
+            ]
+          }
+        },
+        {
+          "ordinal": 20,
+          "task": ":server:checkstyleMain",
+          "milliseconds": 64184,
+          "result": {
+            "incremental": false,
+            "actionable": true,
+            "skipMessage": null,
+            "originBuildInvocationId": null,
+            "originBuildCacheKeyBytes": null,
+            "originExecutionTime": null,
+            "cachingDisabledReasonMessage": null,
+            "cachingDisabledReasonCategory": null,
+            "skipReasonMessage": null,
+            "upToDateMessages": [
+              "Input property 'source' file /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/worktrees/elasticsearch-native/server/src/main/java/org/elasticsearch/cluster/EstimatedHeapUsageCollector.java has changed.",
+              "Input property 'source' file /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/worktrees/elasticsearch-native/server/src/main/java/org/elasticsearch/cluster/InternalClusterInfoService.java has changed.",
+              "Input property 'source' file /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/worktrees/elasticsearch-native/server/src/main/java/org/elasticsearch/cluster/EstimatedHeapUsageStats.java has been added."
+            ]
+          }
+        }
+      ],
+      "decision": "NOT_ADMITTED_REAL_SOURCE_CHANGE",
+      "reason": "The main lint task is up-to-date at ordinal 18 and executes on genuine source edits at 19/20. The plugin already excludes compiled classpath from the lint input contract. Its source inputs cannot be dropped.",
+      "limit": "Large per-file lint processing cost is a separate possible H1 subject; native engine caching and full output semantics have not been audited or qualified."
+    }
+  ],
+  "additionalGradleStarts": 0,
+  "additionalNestedStarts": 0,
+  "newSourcePatch": false,
+  "newH2Allocation": "not started; neither inspected input-repair cause was admitted",
+  "gateConsequence": "No H2 candidate can continue BV-003..008 on this evidence. Preserve the Checkstyle observation as an unstarted proposal, not a product win.",
+  "closedUTC": "2026-09-08T09:59:03.254720+00:00"
+}

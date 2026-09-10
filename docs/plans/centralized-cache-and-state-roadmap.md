@@ -1,5 +1,11 @@
 # Centralized Gradle cache and BuildOpt state POC roadmap
 
+> **Research disposition: DEFERRED (2026-09-08).** Expansion of this
+> infrastructure is outside the current viability study. Existing implementation
+> and proof are retained; the original roadmap below is historical. Consult the
+> [research status register](../research-status.md) and
+> [current tracker](./buildopt-product-viability-v1-tracker.md) before scheduling work.
+
 ## Objective
 
 BuildOpt should offer one optional owner-operated HTTPS service that lets

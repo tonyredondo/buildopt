@@ -1,0 +1,28 @@
+{
+  "program": "BUILDOPT-VIABILITY-V1",
+  "step": "BV-001",
+  "status": "verified",
+  "completedUTC": "2026-09-08T09:03:35.233779+00:00",
+  "gateScope": "Executable prerequisite foundation; no G1 materiality, G2 candidate correctness or saving claim",
+  "proof": {
+    "sourceManifestSHA256": "d0a7682fad7bc5ac08f09be96eea3ec2891d09137b276332613f98a55cefde35",
+    "historySHA256": "3521f7a3e41278a47578857ab58cb6a3a5bfa9f1e9be3a2f4ec029c1470c5a8d",
+    "sourcePreservation": "6598 entry files unchanged; five progress-only Markdown edits",
+    "goCommandsBuild": "PASS",
+    "coreTests": "PASS",
+    "patcherActualCompilationAnd15RealGitCases": "PASS",
+    "longitudinalVerifierTests": "PASS",
+    "nativeServerPrecommit": "PASS: 1045 actionable tasks, source clean",
+    "gitObjectConnectivity": "PASS",
+    "documentation": "PASS: 637 Markdown, 3091 JSON, 3496 local links, 2181 commands",
+    "trackerConsistency": "PASS: 53 accepted decisions",
+    "layout": "PASS",
+    "whitespace": "PASS",
+    "portableFileHashesBeforeCloseout": "31 verified",
+    "requiredHistoryEdges": 100,
+    "nativeFinalUnit": "inactive; LoadState=not-found"
+  },
+  "chargedAttempts": 5,
+  "actualGradleStarts": 4,
+  "next": "BV-002 native baseline and causal opportunity; no candidate implementation before G1"
+}

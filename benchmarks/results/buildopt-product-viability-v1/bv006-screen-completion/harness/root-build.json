@@ -1,0 +1,7 @@
+{
+  "status": "verified",
+  "command": "./dev/run --toolchain go -- go build -mod=readonly -o <phase>/bin/history-replay-current-root ./dev/history-replay",
+  "executable": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion/bin/history-replay-current-root",
+  "sha256": "59b9b7fd2c626cc34f9f0c88c589b1cfa8668c293a8051734653854fe6ec0670",
+  "atUTC": "2026-09-09T17:30:14.984998+00:00"
+}

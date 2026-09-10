@@ -1,0 +1,31 @@
+{
+  "program": "BUILDOPT-VIABILITY-V1",
+  "step": "BV-005",
+  "scope": "Local replay-instrument implementation and qualification fixtures only; no seed validation or public value run",
+  "authorizedBy": "Owner a por ello on 2026-09-08; standing autonomous work and budget authorization",
+  "startedUTC": "2026-09-08T15:09:18.219255+00:00",
+  "deadlineUTC": "2026-09-08T23:09:18.219255+00:00",
+  "maxElapsedSeconds": 28800,
+  "maxGradleStartsIncludingNested": 60,
+  "gradleReservations": 50,
+  "actualGradleStarts": 50,
+  "nestedStarts": 8,
+  "maxQualificationProcessStarts": 600,
+  "qualificationProcessStarts": 497,
+  "maxChildSeconds": 180,
+  "maxNewBytes": 21474836480,
+  "minimumFreeBytes": 42949672960,
+  "initialFreeBytes": 869206802432,
+  "priorProgramCharges": {
+    "reservations": 160,
+    "actualGradleStarts": 159,
+    "nestedStarts": 5,
+    "directEngineJVMStarts": 30,
+    "javacStarts": 9,
+    "metadataJVMStarts": 3
+  },
+  "stopRule": "Preserve all failures; no validation ordinals 21..100; do not claim BV-005 verified until executable/integration/adversarial and overhead proof pass",
+  "javacStarts": 2,
+  "overheadGradleStarts": 20,
+  "testKitHelperJVMStarts": 4
+}

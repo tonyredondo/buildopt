@@ -1,0 +1,37 @@
+LOCK_PROOF mode=RELEASE_PROJECT_LOCKS returnedBeforeProjectRelease=true afterWorkNS=15200 heldAfterWorkNS=252321451
+LOCK_PROOF mode=RELEASE_AND_REACQUIRE_PROJECT_LOCKS returnedBeforeProjectRelease=false afterWorkNS=257211430 heldAfterWorkNS=257043000
+WAIT_FRAME java.lang.Object.wait0
+WAIT_FRAME java.lang.Object.wait
+WAIT_FRAME java.lang.Object.wait
+WAIT_FRAME org.gradle.internal.resources.DefaultResourceLockCoordinationService.withStateLock
+WAIT_FRAME org.gradle.internal.work.DefaultWorkerLeaseService.lambda$acquireLocks$0
+WAIT_FRAME org.gradle.internal.work.ResourceLockStatistics$1.measureLockAcquisition
+WAIT_FRAME org.gradle.internal.work.DefaultWorkerLeaseService.acquireLocks
+WAIT_FRAME org.gradle.internal.work.DefaultWorkerLeaseService.lambda$releaseWorkerLeaseAndWaitFor$0
+WAIT_FRAME org.gradle.internal.Factories$1.create
+WAIT_FRAME org.gradle.internal.work.DefaultWorkerLeaseService.lambda$withoutLocksBlocking$0
+WAIT_FRAME org.gradle.internal.work.ResourceLockStatistics$1.measure
+WAIT_FRAME org.gradle.internal.work.DefaultWorkerLeaseService.withoutLocksBlocking
+WAIT_FRAME org.gradle.internal.work.DefaultWorkerLeaseService.withoutLocksBlocking
+WAIT_FRAME org.gradle.internal.work.DefaultWorkerLeaseService.releaseWorkerLeaseAndWaitFor
+WAIT_FRAME org.gradle.internal.work.DefaultWorkerLeaseService.acquireLocksWithoutWorkerLeaseWhileBlocked
+WAIT_FRAME org.gradle.internal.work.DefaultWorkerLeaseService.lambda$withoutLocks$0
+WAIT_FRAME org.gradle.internal.work.ResourceLockStatistics$1.measure
+WAIT_FRAME org.gradle.internal.work.DefaultWorkerLeaseService.withoutLocks
+WAIT_FRAME org.gradle.internal.work.DefaultWorkerLeaseService.runAsIsolatedTask
+WAIT_FRAME org.gradle.internal.work.DefaultWorkerLeaseService.runAsIsolatedTask
+WAIT_FRAME org.gradle.internal.work.DefaultAsyncWorkTracker.waitForItemsAndGatherFailures
+WAIT_FRAME org.gradle.internal.work.DefaultAsyncWorkTracker.waitForAll
+WAIT_FRAME org.gradle.internal.work.DefaultAsyncWorkTracker.waitForCompletion
+WAIT_FRAME LockRetentionProof.lambda$check$1
+WAIT_FRAME org.gradle.internal.Factories$1.create
+WAIT_FRAME org.gradle.internal.work.DefaultWorkerLeaseService.lambda$runAndReleaseLocks$0
+WAIT_FRAME org.gradle.internal.work.ResourceLockStatistics$1.measure
+WAIT_FRAME org.gradle.internal.work.DefaultWorkerLeaseService.runAndReleaseLocks
+WAIT_FRAME org.gradle.internal.work.DefaultWorkerLeaseService.withLocksAcquired
+WAIT_FRAME org.gradle.internal.work.DefaultWorkerLeaseService.withLocks
+WAIT_FRAME org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread
+WAIT_FRAME org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread
+WAIT_FRAME LockRetentionProof.lambda$check$2
+WAIT_FRAME java.lang.Thread.run
+LOCK_RETENTION_PROOF_VERIFIED Gradle=9.7.1 nativeBuildStarts=0 actualServices=true

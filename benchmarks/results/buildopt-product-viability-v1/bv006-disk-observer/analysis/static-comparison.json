@@ -1,0 +1,70 @@
+{
+  "status": "verified",
+  "rows": [
+    {
+      "bytes": 10955491091,
+      "cpuNS": 1941822000,
+      "wallNS": 1903396934,
+      "variant": "old",
+      "command": [
+        "taskset",
+        "-c",
+        "0-7",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-disk-observer/profile/scan.test",
+        "-test.run=^TestScannerProfile$",
+        "-test.v",
+        "-test.timeout=30s"
+      ],
+      "exitCode": 0
+    },
+    {
+      "bytes": 10955491091,
+      "cpuNS": 1462428000,
+      "wallNS": 1449846725,
+      "variant": "new",
+      "command": [
+        "taskset",
+        "-c",
+        "0-7",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-disk-observer/profile-new/scan.test",
+        "-test.run=^TestScannerProfile$",
+        "-test.v",
+        "-test.timeout=30s"
+      ],
+      "exitCode": 0
+    },
+    {
+      "bytes": 10955491091,
+      "cpuNS": 1469565000,
+      "wallNS": 1457062910,
+      "variant": "new",
+      "command": [
+        "taskset",
+        "-c",
+        "0-7",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-disk-observer/profile-new/scan.test",
+        "-test.run=^TestScannerProfile$",
+        "-test.v",
+        "-test.timeout=30s"
+      ],
+      "exitCode": 0
+    },
+    {
+      "bytes": 10955491091,
+      "cpuNS": 1935971000,
+      "wallNS": 1899879299,
+      "variant": "old",
+      "command": [
+        "taskset",
+        "-c",
+        "0-7",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-disk-observer/profile/scan.test",
+        "-test.run=^TestScannerProfile$",
+        "-test.v",
+        "-test.timeout=30s"
+      ],
+      "exitCode": 0
+    }
+  ],
+  "atUTC": "2026-09-09T09:31:07.767163+00:00"
+}

@@ -1,0 +1,46 @@
+{
+  "schema": "bv005-standalone-check/v1",
+  "binarySHA256": "df9f1caf452387676277ab5cba48c52137bf6f0ccf954188424a95c39d2190cf",
+  "manifestSHA256": "73bf1ceebfff2d995ed9731bc92bae992337adb45b0c666899f122c927eed647",
+  "runRoot": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv005/standalone-cli-03/run",
+  "readOnlyCommandsPreserveEvidence": true,
+  "workflowStartsBeforeAndAfterCheckResume": 4,
+  "checks": [
+    {
+      "arguments": [
+        "validate",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv005/standalone-cli-03/manifest.json"
+      ],
+      "exitCode": 0,
+      "stdout": "manifest valid; no workflow started\n",
+      "stderr": ""
+    },
+    {
+      "arguments": [
+        "run",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv005/standalone-cli-03/manifest.json"
+      ],
+      "exitCode": 0,
+      "stdout": "{\"schema\":\"buildopt.history-replay/result/v1\",\"manifestSHA256\":\"73bf1ceebfff2d995ed9731bc92bae992337adb45b0c666899f122c927eed647\",\"replications\":[{\"replication\":1,\"scheduled\":1,\"comparable\":1,\"adoptionNS\":0,\"maintenanceNS\":139020,\"unpairedCandidateNS\":0,\"nativeNS\":3641008,\"netSavedNS\":96421,\"netFraction\":0.026481952250585552,\"netPerScheduledNS\":96421,\"nativeP50NS\":3641008,\"nativeP95NS\":3641008,\"candidateP50NS\":3405567,\"candidateP95NS\":3405567,\"worstRegressionNS\":0,\"noActionSlots\":0,\"noActionDeltaNS\":0,\"noActionAttributedSavingNS\":0,\"paybackOrdinal\":1,\"temporaryCrossings\":[],\"curveNS\":[96421],\"intervals\":[],\"customerHumanNS\":0,\"researchNS\":15064153726,\"researchRecordingAndOtherNS\":11207329417,\"studyMachineNS\":15078579337,\"wholeStudySensitivityNetNS\":-15078482916,\"fullyLoadedNetNS\":-15064057305,\"complete\":true,\"gate\":\"NOT_QUALIFIED\",\"reasons\":[\"qualification/engineering is not confirmation\"]}],\"slots\":[[{\"ordinal\":0,\"class\":\"COMPARABLE\",\"reason\":\"\",\"nativeNS\":3772518,\"candidateNS\":3467498,\"extraCandidateNS\":0,\"nativeActions\":1,\"candidateActions\":1,\"attempts\":[\"r1-000-g0-N\",\"r1-000-g0-I\"]},{\"ordinal\":1,\"class\":\"COMPARABLE\",\"reason\":\"\",\"nativeNS\":3641008,\"candidateNS\":3405567,\"extraCandidateNS\":0,\"nativeActions\":1,\"candidateActions\":1,\"attempts\":[\"r1-001-g0-N\",\"r1-001-g0-I\"]}]],\"workflowStarts\":4,\"gradleReservations\":0,\"actualGradleStarts\":0,\"nestedStarts\":0,\"unknownGradleReservations\":0,\"decision\":\"FIXTURE_VERIFIED\",\"reasons\":[]}\n",
+      "stderr": ""
+    },
+    {
+      "arguments": [
+        "check",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv005/standalone-cli-03/run"
+      ],
+      "exitCode": 0,
+      "stdout": "raw evidence and claimed result agree\n",
+      "stderr": ""
+    },
+    {
+      "arguments": [
+        "resume",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv005/standalone-cli-03/run"
+      ],
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "replay already reached its full horizon\n"
+    }
+  ]
+}

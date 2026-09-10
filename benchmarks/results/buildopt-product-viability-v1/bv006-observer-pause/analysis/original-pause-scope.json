@@ -1,0 +1,14 @@
+{
+  "status": "verified static evidence",
+  "originalRawSHA256": "6c7e3177c8a208d7e7b08b00fe48948ae6d248f7aacdd1cb31d0340d314d1191",
+  "gapStartUTC": "2026-09-09T11:29:07.339696905Z",
+  "gapEndUTC": "2026-09-09T11:29:09.440687644Z",
+  "scanStartGapMS": 2104.017374,
+  "ownedServiceCPUAdvanceMS": 6892.184,
+  "leftPayloadBytes": 27253,
+  "rightPayloadBytes": 27254,
+  "minimumPayloadBytes": 23941,
+  "maximumPayloadBytes": 27312,
+  "interpretation": "The native owned service consumed CPU while the driver did not emit a sample. This is not evidence of a whole-host suspended interval. Driver scheduling, JSON work and writer latency were not recorded separately.",
+  "atUTC": "2026-09-09T11:50:53.491699+00:00"
+}

@@ -1,0 +1,28 @@
+{
+  "status": "verified",
+  "observedUTC": "2026-09-08T14:40:16.116071+00:00",
+  "method": "du -sx -B1 across the entire prototype state, both worktrees and portable bundle; conservatively includes pre-existing candidate worktree bytes; does not discount reflinks",
+  "paths": [
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-prototype",
+      "allocatedBytes": 12783112192
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/worktrees/elasticsearch-checkstyle",
+      "allocatedBytes": 2071007232
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/worktrees/elasticsearch-checkstyle-control",
+      "allocatedBytes": 2048311296
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/benchmarks/results/buildopt-product-viability-v1/checkstyle-prototype",
+      "allocatedBytes": 20697088
+    }
+  ],
+  "conservativeTotalBytes": 16923127808,
+  "freeBytes": 869320683520,
+  "maximumNewBytes": 128849018880,
+  "minimumFreeBytes": 42949672960,
+  "limits": "Native jobs enforce free-space, log-size and runtime bounds. Full directory footprint is measured at checkpoints, not continuously enforced."
+}

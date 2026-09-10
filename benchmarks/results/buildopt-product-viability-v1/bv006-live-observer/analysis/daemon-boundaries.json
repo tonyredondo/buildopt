@@ -1,0 +1,44 @@
+{
+  "status": "verified diagnostic reconstruction",
+  "rows": [
+    {
+      "arm": "N",
+      "cold": true,
+      "intervals": [
+        {
+          "kind": "native-start-to-first-daemon-snapshot",
+          "ms": 503.587931
+        },
+        {
+          "kind": "last-daemon-snapshot-to-native-end",
+          "ms": 0.551241
+        },
+        {
+          "kind": "between-daemon-snapshots",
+          "ms": 327.405081
+        }
+      ],
+      "original500msCriterionPassed": false
+    },
+    {
+      "arm": "I",
+      "cold": true,
+      "intervals": [
+        {
+          "kind": "native-start-to-first-daemon-snapshot",
+          "ms": 603.431035
+        },
+        {
+          "kind": "last-daemon-snapshot-to-native-end",
+          "ms": 25.849603
+        },
+        {
+          "kind": "between-daemon-snapshots",
+          "ms": 344.201897
+        }
+      ],
+      "original500msCriterionPassed": false
+    }
+  ],
+  "interpretation": "Both cold rows exceed the original endpoint-inclusive 500-ms criterion before the first daemon snapshot. The live sampler itself has no inter-sample gap above 500 ms. These rows were registered cold diagnostics, not measured warm qualification; no original threshold is relaxed and neither row establishes G0/S1."
+}

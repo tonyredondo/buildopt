@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_replay_mode=${1:---unit}
+if (($# > 1)) || [[ ! "$buildopt_replay_mode" =~ ^--(unit|integration|observer|native|overhead)$ ]]; then
+    printf 'usage: %s [--unit|--integration|--observer|--native|--overhead]\n' "$0" >&2
+    exit 64
+fi
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+cd -- "$buildopt_repo_root"
+if [[ "$(uname -s)/$(uname -m)" != Linux/x86_64 ]]; then
+    printf 'Historical replay qualification requires Linux AMD64\n' >&2
+    exit 69
+fi
+
+buildopt_replay_test() {
+    timeout --signal=TERM --kill-after=5s 175s ./dev/run --toolchain go -- \
+        go test -mod=readonly "$@" ./dev/history-replay -count=1 -timeout=160s
+}
+
+case "$buildopt_replay_mode" in
+    --unit)
+        buildopt_replay_test
+        timeout --signal=TERM --kill-after=5s 60s ./dev/run --toolchain go -- \
+            go vet -mod=readonly ./dev/history-replay
+        timeout --signal=TERM --kill-after=5s 60s \
+            python3 -B -I dev/history-replay/precision_statistics_test.py
+        ;;
+    --integration)
+        # At most 104 fixture workflows plus bounded projector helpers, no Gradle.
+        # Each immutable fixture manifest also enforces time/disk/start limits.
+        # Durable fixture receipts can exhaust a combined batch's timeout on
+        # slower filesystems. Keep the existing bound for each complete case.
+        for buildopt_replay_case in \
+            TestOwnedReplayAndIndependentChecker \
+            TestTwoFreshReplicationsReverseOrder \
+            TestExternalPreparationIsChargedExactlyOnce \
+            TestQualifiedProjectionAndSemanticCounterexample \
+            TestFullHorizonDoesNotStopAtNegativeValue \
+            TestTypedFailuresAndNativeFallback \
+            TestDriftStopsBeforeNextChild \
+            TestAllocationStopsAndDetachedChild \
+            TestRawEvidenceTampering \
+            TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost \
+            TestCheckpointResumeAndCrashRecovery; do
+            buildopt_replay_test -tags=replay_integration -run "^${buildopt_replay_case}$"
+        done
+        ;;
+    --observer)
+        # 21 fixture workflows, including deliberate failures and recovery.
+        # Actual CLI consumers run; no Gradle/JVM or public history is used.
+        buildopt_replay_test -v -tags=replay_integration -run '^(TestObserved|TestAffinityScope$)'
+        ;;
+    --native|--overhead)
+        : "${BUILDOPT_REPLAY_GRADLE_HOME:?Set the exact installed Gradle 9.7.1 directory}"
+        : "${BUILDOPT_REPLAY_JAVA_HOME:?Set the exact installed JDK 21 directory}"
+        if [[ "$buildopt_replay_mode" == --native ]]; then
+            # 18 native Gradle invocations, including four nested TestKit starts.
+            buildopt_replay_test -tags=replay_integration,replay_gradle \
+                -run '^(TestGradleNativeUpToDateAndCacheRestore|TestGradlePersistentNoActionReplay|TestGradleNestedTestKitAccounting)$'
+        else
+            # 20 native invocations, including four prospectively excluded warmups.
+            buildopt_replay_test -tags=replay_integration,replay_gradle \
+                -run '^TestGradleSymmetricCaptureOverhead$'
+        fi
+        ;;
+esac
+printf 'Historical replay %s qualification passed; no public history executed\n' "$buildopt_replay_mode"

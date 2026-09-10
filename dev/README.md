@@ -538,6 +538,61 @@ missing-wrapper failure and signal propagation to a descendant tree with:
 This is the `SWL-004` implementation gate. It proves a neutral customer
 command and activates no cache, observation, learning or optimization.
 
+Validate the separate installed native-correction mode and exact Elasticsearch
+recipe locally on Linux AMD64 with:
+
+```bash
+./dev/check-installed-native-correction
+```
+
+This builds a real Linux package, installs it to an isolated prefix and tests the
+generated wrapper with native local Gradle and an owned TLS fixture service.
+It covers typed observation/status, scope and credential rejection, offline
+queue/reuse, corrupt-package fallback, bypass and child/descendant signals.
+The version `0.0.1` is a local fixture label, not a published release. The checker
+uses a maximum of 15 minutes of stage deadlines and caps its regenerable package
+directory at 1 GiB. No public Elasticsearch build or value measurement runs.
+The [installed experiment plan](../docs/plans/installed-elasticsearch-native-correction-v1.md)
+keeps native qualification and candidate timing behind their functional gates.
+
+Validate the separate EIC-004 allocation, source fixture, process capture,
+independent reconstruction and budget refusal with:
+
+```bash
+./dev/check-installed-elasticsearch-protocol
+```
+
+The [protocol tool](./installed-elasticsearch-runner/README.md) compiles all
+314 allocated starts, retains 312 actual local fixture processes and rejects
+tampered or incomplete captures. Its native preparation and diagnostic modes
+admit the frozen P/D rows and the separately authorized, seed-pinned clean-workspace
+CD001/CD002 scenario under the owner's extended total allocation.
+Its `audit` command verifies retained source/history, JDK archive and package
+bytes offline; `budget` keeps hypothetical estimates separate from permission.
+Local fixtures are not native runtime or performance evidence. The approved
+third campaign independently verifies C12/M24 and all 52 owner methods, including
+twelve actual nested TestKit requests. The composite owner profile reconstructs
+late included-build task plans and retains earlier failed receipts. The
+[terminal finding](../docs/findings/buildopt-elasticsearch-installed-experiment-2026-09-08.md)
+closes the experiment at the failed persistent-delivery prerequisite: none of
+twenty fresh uploads is acknowledged in 100 ms, and the actual installed
+Elasticsearch help path also leaves its observation queued. Native execution
+succeeds. V/L/H/O remain unrun; installed savings and chronology are unmeasured.
+
+Validate the BV-005 historical replay instrument with:
+
+```bash
+./dev/check-history-replay --unit
+./dev/check-history-replay --integration
+```
+
+The [runner reference](./history-replay/README.md) documents the separate
+`--native` and `--overhead` checks, explicit pinned Gradle/JDK prerequisites,
+per-check limits and retained fixture evidence. The instrument validates exact
+first-parent source/patch state, owns native process trees, preserves failures
+and reconstructs costs and decisions independently. It executes no public
+history during qualification and preserves previous command contracts.
+
 Validate portable project identity, private credential discovery, exact read
 capabilities, namespace separation, live revocation and Gradle secret
 isolation with:

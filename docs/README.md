@@ -4,6 +4,11 @@ This portal organizes the repository by the task a reader is trying to
 complete. You do not need to read the master RFC or the implementation tracker
 before running the product.
 
+For research, start with the [current status register](./research-status.md).
+It identifies the only current program, discarded directions, retained
+foundations and every historical plan. Old handoffs and pending boxes do not
+reopen a closed experiment.
+
 ## Choose a path
 
 | You want to... | Start here | Continue with |
@@ -14,13 +19,16 @@ before running the product.
 | Add BuildOpt to CI | [CI integration](./guides/ci-integration.md) | [Configuration reference](./reference/configuration.md) |
 | Operate self-hosted or Edge | [Operations guide](./guides/operations.md) | [Runbooks](../runbooks/README.md) |
 | Diagnose a problem | [Troubleshooting](./troubleshooting.md) | [CLI reference](./reference/cli.md) |
-| Review the POC idea, mechanisms, current value, and next steps | [Current POC one-pager](./findings/buildopt-poc-handoff.md) | [Detailed performance findings](./findings/build-optimization-performance.md), [benchmark evidence](../benchmarks/README.md) |
+| Decide next-quarter investment | [Build Optimization investment review](./findings/buildopt-next-quarter-investment-review-2026-09-10.md) | [Supporting evidence and experiment map](./findings/buildopt-next-quarter-evidence-2026-09-10.md) |
+| Check what to pursue or discard | [Research status register](./research-status.md) | [Current tracker](./plans/buildopt-product-viability-v1-tracker.md), [evidence ledger](./plans/buildopt-product-viability-v1-evidence.md) |
+| Review historical POC mechanisms and measured value | [Historical POC one-pager](./findings/buildopt-poc-handoff.md) | [Detailed performance findings](./findings/build-optimization-performance.md), [benchmark evidence](../benchmarks/README.md) |
+| Plan the next product viability study | [Product Viability v1](./plans/buildopt-product-viability-v1.md) | [Detailed tracker](./plans/buildopt-product-viability-v1-tracker.md), [historical replay contract](./plans/buildopt-product-viability-v1-replay.md), [evidence and investment decisions](./plans/buildopt-product-viability-v1-evidence.md) |
 | Review the closed complete native-correction study | [Complete Native Correction POC](./plans/complete-native-correction-poc.md) | [Execution tracker](./plans/complete-native-correction-poc-tracker.md), [terminal evidence](../benchmarks/results/complete-native-correction-v1/cnc004-native-admission/README.md); six native captures complete, admission rejected |
-| Continue the POC on another computer | [Cross-machine handoff, 2026-09-07](./findings/buildopt-cross-machine-handoff-2026-09-07.md) | Published baseline, retained evidence, destination checks and the proposed Elasticsearch successor |
+| Review the previous cross-machine handoff | [Historical handoff, 2026-09-07](./findings/buildopt-cross-machine-handoff-2026-09-07.md) | Retained baseline and evidence; resume new work from the current viability tracker |
 | Review the closed source-bound correction experiment | [Source-Bound Configuration-Input Corrections POC](./plans/source-bound-configuration-input-corrections-poc.md) | [Contract](../specs/poc-source-bound-configuration-input-corrections-v1.md), [evidence index](../benchmarks/results/source-bound-configuration-input-corrections-v1/README.md), [generalization audit](./findings/buildopt-generalization-audit.md) |
-| Review the stopped adaptive hypothesis | [Adaptive Fragment Generalization POC Tracker](./plans/adaptive-fragment-generalization-tracker.md) | [Terminal decision](../specs/poc-adaptive-fragment-terminal-decision-v1.md), [current generalization audit](./findings/buildopt-generalization-audit.md) |
+| Review the stopped adaptive-fragment hypothesis | [Adaptive Fragment Generalization POC Tracker](./plans/adaptive-fragment-generalization-tracker.md) | [Terminal decision](../specs/poc-adaptive-fragment-terminal-decision-v1.md), [historical generalization audit](./findings/buildopt-generalization-audit.md) |
 | Review the implemented onboarding foundation | [One-command POC onboarding roadmap](./plans/one-command-onboarding-roadmap.md) | [Product onboarding](./getting-started/product-onboarding.md), [generalization audit](./findings/buildopt-generalization-audit.md) |
-| Plan optional shared state across machines | [Centralized cache and state POC roadmap](./plans/centralized-cache-and-state-roadmap.md) | [Storage contract](../specs/poc-central-storage-contract-v1.md), [architecture overview](./architecture/overview.md) |
+| Inspect retained, deferred shared-state infrastructure | [Centralized cache and state POC roadmap](./plans/centralized-cache-and-state-roadmap.md) | [Storage contract](../specs/poc-central-storage-contract-v1.md), [architecture overview](./architecture/overview.md) |
 | Inspect exact behavior | [Specifications index](../specs/README.md) | [Contracts index](../contracts/README.md), [ADRs](../adr/README.md) |
 
 ## Documentation map
@@ -54,6 +62,15 @@ before running the product.
 
 ### Findings and recommendations
 
+These are retained historical findings. Current investment decisions live in
+the [research status register](./research-status.md) and viability plan.
+
+- [Installed Elasticsearch experiment, 2026-09-08](./findings/buildopt-elasticsearch-installed-experiment-2026-09-08.md):
+  verified C12/M24 and 52 owner methods; terminal persistent-delivery failure
+  on this host at the unchanged 100-ms deadline; no installed saving claim.
+- [Elasticsearch correctness output contract, 2026-09-07](./findings/buildopt-elasticsearch-correctness-output-contract-2026-09-07.md):
+  successful annotated build, rejected compiler/report metadata differences,
+  exhaustive diagnosis and the approved, separately qualified comparison rules.
 - [Cross-machine handoff, 2026-09-07](./findings/buildopt-cross-machine-handoff-2026-09-07.md):
   complete transfer briefing, closed CNC evidence, platform/state boundaries
   and preparation of the proposed installed Elasticsearch trial.
@@ -70,6 +87,40 @@ before running the product.
 
 ### Plans
 
+#### Current research
+
+- [Product Viability v1](./plans/buildopt-product-viability-v1.md)
+  and [detailed tracker](./plans/buildopt-product-viability-v1-tracker.md):
+  proposed native incremental corrections and adaptive management, retired research
+  routes, a [100-transition replay contract](./plans/buildopt-product-viability-v1-replay.md),
+  a required native/fixed/adaptive comparison, and separate technical and
+  paid-customer gates backed by an
+  [evidence ledger](./plans/buildopt-product-viability-v1-evidence.md).
+  [BV-001 prerequisite evidence](../benchmarks/results/buildopt-product-viability-v1/bv001/inputs.md)
+  is verified. The [20-transition native audit](../benchmarks/results/buildopt-product-viability-v1/bv002/opportunity.md)
+  rejects the ForbiddenPatterns seed at G1; the
+  [technical decision](../benchmarks/results/buildopt-product-viability-v1/viability-decision.md)
+  preserves the original negative result and its unrun downstream phases.
+  The later [Checkstyle admission](../benchmarks/results/buildopt-product-viability-v1/checkstyle-admission/README.md)
+  permits a bounded content-aware prototype, with no measured candidate saving.
+  The [prototype correctness proof](../benchmarks/results/buildopt-product-viability-v1/checkstyle-prototype/README.md)
+  now verifies BV-003/BV-004 for the frozen owner. BV-005 replay qualification
+  is next; candidate lifecycle saving and adaptive/customer gates remain unproved.
+  All six other repository histories are verified; their value remains unmeasured.
+
+#### Closed research and historical substudies
+
+The [complete plan inventory](./research-status.md#complete-plan-inventory)
+also classifies the smaller substudies not listed below. Their original
+outcomes remain evidence; none is a current work queue.
+
+- [Installed Elasticsearch Native Correction v1](./plans/installed-elasticsearch-native-correction-v1.md)
+  and [preparation tracker](./plans/installed-elasticsearch-native-correction-v1-tracker.md):
+  frozen base and five descendants, verified local recipe/installed integration,
+  three-arm protocol qualification and independently verified native admission,
+  C12/M24 and composite owner tests. The final installed delivery prerequisite
+  fails on persistent storage; V/L/H/O remain unrun. Historical native and
+  correctness rejections are retained unchanged.
 - [Complete Native Correction POC](./plans/complete-native-correction-poc.md)
   and [execution tracker](./plans/complete-native-correction-poc-tracker.md):
   directed GraphQL Java blocker closure, followed by separately gated installed
@@ -122,7 +173,7 @@ before running the product.
   safety contract, shadow replay, Gradle-free execution, installed value,
   chronological combined value and a terminal decision.
 - [Observed Recurrent Request Portfolio POC Tracker](./plans/observed-request-portfolio-poc-tracker.md):
-  the latest closed route, terminal cause baseline, exact evidence-precision
+  a closed route, terminal cause baseline, exact evidence-precision
   work and ordered proof over commands actually observed through the wrapper.
 - [Request-aligned Recurrent Learning POC Tracker](./plans/request-aligned-learning-poc-tracker.md):
   the closed predecessor, implemented exact ordinary-request identity/current
@@ -142,6 +193,9 @@ before running the product.
   the completed post-`STOP_GENERIC_POC` hypothesis, terminal
   `STOP_ADAPTIVE_FRAGMENT_POC` scorecard, ordered AF-001..AF-015 work, evidence
   outcomes and mandatory documentation updates.
+
+#### Retained foundations and deferred infrastructure
+
 - [One-command POC onboarding roadmap](./plans/one-command-onboarding-roadmap.md):
   the `buildopt optimize build` north star, automatic state machine, ordered
   implementation blocks, end-to-end value gates and explicit POC boundaries.
@@ -152,8 +206,9 @@ before running the product.
   GitHub/GitLab command input, provider-bound portable exact state, review
   artifacts and service-free native fallback.
 - [Centralized Gradle cache and BuildOpt state POC roadmap](./plans/centralized-cache-and-state-roadmap.md):
-  an optional HTTPS service for native Gradle cache objects and separately
-  governed BuildOpt profiles, evidence and checkpoints across build machines.
+  deferred expansion of an optional HTTPS service for native Gradle cache
+  objects and separately governed BuildOpt profiles, evidence and checkpoints
+  across build machines.
 - [Optional central storage contract](../specs/poc-central-storage-contract-v1.md):
   executable namespaces, immutable publication, exact-generation CAS,
   retention and native fallback before any remote state service exists.

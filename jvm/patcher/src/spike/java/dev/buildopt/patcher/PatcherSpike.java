@@ -114,7 +114,10 @@ public final class PatcherSpike {
     private void assertRecipeRegistry() {
         List<PatchAutopilotRecipeRegistry.Definition> definitions =
                 PatchAutopilotRecipeRegistry.definitions();
-        require(definitions.size() == 6, "recipe registry size");
+        require(PatchAutopilotRecipeRegistry.find(
+                        "REVIEWED_ELASTICSEARCH_FORBIDDEN_PATTERNS_JAVA_V1", "1.0")
+                        .isPresent(), "Elasticsearch recipe is registered");
+        require(definitions.size() == 7, "recipe registry size");
         PatchAutopilotRecipeRegistry.Definition archive =
                 PatchAutopilotRecipeRegistry.find(
                         ArchiveReproducibilityRecipe.RECIPE_ID,
@@ -138,7 +141,8 @@ public final class PatcherSpike {
                 "custom-task registry metadata");
         for (String recipeId : List.of(
                 ReviewedNativePatchJavaRecipe.RELATIVE_CACHEABILITY_RECIPE_ID,
-                ReviewedNativePatchJavaRecipe.MARKER_ONLY_CACHEABILITY_RECIPE_ID)) {
+                ReviewedNativePatchJavaRecipe.MARKER_ONLY_CACHEABILITY_RECIPE_ID,
+                "REVIEWED_ELASTICSEARCH_FORBIDDEN_PATTERNS_JAVA_V1")) {
             PatchAutopilotRecipeRegistry.Definition reviewed =
                     PatchAutopilotRecipeRegistry.find(
                             recipeId, ReviewedNativePatchJavaRecipe.RECIPE_VERSION)
@@ -660,6 +664,27 @@ public final class PatcherSpike {
     }
 
     private void assertExpandedRecipeReverts() throws Exception {
+        try (Fixture fixture = fixture("elasticsearch-post-merge-revert")) {
+            String path = ReviewedNativePatchJavaRecipe.ELASTICSEARCH_FORBIDDEN_PATTERNS_PATH;
+            byte[] source = ReviewedNativePatchRecipeSpike.elasticsearchSource();
+            Files.createDirectories(fixture.repository.resolve(path).getParent());
+            Files.write(fixture.repository.resolve(path), source);
+            fixture.commitAll("qualified Elasticsearch source");
+            fixture.refreshBase();
+            String recipeId = ReviewedNativePatchJavaRecipe.ELASTICSEARCH_FORBIDDEN_PATTERNS_RECIPE_ID;
+            expectFailure(PatchFailure.Status.REJECTED,
+                    () -> verify(reviewedNativeBundle(fixture, recipeId).write(), signingKey));
+            BundleBuilder builder = bundle(fixture, "elasticsearch-exact", recipeId);
+            ReviewedNativePatchJavaRecipe.Result recipe =
+                    ReviewedNativePatchJavaRecipe.applyElasticsearchForbiddenPatterns(path, source);
+            BundleBuilder drifted = bundle(fixture, "elasticsearch-drift", recipeId);
+            byte[] changed = recipe.postimage();
+            changed[0] ^= 1;
+            drifted.modify(path, recipe.preimageDigest(), "blobs/ForbiddenPatternsTask.java", changed);
+            expectFailure(PatchFailure.Status.REJECTED, () -> verify(drifted.write(), signingKey));
+            builder.modify(path, recipe.preimageDigest(), "blobs/ForbiddenPatternsTask.java", recipe.postimage());
+            assertExactRecipeRevert(fixture, builder, path, "elasticsearch");
+        }
         try (Fixture fixture = fixture("groovy-post-merge-revert")) {
             assertExactRecipeRevert(
                     fixture,
@@ -702,6 +727,10 @@ public final class PatcherSpike {
         String originalSource = fixture.show(fixture.baseRevision, path);
         VerifiedPatchBundle original = verify(builder.write(), signingKey);
         PatchBundleApplier.Result applied = apply(fixture, original, Fault.NONE);
+        PatchBundleApplier.Result replay = apply(fixture, original, Fault.NONE);
+        require(replay.outcome() == Outcome.EXISTING_DRAFT_PR
+                        && replay.headCommit().equals(applied.headCommit()),
+                label + " exact delivery replay does not create another commit or PR");
         fixture.git("update-ref", "refs/heads/main", applied.headCommit());
         String mergedMain = fixture.git("rev-parse", "refs/heads/main");
         ExactRevertBundleGenerator.Validation validation =
@@ -736,6 +765,10 @@ public final class PatcherSpike {
                 Fault.NONE);
         require(reverted.outcome() == Outcome.DRAFT_PR_CREATED,
                 label + " regression creates a draft revert PR");
+        PatchBundleApplier.Result inverseReplay = apply(fixture, verifiedRevert, Fault.NONE);
+        require(inverseReplay.outcome() == Outcome.EXISTING_DRAFT_PR
+                        && inverseReplay.headCommit().equals(reverted.headCommit()),
+                label + " exact inverse replay is idempotent");
         require(fixture.show(reverted.branch(), path).equals(originalSource),
                 label + " revert restores exact original bytes");
         require(fixture.git("rev-parse", "refs/heads/main").equals(mergedMain),

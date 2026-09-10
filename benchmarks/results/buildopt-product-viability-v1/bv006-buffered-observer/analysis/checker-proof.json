@@ -1,0 +1,39 @@
+{
+  "status": "verified",
+  "literalOutcomesChecked": 14,
+  "expectedDriverExitChecked": true,
+  "counterexamples": [
+    {
+      "case": "dropped-payload",
+      "status": "rejected",
+      "exception": "AssertionError"
+    },
+    {
+      "case": "changed-digest",
+      "status": "rejected",
+      "exception": "AssertionError"
+    },
+    {
+      "case": "reordered-ack",
+      "status": "rejected",
+      "exception": "AssertionError"
+    },
+    {
+      "case": "excess-queue",
+      "status": "rejected",
+      "exception": "AssertionError"
+    },
+    {
+      "case": "hidden-pending",
+      "status": "rejected",
+      "exception": "AssertionError"
+    },
+    {
+      "case": "missing-final-report",
+      "status": "rejected",
+      "exception": "FileNotFoundError"
+    }
+  ],
+  "newProbeProcesses": 0,
+  "gradleActual": 0
+}

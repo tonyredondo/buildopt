@@ -1,0 +1,285 @@
+--- before/dev/history-replay/capture.go
++++ after/dev/history-replay/capture.go
+@@ -293,7 +293,7 @@
+ 		}
+ 		planned = append(planned, o)
+ 	}
+-	if err := copyEvidenceFiles(copies); err != nil {
++	if err := retainOutputFiles(copies, filepath.Join(m.RunRoot, "output-objects")); err != nil {
+ 		return c, err
+ 	}
+ 	// Persist output names before the capture/attempt can be sealed.
+--- before/dev/history-replay/files.go
++++ after/dev/history-replay/files.go
+@@ -242,6 +242,10 @@
+ // Bound the outstanding I/O so the filesystem can commit those barriers
+ // together. This runs after native completion, outside customer timing.
+ func copyEvidenceFiles(files []fileCopy) error {
++	return copyEvidenceFilesWith(files, func(job fileCopy) error { return copyTree(job.Source, job.Destination) })
++}
++
++func copyEvidenceFilesWith(files []fileCopy, copyFile func(fileCopy) error) error {
+ 	jobs := make(chan fileCopy)
+ 	var workers sync.WaitGroup
+ 	var lock sync.Mutex
+@@ -257,7 +261,7 @@
+ 				if failed {
+ 					continue
+ 				}
+-				if err := copyTree(job.Source, job.Destination); err != nil {
++				if err := copyFile(job); err != nil {
+ 					lock.Lock()
+ 					if firstErr == nil {
+ 						firstErr = err
+@@ -273,6 +277,81 @@
+ 	close(jobs)
+ 	workers.Wait()
+ 	return firstErr
++}
++
++// Only retained evidence shares inodes. Native outputs remain independent and
++// writable. Verify every reused object; never repair a corrupt evidence object
++// silently. All object bytes are durable before publishing attempt output names.
++func retainOutputFiles(files []fileCopy, store string) error {
++	if err := os.MkdirAll(store, 0700); err != nil {
++		return err
++	}
++	err := copyEvidenceFilesWith(files, func(job fileCopy) error {
++		source, err := os.Lstat(job.Source)
++		if err != nil {
++			return err
++		}
++		if !source.Mode().IsRegular() {
++			return fmt.Errorf("nonregular retained source: %s", job.Source)
++		}
++		hash, err := fileDigest(job.Source)
++		if err != nil {
++			return err
++		}
++		object := filepath.Join(store, fmt.Sprintf("%s-%04o", hash, source.Mode().Perm()))
++		verify := func() error {
++			info, err := os.Lstat(object)
++			if err != nil {
++				return err
++			}
++			if !info.Mode().IsRegular() || info.Size() != source.Size() || info.Mode().Perm() != source.Mode().Perm() || os.SameFile(source, info) {
++				return fmt.Errorf("invalid retained object: %s", object)
++			}
++			actual, err := fileDigest(object)
++			if err != nil {
++				return err
++			}
++			if actual != hash {
++				return fmt.Errorf("corrupt retained object: %s", object)
++			}
++			return nil
++		}
++		if _, err := os.Lstat(object); os.IsNotExist(err) {
++			tmp, err := os.MkdirTemp(store, ".populate-")
++			if err != nil {
++				return err
++			}
++			defer os.RemoveAll(tmp)
++			copied := filepath.Join(tmp, "bytes")
++			if err := copyTree(job.Source, copied); err != nil {
++				return err
++			}
++			actual, err := fileDigest(copied)
++			if err != nil {
++				return err
++			}
++			if actual != hash {
++				return fmt.Errorf("source changed during retention: %s", job.Source)
++			}
++			// An identical concurrent publisher may win; its bytes still need verification.
++			if err := os.Link(copied, object); err != nil && !os.IsExist(err) {
++				return err
++			}
++		} else if err != nil {
++			return err
++		}
++		if err := verify(); err != nil {
++			return err
++		}
++		return os.Link(object, job.Destination)
++	})
++	if err != nil {
++		return err
++	}
++	if err := syncDir(store); err != nil {
++		return err
++	}
++	return syncDir(filepath.Dir(store))
+ }
+ 
+ var errDiskObservationStopped = errors.New("disk observation stopped after child exit")
+--- before/dev/history-replay/output_retention_test.go
++++ after/dev/history-replay/output_retention_test.go
+@@ -0,0 +1,103 @@
++//go:build linux && amd64
++
++package main
++
++import (
++	"fmt"
++	"os"
++	"path/filepath"
++	"testing"
++)
++
++func TestOutputRetentionReuseAndNativeIndependence(t *testing.T) {
++	root := t.TempDir()
++	source := filepath.Join(root, "native")
++	if err := os.WriteFile(source, []byte("native bytes"), 0640); err != nil {
++		t.Fatal(err)
++	}
++	store := filepath.Join(root, "objects")
++	files := []fileCopy{}
++	for i := 0; i < 64; i++ {
++		files = append(files, fileCopy{source, filepath.Join(root, fmt.Sprintf("retained-%d", i))})
++	}
++	if err := retainOutputFiles(files, store); err != nil {
++		t.Fatal(err)
++	}
++	native, _ := os.Stat(source)
++	first, _ := os.Stat(files[0].Destination)
++	if os.SameFile(native, first) {
++		t.Fatal("native shares evidence inode")
++	}
++	for _, f := range files {
++		info, err := os.Stat(f.Destination)
++		if err != nil || !os.SameFile(first, info) || info.Mode().Perm() != 0640 {
++			t.Fatalf("reuse/mode mismatch: %v", err)
++		}
++		data, err := os.ReadFile(f.Destination)
++		if err != nil || string(data) != "native bytes" {
++			t.Fatalf("bytes mismatch: %v", err)
++		}
++	}
++	if err := os.WriteFile(source, []byte("new native!!"), 0640); err != nil {
++		t.Fatal(err)
++	}
++	data, _ := os.ReadFile(files[0].Destination)
++	if string(data) != "native bytes" {
++		t.Fatal("native mutation damaged evidence")
++	}
++	if err := retainOutputFiles([]fileCopy{{source, filepath.Join(root, "next")}}, store); err != nil {
++		t.Fatal(err)
++	}
++	// Mode is part of the object key, even for identical bytes.
++	if err := os.Chmod(source, 0600); err != nil {
++		t.Fatal(err)
++	}
++	if err := retainOutputFiles([]fileCopy{{source, filepath.Join(root, "other-mode")}}, store); err != nil {
++		t.Fatal(err)
++	}
++	x, _ := os.Stat(filepath.Join(root, "next"))
++	y, _ := os.Stat(filepath.Join(root, "other-mode"))
++	if os.SameFile(x, y) || y.Mode().Perm() != 0600 {
++		t.Fatal("mixed modes share an object")
++	}
++}
++
++func TestOutputRetentionRejectsTamperingAndOverwrite(t *testing.T) {
++	root := t.TempDir()
++	source := filepath.Join(root, "native")
++	store := filepath.Join(root, "objects")
++	retained := filepath.Join(root, "retained")
++	if err := os.WriteFile(source, []byte("original"), 0600); err != nil {
++		t.Fatal(err)
++	}
++	if err := retainOutputFiles([]fileCopy{{source, retained}}, store); err != nil {
++		t.Fatal(err)
++	}
++	if err := retainOutputFiles([]fileCopy{{source, retained}}, store); err == nil {
++		t.Fatal("overwrote existing destination")
++	}
++	if err := os.WriteFile(retained, []byte("tampered"), 0600); err != nil {
++		t.Fatal(err)
++	}
++	next := filepath.Join(root, "next")
++	if err := retainOutputFiles([]fileCopy{{source, next}}, store); err == nil {
++		t.Fatal("accepted corrupt retained object")
++	}
++	if _, err := os.Lstat(next); !os.IsNotExist(err) {
++		t.Fatal("published rejected evidence")
++	}
++	data, _ := os.ReadFile(source)
++	if string(data) != "original" {
++		t.Fatal("evidence tampering changed native")
++	}
++	if err := retainOutputFiles([]fileCopy{{filepath.Join(root, "missing"), next}}, store); err == nil {
++		t.Fatal("accepted missing source")
++	}
++	link := filepath.Join(root, "link")
++	if err := os.Symlink(source, link); err != nil {
++		t.Fatal(err)
++	}
++	if err := retainOutputFiles([]fileCopy{{link, next}}, store); err == nil {
++		t.Fatal("accepted symlink source")
++	}
++}
+--- before/dev/history-replay/process_departure_test.go
++++ after/dev/history-replay/process_departure_test.go
+@@ -0,0 +1,41 @@
++//go:build linux && amd64
++
++package main
++
++import (
++	"errors"
++	"os"
++	"syscall"
++	"testing"
++)
++
++func TestCgroupEnumerationProcessDeparture(t *testing.T) {
++	for _, cause := range []error{syscall.ENOENT, syscall.ESRCH} {
++		t.Run(cause.Error(), func(t *testing.T) {
++			got, err := identifyCgroupProcesses("/owned", map[int]bool{1: true, 2: true}, func(pid int) (ProcessIdentity, error) {
++				if pid == 1 {
++					return ProcessIdentity{}, &os.PathError{Op: "read", Path: "/proc/1/cgroup", Err: cause}
++				}
++				return ProcessIdentity{PID: pid, StartTicks: 42, Cgroup: "/owned/child"}, nil
++			})
++			if err != nil || len(got) != 1 || got[0].PID != 2 || got[0].StartTicks != 42 {
++				t.Fatalf("surviving owned process lost: %+v, %v", got, err)
++			}
++		})
++	}
++}
++
++func TestCgroupEnumerationRejectsUnknownOwnership(t *testing.T) {
++	for _, cause := range []error{syscall.EACCES, errors.New("bad process stat")} {
++		_, err := identifyCgroupProcesses("/owned", map[int]bool{1: true}, func(int) (ProcessIdentity, error) { return ProcessIdentity{}, cause })
++		if !errors.Is(err, cause) {
++			t.Fatalf("ownership failure hidden: %v", err)
++		}
++	}
++	for _, group := range []string{"/other", "/owned-elsewhere", ""} {
++		_, err := identifyCgroupProcesses("/owned", map[int]bool{1: true}, func(int) (ProcessIdentity, error) { return ProcessIdentity{PID: 1, Cgroup: group}, nil })
++		if err == nil {
++			t.Fatalf("accepted escaped process in %q", group)
++		}
++	}
++}
+--- before/dev/history-replay/process_linux.go
++++ after/dev/history-replay/process_linux.go
+@@ -120,10 +120,15 @@
+ 	if err != nil {
+ 		return nil, err
+ 	}
++	return identifyCgroupProcesses(group, ids, processIdentity)
++}
++
++// A process may exit after cgroup.procs is read, including between proc reads.
++func identifyCgroupProcesses(group string, ids map[int]bool, identify func(int) (ProcessIdentity, error)) ([]ProcessIdentity, error) {
+ 	out := []ProcessIdentity{}
+ 	for pid := range ids {
+-		p, e := processIdentity(pid)
+-		if os.IsNotExist(e) {
++		p, e := identify(pid)
++		if os.IsNotExist(e) || errors.Is(e, syscall.ESRCH) {
+ 			continue
+ 		}
+ 		if e != nil {

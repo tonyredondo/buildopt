@@ -1,0 +1,234 @@
+{
+  "scope": "Exact v5 owner runner source; overhead and engineering readiness remain separate gates",
+  "files": [
+    {
+      "path": "dev/history-replay/README.md",
+      "sha256": "df47826256ccba7e4e9cb60c194dac5f77563bcf9bd50816c8cf829a44460d2a",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/acquisition_test.go",
+      "sha256": "8d4bdfaf2ee4d85d7d63505714d1620674024d9d094df54b8469a70cdbe68df5",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/adversarial_integration_test.go",
+      "sha256": "a7d5f6b82dc7be74e2c9fe2c01f9c0094bd5f5f5fc0cda45605e470829c19138",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/capture.go",
+      "sha256": "db9b723ad83c4e1ad450e367b13f4d00c0c31866cbb562bfb4a95a621aa62d93",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/capture.init.gradle",
+      "sha256": "cac81f720c86919c57b6a8478007c075db41b4365630f16b99c2b50b41d2c240",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/checker.go",
+      "sha256": "e1a731cf10d535243b1bba05eed6964e0e03885b078066be11427b3c2242dc0e",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/contract.go",
+      "sha256": "5eccdeff28ec6612eb201b3922ee3849e044d2d8eae91d8badbc9f03d9634a73",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/contract_test.go",
+      "sha256": "9f668de5df5491c7f990f3960d32add4e093fb2323a5cf51b1cfeb3717e416c8",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/disk_observation_test.go",
+      "sha256": "7bce8c7af2f12f8ec55e4ebc2268ffa642b5e7a6d70370cd8d288e3915f4b0e9",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/driver_death_integration_test.go",
+      "sha256": "e9eb9c89236ec6882c3827d7ef15246c97034bfc867a32dc26d8d20e9e2c59b2",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/evidence_check.go",
+      "sha256": "f6aeb3fc38514ffadaad6958d646afcd79d5b9adcd0ce207ffdc7bc5b016b17c",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/evidence_copy_sizing_test.go",
+      "sha256": "c3380d36c8bd1587abf3b3ab5123f9b6dbf50d986f7d491415f0b1fa656474ad",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/evidence_copy_test.go",
+      "sha256": "2f1ce318d589a54f2a7cfe1e1a604055ece78e24499d73c30d5b0ac9fbb6b44c",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/export.go",
+      "sha256": "285f227f602e121bd829af1aca79bd88af9a7d95c383f20b1a428a5b2609f133",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/external_costs.go",
+      "sha256": "59d00cd55ef10048ceb13335d95ddafef3a54e58fa0ca532491b210cf7a27f4c",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/external_costs_integration_test.go",
+      "sha256": "1901fca78732fa3ed5a67179e54fc3c65f7a22c602abfe889ab172f812804dc8",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/files.go",
+      "sha256": "a1473dd57a90581a39bb9dac5030c3d78514490e6fd24f4fc320ebb489d122b8",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/gradle_integration_test.go",
+      "sha256": "9103def1a888bf7b2bc21f0b32f25107277b08b0d4a0bc69dc96691a10ca70b5",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/gradle_logs.go",
+      "sha256": "1c5c1de096d5e0141779b4507cb5f28a885d38d82c3d5bcbb8c99fb95e23e9d8",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/history.go",
+      "sha256": "e161100317470779c5d12b643f0ce3aa4ef45f0541bc2bfcfdd89b24c3b7ce2e",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/interrupted_costs.go",
+      "sha256": "ce957dab263e08150866463822e66df6329aabe771ab29e35e31f42da7d22196",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/lifecycle.go",
+      "sha256": "c35ae22f0a306247e9de4267e3f0531ee228f79582ad94ed3add10be893bdd5b",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/main.go",
+      "sha256": "c572190b5373e0a397af8c9100482d8dfd90b0c74391c67504ec77595596c415",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/metrics.go",
+      "sha256": "8626126ba39716c878ac841c4916a43a2e41aaad4c527e8beb02af19e001ee9b",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/metrics_test.go",
+      "sha256": "e258fc8a39e97eb2d0d245a8d5255acd7f300a02955e29940b2ddc1eaad9039c",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/overhead_integration_test.go",
+      "sha256": "d821bc80a36e971d57d14b54ee82da60d323affff27fe2515cebcbdf65bcc44a",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/owner_compare.py",
+      "sha256": "673d46a076ecb8bc2afa0fbd2e64c526b631cea66b31ae543a6a51f35d55171e",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/owner_compare_test.py",
+      "sha256": "636c5b9011f3de3dc23b6060eca64ee271a64b2b637fdf7893c021b9964e48cd",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/owner_overhead_integration_test.go",
+      "sha256": "2f6a4f039e18a55974b2b949ef26fe5e98669d5aba5b61857edfe1ca60399bb1",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/owner_policy.go",
+      "sha256": "3d5ee29b04b23b4483fe45509623e4caa98652ed38ec28014c496a525192d878",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/owner_policy_integration_test.go",
+      "sha256": "b6b22f8360b6003299ff6c01eab428451c82689961866e58be9120ce2f29f101",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/process_linux.go",
+      "sha256": "aea661f51c29e88d2df2a56453436bb94e2f9843f8d3ab49bb6576825f765e69",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/projector_integration_test.go",
+      "sha256": "c68e43e6c7f8941bf7fc9e19cb47b40ccd2d8baf2a186fc869e6d375da6dc830",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/projector_proof.go",
+      "sha256": "4e14a4f5a7a83bdfc2edf6554c50147062aa7c1bab50fccd9943ccae20d35633",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/records.go",
+      "sha256": "0de5236a63d023d2f6426c3f74d928c2b611b35d975c9acf6e3e56dc5f74f5c1",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/recovery.go",
+      "sha256": "32d496291c12ff46451f2902ba197cf10b8407f6f4262961ad87a4f08b4da83f",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/resources_linux.go",
+      "sha256": "15afaceedb3a426989146b1c70198f6c62464c90b4e00ffb970da42314148df0",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/runner.go",
+      "sha256": "c5b5af5b8c36964f8748fafd4f5018cfe809094e2fe39c93b1be71d709bbf840",
+      "mode": 420
+    },
+    {
+      "path": "dev/history-replay/runner_test.go",
+      "sha256": "a51fc204566c9692f7f52eabddd42b1a49969c698d3d871b9aa228b1d1ebe727",
+      "mode": 420
+    },
+    {
+      "path": "specs/poc-product-viability-v1.json",
+      "sha256": "616e2e0cfbc276450cba000fe9afd1132a7c41bf772e5e070bf4547e5feeef41",
+      "mode": 420
+    },
+    {
+      "path": "dev/check-history-replay",
+      "sha256": "700d0179d3d7481a2d4adfbaf81ca3cf55c8297c2ee25ba34981ec81f34e5b19",
+      "mode": 493
+    },
+    {
+      "path": "go.mod",
+      "sha256": "43eef140c7e4fcbb4dbaff37f3793cd818455c360a7df2e6c3dc20c0f91ff64e",
+      "mode": 420
+    },
+    {
+      "path": "go.sum",
+      "sha256": "ef13e7d750b9f267d2111488210aec57e63c15541c56bd46277af8fadd52d21d",
+      "mode": 420
+    }
+  ],
+  "archive": {
+    "path": "source.tar.gz",
+    "sha256": "509eab6e355dd9f76c3449d42f5c7b01fa94c7d188ae90ca23e067242a41bcdc"
+  },
+  "executableBindings": [
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/versions/owner-readiness-v5/history-replay",
+      "sha256": "6b5be42ea4c74fb6357d7f5022fd36d5099b39fdcce84d5823d7ebcd736caaa0"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/versions/owner-readiness-v5/owner-overhead.test",
+      "sha256": "fc9231b77cc4199a1cf3ddab2ca53d3e07539ad2973f89ee6bff4a13a023a421"
+    }
+  ]
+}

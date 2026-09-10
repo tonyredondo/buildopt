@@ -1,0 +1,60 @@
+{
+  "status": "verified",
+  "atUTC": "2026-09-09T08:13:48.539150+00:00",
+  "commands": [
+    {
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "test",
+        "-mod=readonly",
+        "./.tools/state/buildopt-product-viability-v1/bv006-daemon-diagnostic/version2/source"
+      ],
+      "exitCode": 0,
+      "durationNS": 976721162,
+      "logSHA256": "ad6a45f22b6bd09b28abb71dc45d179072f119fe3921128fd59e9111c2f2d59e"
+    },
+    {
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "vet",
+        "-mod=readonly",
+        "-tags=replay_integration,replay_gradle,replay_owner",
+        "./.tools/state/buildopt-product-viability-v1/bv006-daemon-diagnostic/version2/source"
+      ],
+      "exitCode": 0,
+      "durationNS": 630287848,
+      "logSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "test",
+        "-mod=readonly",
+        "-race",
+        "-tags=replay_integration,replay_gradle,replay_owner",
+        "-run=^TestDiagnostic",
+        "-count=1",
+        "./.tools/state/buildopt-product-viability-v1/bv006-daemon-diagnostic/version2/source"
+      ],
+      "exitCode": 0,
+      "durationNS": 4013867798,
+      "logSHA256": "99b229c5264fb335afa89e22be5fc799b017fddd0652779580753bf36c9c259f"
+    }
+  ],
+  "additionalNonJVMChildStarts": 1,
+  "newGradleStarts": 0,
+  "newHelperJVMStarts": 0,
+  "scope": "Diagnostic sampler only; original exact JFR helper/settings/preflight native output proof retained unchanged"
+}

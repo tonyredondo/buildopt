@@ -1,0 +1,29 @@
+{
+  "all2-14": {
+    "pairs": 13,
+    "nativeTotalSeconds": 289.055829233,
+    "candidateTotalSeconds": 344.432991443,
+    "lossSeconds": 55.377162209999995,
+    "slowerPercent": 19.157946877231797,
+    "nativeMeanSeconds": 22.235063787153845,
+    "candidateMeanSeconds": 26.494845495615383
+  },
+  "except7": {
+    "pairs": 12,
+    "nativeTotalSeconds": 178.33135722,
+    "candidateTotalSeconds": 192.614843389,
+    "lossSeconds": 14.283486168999985,
+    "slowerPercent": 8.009520250204252,
+    "nativeMeanSeconds": 14.860946435,
+    "candidateMeanSeconds": 16.051236949083332
+  },
+  "after7": {
+    "pairs": 7,
+    "nativeTotalSeconds": 115.470556468,
+    "candidateTotalSeconds": 135.649757244,
+    "lossSeconds": 20.179200776000002,
+    "slowerPercent": 17.47562443036481,
+    "nativeMeanSeconds": 16.495793781142858,
+    "candidateMeanSeconds": 19.378536749142857
+  }
+}

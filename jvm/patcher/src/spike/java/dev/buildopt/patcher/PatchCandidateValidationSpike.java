@@ -191,6 +191,15 @@ final class PatchCandidateValidationSpike {
                 REQUIRED,
                 exactRuns);
         requireResult(exactAdapter, Status.PASSED, "PASSED");
+        requireResult(new Request(
+                ReviewedNativePatchJavaRecipe.ELASTICSEARCH_FORBIDDEN_PATTERNS_RECIPE_ID,
+                "1.0", ArtifactAdapter.EXACT_BYTES, REQUIRED, exactRuns), Status.PASSED, "PASSED");
+        requireResult(new Request(
+                ReviewedNativePatchJavaRecipe.ELASTICSEARCH_FORBIDDEN_PATTERNS_RECIPE_ID,
+                "2.0", ArtifactAdapter.EXACT_BYTES, REQUIRED, exactRuns), Status.INCONCLUSIVE, "INVALID_REQUEST");
+        requireResult(new Request(
+                ReviewedNativePatchJavaRecipe.ELASTICSEARCH_FORBIDDEN_PATTERNS_RECIPE_ID,
+                "1.0", ArtifactAdapter.ARCHIVE_CONTENTS_V1, REQUIRED, exactRuns), Status.INCONCLUSIVE, "INVALID_REQUEST");
 
         Request groovyRecipe = new Request(
                 ArchiveReproducibilityGroovyDslRecipe.RECIPE_ID,

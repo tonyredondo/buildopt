@@ -1,0 +1,17 @@
+{
+  "step": "BV-002",
+  "decision": "CONFIGURATION_CACHE_REJECTED_FOR_THIS_BASELINE",
+  "storageReceipt": "receipts/bv002-configuration-cache.json",
+  "reuseReceipt": "bv002/native-prefix/000/receipt.json",
+  "reuseExitCode": 1,
+  "nativeFailureTask": ":server:spotlessJava",
+  "nativeFailureProperty": "lineEndingsPolicy",
+  "nativeFailure": "Spotless JVM-local cache is stale",
+  "probeHadCustomInitScript": false,
+  "sourceBeforeAfterIdentical": true,
+  "selectedPolicy": "--no-configuration-cache, --daemon, --build-cache, native parallel=true, 8 workers and CPUs 0-7",
+  "scope": "This frozen revision/toolchain/native workflow. No general Gradle configuration-cache incompatibility claim.",
+  "failedArtifactsPreserved": true,
+  "originalPreregisteredPolicy": "configuration-cache-command.json: a native validation failure selects explicit no-configuration-cache",
+  "retiredOptimizationReopened": false
+}

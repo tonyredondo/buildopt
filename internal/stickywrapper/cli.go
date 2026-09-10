@@ -19,6 +19,12 @@ const Usage = "usage: buildopt wrapper init [--server URL --project-scope SCOPE]
 
 // RunCLI executes the wrapper generator in the current repository directory.
 func RunCLI(args []string, stdout, stderr io.Writer) int {
+	return RunCLIWithStatus(args, stdout, stderr, BuildStatus)
+}
+
+// RunCLIWithStatus lets the launcher provide its selected observation surface.
+// The report builder is read-only; management parsing and generation stay shared.
+func RunCLIWithStatus(args []string, stdout, stderr io.Writer, builder func(string, string) (StatusReport, error)) int {
 	if len(args) == 1 && isHelp(args[0]) {
 		_, _ = io.WriteString(stdout, Usage)
 		return 0
@@ -32,10 +38,14 @@ func RunCLI(args []string, stdout, stderr io.Writer) int {
 		Root:     root,
 		Resolver: NewGitHubResolver(os.Getenv("GITHUB_TOKEN")),
 	}
-	return runCLI(args, stdout, stderr, generator)
+	return runCLIWithStatus(args, stdout, stderr, generator, builder)
 }
 
 func runCLI(args []string, stdout, stderr io.Writer, generator Generator) int {
+	return runCLIWithStatus(args, stdout, stderr, generator, BuildStatus)
+}
+
+func runCLIWithStatus(args []string, stdout, stderr io.Writer, generator Generator, builder func(string, string) (StatusReport, error)) int {
 	if len(args) == 1 && isHelp(args[0]) {
 		_, _ = io.WriteString(stdout, Usage)
 		return 0
@@ -61,16 +71,16 @@ func runCLI(args []string, stdout, stderr io.Writer, generator Generator) int {
 	case "update":
 		return runUpdate(context.Background(), generator, args[1:], stdout, stderr)
 	case "status":
-		return runReport("STATUS", generator, args[1:], stdout, stderr)
+		return runReport("STATUS", generator, args[1:], stdout, stderr, builder)
 	case "explain":
-		return runReport("EXPLAIN", generator, args[1:], stdout, stderr)
+		return runReport("EXPLAIN", generator, args[1:], stdout, stderr, builder)
 	default:
 		_, _ = io.WriteString(stderr, Usage)
 		return 64
 	}
 }
 
-func runReport(reportType string, generator Generator, args []string, stdout, stderr io.Writer) int {
+func runReport(reportType string, generator Generator, args []string, stdout, stderr io.Writer, builder func(string, string) (StatusReport, error)) int {
 	jsonOutput := false
 	root := generator.Root
 	rootSet := false
@@ -100,7 +110,7 @@ func runReport(reportType string, generator Generator, args []string, stdout, st
 		_, _ = io.WriteString(stderr, "buildopt: wrapper status root is unavailable\n")
 		return 65
 	}
-	report, err := BuildStatus(root, reportType)
+	report, err := builder(root, reportType)
 	if err != nil {
 		_, _ = fmt.Fprintf(stderr, "buildopt: wrapper %s unavailable: %v\n", strings.ToLower(reportType), err)
 		return 65

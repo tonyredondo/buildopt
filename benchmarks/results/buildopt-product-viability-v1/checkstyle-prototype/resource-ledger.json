@@ -1,0 +1,59 @@
+{
+  "phase": "Checkstyle C5 / BV-003 / BV-004",
+  "reservations": 121,
+  "actualGradleStartsIncludingNested": 121,
+  "nestedTestKitStarts": 5,
+  "directEngineJVMStarts": 0,
+  "standaloneJavacStarts": 5,
+  "metadataProjectionJVMStarts": 3,
+  "priorPhaseCharges": {
+    "reservations": 39,
+    "actualGradleStarts": 38,
+    "nestedGradleStarts": 0,
+    "directEngineJVMStarts": 30,
+    "javacStarts": 4
+  },
+  "programReservations": 160,
+  "programActualGradleStarts": 159,
+  "nativeInvocationElapsedSeconds": 1984.352222982794,
+  "kind": "Research correctness/preparation cost; not customer value timing",
+  "failuresRetained": true,
+  "failedCandidateCorrections": 0,
+  "compatibilityDefects": [
+    "Missing-adapter provider: reproduced and corrected on first attempt; adapter-provider-fix.json",
+    "Replaced private state binding: reproduced and corrected on first attempt; state-binding-fix.json"
+  ],
+  "formatQualification": "Former empty-glob format checks invalidated; explicit five-file selection, guarded formatting and final native format check verified",
+  "allocation": {
+    "program": "BUILDOPT-VIABILITY-V1",
+    "phase": "C5 / BV-003 / BV-004 Checkstyle prototype",
+    "authorizedBy": "User continue on 2026-09-08; standing autonomous local work and budget authorization",
+    "startedUTC": "2026-09-08T11:46:58.962063+00:00",
+    "deadlineUTC": "2026-09-08T17:46:58.962063+00:00",
+    "maxElapsedSeconds": 21600,
+    "maxGradleStarts": 124,
+    "gradleStartsReserved": 121,
+    "actualGradleStarts": 121,
+    "nestedGradleStarts": 5,
+    "maxEngineJVMStarts": 180,
+    "engineJVMStartsReserved": 0,
+    "javacStarts": 5,
+    "maxChildSeconds": 1200,
+    "maxNewFootprintBytes": 128849018880,
+    "minFreeBytes": 42949672960,
+    "initialFreeBytes": 871891152896,
+    "priorPhaseCharges": {
+      "reservations": 39,
+      "actualGradleStarts": 38,
+      "nestedGradleStarts": 0,
+      "directEngineJVMStarts": 30,
+      "javacStarts": 4
+    },
+    "stopRule": "Preserve safety and gate failures; stop at allocation or three failed corrections of same issue. Validation ordinals 21..100 remain unconsumed.",
+    "metadataJVMStarts": 3,
+    "amendment": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-prototype/allocation-amendment.json"
+  },
+  "footprintCheckedAtClose": true,
+  "footprintEvidence": "footprint.json",
+  "footprintEnforcement": "Checked at close; free-space, log-size and child-runtime guards enforced during native jobs"
+}

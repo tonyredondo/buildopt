@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "buildopt.viability/checkstyle-correctness-decision/v1",
+  "status": "verified",
+  "decision": "CHECKSTYLE_G2_VERIFIED",
+  "steps": {
+    "BV-003": "verified",
+    "BV-004": "verified",
+    "BV-005": "pending"
+  },
+  "gate": "G2",
+  "scope": "Frozen Elasticsearch ordinal-20 owner; Linux x86_64, Gradle 9.7.1, Checkstyle 13.11.0, Temurin 21.0.12+8, XML-only server Checkstyle and no Configuration Cache",
+  "revision": "22d6425e9a44ec9e1aedc2785f4478b8019c851a",
+  "candidateManifestSHA256": "4bad4114a60559e4fd96a9253b9a628bf883711837a2d7791461fd441437179a",
+  "evidence": [
+    {
+      "path": "candidate-manifest.json",
+      "sha256": "4bad4114a60559e4fd96a9253b9a628bf883711837a2d7791461fd441437179a"
+    },
+    {
+      "path": "candidate-contract.md",
+      "sha256": "ec15fdb777f002c1a09816ae70de76c0970e2738661c4c54f536ba4fca943eee"
+    },
+    {
+      "path": "correctness-matrix.json",
+      "sha256": "1d2def44e1540d57e390bf196dfebe53603498bac4eefd2ee1c393c108d8a894"
+    },
+    {
+      "path": "owner-comparison/result.json",
+      "sha256": "73f00b4782be3410536b696560547c603c413311e41b69bbf99fc53f5901da76"
+    },
+    {
+      "path": "owner-failure-fixture/result.json",
+      "sha256": "47ce63308232133f30e8eb51f7fb5b9fa794cbfdc92655b7112356976c0b7330"
+    },
+    {
+      "path": "inverse-proof-v2/result.json",
+      "sha256": "8a12482cfcfaa1e67c19779917f7434491588bf7cc8578ebd5e2ae9e4be3e450"
+    },
+    {
+      "path": "cancellation.json",
+      "sha256": "a15c165fe916033eb6cdfa68e3f19bef473ea34056af5192c2f13cf75b304c56"
+    },
+    {
+      "path": "daemon-session/result.json",
+      "sha256": "c779e71537199cae40f6e5788324911195116aedf03bf5841d8427a960099d7d"
+    },
+    {
+      "path": "reconstruction.json",
+      "sha256": "4cc539758568f73122d6dc802b97e4ba639cb507974dbea1dae77a36ebdd49af"
+    },
+    {
+      "path": "resource-ledger.json",
+      "sha256": "6476a67d88578c847d867a631c836957d6500605bbce2e36a613bfda46d01851"
+    },
+    {
+      "path": "owned-unit-audit.json",
+      "sha256": "4b8897b5bf4e860a20836c50c94fef0a0a6ba0d47715c3a4f0e17f3b837c4856"
+    },
+    {
+      "path": "state-binding-proof-validity.json",
+      "sha256": "f09ab52c1ecac91b998ca2c5cd61c8dfaf22306a23665aad3094c091b2ce4f07"
+    }
+  ],
+  "matrixCases": 20,
+  "verifiedFixtureObservations": 67,
+  "finalOwnerTests": {
+    "native": 9,
+    "candidate": 13,
+    "skippedFailuresErrors": 0
+  },
+  "rootGraphTasks": 1301,
+  "ownerOutputEntries": [
+    50225,
+    50226
+  ],
+  "unexplainedCandidateOutputDifferences": 0,
+  "compatibilityDefectsCorrected": 2,
+  "failedCandidateCorrections": 0,
+  "validationOrdinalsConsumed": [],
+  "valueClaim": false,
+  "productViability": "INCOMPLETE_EVIDENCE",
+  "next": "BV-005 qualified historical replay instrument; then BV-006 engineering prefix and frozen confirmation",
+  "unrun": [
+    "BV-005 instrument qualification",
+    "BV-006 engineering N/I prefix",
+    "BV-007 chronological seed G3",
+    "BV-008 other-owner G4",
+    "BV-010 installed delivery",
+    "BV-011 adaptive controller G5",
+    "BV-012 customer G6"
+  ]
+}

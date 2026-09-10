@@ -1,0 +1,21 @@
+{
+  "schema": "buildopt.daemon-diagnostic/seal-audit/v1",
+  "status": "verified",
+  "phaseStatus": "verified",
+  "BV006Status": "partial",
+  "decision": "SUPERVISOR_SCAN_COST_CONFIRMED_VARIABILITY_CAUSE_UNRESOLVED",
+  "readinessQualified": false,
+  "valueQualified": false,
+  "manifest": {
+    "path": "bv006-daemon-diagnostic/evidence-manifest.json",
+    "sha256": "400291dd02be3a9d30048ba54fe1575e141dfc7ee4741ed162e812c5f5e8c6c8"
+  },
+  "sealedFilesVerified": 751,
+  "originCopiesVerified": 746,
+  "priorSeal": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/benchmarks/results/buildopt-product-viability-v1/bv006-attribution-seal-audit.json",
+    "sha256": "d07a5789e95afd7e5903a4c210ec7d6f88e451dc09344a709ab02f47fcbb9ae1"
+  },
+  "independentAuditSHA256": "ba3f0f3b3aedf3540edc170576d62e3cbc910e1624d7a228ea346fd772b825c5",
+  "atUTC": "2026-09-09T09:12:51.398459+00:00"
+}

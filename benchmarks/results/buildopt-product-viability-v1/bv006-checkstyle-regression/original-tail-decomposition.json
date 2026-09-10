@@ -1,0 +1,60 @@
+{
+  "status": "verified observed timeline decomposition; no counterfactual causality claim",
+  "segments": [
+    {
+      "segment": "before collect",
+      "nativeSeconds": 41.91084646,
+      "candidateSeconds": 37.162242269,
+      "additionalSeconds": -4.748604191000005
+    },
+    {
+      "segment": "task collectTransportVersionReferences",
+      "nativeSeconds": 11.267735385,
+      "candidateSeconds": 47.119675059,
+      "additionalSeconds": 35.851939674
+    },
+    {
+      "segment": "gap after collectTransportVersionReferences",
+      "nativeSeconds": 0.007260756,
+      "candidateSeconds": 0.005689583,
+      "additionalSeconds": -0.0015711730000000004
+    },
+    {
+      "segment": "task compileTestJava",
+      "nativeSeconds": 42.830987757,
+      "candidateSeconds": 48.27103861,
+      "additionalSeconds": 5.440050852999995
+    },
+    {
+      "segment": "gap after compileTestJava",
+      "nativeSeconds": 0.001388443,
+      "candidateSeconds": 0.001193813,
+      "additionalSeconds": -0.0001946300000000001
+    },
+    {
+      "segment": "task compileInternalClusterTestJava",
+      "nativeSeconds": 9.673471672,
+      "candidateSeconds": 10.877879839,
+      "additionalSeconds": 1.2044081670000004
+    },
+    {
+      "segment": "gap after compileInternalClusterTestJava",
+      "nativeSeconds": 0.49666534,
+      "candidateSeconds": 0.746373678,
+      "additionalSeconds": 0.24970833799999997
+    },
+    {
+      "segment": "task loggerUsageCheck",
+      "nativeSeconds": 3.575174881,
+      "candidateSeconds": 7.02666458,
+      "additionalSeconds": 3.451489699
+    },
+    {
+      "segment": "gap after loggerUsageCheck",
+      "nativeSeconds": 0.816521865,
+      "candidateSeconds": 0.499859655,
+      "additionalSeconds": -0.31666221
+    }
+  ],
+  "totalAdditionalSeconds": 41.13056452699999
+}

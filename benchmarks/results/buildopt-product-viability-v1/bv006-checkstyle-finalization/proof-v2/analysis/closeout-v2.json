@@ -1,0 +1,179 @@
+{
+  "status": "verified bounded experiment closeout",
+  "units": [
+    {
+      "unit": "buildopt-replay-683cb3025100d66c-r1-N-1.service",
+      "cgroup": "",
+      "state": "inactive"
+    },
+    {
+      "unit": "buildopt-replay-c2b80a66bc563ecf-r1-N-1.service",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-c2b80a66bc563ecf-r1-N-1.service",
+      "state": "inactive"
+    },
+    {
+      "unit": "buildopt-replay-c2b80a66bc563ecf-r1-I-2.service",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-c2b80a66bc563ecf-r1-I-2.service",
+      "state": "inactive"
+    },
+    {
+      "unit": "buildopt-replay-955293f126c2934a-r1-N-1.service",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-955293f126c2934a-r1-N-1.service",
+      "state": "inactive"
+    },
+    {
+      "unit": "buildopt-replay-955293f126c2934a-r1-I-2.service",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-955293f126c2934a-r1-I-2.service",
+      "state": "inactive"
+    },
+    {
+      "unit": "buildopt-replay-955293f126c2934a-r2-I-5.service",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-955293f126c2934a-r2-I-5.service",
+      "state": "inactive"
+    },
+    {
+      "unit": "buildopt-replay-955293f126c2934a-r2-N-6.service",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-955293f126c2934a-r2-N-6.service",
+      "state": "inactive"
+    },
+    {
+      "unit": "buildopt-finalization-current-cold",
+      "state": "inactive"
+    },
+    {
+      "unit": "buildopt-finalization-revised-cold",
+      "state": "inactive"
+    },
+    {
+      "unit": "buildopt-finalization-revised-warm",
+      "state": "inactive"
+    },
+    {
+      "unit": "buildopt-finalization-revised-faults",
+      "state": "inactive"
+    },
+    {
+      "unit": "buildopt-finalization-revised-input-faults",
+      "state": "inactive"
+    },
+    {
+      "unit": "buildopt-finalization-revised-prepared-faults",
+      "state": "inactive"
+    },
+    {
+      "unit": "buildopt-finalization-revised-cancel",
+      "state": "inactive"
+    },
+    {
+      "unit": "buildopt-finalization-revised-recovery",
+      "state": "inactive"
+    },
+    {
+      "unit": "buildopt-finalization-revised-uptodate",
+      "state": "inactive"
+    },
+    {
+      "unit": "buildopt-finalization-supported-cold",
+      "state": "inactive"
+    },
+    {
+      "unit": "buildopt-finalization-supported-warm",
+      "state": "inactive"
+    },
+    {
+      "unit": "buildopt-finalization-supported-final-cold",
+      "state": "inactive"
+    },
+    {
+      "unit": "buildopt-finalization-supported-final-warm",
+      "state": "inactive"
+    },
+    {
+      "unit": "buildopt-finalization-supported-final-faults",
+      "state": "inactive"
+    },
+    {
+      "unit": "buildopt-finalization-supported-final-cancel",
+      "state": "inactive"
+    },
+    {
+      "unit": "buildopt-finalization-supported-final-recovery",
+      "state": "inactive"
+    },
+    {
+      "unit": "buildopt-finalization-supported-final-uptodate",
+      "state": "inactive"
+    },
+    {
+      "unit": "buildopt-finalization-formatter",
+      "state": "inactive"
+    },
+    {
+      "unit": "buildopt-finalization-formatter-v2",
+      "state": "inactive"
+    }
+  ],
+  "sourceBindingsVerified": true,
+  "priorFreezesPreserved": true,
+  "finalDiskBytes": 46064484352,
+  "accounting": {
+    "status": "closed",
+    "maxElapsedSeconds": 14400,
+    "maxNewBytes": 68719476736,
+    "minimumFreeBytes": 42949672960,
+    "maxOwnerComparisonStarts": 10,
+    "maxCorrectnessFixtureStarts": 17,
+    "maxStandaloneHelpers": 20,
+    "maxCompilerCommands": 10,
+    "actualOwnerStarts": 10,
+    "actualFixtureStarts": 17,
+    "actualHelpers": 20,
+    "actualCompilerCommands": 9,
+    "pairedRepetitions": 2,
+    "notes": "No 80-request pilot or new CPU profiles. Additional corrective work must be recorded prospectively within standing authorization.",
+    "amendments": [
+      {
+        "reason": "Two retained assertion/setup failures allowed separately issued fixture commands to run before intended input mutations. They are counted, not rerun under the same identity. Four remaining invocations cover prepared input faults, actual cancellation, recovery and up-to-date; no increase in eight owner comparisons.",
+        "extraSmallFixtureStarts": 1
+      },
+      {
+        "reason": "Preserve one pre-native controller failure caused by selecting general instead of frozen diagnostic runner. Rebind only the exact diagnostic consumer plus tested control extension under new run identity; original deadline and eight actual owner builds unchanged.",
+        "ownerControllerReservations": 16,
+        "maxActualOwnerStarts": 8
+      },
+      {
+        "atUTC": "2026-09-10T08:45:28.069691+00:00",
+        "reason": "V1 deprecated afterTask rejected by actual owner warning-mode=fail. Preserve two failed-trial owner starts, qualify supported shared-service lifecycle under strict warnings, then fresh eight-start comparison. Same CPU profile and deadline.",
+        "extraActualOwnerStarts": 2,
+        "extraSmallFixtureStarts": 6,
+        "extraFormatterStarts": 1
+      },
+      {
+        "reason": "Two strict exploratory V2 fixture starts preceded mandatory formatting. Bind final formatted bytecode and run six-case lifecycle suite from cold state; preserve both exploratory successes.",
+        "extraSmallFixtureStarts": 2
+      }
+    ],
+    "inspectionJVMCommands": 3,
+    "actualFormatterStarts": 2,
+    "maxFormatterStarts": 2,
+    "deadlineUTC": "2026-09-10T10:56:31.740392+00:00",
+    "maxDiagnosticBytes": 134217728,
+    "ownerReserved": 24,
+    "helperJVMReservedForComparisons": 8,
+    "completedOwnerRequests": 10,
+    "maxOwnerControllerReservations": 24,
+    "preliminaryOwnerStarts": 0,
+    "preliminaryRequestReservations": 1,
+    "comparisonMetadataHelpersReconciled": true,
+    "observedGradleStartsThisPhase": 29,
+    "chargedGradleReservationsThisPhase": 43,
+    "cumulativeObservedGradleStarts": 651,
+    "cumulativeChargedGradleReservations": 791,
+    "priorUnknownAccounting": "Older possible metadata start and older helper with missing completion proof remain qualified in predecessor reports.",
+    "closedUTC": "2026-09-10T10:37:49.244065+00:00",
+    "finalAllocatedBytes": 46064484352,
+    "nativeComparisonFinishedWithinDeadline": true
+  },
+  "productViability": "NOT_ESTABLISHED",
+  "decision": "FINALIZATION_VALUE_NOT_ESTABLISHED"
+}

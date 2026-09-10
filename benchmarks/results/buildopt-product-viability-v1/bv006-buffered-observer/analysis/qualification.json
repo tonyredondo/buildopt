@@ -1,0 +1,910 @@
+{
+  "status": "verified",
+  "decision": "BOUNDED_PERSISTENCE_SEPARATION_VERIFIED",
+  "cases": [
+    {
+      "name": "normal",
+      "status": "verified",
+      "records": 40,
+      "partialBytes": 0,
+      "accepted": 40,
+      "acknowledged": 40,
+      "pendingRecords": 0,
+      "pendingBytes": 0,
+      "peakPendingRecords": 1,
+      "peakPendingBytes": 3490,
+      "error": "",
+      "writerExit": 0,
+      "writerCPUms": 5.465,
+      "drainMS": 0.789312,
+      "metrics": {
+        "scan": {
+          "count": 40,
+          "maximumMS": 0.635812,
+          "medianMS": 0.546961,
+          "p95MS": 0.613482
+        },
+        "encoding": {
+          "count": 40,
+          "maximumMS": 0.1515,
+          "medianMS": 0.019515,
+          "p95MS": 0.04736
+        },
+        "admission": {
+          "count": 40,
+          "maximumMS": 0.0116,
+          "medianMS": 0.006325,
+          "p95MS": 0.00818
+        },
+        "samplingGap": {
+          "count": 39,
+          "maximumMS": 100.755518,
+          "medianMS": 99.990017,
+          "p95MS": 100.550977
+        },
+        "fileWrite": {
+          "count": 40,
+          "maximumMS": 0.042731,
+          "medianMS": 0.022845,
+          "p95MS": 0.03448
+        },
+        "internalHeartbeat": {
+          "count": 399,
+          "maximumMS": 10.740205,
+          "medianMS": 10.117343,
+          "p95MS": 10.432503
+        },
+        "externalHeartbeat": {
+          "count": 399,
+          "maximumMS": 10.637684,
+          "medianMS": 10.146243,
+          "p95MS": 10.459903
+        }
+      },
+      "phaseSHA256": "faf207aa04c2e8c54f0f19dcae6fb753be9ccd804a3f5149baa03657df56b5dd",
+      "payloadSHA256": "5eb172c4c35d75284be09126eea5e378c35b51db0476d2e638c9f67eb4a0e808",
+      "allHelpersClosed": true
+    },
+    {
+      "name": "writer-delay",
+      "status": "verified",
+      "records": 40,
+      "partialBytes": 0,
+      "accepted": 40,
+      "acknowledged": 40,
+      "pendingRecords": 0,
+      "pendingBytes": 0,
+      "peakPendingRecords": 22,
+      "peakPendingBytes": 77237,
+      "error": "",
+      "writerExit": 0,
+      "writerCPUms": 4.394,
+      "drainMS": 0.684183,
+      "metrics": {
+        "scan": {
+          "count": 40,
+          "maximumMS": 0.763312,
+          "medianMS": 0.588122,
+          "p95MS": 0.636042
+        },
+        "encoding": {
+          "count": 40,
+          "maximumMS": 0.04372,
+          "medianMS": 0.02182,
+          "p95MS": 0.02741
+        },
+        "admission": {
+          "count": 40,
+          "maximumMS": 0.01477,
+          "medianMS": 0.006646,
+          "p95MS": 0.00801
+        },
+        "samplingGap": {
+          "count": 39,
+          "maximumMS": 100.774358,
+          "medianMS": 99.972703,
+          "p95MS": 100.751308
+        },
+        "fileWrite": {
+          "count": 40,
+          "maximumMS": 2104.204626,
+          "medianMS": 0.015355,
+          "p95MS": 0.03864
+        },
+        "internalHeartbeat": {
+          "count": 399,
+          "maximumMS": 10.977155,
+          "medianMS": 10.132443,
+          "p95MS": 10.525734
+        },
+        "externalHeartbeat": {
+          "count": 399,
+          "maximumMS": 10.630704,
+          "medianMS": 10.175103,
+          "p95MS": 10.506346
+        }
+      },
+      "phaseSHA256": "aa7edb5befe1c712d26b8caeef914f7e1b3a95f7a1aa48b0419bf294ee33e777",
+      "payloadSHA256": "1ebee7a19243ff46ac6ff93de07914dc27d37a03c7b5607795c70a50b3bc7c5d",
+      "allHelpersClosed": true
+    },
+    {
+      "name": "writer-error",
+      "status": "verified",
+      "records": 2,
+      "partialBytes": 0,
+      "accepted": 3,
+      "acknowledged": 2,
+      "pendingRecords": 1,
+      "pendingBytes": 3491,
+      "peakPendingRecords": 1,
+      "peakPendingBytes": 3491,
+      "error": "deliberate writer error\ndeliberate writer error",
+      "writerExit": 1,
+      "writerCPUms": 2.098,
+      "drainMS": 0.03159,
+      "metrics": {
+        "scan": {
+          "count": 3,
+          "maximumMS": 0.548852,
+          "medianMS": 0.513802,
+          "p95MS": 0.548852
+        },
+        "encoding": {
+          "count": 3,
+          "maximumMS": 0.04457,
+          "medianMS": 0.01757,
+          "p95MS": 0.04457
+        },
+        "admission": {
+          "count": 3,
+          "maximumMS": 0.00826,
+          "medianMS": 0.00581,
+          "p95MS": 0.00826
+        },
+        "samplingGap": {
+          "count": 2,
+          "maximumMS": 100.015149,
+          "medianMS": 99.525827,
+          "p95MS": 100.015149
+        },
+        "fileWrite": {
+          "count": 3,
+          "maximumMS": 0.01931,
+          "medianMS": 0.00896,
+          "p95MS": 0.01931
+        },
+        "internalHeartbeat": {
+          "count": 29,
+          "maximumMS": 10.226934,
+          "medianMS": 10.114634,
+          "p95MS": 10.158934
+        },
+        "externalHeartbeat": {
+          "count": 29,
+          "maximumMS": 10.219524,
+          "medianMS": 10.074714,
+          "p95MS": 10.197275
+        }
+      },
+      "phaseSHA256": "6a7c1e2d617fe40d8f74b8e30290c4ff28e074633f7479665e8626399678bb2c",
+      "payloadSHA256": "5d783dc69b3ab2c0064e3bca0670cc45fcfb8a147c1dc225701f6b290c6c7022",
+      "allHelpersClosed": true
+    },
+    {
+      "name": "short-write",
+      "status": "verified",
+      "records": 2,
+      "partialBytes": 1750,
+      "accepted": 3,
+      "acknowledged": 2,
+      "pendingRecords": 1,
+      "pendingBytes": 3500,
+      "peakPendingRecords": 1,
+      "peakPendingBytes": 3500,
+      "error": "short write\nshort write",
+      "writerExit": 1,
+      "writerCPUms": 2.289,
+      "drainMS": 0.03169,
+      "metrics": {
+        "scan": {
+          "count": 3,
+          "maximumMS": 0.555992,
+          "medianMS": 0.481102,
+          "p95MS": 0.555992
+        },
+        "encoding": {
+          "count": 3,
+          "maximumMS": 0.04467,
+          "medianMS": 0.01618,
+          "p95MS": 0.04467
+        },
+        "admission": {
+          "count": 3,
+          "maximumMS": 0.00826,
+          "medianMS": 0.00589,
+          "p95MS": 0.00826
+        },
+        "samplingGap": {
+          "count": 2,
+          "maximumMS": 100.051508,
+          "medianMS": 100.0363835,
+          "p95MS": 100.051508
+        },
+        "fileWrite": {
+          "count": 3,
+          "maximumMS": 0.01823,
+          "medianMS": 0.01701,
+          "p95MS": 0.01823
+        },
+        "internalHeartbeat": {
+          "count": 29,
+          "maximumMS": 10.211905,
+          "medianMS": 10.117155,
+          "p95MS": 10.201525
+        },
+        "externalHeartbeat": {
+          "count": 29,
+          "maximumMS": 10.224625,
+          "medianMS": 10.084734,
+          "p95MS": 10.215825
+        }
+      },
+      "phaseSHA256": "3baccac93801889e0619b77abb3b659838dec8270659e1f798a87970ebaae806",
+      "payloadSHA256": "9b7cefb016e4816a67880d9c57355640265c73b9f2a20fe6583dccb6f2df4767",
+      "allHelpersClosed": true
+    },
+    {
+      "name": "record-saturation",
+      "status": "verified",
+      "records": 5,
+      "partialBytes": 0,
+      "accepted": 5,
+      "acknowledged": 5,
+      "pendingRecords": 0,
+      "pendingBytes": 0,
+      "peakPendingRecords": 3,
+      "peakPendingBytes": 10564,
+      "error": "writer pending record limit",
+      "writerExit": 0,
+      "writerCPUms": 2.661,
+      "drainMS": 1804.908862,
+      "metrics": {
+        "scan": {
+          "count": 6,
+          "maximumMS": 0.678162,
+          "medianMS": 0.606467,
+          "p95MS": 0.678162
+        },
+        "encoding": {
+          "count": 6,
+          "maximumMS": 0.0454,
+          "medianMS": 0.022145,
+          "p95MS": 0.0454
+        },
+        "admission": {
+          "count": 6,
+          "maximumMS": 0.01424,
+          "medianMS": 0.006465,
+          "p95MS": 0.01424
+        },
+        "samplingGap": {
+          "count": 5,
+          "maximumMS": 100.44492,
+          "medianMS": 100.197699,
+          "p95MS": 100.44492
+        },
+        "fileWrite": {
+          "count": 5,
+          "maximumMS": 2104.362926,
+          "medianMS": 0.01459,
+          "p95MS": 2104.362926
+        },
+        "internalHeartbeat": {
+          "count": 59,
+          "maximumMS": 10.536926,
+          "medianMS": 10.115614,
+          "p95MS": 10.494316
+        },
+        "externalHeartbeat": {
+          "count": 59,
+          "maximumMS": 10.580296,
+          "medianMS": 10.161845,
+          "p95MS": 10.529725
+        }
+      },
+      "phaseSHA256": "610c953429f1b25cf4c36e2070fcaefc473720eddff00cc0b87659b08eab32e5",
+      "payloadSHA256": "80eb407ad43515392910abf8cea576d69443b70f1983061a88ef7577f111ba85",
+      "allHelpersClosed": true
+    },
+    {
+      "name": "byte-saturation",
+      "status": "verified",
+      "records": 0,
+      "partialBytes": 0,
+      "accepted": 0,
+      "acknowledged": 0,
+      "pendingRecords": 0,
+      "pendingBytes": 0,
+      "peakPendingRecords": 0,
+      "peakPendingBytes": 0,
+      "error": "writer pending byte limit",
+      "writerExit": 0,
+      "writerCPUms": 1.95,
+      "drainMS": 0.403041,
+      "metrics": {
+        "scan": {
+          "count": 1,
+          "maximumMS": 0.554602,
+          "medianMS": 0.554602,
+          "p95MS": 0.554602
+        },
+        "encoding": {
+          "count": 1,
+          "maximumMS": 0.04441,
+          "medianMS": 0.04441,
+          "p95MS": 0.04441
+        },
+        "admission": {
+          "count": 1,
+          "maximumMS": 0.00251,
+          "medianMS": 0.00251,
+          "p95MS": 0.00251
+        },
+        "samplingGap": {
+          "count": 0,
+          "maximumMS": 0.0,
+          "medianMS": 0,
+          "p95MS": 0
+        },
+        "fileWrite": {
+          "count": 0,
+          "maximumMS": 0.0,
+          "medianMS": 0,
+          "p95MS": 0
+        },
+        "internalHeartbeat": {
+          "count": 9,
+          "maximumMS": 10.190644,
+          "medianMS": 10.100084,
+          "p95MS": 10.190644
+        },
+        "externalHeartbeat": {
+          "count": 9,
+          "maximumMS": 10.114834,
+          "medianMS": 10.074524,
+          "p95MS": 10.114834
+        }
+      },
+      "phaseSHA256": "f1c23535879ee32024706cab0e47876e05ebf46a628201b796da8ad1bdd393d5",
+      "payloadSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "allHelpersClosed": true
+    },
+    {
+      "name": "total-output-limit",
+      "status": "verified",
+      "records": 0,
+      "partialBytes": 0,
+      "accepted": 0,
+      "acknowledged": 0,
+      "pendingRecords": 0,
+      "pendingBytes": 0,
+      "peakPendingRecords": 0,
+      "peakPendingBytes": 0,
+      "error": "writer total byte limit",
+      "writerExit": 0,
+      "writerCPUms": 2.047,
+      "drainMS": 0.425422,
+      "metrics": {
+        "scan": {
+          "count": 1,
+          "maximumMS": 0.563492,
+          "medianMS": 0.563492,
+          "p95MS": 0.563492
+        },
+        "encoding": {
+          "count": 1,
+          "maximumMS": 0.04471,
+          "medianMS": 0.04471,
+          "p95MS": 0.04471
+        },
+        "admission": {
+          "count": 1,
+          "maximumMS": 0.00242,
+          "medianMS": 0.00242,
+          "p95MS": 0.00242
+        },
+        "samplingGap": {
+          "count": 0,
+          "maximumMS": 0.0,
+          "medianMS": 0,
+          "p95MS": 0
+        },
+        "fileWrite": {
+          "count": 0,
+          "maximumMS": 0.0,
+          "medianMS": 0,
+          "p95MS": 0
+        },
+        "internalHeartbeat": {
+          "count": 9,
+          "maximumMS": 10.115965,
+          "medianMS": 10.076334,
+          "p95MS": 10.115965
+        },
+        "externalHeartbeat": {
+          "count": 9,
+          "maximumMS": 10.117384,
+          "medianMS": 10.076824,
+          "p95MS": 10.117384
+        }
+      },
+      "phaseSHA256": "b7dcd90249c867b1ce9d13bd279848953471ff80974e2bb9f9208a283458bee0",
+      "payloadSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "allHelpersClosed": true
+    },
+    {
+      "name": "cancel-before",
+      "status": "verified",
+      "records": 0,
+      "partialBytes": 0,
+      "accepted": 0,
+      "acknowledged": 0,
+      "pendingRecords": 0,
+      "pendingBytes": 0,
+      "peakPendingRecords": 0,
+      "peakPendingBytes": 0,
+      "error": "",
+      "writerExit": 0,
+      "writerCPUms": 1.896,
+      "drainMS": 0.929473,
+      "metrics": {
+        "scan": {
+          "count": 0,
+          "maximumMS": 0.0,
+          "medianMS": 0,
+          "p95MS": 0
+        },
+        "encoding": {
+          "count": 0,
+          "maximumMS": 0.0,
+          "medianMS": 0,
+          "p95MS": 0
+        },
+        "admission": {
+          "count": 0,
+          "maximumMS": 0.0,
+          "medianMS": 0,
+          "p95MS": 0
+        },
+        "samplingGap": {
+          "count": 0,
+          "maximumMS": 0.0,
+          "medianMS": 0,
+          "p95MS": 0
+        },
+        "fileWrite": {
+          "count": 0,
+          "maximumMS": 0.0,
+          "medianMS": 0,
+          "p95MS": 0
+        },
+        "internalHeartbeat": {
+          "count": 0,
+          "maximumMS": 0.0,
+          "medianMS": 0,
+          "p95MS": 0
+        },
+        "externalHeartbeat": {
+          "count": 0,
+          "maximumMS": 0.0,
+          "medianMS": 0,
+          "p95MS": 0
+        }
+      },
+      "phaseSHA256": "524f3c30e939b0b326d13253ffc84c1109994a010a01811cb373d57a7b1eabf6",
+      "payloadSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "allHelpersClosed": true
+    },
+    {
+      "name": "cancel-capture",
+      "status": "verified",
+      "records": 7,
+      "partialBytes": 0,
+      "accepted": 7,
+      "acknowledged": 7,
+      "pendingRecords": 0,
+      "pendingBytes": 0,
+      "peakPendingRecords": 5,
+      "peakPendingBytes": 17484,
+      "error": "",
+      "writerExit": 0,
+      "writerCPUms": 2.675,
+      "drainMS": 1658.682549,
+      "metrics": {
+        "scan": {
+          "count": 7,
+          "maximumMS": 0.650012,
+          "medianMS": 0.597012,
+          "p95MS": 0.650012
+        },
+        "encoding": {
+          "count": 7,
+          "maximumMS": 0.04409,
+          "medianMS": 0.02165,
+          "p95MS": 0.04409
+        },
+        "admission": {
+          "count": 7,
+          "maximumMS": 0.01265,
+          "medianMS": 0.00641,
+          "p95MS": 0.01265
+        },
+        "samplingGap": {
+          "count": 6,
+          "maximumMS": 100.48529,
+          "medianMS": 100.0861775,
+          "p95MS": 100.48529
+        },
+        "fileWrite": {
+          "count": 7,
+          "maximumMS": 2104.121443,
+          "medianMS": 0.01229,
+          "p95MS": 2104.121443
+        },
+        "internalHeartbeat": {
+          "count": 73,
+          "maximumMS": 10.965477,
+          "medianMS": 10.145154,
+          "p95MS": 10.504065
+        },
+        "externalHeartbeat": {
+          "count": 73,
+          "maximumMS": 10.539846,
+          "medianMS": 10.114184,
+          "p95MS": 10.501125
+        }
+      },
+      "phaseSHA256": "4ad7c2437736c5820649b7c78ffaec8d2696ca62d20f61d41a4ed59929e28dc5",
+      "payloadSHA256": "b5540d86c9274b69bf0131af948afd2ed78b910a01bd80023d9fd88df6009102",
+      "allHelpersClosed": true
+    },
+    {
+      "name": "cancel-drain",
+      "status": "verified",
+      "records": 3,
+      "partialBytes": 0,
+      "accepted": 3,
+      "acknowledged": 3,
+      "pendingRecords": 0,
+      "pendingBytes": 0,
+      "peakPendingRecords": 1,
+      "peakPendingBytes": 3490,
+      "error": "",
+      "writerExit": 0,
+      "writerCPUms": 2.551,
+      "drainMS": 2104.960906,
+      "metrics": {
+        "scan": {
+          "count": 3,
+          "maximumMS": 0.566132,
+          "medianMS": 0.558672,
+          "p95MS": 0.566132
+        },
+        "encoding": {
+          "count": 3,
+          "maximumMS": 0.04302,
+          "medianMS": 0.01737,
+          "p95MS": 0.04302
+        },
+        "admission": {
+          "count": 3,
+          "maximumMS": 0.00951,
+          "medianMS": 0.00568,
+          "p95MS": 0.00951
+        },
+        "samplingGap": {
+          "count": 2,
+          "maximumMS": 100.78188,
+          "medianMS": 100.280038,
+          "p95MS": 100.78188
+        },
+        "fileWrite": {
+          "count": 3,
+          "maximumMS": 2104.212443,
+          "medianMS": 0.01868,
+          "p95MS": 2104.212443
+        },
+        "internalHeartbeat": {
+          "count": 29,
+          "maximumMS": 10.222065,
+          "medianMS": 10.094984,
+          "p95MS": 10.204255
+        },
+        "externalHeartbeat": {
+          "count": 29,
+          "maximumMS": 10.197815,
+          "medianMS": 10.113274,
+          "p95MS": 10.152294
+        }
+      },
+      "phaseSHA256": "98eab2f3b76bb9de5af0b48114e0179a64d700c81e36abab8471a420a9cd3735",
+      "payloadSHA256": "4908d84823caa8ab32ec5ac332b0664dcd327a775ca89b9ac9bb76e0fbea657f",
+      "allHelpersClosed": true
+    },
+    {
+      "name": "drain-timeout",
+      "status": "verified",
+      "records": 2,
+      "partialBytes": 0,
+      "accepted": 3,
+      "acknowledged": 2,
+      "pendingRecords": 1,
+      "pendingBytes": 3508,
+      "peakPendingRecords": 1,
+      "peakPendingBytes": 3508,
+      "error": "writer drain deadline",
+      "writerExit": -1,
+      "writerCPUms": 2.405,
+      "drainMS": 201.102646,
+      "metrics": {
+        "scan": {
+          "count": 3,
+          "maximumMS": 0.647382,
+          "medianMS": 0.610322,
+          "p95MS": 0.647382
+        },
+        "encoding": {
+          "count": 3,
+          "maximumMS": 0.04345,
+          "medianMS": 0.022171,
+          "p95MS": 0.04345
+        },
+        "admission": {
+          "count": 3,
+          "maximumMS": 0.0156,
+          "medianMS": 0.00672,
+          "p95MS": 0.0156
+        },
+        "samplingGap": {
+          "count": 2,
+          "maximumMS": 99.931137,
+          "medianMS": 99.8726915,
+          "p95MS": 99.931137
+        },
+        "fileWrite": {
+          "count": 2,
+          "maximumMS": 0.03345,
+          "medianMS": 0.02266,
+          "p95MS": 0.03345
+        },
+        "internalHeartbeat": {
+          "count": 29,
+          "maximumMS": 10.472066,
+          "medianMS": 10.114333,
+          "p95MS": 10.351075
+        },
+        "externalHeartbeat": {
+          "count": 29,
+          "maximumMS": 10.396305,
+          "medianMS": 10.113925,
+          "p95MS": 10.325724
+        }
+      },
+      "phaseSHA256": "6ea1331c02a94903294e7a20b674b967736f65996288f5b72213bf921b2eca14",
+      "payloadSHA256": "778120d58ec3af2c5582c45357aa8ceff70de5bb90ea67cb479de7c6f2c8ec23",
+      "allHelpersClosed": true
+    },
+    {
+      "name": "writer-exit",
+      "status": "verified",
+      "records": 2,
+      "partialBytes": 0,
+      "accepted": 3,
+      "acknowledged": 2,
+      "pendingRecords": 1,
+      "pendingBytes": 3489,
+      "peakPendingRecords": 1,
+      "peakPendingBytes": 3489,
+      "error": "writer acknowledgement: EOF\nwriter acknowledgement: EOF",
+      "writerExit": 89,
+      "writerCPUms": 2.189,
+      "drainMS": 0.04227,
+      "metrics": {
+        "scan": {
+          "count": 3,
+          "maximumMS": 0.542182,
+          "medianMS": 0.483902,
+          "p95MS": 0.542182
+        },
+        "encoding": {
+          "count": 3,
+          "maximumMS": 0.0443,
+          "medianMS": 0.01691,
+          "p95MS": 0.0443
+        },
+        "admission": {
+          "count": 3,
+          "maximumMS": 0.00911,
+          "medianMS": 0.00598,
+          "p95MS": 0.00911
+        },
+        "samplingGap": {
+          "count": 2,
+          "maximumMS": 100.755768,
+          "medianMS": 100.3036925,
+          "p95MS": 100.755768
+        },
+        "fileWrite": {
+          "count": 2,
+          "maximumMS": 0.01938,
+          "medianMS": 0.01548,
+          "p95MS": 0.01938
+        },
+        "internalHeartbeat": {
+          "count": 29,
+          "maximumMS": 10.238145,
+          "medianMS": 10.083274,
+          "p95MS": 10.217164
+        },
+        "externalHeartbeat": {
+          "count": 29,
+          "maximumMS": 10.133984,
+          "medianMS": 10.074724,
+          "p95MS": 10.133045
+        }
+      },
+      "phaseSHA256": "50b6b1c01637cbdf4437f47fd758c8976f6625aee79ea17da4415d5c33c05509",
+      "payloadSHA256": "e2c2285e582873c6fda1ca7e942e4f55c7e33c41e5ab47ea1bc8f32764d8f558",
+      "allHelpersClosed": true
+    },
+    {
+      "name": "driver-exit",
+      "status": "verified expected incomplete attempt",
+      "records": 2,
+      "finalReceiptMissing": true,
+      "exactAcceptedCountKnown": false,
+      "allHelpersClosed": true,
+      "killToCloseMS": 10.082784
+    },
+    {
+      "name": "scan-error",
+      "status": "verified",
+      "records": 0,
+      "partialBytes": 0,
+      "accepted": 0,
+      "acknowledged": 0,
+      "pendingRecords": 0,
+      "pendingBytes": 0,
+      "peakPendingRecords": 0,
+      "peakPendingBytes": 0,
+      "error": "deliberate scan error",
+      "writerExit": 0,
+      "writerCPUms": 2.052,
+      "drainMS": 0.427511,
+      "metrics": {
+        "scan": {
+          "count": 1,
+          "maximumMS": 0.032091,
+          "medianMS": 0.032091,
+          "p95MS": 0.032091
+        },
+        "encoding": {
+          "count": 0,
+          "maximumMS": 0.0,
+          "medianMS": 0,
+          "p95MS": 0
+        },
+        "admission": {
+          "count": 0,
+          "maximumMS": 0.0,
+          "medianMS": 0,
+          "p95MS": 0
+        },
+        "samplingGap": {
+          "count": 0,
+          "maximumMS": 0.0,
+          "medianMS": 0,
+          "p95MS": 0
+        },
+        "fileWrite": {
+          "count": 0,
+          "maximumMS": 0.0,
+          "medianMS": 0,
+          "p95MS": 0
+        },
+        "internalHeartbeat": {
+          "count": 9,
+          "maximumMS": 10.114074,
+          "medianMS": 10.074283,
+          "p95MS": 10.114074
+        },
+        "externalHeartbeat": {
+          "count": 9,
+          "maximumMS": 10.114364,
+          "medianMS": 10.075143,
+          "p95MS": 10.114364
+        }
+      },
+      "phaseSHA256": "b519c95c32676f05c697a389597abdc989eb4607001fa0dda10a85147736c20d",
+      "payloadSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "allHelpersClosed": true
+    },
+    {
+      "name": "race-writer-delay",
+      "status": "verified",
+      "records": 40,
+      "partialBytes": 0,
+      "accepted": 40,
+      "acknowledged": 40,
+      "pendingRecords": 0,
+      "pendingBytes": 0,
+      "peakPendingRecords": 22,
+      "peakPendingBytes": 78316,
+      "error": "",
+      "writerExit": 0,
+      "writerCPUms": 10.196,
+      "drainMS": 1001.621133,
+      "metrics": {
+        "scan": {
+          "count": 40,
+          "maximumMS": 1.451925,
+          "medianMS": 1.207814,
+          "p95MS": 1.353305
+        },
+        "encoding": {
+          "count": 40,
+          "maximumMS": 0.190441,
+          "medianMS": 0.125865,
+          "p95MS": 0.15623
+        },
+        "admission": {
+          "count": 40,
+          "maximumMS": 0.02803,
+          "medianMS": 0.017335,
+          "p95MS": 0.02511
+        },
+        "samplingGap": {
+          "count": 39,
+          "maximumMS": 100.9021,
+          "medianMS": 100.015697,
+          "p95MS": 100.797899
+        },
+        "fileWrite": {
+          "count": 40,
+          "maximumMS": 2104.216208,
+          "medianMS": 0.01839,
+          "p95MS": 0.03196
+        },
+        "internalHeartbeat": {
+          "count": 398,
+          "maximumMS": 12.11925,
+          "medianMS": 10.22073,
+          "p95MS": 10.636386
+        },
+        "externalHeartbeat": {
+          "count": 399,
+          "maximumMS": 10.581366,
+          "medianMS": 10.226635,
+          "p95MS": 10.493685
+        }
+      },
+      "phaseSHA256": "f7286ff079269fe35f734bc422a95902e170925bde065ba707cc09288e07c111",
+      "payloadSHA256": "347bb583a3c0d0d289efccc19fcfcc202f417419160ad1b08be27cda5f700925",
+      "allHelpersClosed": true
+    }
+  ],
+  "regression": {
+    "beforeGapMS": 2105.065581,
+    "afterGapMS": 100.774358,
+    "reductionPercent": 95.21276871801173,
+    "criterionMS": 500
+  },
+  "qualificationCases": 15,
+  "retainedFailedReaderCases": 1,
+  "gradleActual": 0,
+  "helperJVMActual": 0,
+  "originalCauseEstablished": false,
+  "readinessQualified": false,
+  "valueQualified": false
+}

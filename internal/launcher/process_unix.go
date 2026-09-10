@@ -51,7 +51,7 @@ func executeChildWithReservedDirectory(childArgs []string, environmentOverrides 
 	signal.Stop(signals)
 	close(stopForwarding)
 	<-forwardingStopped
-	return childExecution{started: true, startedAt: startedAt, completedAt: completedAt, cancelled: len(cancellationForwarded) > 0 || platformChildWasCancelled(err), err: err}
+	return childExecution{pid: command.Process.Pid, started: true, startedAt: startedAt, completedAt: completedAt, cancelled: len(cancellationForwarded) > 0 || platformChildWasCancelled(err), err: err}
 }
 
 func platformChildWasCancelled(err error) bool {

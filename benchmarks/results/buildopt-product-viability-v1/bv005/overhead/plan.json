@@ -1,0 +1,15 @@
+{
+  "Schema": "buildopt.history-replay/overhead-plan/v1",
+  "Policy": "symmetric lean graph/outcomes; deep tracing diagnostic only",
+  "Order": "Two warmups per arm with opposite style order; four measured pairs per arm; arm and style order alternate",
+  "Scope": "Small no-action native fixture only; BV-006 repeats qualification on the frozen owner workflow",
+  "WarmupsPerArm": 2,
+  "MeasuredPairsPerArm": 4,
+  "TotalGradleStarts": 20,
+  "MaximumWrapperNS": 10000000,
+  "MaximumArmImbalanceNS": 100000000,
+  "Manifest": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv005/fixtures/TestGradleSymmetricCaptureOverhead-2604751880/run/manifest.json",
+    "sha256": "2c3d8162136461e0babfe3add00e6356f44aecff9cc0a25e6a9766ba546d52a2"
+  }
+}

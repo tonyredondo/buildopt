@@ -1,5 +1,11 @@
 # Repository map
 
+> **Retained implementation map.** The POC ownership and next-step language
+> below includes historical snapshots. Verify ownership against the actual
+> tree before editing; use the [research status register](../research-status.md)
+> and [current tracker](../plans/buildopt-product-viability-v1-tracker.md) to
+> select new work.
+
 This document is the bridge between the conceptual architecture and the
 source tree. Use it to find the owning layer before changing behavior.
 
@@ -30,19 +36,23 @@ The repository is a monorepo because contracts, producers, consumers, fixtures,
 and evidence must change together. It is not a collection of independently
 versioned microservices.
 
-## Latest generic POC ownership
+<a id="latest-generic-poc-ownership"></a>
 
-The active wrapper-coordinated native-corrections pivot is ordered by
+## Historical generic POC ownership
+
+The historical wrapper-coordinated native-corrections pivot was ordered by
 [`wrapper-coordinated-native-corrections-poc.md`](../plans/wrapper-coordinated-native-corrections-poc.md).
 Its human and machine contracts live under `specs/poc-wrapper-coordinated-native-corrections-v1.*`;
 the five control-plane schemas live under `contracts/jsonschema/wcncp-*.v1.schema.json`,
 and their language-neutral conformance corpus lives under
 `contracts/test-vectors/wcncp/`. The independent
 `dev/check-wrapper-coordinated-native-corrections-plan` gate owns WCNCP-000.
-No runtime package owns this pivot yet; `WCNCP-001` must define that seam before
-implementation can enter the wrapper path.
+At that planning snapshot, runtime ownership was pending `WCNCP-001`. This
+is a historical dependency, not a current implementation instruction; later
+integration and its terminal result are recorded in the closed
+[installed Elasticsearch tracker](../plans/installed-elasticsearch-native-correction-v1-tracker.md).
 
-The latest closed experiment is specified by
+An earlier closed experiment is specified by
 [`poc-request-aligned-learning-v1`](../../specs/poc-request-aligned-learning-v1.md)
 and ordered by the
 [`Request-aligned Recurrent Learning POC Tracker`](../plans/request-aligned-learning-poc-tracker.md).

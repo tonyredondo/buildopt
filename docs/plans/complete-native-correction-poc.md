@@ -1,5 +1,11 @@
 # Complete Native Correction POC
 
+> **Research disposition: HISTORICAL; closed research (2026-09-08).**
+> Original outcomes and evidence are preserved below. Old phase instructions
+> and unchecked boxes do not reopen this route. Use the
+> [research status register](../research-status.md) and
+> [current tracker](./buildopt-product-viability-v1-tracker.md) for new work.
+
 **Experiment:** `COMPLETE_NATIVE_CORRECTION_V1` (`CNC`)<br>
 **State:** `STOP_NATIVE_ADMISSION`; fourth CNC-004 window completed six native captures; warmed configuration is 362 ms and two native JAR manifests change without a candidate<br>
 **Planning baseline:** BuildOpt `ca5fb5d8c10ac581de7478cc1dec52269da67e24`<br>

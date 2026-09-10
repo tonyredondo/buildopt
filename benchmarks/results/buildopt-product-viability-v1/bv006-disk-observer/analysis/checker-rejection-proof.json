@@ -1,0 +1,15 @@
+{
+  "status": "verified",
+  "cases": {
+    "valid": "accepted",
+    "missing-middle": "rejected",
+    "missing-tail": "rejected",
+    "negative-cpu": "rejected"
+  },
+  "nativeStarts": 0,
+  "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-daemon-diagnostic/owner-02/run/attempts/diagnostic-17-N-plain",
+  "sourceCPUSHA256": "abb36d735478dec8c97b8ca129be0f4b036aea42b580c16fc4e8c67f4ccb84b5",
+  "checkerSHA256": "7e780ff4f006aad2df67211b57b73d3b541b2a8f110ce10c9436f480ea6e44b3",
+  "scope": "Retained warm raw record; CPU counters mapped without changing values. Proves rejection behavior, not new native or timing observations",
+  "atUTC": "2026-09-09T09:43:55.075243+00:00"
+}

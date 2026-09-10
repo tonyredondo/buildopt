@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+cd -- "${buildopt_repo_root}"
+if [[ "$(uname -s)/$(uname -m)" != Linux/x86_64 ]]; then
+    printf 'EIC protocol qualification requires Linux AMD64\n' >&2
+    exit 69
+fi
+# Bounded local processes only. The public Elasticsearch allocation is not run.
+# Tests clean their own fixture directories; caches and existing work are kept.
+timeout --signal=TERM --kill-after=5s 180s ./dev/run --toolchain go -- \
+    go test -mod=readonly ./dev/installed-elasticsearch-runner -count=1 -timeout=150s
+timeout --signal=TERM --kill-after=5s 60s ./dev/run --toolchain go -- \
+    go vet -mod=readonly ./dev/installed-elasticsearch-runner
+printf 'EIC protocol qualification OK: allocation, raw process capture, reconstruction, source fixtures and budget refusal; no public execution\n'

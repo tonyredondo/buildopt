@@ -1,0 +1,97 @@
+{
+  "status": "verified",
+  "decision": "LIVE_GAP_OVER_500MS_NOT_REPRODUCED",
+  "phaseStatus": "verified bounded diagnostic",
+  "BV006Status": "partial",
+  "originalCauseEstablished": false,
+  "readinessQualified": false,
+  "valueQualified": false,
+  "gradleReserved": 2,
+  "gradleActual": 2,
+  "qualificationCases": 9,
+  "qualificationRecords": 128,
+  "ownerRecords": 4322,
+  "heartbeatProcesses": 11,
+  "helperJVMActual": 0,
+  "compilerCommands": 3,
+  "programGradleReserved": 646,
+  "programGradleActual": 547,
+  "cpuScreenStarts": 0,
+  "entryFilesChecked": 20113,
+  "changedEntryFiles": [
+    "docs/plans/buildopt-product-viability-v1-cpu-screen.md",
+    "benchmarks/results/buildopt-product-viability-v1/README.md",
+    "docs/research-status.md",
+    "docs/plans/buildopt-product-viability-v1-tracker.md"
+  ],
+  "productionSourceUnchanged": true,
+  "priorSealedFilesVerified": 63,
+  "originCopiesVerified": 211,
+  "localLinksChecked": 190,
+  "closedDrivers": [
+    {
+      "pid": 1102013,
+      "startTicks": "41310345"
+    },
+    {
+      "pid": 1099861,
+      "startTicks": "41293461"
+    },
+    {
+      "pid": 1099908,
+      "startTicks": "41293866"
+    },
+    {
+      "pid": 1100001,
+      "startTicks": "41294471"
+    },
+    {
+      "pid": 1100137,
+      "startTicks": "41295076"
+    },
+    {
+      "pid": 1100152,
+      "startTicks": "41295110"
+    },
+    {
+      "pid": 1100166,
+      "startTicks": "41295147"
+    },
+    {
+      "pid": 1100179,
+      "startTicks": "41295177"
+    },
+    {
+      "pid": 1100192,
+      "startTicks": "41295192"
+    },
+    {
+      "pid": 1100213,
+      "startTicks": "41295226"
+    }
+  ],
+  "worktrees": [
+    {
+      "arm": "N",
+      "branch": "bv-replay-a9bb165269e0-r1-N-000",
+      "commonGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/eic-native-v1/repos/elasticsearch.git",
+      "head": "53a80bec683ad0b065ed9ebe6a57f984e6a91ed1",
+      "locator": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/task-state.json",
+      "remoteTarget": "read-only subject history; no publication",
+      "repository": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-live-observer/owner/run/r1/N/repo"
+    },
+    {
+      "arm": "I",
+      "branch": "bv-replay-a9bb165269e0-r1-I-000",
+      "commonGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/eic-native-v1/repos/elasticsearch.git",
+      "head": "53a80bec683ad0b065ed9ebe6a57f984e6a91ed1",
+      "locator": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/task-state.json",
+      "remoteTarget": "read-only subject history; no publication",
+      "repository": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-live-observer/owner/run/r1/I/repo"
+    }
+  ],
+  "phaseLogicalBytes": 10964484667,
+  "portableCopyBytes": 183182047,
+  "freeBytes": 834851328000,
+  "atUTC": "2026-09-09T12:42:14.010415+00:00"
+}

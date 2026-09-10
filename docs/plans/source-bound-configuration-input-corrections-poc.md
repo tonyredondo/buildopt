@@ -1,5 +1,11 @@
 # Source-Bound Configuration-Input Corrections POC
 
+> **Research disposition: HISTORICAL; closed research (2026-09-08).**
+> Original outcomes and evidence are preserved below. Old phase instructions
+> and unchecked boxes do not reopen this route. Use the
+> [research status register](../research-status.md) and
+> [current tracker](./buildopt-product-viability-v1-tracker.md) for new work.
+
 **Overall:** `STOP_INSUFFICIENT_DIAGNOSTIC_BINDING`<br>
 **Current block:** `SBIC-006` terminal documentation is complete<br>
 **Next action:** none; a materially different successor needs a new contract

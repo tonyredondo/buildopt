@@ -1,0 +1,14 @@
+{
+  "status": "verified",
+  "designSHA256": "136226475955bfd633153e41e69b98e6f89be6fec7aa94bf312fda3fa9d76552",
+  "freezeSHA256": "7cd031f4468c88c5333a27c7640576f9dbdc7bf1043350e6c4fcafed065df13a",
+  "isolationSealSHA256": "266b41b6aff8a0f13b60ff79738ebbdcc1494e85204dd84a09a69507bf00715b",
+  "profilesValidated": [
+    8,
+    4,
+    2
+  ],
+  "nativeStarts": 0,
+  "helperJVMStarts": 0,
+  "atUTC": "2026-09-09T14:32:52.251989+00:00"
+}

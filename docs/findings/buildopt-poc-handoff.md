@@ -1,5 +1,11 @@
 # BuildOpt POC: One-Page Handoff
 
+> **Research disposition: HISTORICAL evidence (2026-09-08).** Original
+> findings, limits and outcomes are preserved below. Old recommendations and
+> successor instructions are scoped to that campaign. Use the
+> [research status register](../research-status.md) and
+> [current tracker](../plans/buildopt-product-viability-v1-tracker.md) for new work.
+
 For transfer to another computer, use the dated
 [complete cross-machine handoff](./buildopt-cross-machine-handoff-2026-09-07.md).
 It binds the published CNC closure, portable evidence, destination checks and

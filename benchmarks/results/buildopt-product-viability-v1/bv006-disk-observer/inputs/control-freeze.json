@@ -1,0 +1,34 @@
+[
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-disk-observer/control/old/source",
+    "sha256": "967167b4d74c2700979b7ed07b1673adce5085dc3d07bd5f7ea964f727e04618"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-disk-observer/control/new/source",
+    "sha256": "c375aec062903b09f5dff0134a81a0dc95edb56ba38f0b4a0ef7f8a144430d5f"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-disk-observer/control/old/control.test",
+    "sha256": "d3ec68871ad499662c742885788e0ea33f855e8573100c351d9bf305b32bc0ee"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-disk-observer/control/new/control.test",
+    "sha256": "1ff5cdb285e358dccdf76aa1701c10e9a14c1b4668865e5f48f79e4a13868e22"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-disk-observer/control/owner-manifest.json",
+    "sha256": "366590704cc81f393cb61e1531963d1e0f9b96bd9c2e7b783c51339046a76c33"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-disk-observer/inputs/control-design.json",
+    "sha256": "b9569bfbe9c99c3c18bb5739c9eb0e33685a7301938f58f290c2eb8df53cc74c"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-disk-observer/inputs/old-worker.json",
+    "sha256": "ded0944d9bd4baa81f574ec2de6bcaf5b7e0716ece72918249c1619e1f579717"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-disk-observer/run-check.py",
+    "sha256": "be4162f3fd6a58d5203cda9b8c2300d04a40aa57c2ab856ad0e885951b5037b5"
+  }
+]

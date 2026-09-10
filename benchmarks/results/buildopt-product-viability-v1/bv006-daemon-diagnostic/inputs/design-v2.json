@@ -1,0 +1,117 @@
+{
+  "schema": "buildopt.daemon-diagnostic/design/v2",
+  "ownerRequests": 32,
+  "warmupPerArm": 8,
+  "measuredPerArm": 8,
+  "order": "armOrder(1,cycle), 16 cycles; all plain",
+  "helper": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-daemon-diagnostic/helper.py",
+    "sha256": "806e5adc8fe108b5ae700d774ea08770c8cfaf403f348d90c9dcc716a3a8ea5a"
+  },
+  "settings": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-daemon-diagnostic/inputs/diagnostic.jfc",
+    "sha256": "9bb89168bdb070068975f8b58806ea084288b266df707fa46f7ebe9470974991"
+  },
+  "source": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-daemon-diagnostic/version2/source",
+    "sha256": "762e23711282761cddabccc2e15745c74c004927236db65464c888322e05a9c0"
+  },
+  "events": {
+    "jdk.ExecutionSample": {
+      "period": "20 ms"
+    },
+    "jdk.NativeMethodSample": {
+      "period": "20 ms"
+    },
+    "jdk.CPULoad": {
+      "period": "1 s"
+    },
+    "jdk.ThreadCPULoad": {
+      "period": "1 s"
+    },
+    "jdk.Compilation": {
+      "threshold": "1 ms"
+    },
+    "jdk.GarbageCollection": {
+      "threshold": "0 ms"
+    },
+    "jdk.GCPhasePause": {
+      "threshold": "0 ms"
+    },
+    "jdk.SafepointBegin": {
+      "threshold": "0 ms"
+    },
+    "jdk.SafepointStateSynchronization": {
+      "threshold": "0 ms"
+    },
+    "jdk.SafepointEnd": {
+      "threshold": "0 ms"
+    },
+    "jdk.ExecuteVMOperation": {
+      "threshold": "1 ms"
+    },
+    "jdk.ThreadPark": {
+      "threshold": "10 ms",
+      "stackTrace": "true"
+    },
+    "jdk.ThreadSleep": {
+      "threshold": "10 ms",
+      "stackTrace": "true"
+    },
+    "jdk.JavaMonitorEnter": {
+      "threshold": "10 ms",
+      "stackTrace": "true"
+    },
+    "jdk.JavaMonitorWait": {
+      "threshold": "10 ms",
+      "stackTrace": "true"
+    },
+    "jdk.FileRead": {
+      "threshold": "10 ms",
+      "stackTrace": "true"
+    },
+    "jdk.FileWrite": {
+      "threshold": "10 ms",
+      "stackTrace": "true"
+    },
+    "jdk.SocketRead": {
+      "threshold": "10 ms",
+      "stackTrace": "true"
+    },
+    "jdk.SocketWrite": {
+      "threshold": "10 ms",
+      "stackTrace": "true"
+    },
+    "jdk.DataLoss": {},
+    "jdk.ActiveSetting": {},
+    "jdk.ActiveRecording": {},
+    "jdk.JVMInformation": {
+      "period": "beginChunk"
+    }
+  },
+  "jfrStart": "After first cold request per arm; cold request retains proc and supervisor data but no JFR. Remaining seven warmups and all eight measured requests are profiled. Helpers run between requests.",
+  "intervalPolicy": "Native CLOCK_BOOTTIME/UTC and daemon log UTC; JFR event UTC. Record native and sampler mapping bounds; never sum parallel durations or attribute residual by subtraction.",
+  "procPeriodMS": 100,
+  "executionSamplingPeriodMS": 20,
+  "readinessQualified": false,
+  "valueQualified": false,
+  "observerLimitations": "Diagnostic variant adds two getrusage calls and clock stamps per scan, buffers spans then writes after native exit; proc sampler reads owned /proc and pressure at100ms. Observer cost retained, no low-overhead or equivalence claim from two fixture requests.",
+  "hypotheses": [
+    "CPU/JIT: slow intervals have daemon CPU and compilation/sample concentration",
+    "GC/safepoints: pauses overlap variable intervals",
+    "I/O/locking/scheduling: blocking events or owned scheduling counters overlap",
+    "Supervisor: repeated tree scans consume CPU and overlap native variability; causality requires separate control"
+  ],
+  "stop": "One fresh full32 after sampler correction; retain failed batch, no reused rows and no further owner restart in this allocation; original phase time/disk/JVM bounds unchanged",
+  "samplerGapPolicy": "Only typed ESRCH/ENOENT at /proc/<positive-pid>/{stat,cgroup,cmdline}; preserve each gap and continue; missing owned cgroup, permission, I/O and unattributed errors remain fatal",
+  "measuredMinimumDaemonCPUCoverageFraction": 0.9,
+  "measuredMaximumDaemonSnapshotGapMS": 500,
+  "failedAttempt": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-daemon-diagnostic/receipts/owner-driver-end.json",
+    "sha256": "a432fab95cc0b9037d19aa7cb46854fe513bbef55400e5ba7702fd5dad753590"
+  },
+  "correctionProof": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-daemon-diagnostic/analysis/sampler-qualification.json",
+    "sha256": "6e4cae9c85ee24ee9e8831c279e01443d2596a71889389dc4bf440dd5af1c627"
+  }
+}

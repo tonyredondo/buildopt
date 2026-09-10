@@ -1,0 +1,325 @@
+{
+  "status": "verified",
+  "decision": "BOUNDED_PERSISTENCE_SEPARATION_VERIFIED",
+  "phaseStatus": "verified R2/R3 controlled persistence",
+  "BV006Status": "partial",
+  "originalCauseEstablished": false,
+  "readinessQualified": false,
+  "valueQualified": false,
+  "gradleReserved": 0,
+  "gradleActual": 0,
+  "helperJVMActual": 0,
+  "cpuScreenStarts": 0,
+  "qualificationCases": 15,
+  "retainedReaderFailures": 1,
+  "caseDrivers": 16,
+  "writerHelpers": 16,
+  "heartbeatHelpers": 16,
+  "compilerCommands": 5,
+  "qualificationRecords": 145,
+  "retainedReaderRecords": 40,
+  "partialTailBytes": 1750,
+  "auditorCounterexamplesRejected": 6,
+  "productFailedCorrections": 0,
+  "testReaderCorrections": 1,
+  "programGradleReserved": 646,
+  "programGradleActual": 547,
+  "sourceChanges": [
+    "isolation_control_test.go",
+    "live_observer_test.go"
+  ],
+  "newSourceFiles": [
+    "buffered_observer_case_test.go",
+    "buffered_writer_test.go"
+  ],
+  "productionSourceUnchanged": true,
+  "entryFilesChecked": 20295,
+  "changedEntryFiles": [
+    "docs/research-status.md",
+    "docs/plans/buildopt-product-viability-v1-cpu-screen.md",
+    "benchmarks/results/buildopt-product-viability-v1/README.md",
+    "docs/plans/buildopt-product-viability-v1-tracker.md"
+  ],
+  "priorSealedFilesVerified": 216,
+  "originCopiesVerified": 412,
+  "localLinksChecked": 198,
+  "closedProcessIdentities": [
+    {
+      "pid": 1148725,
+      "startTicks": "41595806"
+    },
+    {
+      "pid": 1148727,
+      "startTicks": 41595807
+    },
+    {
+      "pid": 1148735,
+      "startTicks": 41595809
+    },
+    {
+      "pid": 1148739,
+      "startTicks": 41595809
+    },
+    {
+      "pid": 1148821,
+      "startTicks": "41596213"
+    },
+    {
+      "pid": 1148822,
+      "startTicks": 41596213
+    },
+    {
+      "pid": 1148827,
+      "startTicks": 41596215
+    },
+    {
+      "pid": 1148831,
+      "startTicks": 41596216
+    },
+    {
+      "pid": 1148842,
+      "startTicks": "41596619"
+    },
+    {
+      "pid": 1148843,
+      "startTicks": 41596620
+    },
+    {
+      "pid": 1148848,
+      "startTicks": 41596622
+    },
+    {
+      "pid": 1148853,
+      "startTicks": 41596622
+    },
+    {
+      "pid": 1148861,
+      "startTicks": "41596655"
+    },
+    {
+      "pid": 1148862,
+      "startTicks": 41596655
+    },
+    {
+      "pid": 1148867,
+      "startTicks": 41596658
+    },
+    {
+      "pid": 1148871,
+      "startTicks": 41596658
+    },
+    {
+      "pid": 1148881,
+      "startTicks": "41596691"
+    },
+    {
+      "pid": 1148882,
+      "startTicks": 41596691
+    },
+    {
+      "pid": 1148887,
+      "startTicks": 41596694
+    },
+    {
+      "pid": 1148891,
+      "startTicks": 41596694
+    },
+    {
+      "pid": 1148904,
+      "startTicks": "41596938"
+    },
+    {
+      "pid": 1148905,
+      "startTicks": 41596938
+    },
+    {
+      "pid": 1148910,
+      "startTicks": 41596941
+    },
+    {
+      "pid": 1148914,
+      "startTicks": 41596941
+    },
+    {
+      "pid": 1148923,
+      "startTicks": "41596954"
+    },
+    {
+      "pid": 1148924,
+      "startTicks": 41596954
+    },
+    {
+      "pid": 1148929,
+      "startTicks": 41596957
+    },
+    {
+      "pid": 1148934,
+      "startTicks": 41596957
+    },
+    {
+      "pid": 1148942,
+      "startTicks": "41596971"
+    },
+    {
+      "pid": 1148943,
+      "startTicks": 41596972
+    },
+    {
+      "pid": 1148948,
+      "startTicks": 41596974
+    },
+    {
+      "pid": 1148952,
+      "startTicks": 41596974
+    },
+    {
+      "pid": 1148961,
+      "startTicks": "41596985"
+    },
+    {
+      "pid": 1148962,
+      "startTicks": 41596986
+    },
+    {
+      "pid": 1148967,
+      "startTicks": 41596989
+    },
+    {
+      "pid": 1148971,
+      "startTicks": 41596989
+    },
+    {
+      "pid": 1148980,
+      "startTicks": "41597232"
+    },
+    {
+      "pid": 1148981,
+      "startTicks": 41597233
+    },
+    {
+      "pid": 1148986,
+      "startTicks": 41597235
+    },
+    {
+      "pid": 1148990,
+      "startTicks": 41597235
+    },
+    {
+      "pid": 1149003,
+      "startTicks": "41597479"
+    },
+    {
+      "pid": 1149004,
+      "startTicks": 41597479
+    },
+    {
+      "pid": 1149009,
+      "startTicks": 41597482
+    },
+    {
+      "pid": 1149013,
+      "startTicks": 41597482
+    },
+    {
+      "pid": 1149023,
+      "startTicks": "41597535"
+    },
+    {
+      "pid": 1149024,
+      "startTicks": 41597535
+    },
+    {
+      "pid": 1149029,
+      "startTicks": 41597538
+    },
+    {
+      "pid": 1149033,
+      "startTicks": 41597538
+    },
+    {
+      "pid": 1149043,
+      "startTicks": "41597571"
+    },
+    {
+      "pid": 1149044,
+      "startTicks": 41597571
+    },
+    {
+      "pid": 1149049,
+      "startTicks": 41597573
+    },
+    {
+      "pid": 1149053,
+      "startTicks": 41597574
+    },
+    {
+      "pid": 1149062,
+      "startTicks": "41597607"
+    },
+    {
+      "pid": 1149063,
+      "startTicks": 41597608
+    },
+    {
+      "pid": 1149068,
+      "startTicks": 41597610
+    },
+    {
+      "pid": 1149073,
+      "startTicks": 41597610
+    },
+    {
+      "pid": 1149080,
+      "startTicks": "41597623"
+    },
+    {
+      "pid": 1149081,
+      "startTicks": 41597623
+    },
+    {
+      "pid": 1149086,
+      "startTicks": 41597626
+    },
+    {
+      "pid": 1149090,
+      "startTicks": 41597627
+    },
+    {
+      "pid": 1146497,
+      "startTicks": "41562459"
+    },
+    {
+      "pid": 1146498,
+      "startTicks": 41562460
+    },
+    {
+      "pid": 1146503,
+      "startTicks": 41562484
+    },
+    {
+      "pid": 1146508,
+      "startTicks": 41562484
+    }
+  ],
+  "unloadedUnits": [
+    "bv-buffered-normal-1148716",
+    "bv-buffered-writer-delay-1148716",
+    "bv-buffered-writer-error-1148716",
+    "bv-buffered-short-write-1148716",
+    "bv-buffered-record-saturation-1148716",
+    "bv-buffered-byte-saturation-1148716",
+    "bv-buffered-total-output-limit-1148716",
+    "bv-buffered-cancel-before-1148716",
+    "bv-buffered-cancel-capture-1148716",
+    "bv-buffered-cancel-drain-1148716",
+    "bv-buffered-drain-timeout-1148716",
+    "bv-buffered-writer-exit-1148716",
+    "bv-buffered-driver-exit-1148716",
+    "bv-buffered-scan-error-1148716",
+    "bv-buffered-race-writer-delay-1148716",
+    "bv-buffered-normal-1146493"
+  ],
+  "finalQualificationWallSeconds": 25.26121238298947,
+  "initialServiceRuntimeSeconds": 4.294,
+  "initialControllerEndStampRetained": false
+}

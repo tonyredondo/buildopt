@@ -1,0 +1,199 @@
+{
+  "status": "verified observation and registered flag reconstruction",
+  "requests": [
+    {
+      "attempt": "r1-000-g0-I",
+      "replication": 1,
+      "originalOrdinal": 6,
+      "arm": "I",
+      "nativeSeconds": 202.283427105,
+      "coverageSeconds": 202.28342710500002,
+      "maximumSampleGapSeconds": 1.188990882,
+      "samplingQualified": true,
+      "incompleteOwnershipSeconds": 0.11347139,
+      "externalCPUAttributionQualified": false,
+      "contendedFractionUpperBound": 0.3531372362695862,
+      "contendedFractionLowerBound": 0.3531372362695862,
+      "contention": "FLAGGED",
+      "averageExternalCoreEquivalentsUpperBound": 0.29148987742248855,
+      "averageHostBusyCoreEquivalents": 5.696045079870539,
+      "averageOwnedCoreEquivalentsLowerBound": 5.40455520244805,
+      "averagePressure": {
+        "cpu": 0.12784287709600098,
+        "io": 0.02881104127108416,
+        "memory": 0.0012981434260206195
+      }
+    },
+    {
+      "attempt": "r1-000-g0-N",
+      "replication": 1,
+      "originalOrdinal": 6,
+      "arm": "N",
+      "nativeSeconds": 206.975300761,
+      "coverageSeconds": 206.975300761,
+      "maximumSampleGapSeconds": 1.935522169,
+      "samplingQualified": true,
+      "incompleteOwnershipSeconds": 0.434053426,
+      "externalCPUAttributionQualified": false,
+      "contendedFractionUpperBound": 0.4032692184386839,
+      "contendedFractionLowerBound": 0.4032692184386839,
+      "contention": "FLAGGED",
+      "averageExternalCoreEquivalentsUpperBound": 0.8164141020510473,
+      "averageHostBusyCoreEquivalents": 6.120744749825917,
+      "averageOwnedCoreEquivalentsLowerBound": 5.3043306477748695,
+      "averagePressure": {
+        "cpu": 0.12311765586024179,
+        "io": 0.03678196677217168,
+        "memory": 0.001573667840861981
+      }
+    },
+    {
+      "attempt": "r1-001-g0-I",
+      "replication": 1,
+      "originalOrdinal": 7,
+      "arm": "I",
+      "nativeSeconds": 82.768565338,
+      "coverageSeconds": 82.768565338,
+      "maximumSampleGapSeconds": 1.011049564,
+      "samplingQualified": true,
+      "incompleteOwnershipSeconds": 0,
+      "externalCPUAttributionQualified": true,
+      "contendedFractionUpperBound": 0.26987002883019573,
+      "contendedFractionLowerBound": 0.26987002883019573,
+      "contention": "FLAGGED",
+      "averageExternalCoreEquivalentsUpperBound": 0.3379050133601852,
+      "averageHostBusyCoreEquivalents": 4.842071280892705,
+      "averageOwnedCoreEquivalentsLowerBound": 4.504166267532519,
+      "averagePressure": {
+        "cpu": 0.08350534418822839,
+        "io": 0.013206143607523112,
+        "memory": 0.0031583632397700163
+      }
+    },
+    {
+      "attempt": "r1-001-g0-N",
+      "replication": 1,
+      "originalOrdinal": 7,
+      "arm": "N",
+      "nativeSeconds": 124.144570198,
+      "coverageSeconds": 124.144570198,
+      "maximumSampleGapSeconds": 3.313544273,
+      "samplingQualified": false,
+      "incompleteOwnershipSeconds": 0,
+      "externalCPUAttributionQualified": false,
+      "contendedFractionUpperBound": 0.805175386765408,
+      "contendedFractionLowerBound": 0.805175386765408,
+      "contention": "FLAGGED",
+      "averageExternalCoreEquivalentsUpperBound": 13.203748208565512,
+      "averageHostBusyCoreEquivalents": 17.034627395059086,
+      "averageOwnedCoreEquivalentsLowerBound": 3.830879186493571,
+      "averagePressure": {
+        "cpu": 0.173095824694488,
+        "io": 0.10303470095403905,
+        "memory": 0.0020149941421339084
+      }
+    },
+    {
+      "attempt": "r2-000-g0-I",
+      "replication": 2,
+      "originalOrdinal": 6,
+      "arm": "I",
+      "nativeSeconds": 203.936088178,
+      "coverageSeconds": 203.936088178,
+      "maximumSampleGapSeconds": 1.037714213,
+      "samplingQualified": true,
+      "incompleteOwnershipSeconds": 0,
+      "externalCPUAttributionQualified": true,
+      "contendedFractionUpperBound": 0.34086528800790755,
+      "contendedFractionLowerBound": 0.34086528800790755,
+      "contention": "FLAGGED",
+      "averageExternalCoreEquivalentsUpperBound": 0.7753566508195888,
+      "averageHostBusyCoreEquivalents": 6.122827797316696,
+      "averageOwnedCoreEquivalentsLowerBound": 5.3474711464971065,
+      "averagePressure": {
+        "cpu": 0.1369950911719085,
+        "io": 0.009663652388955205,
+        "memory": 0.0004171842463690407
+      }
+    },
+    {
+      "attempt": "r2-000-g0-N",
+      "replication": 2,
+      "originalOrdinal": 6,
+      "arm": "N",
+      "nativeSeconds": 204.601443997,
+      "coverageSeconds": 204.601443997,
+      "maximumSampleGapSeconds": 1.07872501,
+      "samplingQualified": true,
+      "incompleteOwnershipSeconds": 0,
+      "externalCPUAttributionQualified": true,
+      "contendedFractionUpperBound": 0.3754472957293808,
+      "contendedFractionLowerBound": 0.3754472957293808,
+      "contention": "FLAGGED",
+      "averageExternalCoreEquivalentsUpperBound": 0.4604307850436435,
+      "averageHostBusyCoreEquivalents": 5.825724874786061,
+      "averageOwnedCoreEquivalentsLowerBound": 5.365294089742417,
+      "averagePressure": {
+        "cpu": 0.12350743794101528,
+        "io": 0.03362812966504322,
+        "memory": 0.013888486986288757
+      }
+    },
+    {
+      "attempt": "r2-001-g0-I",
+      "replication": 2,
+      "originalOrdinal": 7,
+      "arm": "I",
+      "nativeSeconds": 97.163911188,
+      "coverageSeconds": 97.163911188,
+      "maximumSampleGapSeconds": 1.093384197,
+      "samplingQualified": true,
+      "incompleteOwnershipSeconds": 0,
+      "externalCPUAttributionQualified": true,
+      "contendedFractionUpperBound": 0.37869108322333866,
+      "contendedFractionLowerBound": 0.37869108322333866,
+      "contention": "FLAGGED",
+      "averageExternalCoreEquivalentsUpperBound": 0.32205489047558244,
+      "averageHostBusyCoreEquivalents": 4.455991683487744,
+      "averageOwnedCoreEquivalentsLowerBound": 4.133936793012161,
+      "averagePressure": {
+        "cpu": 0.06530716676378653,
+        "io": 0.07636999069257124,
+        "memory": 0.007894461567230652
+      }
+    },
+    {
+      "attempt": "r2-001-g0-N",
+      "replication": 2,
+      "originalOrdinal": 7,
+      "arm": "N",
+      "nativeSeconds": 82.535100748,
+      "coverageSeconds": 82.535100748,
+      "maximumSampleGapSeconds": 1.021159835,
+      "samplingQualified": true,
+      "incompleteOwnershipSeconds": 0,
+      "externalCPUAttributionQualified": true,
+      "contendedFractionUpperBound": 0.21797444177029068,
+      "contendedFractionLowerBound": 0.21797444177029068,
+      "contention": "FLAGGED",
+      "averageExternalCoreEquivalentsUpperBound": 0.2700322959740478,
+      "averageHostBusyCoreEquivalents": 4.761739455057768,
+      "averageOwnedCoreEquivalentsLowerBound": 4.49170715908372,
+      "averagePressure": {
+        "cpu": 0.0699626025698693,
+        "io": 0.022586103181908963,
+        "memory": 0.001013926461338898
+      }
+    }
+  ],
+  "samples": 5108,
+  "analyzerSHA256": "8e294e455119252692dc14f92c979cb6c4f52147fe35b601866c705162809153",
+  "limits": [
+    "Shared CPU affinity is not host isolation",
+    "Counter reads are sequential and quantized; CPU estimates have sampling error",
+    "Host PSI includes the experiment itself and does not prove external interference",
+    "External workload is inferred, not attributed to Rust, .NET or a named process",
+    "Owned service lifecycle gaps bound external CPU; they remain unqualified for precise attribution",
+    "Every interval and request retained; contention flags do not remove measurements"
+  ]
+}

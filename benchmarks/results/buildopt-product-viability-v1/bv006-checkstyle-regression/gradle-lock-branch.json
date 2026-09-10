@@ -1,0 +1,17 @@
+{
+  "status": "verified",
+  "gradleJar": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-prototype/native-state/gradle/wrapper/dists/gradle-9.7.1-bin/1w1c7tv4s851m17nbqdsro2tv/gradle-9.7.1/lib/gradle-core-9.7.1.jar",
+  "gradleJarSHA256": "470ae06ceef38cf2c69f1a20838bc80ece735bc92c2615f5bad77a50ab379d25",
+  "taskExecutionClassSHA256": "4bf6e42e90ac56a1ab972f2be7bff6b1a73ebbd0fd1099bba653d45e4a96eecd",
+  "branches": [
+    {
+      "bytecodeOffset": 80,
+      "hasMoreWorkTrue": "RELEASE_AND_REACQUIRE_PROJECT_LOCKS",
+      "hasMoreWorkFalse": "RELEASE_PROJECT_LOCKS"
+    }
+  ],
+  "actualServiceProof": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-regression/receipts/lock-proof.json",
+  "hasMoreWorkConstruction": "TaskActionListener or TaskExecutionListener registered with the scoped ListenerManager, or another task action remains",
+  "captureHookProof": "Exact taskGraph.beforeTask/afterTask registration does not set those scoped ListenerManager flags in pinned Gradle ProjectBuilder; this is not a dump of all owner plugin listeners",
+  "listenerProof": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-regression/receipts/listener-proof.json"
+}

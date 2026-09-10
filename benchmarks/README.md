@@ -1,5 +1,14 @@
 # Benchmarks
 
+> **Retained historical evidence.** Existing results keep their original
+> scope, costs, failures and terminal decisions. Read the
+> [research status register](../docs/research-status.md) before interpreting
+> an old “next” or “authorize” statement as current work. New research uses
+> [Product Viability v1](../docs/plans/buildopt-product-viability-v1.md) and
+> its separate replay contract. Its [evidence index](./results/buildopt-product-viability-v1/README.md)
+> records native admission and Checkstyle correctness; chronological candidate
+> value remains unmeasured.
+
 Reproducible workloads for measuring causal savings, overhead, queues, additional compute, and behavior under failure.
 
 The closed [source-bound configuration-input evidence index](./results/source-bound-configuration-input-corrections-v1/README.md)
@@ -33,7 +42,7 @@ The checked [critical-path successor selection](./results/critical-path-successo
 
 The fresh [change-scoped critical-path discovery](./results/change-scoped-critical-path-discovery-v1.json) reconstructs all five rows from source-bound structural evidence and retained native traces. Only Micronaut has complete task-DAG critical-path attribution, and it is a conclusive no-action row; the 1/5 conclusive, 0/5 actionable result stops before builds and timing.
 
-The latest closed route is documented by the
+An earlier closed route is documented by the
 [remote cache locality v2 evidence](./results/remote-cache-locality-value-v2/README.md).
 `RCL-001` freezes identical graph/key/object/output opportunity, one unshaped
 remote path and complete fill/operation cost accounting. `RCL-002` passes its
@@ -61,12 +70,14 @@ belongs in [`specs/benchmark-beta-v1.md`](../specs/benchmark-beta-v1.md).
 
 The JSON-compatible YAML is validated by `./dev/check-beta-benchmark`. The
 historical load/fault harnesses remain available as engineering evidence, but
-the active POC does not run or require long soak qualification. Current effort
-goes to paired, bounded build-time experiments against an optimized native
-Gradle control. `./dev/check-beta-gradle-fixtures` owns the bounded
+the current viability program does not require long soak qualification. Its
+replay contract defines the new native, fixed and adaptive comparisons.
+`./dev/check-beta-gradle-fixtures` owns the bounded
 small/medium/large Gradle build matrix and makes no performance claim.
 
-## Current generic opportunity selection
+<a id="current-generic-opportunity-selection"></a>
+
+## Historical generic opportunity selection
 
 [`generic-opportunity-discovery-v1.json`](./results/generic-opportunity-discovery-v1.json)
 is the deterministic `SWL-CHANGE-000` decision over the closed fresh route,
@@ -877,11 +888,14 @@ the next five-public-repository transfer owns the performance decision.
 
 ## Build Optimization scorecard
 
-For the decision-ready product summary, see the [current POC one-pager](../docs/findings/buildopt-poc-handoff.md).
+For current investment decisions, see the [research status register](../docs/research-status.md).
+The [POC one-pager](../docs/findings/buildopt-poc-handoff.md) is historical.
 The [detailed performance findings](../docs/findings/build-optimization-performance.md)
 retain mechanism-specific and historical experiments for engineering review.
 
-### Latest generic blocker closure
+<a id="latest-generic-blocker-closure"></a>
+
+### Historical generic blocker closure
 
 The [workflow-input ownership evidence](./results/poc-workflow-input-ownership-v1/README.md)
 replays the OpenTelemetry JMX change that previously retained native on mixed
@@ -894,7 +908,9 @@ Calibration is skipped, so this is structural correctness evidence rather than
 a new performance row. The Kafka-only selected-replay value claim remains
 unchanged.
 
-### Current automatic one-command terminal result
+<a id="current-automatic-one-command-terminal-result"></a>
+
+### Historical automatic one-command terminal result
 
 The [published terminal evidence](./results/poc-magic-end-to-end-value-v2/README.md)
 tests the customer-shaped `buildopt optimize` path with public `v0.6.1`,

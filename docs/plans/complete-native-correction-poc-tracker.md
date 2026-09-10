@@ -1,5 +1,11 @@
 # Complete Native Correction POC — Execution Tracker
 
+> **Research disposition: HISTORICAL; closed research (2026-09-08).**
+> Original outcomes and evidence are preserved below. Old phase instructions
+> and unchecked boxes do not reopen this route. Use the
+> [research status register](../research-status.md) and
+> [current tracker](./buildopt-product-viability-v1-tracker.md) for new work.
+
 **Overall:** `STOP_NATIVE_ADMISSION` — six fourth-window captures complete; native materiality/output admission rejected<br>
 **Plan:** [Complete Native Correction POC](./complete-native-correction-poc.md)<br>
 **Current task:** CNC-004 verified as rejected admission; CNC-008/CNC-014 record the bounded terminal synthesis (`E-556`)<br>

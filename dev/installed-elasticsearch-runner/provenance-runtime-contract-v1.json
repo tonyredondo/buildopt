@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "buildopt.eic/reused-output-provenance-contract/v1",
+  "acceptedProposalSha256": "449e56c3924704129ae90d498004392fdfeb2ce51e02f11e6da578d15422a14d",
+  "sourceRevision": "16bd5bc5355ac7c6ad736f8a6f93281b24a05ab7",
+  "dateContractSha256": "156bc82fc75d2283b13548813d5e67741d9f6f54cbc15ec7404d717def36b46f",
+  "metadataContractSha256": "029aa61c19a89bd147129787770129fd7195176dc4102336379450ec06bd8a77",
+  "dateOrigin": "Earlier verified row in the same frozen campaign and revision; exact raw file, path, type and mode; actual EXECUTED owner; rehashed original file and source jars; original invocation window and unchanged current source-manifest propagation. No added date paths, fields or archive normalization.",
+  "checkstylePath": "server/build/reports/checkstyle/main.xml",
+  "checkstyleOwner": ":server:checkstyleMain",
+  "checkstyleClass": "org.gradle.api.plugins.quality.Checkstyle_Decorated",
+  "checkstyleProjection": "Replace only the verified producer workspace prefix in each direct file name attribute, preserving every other original XML byte. Reuse requires exact earlier executed report or the one pinned seed.",
+  "seedCaptureSha256": "17120c2cc69e1387f3676ef547b5a376b61ec6bc3a8cbe1ec9eb1901e560f03e",
+  "seedReportSha256": "5f28cf2fbd11267698ed81dd994fe463c51a8b3102bb51b6b8911b0506366ef4",
+  "historicalRejectionsPreserved": true,
+  "valueAdmitted": false
+}

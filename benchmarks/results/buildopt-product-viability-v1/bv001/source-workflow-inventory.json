@@ -1,0 +1,271 @@
+{
+  "program": "BUILDOPT-VIABILITY-V1",
+  "anchor": "53a80bec683ad0b065ed9ebe6a57f984e6a91ed1",
+  "workflow": ":server:precommit",
+  "evidenceScope": "declared subproject precommit workflow; full root CI precommit and general CI savings are not claimed",
+  "ciEvidence": ".buildkite/pipelines/pull-request/precommit.yml invokes root precommit",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "present": true,
+      "sha256": "838a0ae1611447c76a39855bced73e359183098a9952a1bb08f105d7ae67602f"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "present": true,
+      "sha256": "488f4b873a6e394a3cbdcb059576c81639500665b35c487418b40d04ea215e51"
+    },
+    {
+      "path": "TESTING.asciidoc",
+      "present": true,
+      "sha256": "ca79d72825ca9fcd0a5c2513d0ea4919f45747ac671602a23c6d1b6f234b4e26"
+    },
+    {
+      "path": "BUILDING.md",
+      "present": true,
+      "sha256": "fe0d70b063eba2ffe026cc6f319d6496b34c8c5364effd7b9342c396df294bd9"
+    },
+    {
+      "path": ".buildkite/pipelines/pull-request/precommit.yml",
+      "present": true,
+      "sha256": "ab15fcc1970bea7c0588c5f0ffbb7efbb91c4bbb64fa65d292d541ea6dfd74e3"
+    },
+    {
+      "path": "gradle/wrapper/gradle-wrapper.properties",
+      "present": true,
+      "sha256": "d0bebe8133babb74ab29a31ee6616c56ef8985fc801e1fd16c61b5ed2189e907"
+    },
+    {
+      "path": "gradle/gradle-daemon-jvm.properties",
+      "present": true,
+      "sha256": "ad15ca563469effc150939ed2a21c93f4de33005bcc3102350249eb5c6042674"
+    },
+    {
+      "path": "gradle.properties",
+      "present": true,
+      "sha256": "52dd8957a6a0fb75fa509328464bb0c9fa8d43fe9d760a744144a7e99f271af8"
+    },
+    {
+      "path": "gradle/build.versions.toml",
+      "present": true,
+      "sha256": "c28e155dc456d8a1a862ff2965f3bb7ec9d00abf48cd1d8a393b7eedef4b4867"
+    },
+    {
+      "path": "build-tools-internal/src/main/groovy/elasticsearch.build-scan.gradle",
+      "present": true,
+      "sha256": "5fa5f21f1a71ae323debaeef60cc68bdd7c79b12d0783a941f6f62f87cfd1daa"
+    },
+    {
+      "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/ForbiddenPatternsTask.java",
+      "present": true,
+      "sha256": "61fe2eaa06ff463c2a49cea656b147889060855acfa094288ebb8b31567e11b6"
+    },
+    {
+      "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/ForbiddenPatternsPrecommitPlugin.java",
+      "present": true,
+      "sha256": "07608729243f1ef44e79463e86a6b6917a2bfec381218169445c1f6b27ee02cb"
+    },
+    {
+      "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/InternalPrecommitTasks.java",
+      "present": true,
+      "sha256": "673c85543b3c248b92b053c9c9564ab9c12fd09570d3a71c7bf80eea5800e4ae"
+    }
+  ],
+  "prefixTransitions": [
+    {
+      "ordinal": 1,
+      "revision": "61470113b4cc22df30496e0e5db5fa876017650d",
+      "serverChanges": [],
+      "buildLogicChanges": []
+    },
+    {
+      "ordinal": 2,
+      "revision": "8de19265331ea29afc1ee3a245353b071c6f3f2b",
+      "serverChanges": [],
+      "buildLogicChanges": []
+    },
+    {
+      "ordinal": 3,
+      "revision": "620db26a7418e9e397a14aadec6e6c670a3175c4",
+      "serverChanges": [],
+      "buildLogicChanges": []
+    },
+    {
+      "ordinal": 4,
+      "revision": "7bbd92d9d98ac368bbcdbbcc089826b00422b330",
+      "serverChanges": [],
+      "buildLogicChanges": []
+    },
+    {
+      "ordinal": 5,
+      "revision": "f35bad5aaed07d72af4486f7858c5e0e61a2b678",
+      "serverChanges": [],
+      "buildLogicChanges": []
+    },
+    {
+      "ordinal": 6,
+      "revision": "b653442570bc16718c8b75b6bd318dd98e5599b8",
+      "serverChanges": [],
+      "buildLogicChanges": []
+    },
+    {
+      "ordinal": 7,
+      "revision": "3a00a9167b54dc298e015cf92ef692d6ddacab77",
+      "serverChanges": [
+        {
+          "status": "M",
+          "path": "server/src/main/java/org/elasticsearch/index/codec/tsdb/AbstractTSDBDocValuesProducer.java"
+        },
+        {
+          "status": "M",
+          "path": "server/src/main/java/org/elasticsearch/index/mapper/BlockLoader.java"
+        },
+        {
+          "status": "M",
+          "path": "server/src/main/java/org/elasticsearch/index/mapper/DateFieldMapper.java"
+        },
+        {
+          "status": "M",
+          "path": "server/src/main/java/org/elasticsearch/index/mapper/NumberFieldMapper.java"
+        },
+        {
+          "status": "D",
+          "path": "server/src/main/java/org/elasticsearch/lucene/queries/SortedNumericDocValuesRangeQuery.java"
+        },
+        {
+          "status": "M",
+          "path": "server/src/test/java/org/elasticsearch/index/codec/tsdb/AbstractTSDBDocValuesFormatTests.java"
+        },
+        {
+          "status": "M",
+          "path": "server/src/test/java/org/elasticsearch/index/mapper/DateFieldTypeTests.java"
+        },
+        {
+          "status": "M",
+          "path": "server/src/test/java/org/elasticsearch/index/mapper/NumberFieldTypeTests.java"
+        },
+        {
+          "status": "M",
+          "path": "server/src/test/java/org/elasticsearch/index/mapper/RangeFieldQueryStringQueryBuilderTests.java"
+        },
+        {
+          "status": "M",
+          "path": "server/src/test/java/org/elasticsearch/index/query/QueryStringQueryBuilderTests.java"
+        },
+        {
+          "status": "M",
+          "path": "server/src/test/java/org/elasticsearch/search/DocValuesRangeIteratorFalsePositiveReproductionTests.java"
+        }
+      ],
+      "buildLogicChanges": []
+    },
+    {
+      "ordinal": 8,
+      "revision": "a48778e0c3fcd8c0e1eef8eea0b61b5656a20d67",
+      "serverChanges": [],
+      "buildLogicChanges": []
+    },
+    {
+      "ordinal": 9,
+      "revision": "3b0e446a54e5f33bfa317e9136b90cfd8d8aef49",
+      "serverChanges": [],
+      "buildLogicChanges": []
+    },
+    {
+      "ordinal": 10,
+      "revision": "10176f3a95ef71c45b921c618ae56941c41b7a7f",
+      "serverChanges": [],
+      "buildLogicChanges": []
+    },
+    {
+      "ordinal": 11,
+      "revision": "368a07ceed50a08869951242bdb6243f1a50fd00",
+      "serverChanges": [],
+      "buildLogicChanges": []
+    },
+    {
+      "ordinal": 12,
+      "revision": "3acb36664e575b46b7edec829f0d8fbf245ae9d4",
+      "serverChanges": [],
+      "buildLogicChanges": []
+    },
+    {
+      "ordinal": 13,
+      "revision": "9aec7d25f20e0dc686f02d82c51eecff1c1154c6",
+      "serverChanges": [],
+      "buildLogicChanges": []
+    },
+    {
+      "ordinal": 14,
+      "revision": "48a69d2269071c18d5bfb196d6c3d9c1671c6afb",
+      "serverChanges": [],
+      "buildLogicChanges": []
+    },
+    {
+      "ordinal": 15,
+      "revision": "d3c85a62f63ab14ab98432f7519798a5acc298ac",
+      "serverChanges": [],
+      "buildLogicChanges": []
+    },
+    {
+      "ordinal": 16,
+      "revision": "54f83a8180be3a1b6e339e0b2b81ee4c79480ce3",
+      "serverChanges": [],
+      "buildLogicChanges": []
+    },
+    {
+      "ordinal": 17,
+      "revision": "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe",
+      "serverChanges": [],
+      "buildLogicChanges": []
+    },
+    {
+      "ordinal": 18,
+      "revision": "d47f43f5ff06883d3f0a04f3d40af627ecf5142e",
+      "serverChanges": [],
+      "buildLogicChanges": []
+    },
+    {
+      "ordinal": 19,
+      "revision": "72aa4d4120d09157106325096f0e7b2cc1852f59",
+      "serverChanges": [
+        {
+          "status": "M",
+          "path": "server/src/main/java/org/elasticsearch/rest/action/admin/indices/CreateIndexCapabilities.java"
+        }
+      ],
+      "buildLogicChanges": []
+    },
+    {
+      "ordinal": 20,
+      "revision": "22d6425e9a44ec9e1aedc2785f4478b8019c851a",
+      "serverChanges": [
+        {
+          "status": "M",
+          "path": "server/src/internalClusterTest/java/org/elasticsearch/index/shard/IndexShardIT.java"
+        },
+        {
+          "status": "M",
+          "path": "server/src/main/java/org/elasticsearch/cluster/EstimatedHeapUsageCollector.java"
+        },
+        {
+          "status": "A",
+          "path": "server/src/main/java/org/elasticsearch/cluster/EstimatedHeapUsageStats.java"
+        },
+        {
+          "status": "M",
+          "path": "server/src/main/java/org/elasticsearch/cluster/InternalClusterInfoService.java"
+        },
+        {
+          "status": "M",
+          "path": "server/src/test/java/org/elasticsearch/cluster/InternalClusterInfoServiceRefreshTests.java"
+        },
+        {
+          "status": "M",
+          "path": "server/src/test/java/org/elasticsearch/cluster/InternalClusterInfoServiceSchedulingTests.java"
+        }
+      ],
+      "buildLogicChanges": []
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "schema": "buildopt.regression-artifacts/v1",
+  "files": [
+    {
+      "path": "ListenerRetentionProof.java",
+      "sha256": "e8372f01c8901ac11a8c526abf2fa2b206e8426f7633880d08ac1763865d0648",
+      "bytes": 1769
+    },
+    {
+      "path": "LockRetentionProof.java",
+      "sha256": "a1c6f7ebe95e42df0f758d412281135c5eabd929a48997c7aebb6bd7736bbd8e",
+      "bytes": 6669
+    },
+    {
+      "path": "README.md",
+      "sha256": "d7a01a301ee67a91472419993f6447eab97f199eddb7df0ed6b621c38828e7ce",
+      "bytes": 12068
+    },
+    {
+      "path": "allocation.json",
+      "sha256": "fbe7930bc45c189b840eb764ccf7baf245cdab02f53191a74727af230a58f264",
+      "bytes": 3353
+    },
+    {
+      "path": "closeout-state.json",
+      "sha256": "4fba4b34edcca2a9e74d2da80e983224241817a713690c8eeaab44d1c0897ce2",
+      "bytes": 5725
+    },
+    {
+      "path": "coverage-and-idle.json",
+      "sha256": "2b08521cc758a7f121e92e5f7f3352a5d6b2f0d20770c61d95817a4e8718682d",
+      "bytes": 7427
+    },
+    {
+      "path": "flight-export-compression.json",
+      "sha256": "d6cc8ba9897fa27f9f2edaf05478dc7a3139ae2bda5ae7b1a69e5329c9e5c92d",
+      "bytes": 776
+    },
+    {
+      "path": "gradle-lock-branch.json",
+      "sha256": "41d7e080c474f0a21ac86a5c5c8b70bdad36c9cb2c50a805cc3696f1b43c969d",
+      "bytes": 1344
+    },
+    {
+      "path": "listener-proof-receipt.json",
+      "sha256": "24704375d90934066a431ed1f24f911d521cec85096db86c6e70c50bc633ebe7",
+      "bytes": 59
+    },
+    {
+      "path": "listener-proof.txt",
+      "sha256": "10984200f98460b1ff5ad5639eb7f18cc0cafcc5a53223e10d6853774b8a2a7e",
+      "bytes": 269
+    },
+    {
+      "path": "lock-proof-receipt.json",
+      "sha256": "2826cd2ecdf8f8672de1cea55c331c710ccd682a345b24ac6c36a8a3b803036d",
+      "bytes": 60
+    },
+    {
+      "path": "lock-proof.txt",
+      "sha256": "88ebee3d54b8659eb91b4ae1bcbcb40171ab84f6565caa2d07f73ea978c2ad3e",
+      "bytes": 2795
+    },
+    {
+      "path": "native-validation.json",
+      "sha256": "5fd62d5420631d1a0e019c2e6accd3c7693a40a453bd95158b1e865bfb47d504",
+      "bytes": 15082
+    },
+    {
+      "path": "next-step.md",
+      "sha256": "8f26a94d7996c2698f33eb0a0d8c0e1d29b0891648c45c9758c4287f83e6f236",
+      "bytes": 2425
+    },
+    {
+      "path": "original-evidence.json",
+      "sha256": "dc391ee0eeb9b15a764f6a93d64edee0f87d5d54e85d061553d34bc088412f6d",
+      "bytes": 45140
+    },
+    {
+      "path": "original-tail-decomposition.json",
+      "sha256": "25c16c5e4d9696559cff8c6c4cf6285d7e15b4a7525edda2bdc5f0a78798c3c6",
+      "bytes": 1809
+    },
+    {
+      "path": "original-window-economics.json",
+      "sha256": "0fd6247d715eaf1e18546dca3e95614b19dc0503aca0aa47055218f97c7589d0",
+      "bytes": 874
+    },
+    {
+      "path": "phase-evidence.json",
+      "sha256": "8e3f2e8bd4fc99526205353ca14f46b185cc8c3fa15aa7ba28a3647e595b5ec8",
+      "bytes": 72059
+    },
+    {
+      "path": "summary.json",
+      "sha256": "b428e42ca3a5cf087222d0a20da38a2437dda875c472c9037a5cace7fb141fdf",
+      "bytes": 1520
+    },
+    {
+      "path": "validation.json",
+      "sha256": "4ff19162d3787900e473cefa123b25400d1056f22582ecc6fa2fcc7158c1e2b6",
+      "bytes": 1864
+    }
+  ]
+}

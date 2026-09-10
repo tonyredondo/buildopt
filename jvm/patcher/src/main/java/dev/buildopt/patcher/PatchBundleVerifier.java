@@ -160,7 +160,10 @@ public final class PatchBundleVerifier {
         List<Blob> blobDeclarations = parseBlobDeclarations(
                 rawBlobs,
                 canonicalRoot);
-        parseOperations(rawOperations, blobDeclarations);
+        List<Operation> declaredOperations = parseOperations(rawOperations, blobDeclarations);
+        if (ReviewedNativePatchJavaRecipe.ELASTICSEARCH_FORBIDDEN_PATTERNS_RECIPE_ID.equals(recipe.id())) {
+            ReviewedNativePatchJavaRecipe.validateElasticsearchOperations(declaredOperations);
+        }
 
         String calculatedBundleDigest = calculateBundleDigest(root);
         if (!declaredBundleDigest.equals(calculatedBundleDigest)) {

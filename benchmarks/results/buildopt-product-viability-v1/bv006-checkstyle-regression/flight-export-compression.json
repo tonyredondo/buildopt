@@ -1,0 +1,12 @@
+{
+  "status": "lossless compression verified",
+  "originalBytes": 568933606,
+  "uncompressedSHA256": "b44a9e882adc6fcba32e6c77256baab9dbf1c3fa6257cebeb25868e186c1be0c",
+  "compressedBytes": 12529265,
+  "compressedSHA256": "30d71fd3fed93b5f99417d8844bf06dc216064c44bf0f35ac099def30b4abf3c",
+  "compressedPath": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-regression/analysis/flight-events.jsonl.gz",
+  "elapsedSeconds": 1.8441605129628442,
+  "analysisExportExceeded512MiBBound": true,
+  "nativeObservationBoundPassed": true,
+  "limitation": "Post-run JSON export exceeded the external analysis artifact bound before compression; this resource failure is retained and no resource qualification is claimed."
+}

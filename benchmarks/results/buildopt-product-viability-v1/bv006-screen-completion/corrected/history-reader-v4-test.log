@@ -1,0 +1,1 @@
+PASS: original failure reproduced; all 11390 real samples retain failed worker isolation; native/scope/missing-mask negatives reject; other worker violations stay unqualified; zero native/JVM starts

@@ -565,6 +565,18 @@ func serveWCNCPProjection(storage *Storage, authorization CentralTokenAuthorizat
 		}
 	}
 	if state == "" {
+		// Batch ingestion persists typed observations without publishing a
+		// proposal/decision head. Show those verified observations immediately.
+		observed, err := storage.hasWCNCPObservation(request.Context(), route.repositoryScopeSHA256)
+		if err != nil {
+			writeWCNCPStorageError(response, err)
+			return
+		}
+		if observed {
+			state = "OBSERVING"
+		}
+	}
+	if state == "" {
 		writeCacheStatus(response, http.StatusNotFound)
 		return
 	}

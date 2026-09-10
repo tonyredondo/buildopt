@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.elasticsearch.gradle.internal.precommit.ForbiddenPatternsTaskTests" tests="20" skipped="0" failures="0" errors="0" timestamp="2026-09-08T09:17:38.396Z" hostname="omarchy" time="1.179">
+  <properties/>
+  <testcase name="testToKebabCaseUpperCamelCase" classname="org.elasticsearch.gradle.internal.precommit.ForbiddenPatternsTaskTests" time="0.014"/>
+  <testcase name="testToKebabCaseEmptyString" classname="org.elasticsearch.gradle.internal.precommit.ForbiddenPatternsTaskTests" time="0.0"/>
+  <testcase name="testToKebabCaseSimpleCamelCase" classname="org.elasticsearch.gradle.internal.precommit.ForbiddenPatternsTaskTests" time="0.0"/>
+  <testcase name="testCheckInvalidPatternsWhenNoSourceFilesExist" classname="org.elasticsearch.gradle.internal.precommit.ForbiddenPatternsTaskTests" time="1.023"/>
+  <testcase name="testToKebabCaseAlreadyKebab" classname="org.elasticsearch.gradle.internal.precommit.ForbiddenPatternsTaskTests" time="0.001"/>
+  <testcase name="testCheckInvalidPatternsWithCustomRule" classname="org.elasticsearch.gradle.internal.precommit.ForbiddenPatternsTaskTests" time="0.03"/>
+  <testcase name="testCheckInvalidPatternsWhenExcludingFiles" classname="org.elasticsearch.gradle.internal.precommit.ForbiddenPatternsTaskTests" time="0.02"/>
+  <testcase name="testExceptionMessageContainsPerViolationDetail" classname="org.elasticsearch.gradle.internal.precommit.ForbiddenPatternsTaskTests" time="0.019"/>
+  <testcase name="testToKebabCaseOnlySpecialChars" classname="org.elasticsearch.gradle.internal.precommit.ForbiddenPatternsTaskTests" time="0.0"/>
+  <testcase name="testCheckInvalidPatternsWhenSourceFilesExistNoViolation" classname="org.elasticsearch.gradle.internal.precommit.ForbiddenPatternsTaskTests" time="0.017"/>
+  <testcase name="testToKebabCaseSingleWord" classname="org.elasticsearch.gradle.internal.precommit.ForbiddenPatternsTaskTests" time="0.0"/>
+  <testcase name="testMultipleRuleViolationsInSameFile" classname="org.elasticsearch.gradle.internal.precommit.ForbiddenPatternsTaskTests" time="0.016"/>
+  <testcase name="testToKebabCaseNumericContent" classname="org.elasticsearch.gradle.internal.precommit.ForbiddenPatternsTaskTests" time="0.001"/>
+  <testcase name="testToKebabCaseAllUpperCase" classname="org.elasticsearch.gradle.internal.precommit.ForbiddenPatternsTaskTests" time="0.0"/>
+  <testcase name="testToKebabCaseLeadingAndTrailingSpecialChars" classname="org.elasticsearch.gradle.internal.precommit.ForbiddenPatternsTaskTests" time="0.0"/>
+  <testcase name="testToKebabCaseWithUnderscores" classname="org.elasticsearch.gradle.internal.precommit.ForbiddenPatternsTaskTests" time="0.0"/>
+  <testcase name="testToKebabCaseConsecutiveSpecialChars" classname="org.elasticsearch.gradle.internal.precommit.ForbiddenPatternsTaskTests" time="0.0"/>
+  <testcase name="testCheckInvalidPatternsWhenSourceFilesExistHavingTab" classname="org.elasticsearch.gradle.internal.precommit.ForbiddenPatternsTaskTests" time="0.015"/>
+  <testcase name="testToKebabCaseWithSpaces" classname="org.elasticsearch.gradle.internal.precommit.ForbiddenPatternsTaskTests" time="0.0"/>
+  <testcase name="testMultipleViolationsCollectedInSingleException" classname="org.elasticsearch.gradle.internal.precommit.ForbiddenPatternsTaskTests" time="0.016"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[SLF4J(W): Class path contains multiple SLF4J providers.
+SLF4J(W): Found provider [org.gradle.internal.logging.slf4j.StaticLoggerProvider@3676ac27]
+SLF4J(W): Found provider [org.slf4j.simple.SimpleServiceProvider@62f87c44]
+SLF4J(W): See https://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J(I): Actual provider is of type [org.gradle.internal.logging.slf4j.StaticLoggerProvider@3676ac27]
+]]></system-err>
+</testsuite>

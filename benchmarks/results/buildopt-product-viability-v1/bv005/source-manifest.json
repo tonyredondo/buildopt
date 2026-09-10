@@ -1,0 +1,236 @@
+{
+  "schema": "buildopt.viability/replay-source/v1",
+  "repository": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+  "branch": "main",
+  "base": "b76ded08c952ebb386576fafce4ae2d8fdcc09f1",
+  "files": [
+    {
+      "path": "dev/history-replay/README.md",
+      "sha256": "b674d144037d18462616f84de5cf4c25e6cdad1ee3722f6810fcd150301aeb2d",
+      "bytes": 5982,
+      "mode": "0o644"
+    },
+    {
+      "path": "dev/history-replay/adversarial_integration_test.go",
+      "sha256": "a7d5f6b82dc7be74e2c9fe2c01f9c0094bd5f5f5fc0cda45605e470829c19138",
+      "bytes": 10181,
+      "mode": "0o644"
+    },
+    {
+      "path": "dev/history-replay/capture.go",
+      "sha256": "4931828bb0c9f858c1ef8c0e73680f5573a7b7f6228d5bad66aa9aa58baec5ea",
+      "bytes": 20263,
+      "mode": "0o644"
+    },
+    {
+      "path": "dev/history-replay/capture.init.gradle",
+      "sha256": "42cc643d1b8ec1f5fee2d5952aad8322bd2cb90190da1696dc952eb472d7d2bf",
+      "bytes": 2476,
+      "mode": "0o644"
+    },
+    {
+      "path": "dev/history-replay/checker.go",
+      "sha256": "37e3dc54066d8c5a2bdf4cb8f3640fb0a2d916430fda4c9b7bdc9869b53bfc54",
+      "bytes": 20591,
+      "mode": "0o644"
+    },
+    {
+      "path": "dev/history-replay/contract.go",
+      "sha256": "90f73e3f4bd99f710d3e6b4c3c50d2ca840417275bc8e1590b6c676c7ecf7a93",
+      "bytes": 16555,
+      "mode": "0o644"
+    },
+    {
+      "path": "dev/history-replay/contract_test.go",
+      "sha256": "9f668de5df5491c7f990f3960d32add4e093fb2323a5cf51b1cfeb3717e416c8",
+      "bytes": 8017,
+      "mode": "0o644"
+    },
+    {
+      "path": "dev/history-replay/driver_death_integration_test.go",
+      "sha256": "e9eb9c89236ec6882c3827d7ef15246c97034bfc867a32dc26d8d20e9e2c59b2",
+      "bytes": 3880,
+      "mode": "0o644"
+    },
+    {
+      "path": "dev/history-replay/evidence_check.go",
+      "sha256": "f6aeb3fc38514ffadaad6958d646afcd79d5b9adcd0ce207ffdc7bc5b016b17c",
+      "bytes": 5758,
+      "mode": "0o644"
+    },
+    {
+      "path": "dev/history-replay/export.go",
+      "sha256": "285f227f602e121bd829af1aca79bd88af9a7d95c383f20b1a428a5b2609f133",
+      "bytes": 5349,
+      "mode": "0o644"
+    },
+    {
+      "path": "dev/history-replay/external_costs.go",
+      "sha256": "59d00cd55ef10048ceb13335d95ddafef3a54e58fa0ca532491b210cf7a27f4c",
+      "bytes": 2808,
+      "mode": "0o644"
+    },
+    {
+      "path": "dev/history-replay/external_costs_integration_test.go",
+      "sha256": "1901fca78732fa3ed5a67179e54fc3c65f7a22c602abfe889ab172f812804dc8",
+      "bytes": 1570,
+      "mode": "0o644"
+    },
+    {
+      "path": "dev/history-replay/files.go",
+      "sha256": "8cce1aef145f88c11bdc149e16f0c5d06337a760f7d47f5aa758b5b3552ac165",
+      "bytes": 6053,
+      "mode": "0o644"
+    },
+    {
+      "path": "dev/history-replay/gradle_integration_test.go",
+      "sha256": "9103def1a888bf7b2bc21f0b32f25107277b08b0d4a0bc69dc96691a10ca70b5",
+      "bytes": 9090,
+      "mode": "0o644"
+    },
+    {
+      "path": "dev/history-replay/gradle_logs.go",
+      "sha256": "1c5c1de096d5e0141779b4507cb5f28a885d38d82c3d5bcbb8c99fb95e23e9d8",
+      "bytes": 5837,
+      "mode": "0o644"
+    },
+    {
+      "path": "dev/history-replay/history.go",
+      "sha256": "e161100317470779c5d12b643f0ce3aa4ef45f0541bc2bfcfdd89b24c3b7ce2e",
+      "bytes": 14130,
+      "mode": "0o644"
+    },
+    {
+      "path": "dev/history-replay/interrupted_costs.go",
+      "sha256": "ce957dab263e08150866463822e66df6329aabe771ab29e35e31f42da7d22196",
+      "bytes": 1470,
+      "mode": "0o644"
+    },
+    {
+      "path": "dev/history-replay/lifecycle.go",
+      "sha256": "c35ae22f0a306247e9de4267e3f0531ee228f79582ad94ed3add10be893bdd5b",
+      "bytes": 3994,
+      "mode": "0o644"
+    },
+    {
+      "path": "dev/history-replay/main.go",
+      "sha256": "c572190b5373e0a397af8c9100482d8dfd90b0c74391c67504ec77595596c415",
+      "bytes": 2430,
+      "mode": "0o644"
+    },
+    {
+      "path": "dev/history-replay/metrics.go",
+      "sha256": "b295e1efe39343a784bbd746fda2b0e7d6292a1ac575d5a4b08ca54e67cd60db",
+      "bytes": 11320,
+      "mode": "0o644"
+    },
+    {
+      "path": "dev/history-replay/metrics_test.go",
+      "sha256": "e258fc8a39e97eb2d0d245a8d5255acd7f300a02955e29940b2ddc1eaad9039c",
+      "bytes": 4056,
+      "mode": "0o644"
+    },
+    {
+      "path": "dev/history-replay/overhead_integration_test.go",
+      "sha256": "0c6e0d3ddfef83ff74328ef107db08af3b0d236781eb025988a81ac5dec9973d",
+      "bytes": 7824,
+      "mode": "0o644"
+    },
+    {
+      "path": "dev/history-replay/process_linux.go",
+      "sha256": "5b04e49b45d821390bcb43c3d3a3bb2ffcd1b1a7be5cd9b1f4224ae179ef0520",
+      "bytes": 19262,
+      "mode": "0o644"
+    },
+    {
+      "path": "dev/history-replay/projector_integration_test.go",
+      "sha256": "c68e43e6c7f8941bf7fc9e19cb47b40ccd2d8baf2a186fc869e6d375da6dc830",
+      "bytes": 2709,
+      "mode": "0o644"
+    },
+    {
+      "path": "dev/history-replay/projector_proof.go",
+      "sha256": "4e14a4f5a7a83bdfc2edf6554c50147062aa7c1bab50fccd9943ccae20d35633",
+      "bytes": 3526,
+      "mode": "0o644"
+    },
+    {
+      "path": "dev/history-replay/records.go",
+      "sha256": "2a11e22b29332ebbec9d89541180634e94defb3eeedab374cfaeda55aa35d89d",
+      "bytes": 14233,
+      "mode": "0o644"
+    },
+    {
+      "path": "dev/history-replay/recovery.go",
+      "sha256": "32d496291c12ff46451f2902ba197cf10b8407f6f4262961ad87a4f08b4da83f",
+      "bytes": 13400,
+      "mode": "0o644"
+    },
+    {
+      "path": "dev/history-replay/resources_linux.go",
+      "sha256": "15afaceedb3a426989146b1c70198f6c62464c90b4e00ffb970da42314148df0",
+      "bytes": 1838,
+      "mode": "0o644"
+    },
+    {
+      "path": "dev/history-replay/runner.go",
+      "sha256": "0a689fd31f1f1060774671e88e91ecf012080a1cd64b5c06e7d56704c1d8c461",
+      "bytes": 22345,
+      "mode": "0o644"
+    },
+    {
+      "path": "dev/history-replay/runner_test.go",
+      "sha256": "a51fc204566c9692f7f52eabddd42b1a49969c698d3d871b9aa228b1d1ebe727",
+      "bytes": 9863,
+      "mode": "0o644"
+    },
+    {
+      "path": "dev/check-history-replay",
+      "sha256": "afa118a3082a5212cd853f56a2bba030fd386ecd3e7b927af26f3595051c4ba8",
+      "bytes": 2806,
+      "mode": "0o755"
+    },
+    {
+      "path": "specs/poc-product-viability-v1.json",
+      "sha256": "58457f65efcbafdf50cc804f18e542b6bc0c18fb0cbf037eb7435e6c506c7c76",
+      "bytes": 1175,
+      "mode": "0o644"
+    },
+    {
+      "path": "specs/poc-product-viability-v1.md",
+      "sha256": "04f13bcc9548d62a217555b2208b908dca4b65fb21d376cd77f31ed950259c27",
+      "bytes": 8804,
+      "mode": "0o644"
+    },
+    {
+      "path": "go.mod",
+      "sha256": "43eef140c7e4fcbb4dbaff37f3793cd818455c360a7df2e6c3dc20c0f91ff64e",
+      "bytes": 542,
+      "mode": "0o644"
+    },
+    {
+      "path": "go.sum",
+      "sha256": "ef13e7d750b9f267d2111488210aec57e63c15541c56bd46277af8fadd52d21d",
+      "bytes": 4214,
+      "mode": "0o644"
+    },
+    {
+      "path": "dev/run",
+      "sha256": "2f08665d4c61bf93723b5881a74704c7c9a4e939989e140d9a34ed43ecee787d",
+      "bytes": 14899,
+      "mode": "0o755"
+    },
+    {
+      "path": "dev/toolchains.lock.yaml",
+      "sha256": "f5b21d2f92001eecd01aafd69e009e246e98f236c2da8e56f0fbb6af7d61e195",
+      "bytes": 5117,
+      "mode": "0o644"
+    }
+  ],
+  "executable": {
+    "path": ".tools/state/buildopt-product-viability-v1/bv005/bin/history-replay",
+    "sha256": "df9f1caf452387676277ab5cba48c52137bf6f0ccf954188424a95c39d2190cf",
+    "bytes": 5474565
+  },
+  "documentationOnlyUpdate": "Build command uses the full local Go import path to satisfy the existing documentation command validator; production sources unchanged."
+}

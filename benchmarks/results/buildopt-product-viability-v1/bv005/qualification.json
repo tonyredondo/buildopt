@@ -1,0 +1,220 @@
+{
+  "schema": "buildopt.viability/replay-qualification/v1",
+  "status": "verified",
+  "decision": "REPLAY_INSTRUMENT_QUALIFIED_FIXTURES",
+  "phase": "BV-005",
+  "platform": "Linux AMD64 / cgroup v2 / user systemd",
+  "cases": [
+    {
+      "case": "TestOwnedReplayAndIndependentChecker",
+      "status": "verified",
+      "successfulObservations": [
+        {
+          "label": "core-final-01",
+          "test": "TestOwnedReplayAndIndependentChecker",
+          "action": "pass",
+          "elapsedSeconds": 14.44
+        }
+      ]
+    },
+    {
+      "case": "TestTwoFreshReplicationsReverseOrder",
+      "status": "verified",
+      "successfulObservations": [
+        {
+          "label": "core-final-01",
+          "test": "TestTwoFreshReplicationsReverseOrder",
+          "action": "pass",
+          "elapsedSeconds": 22.54
+        }
+      ]
+    },
+    {
+      "case": "TestExternalPreparationIsChargedExactlyOnce",
+      "status": "verified",
+      "successfulObservations": [
+        {
+          "label": "core-final-01",
+          "test": "TestExternalPreparationIsChargedExactlyOnce",
+          "action": "pass",
+          "elapsedSeconds": 13.01
+        }
+      ]
+    },
+    {
+      "case": "TestQualifiedProjectionAndSemanticCounterexample",
+      "status": "verified",
+      "successfulObservations": [
+        {
+          "label": "core-final-01",
+          "test": "TestQualifiedProjectionAndSemanticCounterexample",
+          "action": "pass",
+          "elapsedSeconds": 6
+        }
+      ]
+    },
+    {
+      "case": "TestFullHorizonDoesNotStopAtNegativeValue",
+      "status": "verified",
+      "successfulObservations": [
+        {
+          "label": "core-final-01",
+          "test": "TestFullHorizonDoesNotStopAtNegativeValue",
+          "action": "pass",
+          "elapsedSeconds": 35.9
+        }
+      ]
+    },
+    {
+      "case": "TestTypedFailuresAndNativeFallback",
+      "status": "verified",
+      "successfulObservations": [
+        {
+          "label": "adversarial-final-01",
+          "test": "TestTypedFailuresAndNativeFallback",
+          "action": "pass",
+          "elapsedSeconds": 97.1
+        }
+      ]
+    },
+    {
+      "case": "TestDriftStopsBeforeNextChild",
+      "status": "verified",
+      "successfulObservations": [
+        {
+          "label": "adversarial-final-01",
+          "test": "TestDriftStopsBeforeNextChild",
+          "action": "pass",
+          "elapsedSeconds": 44.76
+        }
+      ]
+    },
+    {
+      "case": "TestAllocationStopsAndDetachedChild",
+      "status": "verified",
+      "successfulObservations": [
+        {
+          "label": "limits-recovery-final-01",
+          "test": "TestAllocationStopsAndDetachedChild",
+          "action": "pass",
+          "elapsedSeconds": 11.81
+        }
+      ]
+    },
+    {
+      "case": "TestRawEvidenceTampering",
+      "status": "verified",
+      "successfulObservations": [
+        {
+          "label": "limits-recovery-final-01",
+          "test": "TestRawEvidenceTampering",
+          "action": "pass",
+          "elapsedSeconds": 10.37
+        }
+      ]
+    },
+    {
+      "case": "TestCheckpointResumeAndCrashRecovery",
+      "status": "verified",
+      "successfulObservations": [
+        {
+          "label": "limits-recovery-final-01",
+          "test": "TestCheckpointResumeAndCrashRecovery",
+          "action": "pass",
+          "elapsedSeconds": 81.56
+        }
+      ]
+    },
+    {
+      "case": "TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost",
+      "status": "verified",
+      "successfulObservations": [
+        {
+          "label": "driver-death-final-01",
+          "test": "TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost",
+          "action": "pass",
+          "elapsedSeconds": 7.04
+        },
+        {
+          "label": "driver-death-final-01",
+          "test": "TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost",
+          "action": "pass",
+          "elapsedSeconds": 6.25
+        },
+        {
+          "label": "driver-death-final-01",
+          "test": "TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost",
+          "action": "pass",
+          "elapsedSeconds": 9.12
+        },
+        {
+          "label": "driver-death-final-01",
+          "test": "TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost",
+          "action": "pass",
+          "elapsedSeconds": 9.61
+        },
+        {
+          "label": "driver-death-final-01",
+          "test": "TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost",
+          "action": "pass",
+          "elapsedSeconds": 9.62
+        }
+      ]
+    },
+    {
+      "case": "TestGradleNativeUpToDateAndCacheRestore",
+      "status": "verified",
+      "successfulObservations": [
+        {
+          "label": "gradle-lifecycles-02",
+          "test": "TestGradleNativeUpToDateAndCacheRestore",
+          "action": "pass",
+          "elapsedSeconds": 31.57
+        }
+      ]
+    },
+    {
+      "case": "TestGradlePersistentNoActionReplay",
+      "status": "verified",
+      "successfulObservations": [
+        {
+          "label": "gradle-lifecycles-02",
+          "test": "TestGradlePersistentNoActionReplay",
+          "action": "pass",
+          "elapsedSeconds": 27.35
+        }
+      ]
+    },
+    {
+      "case": "TestGradleNestedTestKitAccounting",
+      "status": "verified",
+      "successfulObservations": [
+        {
+          "label": "gradle-lifecycles-02",
+          "test": "TestGradleNestedTestKitAccounting",
+          "action": "pass",
+          "elapsedSeconds": 24.98
+        }
+      ]
+    },
+    {
+      "case": "TestGradleSymmetricCaptureOverhead",
+      "status": "verified",
+      "successfulObservations": [
+        {
+          "label": "gradle-overhead-01",
+          "test": "TestGradleSymmetricCaptureOverhead",
+          "action": "pass",
+          "elapsedSeconds": 30.73
+        }
+      ]
+    }
+  ],
+  "unitAndVet": "unit-final-02",
+  "allGoBuild": "build-all-01",
+  "oldCommandContracts": "historical-contracts-01",
+  "standaloneCLI": "standalone-cli-03",
+  "positivePublicValueClaim": false,
+  "validationOrdinalsConsumed": [],
+  "remainingOwnerDependency": "BV-006 integrates and qualifies the exact C5 Elasticsearch output adapters, measures owner-specific overhead, runs engineering ordinals 0..20, then freezes confirmation."
+}

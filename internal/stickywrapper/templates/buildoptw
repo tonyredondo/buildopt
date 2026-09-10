@@ -7,7 +7,9 @@ buildopt_fail() {
     if [ "${buildopt_fallback_ready:-0}" -ne 1 ]; then
         printf 'buildoptw: %s\n' "$*" >&2
     fi
-    exit "${buildopt_fail_code}"
+    # Return to the script before errexit runs its EXIT trap. Exiting inside
+    # this function would replace the native arguments with this diagnostic.
+    return "${buildopt_fail_code}"
 }
 
 buildopt_script_dir=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd) ||
@@ -56,9 +58,9 @@ buildopt_scrub_child_environment() {
 
 buildopt_scrub_direct_gradle_environment() {
     # Direct Gradle execution has no BuildOpt launcher available to remove a
-    # repository-selected credential name. Treat the BUILDOPT_ namespace as
-    # private and remove it in full before bypass or bootstrap fallback.
-    buildopt_private_names=$(env | sed -n 's/^\(BUILDOPT_[A-Za-z0-9_]*\)=.*/\1/p')
+    # repository-selected credential name. Treat the BUILDOPT_ and WCNCP_ namespaces as
+    # private and remove them in full before bypass or bootstrap fallback.
+    buildopt_private_names=$(env | sed -n 's/^\(BUILDOPT_[A-Za-z0-9_]*\)=.*/\1/p; s/^\(WCNCP_[A-Za-z0-9_]*\)=.*/\1/p')
     for buildopt_private_name in ${buildopt_private_names}; do
         unset "${buildopt_private_name}"
     done
@@ -94,11 +96,11 @@ buildopt_properties="${buildopt_script_dir}/.buildopt/wrapper.properties"
 exec 3<"${buildopt_properties}"
 buildopt_read_property() {
     IFS='=' read -r buildopt_property_key buildopt_property_value <&3 ||
-        buildopt_fail 65 "missing property $1"
+        buildopt_fail 65 "missing property $1" || return $?
     [ "${buildopt_property_key}" = "$1" ] ||
-        buildopt_fail 65 "expected property $1"
+        buildopt_fail 65 "expected property $1" || return $?
     case "${buildopt_property_value}" in
-        *'='*) buildopt_fail 65 "property $1 is malformed" ;;
+        *'='*) buildopt_fail 65 "property $1 is malformed" || return $? ;;
     esac
     BUILDOPT_PROPERTY_VALUE=${buildopt_property_value}
 }

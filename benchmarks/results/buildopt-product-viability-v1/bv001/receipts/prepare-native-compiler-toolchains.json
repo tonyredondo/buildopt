@@ -1,0 +1,63 @@
+{
+  "kind": "DEPENDENCY_PREPARATION_ONLY",
+  "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/eic-resolution-diagnosis-v1/state/N0/gradle/jdks",
+  "destination": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/native-state/gradle/jdks",
+  "reason": "Offline native build exposed additional multi-release compiler toolchains; copy their retained archive and installations without task history or outputs",
+  "elapsedSeconds": 41.15130094700726,
+  "networkDownloadBytes": 0,
+  "rsyncStatistics": "\nNumber of files: 2,110 (reg: 1,764, dir: 346)\nNumber of created files: 2,110 (reg: 1,764, dir: 346)\nNumber of deleted files: 0\nNumber of regular files transferred: 1,764\nTotal file size: 2,285,200,517 bytes\nTotal transferred file size: 2,285,200,517 bytes\nLiteral data: 2,285,200,517 bytes\nMatched data: 0 bytes\nFile list size: 65,535\nFile list generation time: 0.001 seconds\nFile list transfer time: 0.000 seconds\nTotal bytes sent: 2,285,885,063\nTotal bytes received: 35,187\n\nsent 2,285,885,063 bytes  received 35,187 bytes  55,082,415.66 bytes/sec\ntotal size is 2,285,200,517  speedup is 1.00\n",
+  "artifacts": [
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/native-state/gradle/jdks/OpenJDK22U-jdk_x64_linux_hotspot_22-any-vendor-22.0.2_9.tar.gz",
+      "bytes": 205853101,
+      "sha256": "05cd9359dacb1a1730f7c54f57e0fed47942a5292eb56a3a0ee6b13b87457a43"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/native-state/gradle/jdks/OpenJDK25U-jdk_x64_linux_hotspot_25-any-vendor-25.0.4.1_1.tar.gz",
+      "bytes": 141329719,
+      "sha256": "dbb698396d478e7fa2b1e50f4103324b2a99b90569ee27c33f2261f9215cf41e"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/native-state/gradle/jdks/eclipse_adoptium-22-amd64-linux.2",
+      "javaVersion": "22.0.2",
+      "vendor": "Eclipse Adoptium",
+      "javaSHA256": "ea70a093b69c865f31ce1179d3a7b8e6f0a128092e3cbf6941f9a5159bc9536e",
+      "javacSHA256": "7d3e3f26e61afe89b815484daaab3e74508761f02060413bb295465354ecd54b",
+      "releaseSHA256": "dd613fddd601307c70f53f67f5b23fc1b867a963a2603d63bf9970c51eff5eaf"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/native-state/gradle/jdks/eclipse_adoptium-25-amd64-linux.2",
+      "javaVersion": "25.0.4.1",
+      "vendor": "Eclipse Adoptium",
+      "javaSHA256": "7380ce48ed5013735d2c8414db54adb8f981e7933ff594bd36f3baccddaafba3",
+      "javacSHA256": "86d10cd1c73e976f364291f3c3d10bb167f0bafdd6eb4c9c6dc44bddeffcc45e",
+      "releaseSHA256": "44be64b383baa18668afefbe9a780ae3a9d730a066eaaa92500f77bd1e4b934c"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/native-state/gradle/jdks/openjdk-26-any-vendor-26.0.2_linux-x64_bin.tar.gz",
+      "bytes": 227507843,
+      "sha256": "2da09e9db53e5c4f9eeec045f49e7d8fbcd8e4153edbf0c269f520ff82fd4198"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/native-state/gradle/jdks/openjdk-27_linux-x64_bin-any-vendor-27.tar.gz",
+      "bytes": 226435531,
+      "sha256": "95fc37eb3a18a27a26d5904c2d89d52bace8dafa9a078ca27f4747fbc4bf070b"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/native-state/gradle/jdks/oracle_corporation-26-amd64-linux.2",
+      "javaVersion": "26.0.2",
+      "vendor": "Oracle Corporation",
+      "javaSHA256": "d9f3fb13f59861179a0a51a32b03cba7a84bf85a1fa004c86ed07ce8c9aa3cdc",
+      "javacSHA256": "9d9bb3ad437dbee51f55134233b536c35fd788d5b3bb41cf7cd8deb570edf612",
+      "releaseSHA256": "589057d708b3285b7281a42cd11c4bab565ed0ea3608d356bd09b6d84c9aa96b"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/native-state/gradle/jdks/oracle_corporation-27-amd64-linux.2",
+      "javaVersion": "27",
+      "vendor": "Oracle Corporation",
+      "javaSHA256": "47058b76c60929f12a1fe1e724f95dd9f4302624ed9fdd8d3cd26b578f0a4461",
+      "javacSHA256": "e0669b1c8e2dde0114e6eed10ef356327646aacdc83755f51d5b7d7e0fd9ec87",
+      "releaseSHA256": "f63c9cd965a39ef30c7f559df1e62964d645ae2142c4685f65ea4cdd7caff791"
+    }
+  ]
+}

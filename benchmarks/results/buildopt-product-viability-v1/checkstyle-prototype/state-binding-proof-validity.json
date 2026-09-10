@@ -1,0 +1,30 @@
+{
+  "status": "verified",
+  "scope": "Validity of prior evidence after the final state-binding correction",
+  "changedCandidateFiles": [
+    "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstyleSuccessHistory.java"
+  ],
+  "unchangedCandidateFiles": [
+    "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstylePrecommitPlugin.java",
+    "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/CheckstyleSuccessState.java",
+    "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareChecker.java",
+    "build-tools-internal/src/test/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareCheckerTests.java"
+  ],
+  "originalManifestSHA256": "df04f3d59445278f5012a76902551d8c2125147f4b506427ec2099451a504ca9",
+  "finalHistorySourceSHA256": "47ef64a13b72b1aa45b23068614c1308a42ab73dfbffd625f8051c925f1c8157",
+  "sourceDiff": "state-binding-source.diff",
+  "change": "Two additional conjuncts require the private state property and config directory to identify the installed task state; no existing admission guard or execution path removed.",
+  "retainedProof": "Per-file hashing/checking, ordered native audit events, state codec, native fallback body and commit protocol source remain identical. Prior decoding, failure, recovery, cancellation and daemon proofs remain valid for their unchanged admitted configurations.",
+  "revalidated": [
+    "cs-owner-state-binding-tests",
+    "cs-state-binding-regression",
+    "cs-state-binding-config-directory",
+    "cs-state-binding-admitted",
+    "cs-state-binding-warm",
+    "cs-owner-state-binding-full",
+    "cs-owner-state-binding-inverse",
+    "cs-owner-state-binding-reapplied",
+    "prototype-state-binding-final-check"
+  ],
+  "remaining": "Semantic, owner integration, inverse and native formatter proof verified; artifact and documentation checks are recorded separately"
+}

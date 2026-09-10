@@ -1,5 +1,19 @@
 # BuildOpt
 
+> **Current research, 2026-09-08:** [Product Viability v1](./docs/plans/buildopt-product-viability-v1.md)
+> is the only current research program: native incremental corrections, real
+> Git-history replay and adaptive management. BV-001 prerequisites are verified;
+> the first 20-commit native replay rejects the ForbiddenPatterns seed at G1.
+> See the [technical decision](./benchmarks/results/buildopt-product-viability-v1/viability-decision.md).
+> The subsequent [Checkstyle prototype](./benchmarks/results/buildopt-product-viability-v1/checkstyle-prototype/README.md)
+> passes the frozen owner correctness gate. A qualified chronological replay
+> instrument is next; actual lifecycle savings remain unproved.
+> Product viability remains unproven.
+> Use its [tracker](./docs/plans/buildopt-product-viability-v1-tracker.md) for
+> next work and the [research status register](./docs/research-status.md) for
+> discarded routes. The POC results below are historical; the usage guides
+> describe retained implementation.
+
 BuildOpt makes Gradle builds faster without changing their expected outputs.
 It runs the existing Gradle command, observes what happened, and activates
 only optimizations that have enough evidence. If an optimization is unavailable
@@ -27,8 +41,9 @@ evidence around that execution and uses conservative fallbacks: a rejected
 cache entry becomes a normal cache miss, an unqualified optimization is not
 applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 
-> **Active POC pivot:** `WRAPPER_COORDINATED_NATIVE_CORRECTIONS_V1` keeps the
-> repository wrapper as the ordinary Gradle entrypoint while separating native
+> **Closed wrapper-coordination experiment:**
+> `WRAPPER_COORDINATED_NATIVE_CORRECTIONS_V1` keeps the repository wrapper as
+> the ordinary Gradle entrypoint while separating native
 > cache objects from typed observations, proposals, validations and decisions.
 > The prospective experiment is complete: 30 wrapper observations, 16 initial
 > diagnostics, and six controlled rows yield 10/10 conclusive but only 1/3
@@ -70,8 +85,8 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > the [checked result](./benchmarks/results/sticky-wrapper-two-machine-v1.json)
 > and [contract](./specs/poc-sticky-wrapper-two-machine-v1.md).
 
-> **Reviewed-profile research:** this is an owner-operated proof of concept. In a fresh
-> preregistered balanced rerun, the same generic structural Build Impact method
+> **Historical reviewed-profile research:** this is an owner-operated proof of
+> concept. In a fresh preregistered balanced rerun, the same generic structural Build Impact method
 > qualified independently on Spring, OpenTelemetry, Kafka, Micronaut, and
 > Groovy at **14.97% to 87.35% lower wall time** than optimized native Gradle.
 > All 80 raw pairs improved, required outputs matched, tails improved, and full
@@ -95,11 +110,11 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > needs **24–26**; exact repeat evaluation repays after **4–12**.
 > These results are bound to exact changes, workflows, and reviewed output contracts;
 > profiles remain review-required and are not production-authorized. See the
-> [current one-pager](./docs/findings/buildopt-poc-handoff.md)
+> [historical one-pager](./docs/findings/buildopt-poc-handoff.md)
 > and [generalization audit](./docs/findings/buildopt-generalization-audit.md).
 
-> **Current automatic status:** immutable public `v0.6.1` has completed the
-> zero-manual-file terminal POC gate. From fresh Ktor state,
+> **Historical published automatic proof:** immutable public `v0.6.1` has
+> completed the zero-manual-file terminal POC gate. From fresh Ktor state,
 > `buildopt optimize jvmJar --max-workers=12` reduces 133 to ten projects and
 > measures **79.82% lower wall time** with 8/8 positive pairs and 26-build
 > payback. From fresh Apache Beam state, `buildopt optimize classes
@@ -112,7 +127,7 @@ applied, and `BUILDOPT_BYPASS=1` removes the optimization path immediately.
 > the [v1 matrix](./benchmarks/results/poc-magic-end-to-end-value-v1/README.md)
 > remains historical diagnostic evidence rather than being rewritten.
 
-> **Current terminal decision:** one exact executable ran frozen Spring,
+> **Closed structural-profile decision:** one exact executable ran frozen Spring,
 > OpenTelemetry, Kafka, Micronaut and Groovy ordinary-build windows. Four
 > short-lived hypotheses stopped after one requested build, avoiding 64
 > additional learning builds. Kafka qualified at **21.43% faster with 8/8

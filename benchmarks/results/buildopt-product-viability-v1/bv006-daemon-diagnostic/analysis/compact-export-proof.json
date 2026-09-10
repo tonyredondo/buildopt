@@ -1,0 +1,9 @@
+{
+  "status": "verified",
+  "events": 1449,
+  "timestampsDurationsCountsEquivalent": true,
+  "eventAndSampledThreadsEquivalent": true,
+  "sharedExportedFramesChecked": 5028,
+  "sourceSHA256": "ee84a366074219298d2b75d32884cd9249d1187d279ef5458742ea9274771243",
+  "scope": "Compact representation retains all event timestamps/durations, scalar fields, recorded thread IDs/names, method identities and recorded frames; avoids recursive classloader/module descriptions; original JFR remains authoritative"
+}

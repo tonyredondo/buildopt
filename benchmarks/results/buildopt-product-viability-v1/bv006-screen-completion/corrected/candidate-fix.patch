@@ -1,0 +1,19 @@
+--- a/build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstyleSuccessHistory.java
++++ b/build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstyleSuccessHistory.java
+@@ -20,6 +20,7 @@
+ import java.nio.charset.StandardCharsets;
+ import java.nio.file.Files;
+ import java.nio.file.Path;
++import java.util.LinkedHashMap;
+ import java.util.Map;
+ import java.util.Properties;
+ import java.util.TreeMap;
+@@ -74,6 +75,8 @@
+     public static void install(Project project, Checkstyle task, File originalConfig, File adaptedConfig) {
+         File state = new File(project.getRootDir(), ".gradle/buildopt-checkstyle/server/" + task.getName());
+         task.getLocalState().register(state);
++        // Gradle conventions share this map between tasks; the state reference is task-local.
++        task.setConfigProperties(new LinkedHashMap<>(task.getConfigProperties()));
+         task.getConfigProperties()
+             .put(
+                 "buildopt_state",

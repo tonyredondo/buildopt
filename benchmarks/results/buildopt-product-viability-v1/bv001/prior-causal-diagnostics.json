@@ -1,0 +1,106 @@
+{
+  "program": "BUILDOPT-VIABILITY-V1",
+  "status": "historical source evidence reconstructed; no G1 or saving claim",
+  "records": [
+    {
+      "case": "C007",
+      "kind": "HISTORICAL_DIAGNOSTIC_NOT_VALUE_PAIR",
+      "sourceRevision": "16bd5bc5355ac7c6ad736f8a6f93281b24a05ab7",
+      "workload": "workflow",
+      "mutationState": "benign-comment",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "--console=plain",
+        "--max-workers=8",
+        "--build-cache",
+        ":server:precommit"
+      ],
+      "requestSHA256": "c841037ed14dffbdbdacea982e7af9452462e049b70659e88c15c3755f9f962f",
+      "operationsSHA256": "6e583c68229ad612ffc535404c74115c617b64a4091004c27a5e36c8a7884b4a",
+      "operationsPath": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/eic-correctness-v3/attempts/C007/operations-log.txt",
+      "spans": [
+        {
+          "id": 138884,
+          "parentId": 135989,
+          "displayName": "Task :server:forbiddenPatterns",
+          "startTime": 1788810252784,
+          "endTime": 1788810258799,
+          "durationMs": 6015
+        },
+        {
+          "id": 138926,
+          "parentId": 138925,
+          "displayName": "Execute checkInvalidPatterns for :server:forbiddenPatterns",
+          "startTime": 1788810252935,
+          "endTime": 1788810258799,
+          "durationMs": 5864
+        }
+      ],
+      "actionToTaskAncestors": [
+        {
+          "id": 138926,
+          "parentId": 138925,
+          "displayName": "Execute checkInvalidPatterns for :server:forbiddenPatterns",
+          "startTime": 1788810252935
+        },
+        {
+          "id": 138925,
+          "parentId": 138884,
+          "displayName": "Executing task ':server:forbiddenPatterns'",
+          "startTime": 1788810252935
+        }
+      ]
+    },
+    {
+      "case": "C008",
+      "kind": "HISTORICAL_DIAGNOSTIC_NOT_VALUE_PAIR",
+      "sourceRevision": "16bd5bc5355ac7c6ad736f8a6f93281b24a05ab7",
+      "workload": "workflow",
+      "mutationState": "benign-comment",
+      "command": [
+        "./buildoptw",
+        "--no-daemon",
+        "--console=plain",
+        "--max-workers=8",
+        "--build-cache",
+        ":server:precommit"
+      ],
+      "requestSHA256": "ad3b313bd352c08d27526e427389ddda08b552d0648f48fa0cd10096f390aed4",
+      "operationsSHA256": "9f7e4515abb93130cc0819b2713290e5a395371039198b65001e1929d86ab785",
+      "operationsPath": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/eic-correctness-v3/attempts/C008/operations-log.txt",
+      "spans": [
+        {
+          "id": 138150,
+          "parentId": 135989,
+          "displayName": "Task :server:forbiddenPatterns",
+          "startTime": 1788810429702,
+          "endTime": 1788810437705,
+          "durationMs": 8003
+        },
+        {
+          "id": 138339,
+          "parentId": 138338,
+          "displayName": "Execute checkInvalidPatterns for :server:forbiddenPatterns",
+          "startTime": 1788810430053,
+          "endTime": 1788810437704,
+          "durationMs": 7651
+        }
+      ],
+      "actionToTaskAncestors": [
+        {
+          "id": 138339,
+          "parentId": 138338,
+          "displayName": "Execute checkInvalidPatterns for :server:forbiddenPatterns",
+          "startTime": 1788810430053
+        },
+        {
+          "id": 138338,
+          "parentId": 138150,
+          "displayName": "Executing task ':server:forbiddenPatterns'",
+          "startTime": 1788810430053
+        }
+      ]
+    }
+  ]
+}

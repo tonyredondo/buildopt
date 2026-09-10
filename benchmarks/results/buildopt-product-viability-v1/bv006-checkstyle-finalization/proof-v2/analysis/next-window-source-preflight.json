@@ -1,0 +1,94 @@
+{
+  "status": "verified source prerequisites only; no new native execution",
+  "retainedManifest": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/inputs/seed-history.json",
+    "sha256": "3521f7a3e41278a47578857ab58cb6a3a5bfa9f1e9be3a2f4ec029c1470c5a8d"
+  },
+  "revisions": [
+    {
+      "ordinal": 17,
+      "commit": "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe",
+      "tree": "95f4aa97b7917c7cd68ab4074c192e3234247955",
+      "candidatePrerequisitesAndPreimages": {
+        "gradle/wrapper/gradle-wrapper.properties": true,
+        "build-tools-internal/src/main/resources/checkstyle.xml": true,
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/SnippetLengthCheck.java": true,
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/StringFormattingCheck.java": true,
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/SwitchBetweenCheck.java": true,
+        "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstylePrecommitPlugin.java": true,
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/CheckstyleSuccessState.java": true,
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareChecker.java": true,
+        "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstyleSuccessHistory.java": true,
+        "build-tools-internal/src/test/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareCheckerTests.java": true
+      },
+      "allMatch": true,
+      "nativeBaselinePreimages": {
+        "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/ForbiddenPatternsTask.java": true
+      }
+    },
+    {
+      "ordinal": 18,
+      "commit": "d47f43f5ff06883d3f0a04f3d40af627ecf5142e",
+      "tree": "1b7988976308af220086bf2a8901b7d2083668b9",
+      "candidatePrerequisitesAndPreimages": {
+        "gradle/wrapper/gradle-wrapper.properties": true,
+        "build-tools-internal/src/main/resources/checkstyle.xml": true,
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/SnippetLengthCheck.java": true,
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/StringFormattingCheck.java": true,
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/SwitchBetweenCheck.java": true,
+        "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstylePrecommitPlugin.java": true,
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/CheckstyleSuccessState.java": true,
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareChecker.java": true,
+        "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstyleSuccessHistory.java": true,
+        "build-tools-internal/src/test/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareCheckerTests.java": true
+      },
+      "allMatch": true,
+      "nativeBaselinePreimages": {
+        "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/ForbiddenPatternsTask.java": true
+      }
+    },
+    {
+      "ordinal": 19,
+      "commit": "72aa4d4120d09157106325096f0e7b2cc1852f59",
+      "tree": "10c55a6aec66b4bea130a47f6c8cdaa4e4f0de7f",
+      "candidatePrerequisitesAndPreimages": {
+        "gradle/wrapper/gradle-wrapper.properties": true,
+        "build-tools-internal/src/main/resources/checkstyle.xml": true,
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/SnippetLengthCheck.java": true,
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/StringFormattingCheck.java": true,
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/SwitchBetweenCheck.java": true,
+        "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstylePrecommitPlugin.java": true,
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/CheckstyleSuccessState.java": true,
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareChecker.java": true,
+        "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstyleSuccessHistory.java": true,
+        "build-tools-internal/src/test/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareCheckerTests.java": true
+      },
+      "allMatch": true,
+      "nativeBaselinePreimages": {
+        "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/ForbiddenPatternsTask.java": true
+      }
+    },
+    {
+      "ordinal": 20,
+      "commit": "22d6425e9a44ec9e1aedc2785f4478b8019c851a",
+      "tree": "e69c43982d6e2fa4c2562be06cd2a6ab484c57ad",
+      "candidatePrerequisitesAndPreimages": {
+        "gradle/wrapper/gradle-wrapper.properties": true,
+        "build-tools-internal/src/main/resources/checkstyle.xml": true,
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/SnippetLengthCheck.java": true,
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/StringFormattingCheck.java": true,
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/SwitchBetweenCheck.java": true,
+        "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstylePrecommitPlugin.java": true,
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/CheckstyleSuccessState.java": true,
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareChecker.java": true,
+        "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstyleSuccessHistory.java": true,
+        "build-tools-internal/src/test/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareCheckerTests.java": true
+      },
+      "allMatch": true,
+      "nativeBaselinePreimages": {
+        "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/ForbiddenPatternsTask.java": true
+      }
+    }
+  ],
+  "limit": "Source admission alone does not prove dynamic task activity, native value or lifecycle payback."
+}

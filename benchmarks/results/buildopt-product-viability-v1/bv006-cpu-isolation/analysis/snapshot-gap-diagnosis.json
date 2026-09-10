@@ -1,0 +1,334 @@
+{
+  "status": "verified static diagnosis",
+  "attempt": "diagnostic-28-N-plain",
+  "gaps": [
+    {
+      "index": 24,
+      "gapMS": 2104.017374,
+      "previousBegin": {
+        "ns": 410273144110647,
+        "utc": "2026-09-09T11:29:07.33667443Z",
+        "boot": "6b02acec-6ec1-412f-a388-1f6ba2e7d1f3"
+      },
+      "previousEnd": {
+        "ns": 410273147152282,
+        "utc": "2026-09-09T11:29:07.339696905Z",
+        "boot": "6b02acec-6ec1-412f-a388-1f6ba2e7d1f3"
+      },
+      "previousScanMS": 3.041635,
+      "nextBegin": {
+        "ns": 410275248128021,
+        "utc": "2026-09-09T11:29:09.440687644Z",
+        "boot": "6b02acec-6ec1-412f-a388-1f6ba2e7d1f3"
+      },
+      "nextEnd": {
+        "ns": 410275250860085,
+        "utc": "2026-09-09T11:29:09.443402429Z",
+        "boot": "6b02acec-6ec1-412f-a388-1f6ba2e7d1f3"
+      },
+      "nextScanMS": 2.732064,
+      "previousProcesses": [
+        {
+          "pid": 1045962,
+          "command": [
+            "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-isolation/control/control.test",
+            "worker"
+          ],
+          "threadCount": 13
+        },
+        {
+          "pid": 1046120,
+          "command": [
+            "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/bin/java",
+            "--add-opens=java.base/java.lang=ALL-UNNAMED"
+          ],
+          "threadCount": 172
+        },
+        {
+          "pid": 1046999,
+          "command": [
+            "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-isolation/owner/run/r1/N/gradle/jdks/eclipse_adoptium-22-amd64-linux.2/bin/java",
+            "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED"
+          ],
+          "threadCount": 29
+        },
+        {
+          "pid": 1047082,
+          "command": [
+            "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-isolation/owner/run/r1/N/gradle/jdks/eclipse_adoptium-22-amd64-linux.2/bin/java",
+            "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED"
+          ],
+          "threadCount": 29
+        },
+        {
+          "pid": 1047111,
+          "command": [
+            "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-isolation/owner/run/r1/N/gradle/jdks/eclipse_adoptium-25-amd64-linux.2/bin/java",
+            "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED"
+          ],
+          "threadCount": 30
+        },
+        {
+          "pid": 1047286,
+          "command": [
+            "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-isolation/owner/run/r1/N/gradle/jdks/eclipse_adoptium-25-amd64-linux.2/bin/java",
+            "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED"
+          ],
+          "threadCount": 29
+        },
+        {
+          "pid": 1047369,
+          "command": [
+            "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-isolation/owner/run/r1/N/gradle/jdks/eclipse_adoptium-25-amd64-linux.2/bin/java",
+            "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED"
+          ],
+          "threadCount": 29
+        },
+        {
+          "pid": 1047441,
+          "command": [
+            "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-isolation/owner/run/r1/N/gradle/jdks/oracle_corporation-26-amd64-linux.2/bin/java",
+            "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED"
+          ],
+          "threadCount": 32
+        },
+        {
+          "pid": 1047539,
+          "command": [
+            "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-isolation/owner/run/r1/N/gradle/jdks/oracle_corporation-27-amd64-linux.2/bin/java",
+            "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED"
+          ],
+          "threadCount": 32
+        },
+        {
+          "pid": 1065683,
+          "command": [
+            "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/bin/java",
+            "-Xmx64m"
+          ],
+          "threadCount": 21
+        }
+      ]
+    },
+    {
+      "index": 18,
+      "gapMS": 212.610206,
+      "previousBegin": {
+        "ns": 410272444713413,
+        "utc": "2026-09-09T11:29:06.637269006Z",
+        "boot": "6b02acec-6ec1-412f-a388-1f6ba2e7d1f3"
+      },
+      "previousEnd": {
+        "ns": 410272446976947,
+        "utc": "2026-09-09T11:29:06.63951635Z",
+        "boot": "6b02acec-6ec1-412f-a388-1f6ba2e7d1f3"
+      },
+      "previousScanMS": 2.263534,
+      "nextBegin": {
+        "ns": 410272657323619,
+        "utc": "2026-09-09T11:29:06.849882042Z",
+        "boot": "6b02acec-6ec1-412f-a388-1f6ba2e7d1f3"
+      },
+      "nextEnd": {
+        "ns": 410272659754603,
+        "utc": "2026-09-09T11:29:06.852295076Z",
+        "boot": "6b02acec-6ec1-412f-a388-1f6ba2e7d1f3"
+      },
+      "nextScanMS": 2.430984,
+      "previousProcesses": [
+        {
+          "pid": 1045962,
+          "command": [
+            "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-isolation/control/control.test",
+            "worker"
+          ],
+          "threadCount": 13
+        },
+        {
+          "pid": 1046120,
+          "command": [
+            "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/bin/java",
+            "--add-opens=java.base/java.lang=ALL-UNNAMED"
+          ],
+          "threadCount": 172
+        },
+        {
+          "pid": 1046999,
+          "command": [
+            "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-isolation/owner/run/r1/N/gradle/jdks/eclipse_adoptium-22-amd64-linux.2/bin/java",
+            "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED"
+          ],
+          "threadCount": 29
+        },
+        {
+          "pid": 1047082,
+          "command": [
+            "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-isolation/owner/run/r1/N/gradle/jdks/eclipse_adoptium-22-amd64-linux.2/bin/java",
+            "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED"
+          ],
+          "threadCount": 29
+        },
+        {
+          "pid": 1047111,
+          "command": [
+            "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-isolation/owner/run/r1/N/gradle/jdks/eclipse_adoptium-25-amd64-linux.2/bin/java",
+            "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED"
+          ],
+          "threadCount": 30
+        },
+        {
+          "pid": 1047286,
+          "command": [
+            "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-isolation/owner/run/r1/N/gradle/jdks/eclipse_adoptium-25-amd64-linux.2/bin/java",
+            "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED"
+          ],
+          "threadCount": 29
+        },
+        {
+          "pid": 1047369,
+          "command": [
+            "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-isolation/owner/run/r1/N/gradle/jdks/eclipse_adoptium-25-amd64-linux.2/bin/java",
+            "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED"
+          ],
+          "threadCount": 29
+        },
+        {
+          "pid": 1047441,
+          "command": [
+            "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-isolation/owner/run/r1/N/gradle/jdks/oracle_corporation-26-amd64-linux.2/bin/java",
+            "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED"
+          ],
+          "threadCount": 32
+        },
+        {
+          "pid": 1047539,
+          "command": [
+            "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-isolation/owner/run/r1/N/gradle/jdks/oracle_corporation-27-amd64-linux.2/bin/java",
+            "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED"
+          ],
+          "threadCount": 32
+        },
+        {
+          "pid": 1065683,
+          "command": [
+            "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/bin/java",
+            "-Xmx64m"
+          ],
+          "threadCount": 21
+        }
+      ]
+    },
+    {
+      "index": 20,
+      "gapMS": 150.90795,
+      "previousBegin": {
+        "ns": 410272744109768,
+        "utc": "2026-09-09T11:29:06.936668361Z",
+        "boot": "6b02acec-6ec1-412f-a388-1f6ba2e7d1f3"
+      },
+      "previousEnd": {
+        "ns": 410272746741553,
+        "utc": "2026-09-09T11:29:06.939284076Z",
+        "boot": "6b02acec-6ec1-412f-a388-1f6ba2e7d1f3"
+      },
+      "previousScanMS": 2.631785,
+      "nextBegin": {
+        "ns": 410272895017718,
+        "utc": "2026-09-09T11:29:07.087586321Z",
+        "boot": "6b02acec-6ec1-412f-a388-1f6ba2e7d1f3"
+      },
+      "nextEnd": {
+        "ns": 410272897314462,
+        "utc": "2026-09-09T11:29:07.089853555Z",
+        "boot": "6b02acec-6ec1-412f-a388-1f6ba2e7d1f3"
+      },
+      "nextScanMS": 2.296744,
+      "previousProcesses": [
+        {
+          "pid": 1045962,
+          "command": [
+            "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-isolation/control/control.test",
+            "worker"
+          ],
+          "threadCount": 13
+        },
+        {
+          "pid": 1046120,
+          "command": [
+            "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/bin/java",
+            "--add-opens=java.base/java.lang=ALL-UNNAMED"
+          ],
+          "threadCount": 172
+        },
+        {
+          "pid": 1046999,
+          "command": [
+            "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-isolation/owner/run/r1/N/gradle/jdks/eclipse_adoptium-22-amd64-linux.2/bin/java",
+            "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED"
+          ],
+          "threadCount": 29
+        },
+        {
+          "pid": 1047082,
+          "command": [
+            "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-isolation/owner/run/r1/N/gradle/jdks/eclipse_adoptium-22-amd64-linux.2/bin/java",
+            "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED"
+          ],
+          "threadCount": 29
+        },
+        {
+          "pid": 1047111,
+          "command": [
+            "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-isolation/owner/run/r1/N/gradle/jdks/eclipse_adoptium-25-amd64-linux.2/bin/java",
+            "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED"
+          ],
+          "threadCount": 30
+        },
+        {
+          "pid": 1047286,
+          "command": [
+            "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-isolation/owner/run/r1/N/gradle/jdks/eclipse_adoptium-25-amd64-linux.2/bin/java",
+            "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED"
+          ],
+          "threadCount": 29
+        },
+        {
+          "pid": 1047369,
+          "command": [
+            "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-isolation/owner/run/r1/N/gradle/jdks/eclipse_adoptium-25-amd64-linux.2/bin/java",
+            "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED"
+          ],
+          "threadCount": 29
+        },
+        {
+          "pid": 1047441,
+          "command": [
+            "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-isolation/owner/run/r1/N/gradle/jdks/oracle_corporation-26-amd64-linux.2/bin/java",
+            "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED"
+          ],
+          "threadCount": 32
+        },
+        {
+          "pid": 1047539,
+          "command": [
+            "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-isolation/owner/run/r1/N/gradle/jdks/oracle_corporation-27-amd64-linux.2/bin/java",
+            "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED"
+          ],
+          "threadCount": 32
+        },
+        {
+          "pid": 1065683,
+          "command": [
+            "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/bin/java",
+            "-Xmx64m"
+          ],
+          "threadCount": 21
+        }
+      ]
+    }
+  ],
+  "hostLoadBefore": "4.18 5.52 5.02 5/2383 1065682",
+  "hostLoadAfter": "5.11 5.68 5.07 6/2367 1065847",
+  "hostMemoryBefore": "26867568 kB",
+  "hostMemoryAfter": "26351848 kB"
+}

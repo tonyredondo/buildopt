@@ -135,3 +135,11 @@ func TestOutboxAtomicBoundedOldestFirst(t *testing.T) {
 		t.Fatalf("runner identity was removed: %v", err)
 	}
 }
+
+func TestDeriveStatusPreservesOwnerDecisions(t *testing.T) {
+	for _, state := range []string{"OWNER_ACCEPTED", "OWNER_REJECTED", "OWNER_DEFERRED"} {
+		if got := DeriveStatus(0, state, true); got.State != state {
+			t.Fatalf("verified %s became %s", state, got.State)
+		}
+	}
+}

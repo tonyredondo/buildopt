@@ -1,0 +1,32 @@
+[
+  {
+    "original": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/source",
+      "sha256": "b1fd008fa207504b5be503a000433845bd07e82dbb56df22f0bec06a24244fef"
+    },
+    "retained": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/v1/source",
+      "sha256": "b1fd008fa207504b5be503a000433845bd07e82dbb56df22f0bec06a24244fef"
+    }
+  },
+  {
+    "original": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+      "sha256": "cc348557ca16e60299ad2027cf47e41fdd55f36cd784c63c65eea40cd69e8648"
+    },
+    "retained": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/v1/control.test",
+      "sha256": "cc348557ca16e60299ad2027cf47e41fdd55f36cd784c63c65eea40cd69e8648"
+    }
+  },
+  {
+    "original": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control-race.test",
+      "sha256": "af6b55a9284cf3a653d2b9a55e32fd15f9e12deffd8536c5208be3dcbfa6ac2a"
+    },
+    "retained": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/v1/control-race.test",
+      "sha256": "af6b55a9284cf3a653d2b9a55e32fd15f9e12deffd8536c5208be3dcbfa6ac2a"
+    }
+  }
+]

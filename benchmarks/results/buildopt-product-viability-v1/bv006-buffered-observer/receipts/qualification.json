@@ -1,0 +1,1060 @@
+{
+  "status": "completed",
+  "cases": [
+    {
+      "name": "normal",
+      "unit": "bv-buffered-normal-1148716",
+      "command": [
+        "systemd-run",
+        "--user",
+        "--wait",
+        "--pipe",
+        "--collect",
+        "--unit=bv-buffered-normal-1148716",
+        "--property=KillMode=control-group",
+        "--property=ExitType=cgroup",
+        "--property=CPUAffinity=8",
+        "--property=MemoryMax=512M",
+        "--property=RuntimeMaxSec=20",
+        "--working-directory=/home/tonyredondo/repos/github/tonyredondo/buildopt",
+        "--setenv=BUILDOPT_BUFFERED_CASE=normal",
+        "--setenv=BUILDOPT_BUFFERED_ROOT=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/runs/normal",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+        "-test.run=^TestBufferedObserverCase$",
+        "-test.timeout=18s",
+        "-test.v"
+      ],
+      "startBootNS": 415958064527806,
+      "sourceFreeze": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/source",
+        "sha256": "39492f94506364772aa0aa173b65291bd27c55c3aa93b348d50e0a17d4d41a95"
+      },
+      "executable": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+        "sha256": "de23df6b9d6eea93c09961f7b9f479c90a30942b4c16aee90221a6637072a244"
+      },
+      "pid": 1148725,
+      "startTicks": "41595806",
+      "exitCode": 0,
+      "endBootNS": 415962118845296,
+      "logSHA256": "efb3a1e24cc63ea658f09a6dfb86073829206bc585171e2f4fac16473884881e",
+      "fixtureIdentity": {
+        "pid": 1148727,
+        "startTicks": 41595807,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-normal-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestBufferedObserverCase$",
+          "-test.timeout=18s",
+          "-test.v"
+        ]
+      },
+      "writerIdentity": {
+        "pid": 1148735,
+        "startTicks": 41595809,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-normal-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestBufferedWriterHelper$",
+          "-test.timeout=1005s"
+        ]
+      },
+      "heartbeatIdentity": {
+        "pid": 1148739,
+        "startTicks": 41595809,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-normal-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestLiveObserverHeartbeat$",
+          "-test.timeout=1005s"
+        ]
+      },
+      "closed": true
+    },
+    {
+      "name": "writer-delay",
+      "unit": "bv-buffered-writer-delay-1148716",
+      "command": [
+        "systemd-run",
+        "--user",
+        "--wait",
+        "--pipe",
+        "--collect",
+        "--unit=bv-buffered-writer-delay-1148716",
+        "--property=KillMode=control-group",
+        "--property=ExitType=cgroup",
+        "--property=CPUAffinity=8",
+        "--property=MemoryMax=512M",
+        "--property=RuntimeMaxSec=20",
+        "--working-directory=/home/tonyredondo/repos/github/tonyredondo/buildopt",
+        "--setenv=BUILDOPT_BUFFERED_CASE=writer-delay",
+        "--setenv=BUILDOPT_BUFFERED_ROOT=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/runs/writer-delay",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+        "-test.run=^TestBufferedObserverCase$",
+        "-test.timeout=18s",
+        "-test.v"
+      ],
+      "startBootNS": 415962131206824,
+      "sourceFreeze": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/source",
+        "sha256": "39492f94506364772aa0aa173b65291bd27c55c3aa93b348d50e0a17d4d41a95"
+      },
+      "executable": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+        "sha256": "de23df6b9d6eea93c09961f7b9f479c90a30942b4c16aee90221a6637072a244"
+      },
+      "pid": 1148821,
+      "startTicks": "41596213",
+      "exitCode": 0,
+      "endBootNS": 415966180838878,
+      "logSHA256": "5b55a1f1a6f61f573ed004f42b5630508dd5f4b60da6be5a56f872057e866291",
+      "fixtureIdentity": {
+        "pid": 1148822,
+        "startTicks": 41596213,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-writer-delay-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestBufferedObserverCase$",
+          "-test.timeout=18s",
+          "-test.v"
+        ]
+      },
+      "writerIdentity": {
+        "pid": 1148827,
+        "startTicks": 41596215,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-writer-delay-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestBufferedWriterHelper$",
+          "-test.timeout=1005s"
+        ]
+      },
+      "heartbeatIdentity": {
+        "pid": 1148831,
+        "startTicks": 41596216,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-writer-delay-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestLiveObserverHeartbeat$",
+          "-test.timeout=1005s"
+        ]
+      },
+      "closed": true
+    },
+    {
+      "name": "writer-error",
+      "unit": "bv-buffered-writer-error-1148716",
+      "command": [
+        "systemd-run",
+        "--user",
+        "--wait",
+        "--pipe",
+        "--collect",
+        "--unit=bv-buffered-writer-error-1148716",
+        "--property=KillMode=control-group",
+        "--property=ExitType=cgroup",
+        "--property=CPUAffinity=8",
+        "--property=MemoryMax=512M",
+        "--property=RuntimeMaxSec=20",
+        "--working-directory=/home/tonyredondo/repos/github/tonyredondo/buildopt",
+        "--setenv=BUILDOPT_BUFFERED_CASE=writer-error",
+        "--setenv=BUILDOPT_BUFFERED_ROOT=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/runs/writer-error",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+        "-test.run=^TestBufferedObserverCase$",
+        "-test.timeout=18s",
+        "-test.v"
+      ],
+      "startBootNS": 415966193154439,
+      "sourceFreeze": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/source",
+        "sha256": "39492f94506364772aa0aa173b65291bd27c55c3aa93b348d50e0a17d4d41a95"
+      },
+      "executable": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+        "sha256": "de23df6b9d6eea93c09961f7b9f479c90a30942b4c16aee90221a6637072a244"
+      },
+      "pid": 1148842,
+      "startTicks": "41596619",
+      "exitCode": 0,
+      "endBootNS": 415966540151934,
+      "logSHA256": "317abb61ff0e561d7e2dd00ff1749a33f479da33e6eab56f61c1896c8bf25f2e",
+      "fixtureIdentity": {
+        "pid": 1148843,
+        "startTicks": 41596620,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-writer-error-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestBufferedObserverCase$",
+          "-test.timeout=18s",
+          "-test.v"
+        ]
+      },
+      "writerIdentity": {
+        "pid": 1148848,
+        "startTicks": 41596622,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-writer-error-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestBufferedWriterHelper$",
+          "-test.timeout=1005s"
+        ]
+      },
+      "heartbeatIdentity": {
+        "pid": 1148853,
+        "startTicks": 41596622,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-writer-error-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestLiveObserverHeartbeat$",
+          "-test.timeout=1005s"
+        ]
+      },
+      "closed": true
+    },
+    {
+      "name": "short-write",
+      "unit": "bv-buffered-short-write-1148716",
+      "command": [
+        "systemd-run",
+        "--user",
+        "--wait",
+        "--pipe",
+        "--collect",
+        "--unit=bv-buffered-short-write-1148716",
+        "--property=KillMode=control-group",
+        "--property=ExitType=cgroup",
+        "--property=CPUAffinity=8",
+        "--property=MemoryMax=512M",
+        "--property=RuntimeMaxSec=20",
+        "--working-directory=/home/tonyredondo/repos/github/tonyredondo/buildopt",
+        "--setenv=BUILDOPT_BUFFERED_CASE=short-write",
+        "--setenv=BUILDOPT_BUFFERED_ROOT=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/runs/short-write",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+        "-test.run=^TestBufferedObserverCase$",
+        "-test.timeout=18s",
+        "-test.v"
+      ],
+      "startBootNS": 415966551709683,
+      "sourceFreeze": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/source",
+        "sha256": "39492f94506364772aa0aa173b65291bd27c55c3aa93b348d50e0a17d4d41a95"
+      },
+      "executable": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+        "sha256": "de23df6b9d6eea93c09961f7b9f479c90a30942b4c16aee90221a6637072a244"
+      },
+      "pid": 1148861,
+      "startTicks": "41596655",
+      "exitCode": 0,
+      "endBootNS": 415966898681807,
+      "logSHA256": "85e4bf5a32ade68b3bbb6750e22c2f94b5095f86640d4480d0447897e7c36d86",
+      "fixtureIdentity": {
+        "pid": 1148862,
+        "startTicks": 41596655,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-short-write-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestBufferedObserverCase$",
+          "-test.timeout=18s",
+          "-test.v"
+        ]
+      },
+      "writerIdentity": {
+        "pid": 1148867,
+        "startTicks": 41596658,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-short-write-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestBufferedWriterHelper$",
+          "-test.timeout=1005s"
+        ]
+      },
+      "heartbeatIdentity": {
+        "pid": 1148871,
+        "startTicks": 41596658,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-short-write-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestLiveObserverHeartbeat$",
+          "-test.timeout=1005s"
+        ]
+      },
+      "closed": true
+    },
+    {
+      "name": "record-saturation",
+      "unit": "bv-buffered-record-saturation-1148716",
+      "command": [
+        "systemd-run",
+        "--user",
+        "--wait",
+        "--pipe",
+        "--collect",
+        "--unit=bv-buffered-record-saturation-1148716",
+        "--property=KillMode=control-group",
+        "--property=ExitType=cgroup",
+        "--property=CPUAffinity=8",
+        "--property=MemoryMax=512M",
+        "--property=RuntimeMaxSec=20",
+        "--working-directory=/home/tonyredondo/repos/github/tonyredondo/buildopt",
+        "--setenv=BUILDOPT_BUFFERED_CASE=record-saturation",
+        "--setenv=BUILDOPT_BUFFERED_ROOT=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/runs/record-saturation",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+        "-test.run=^TestBufferedObserverCase$",
+        "-test.timeout=18s",
+        "-test.v"
+      ],
+      "startBootNS": 415966911222820,
+      "sourceFreeze": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/source",
+        "sha256": "39492f94506364772aa0aa173b65291bd27c55c3aa93b348d50e0a17d4d41a95"
+      },
+      "executable": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+        "sha256": "de23df6b9d6eea93c09961f7b9f479c90a30942b4c16aee90221a6637072a244"
+      },
+      "pid": 1148881,
+      "startTicks": "41596691",
+      "exitCode": 0,
+      "endBootNS": 415969369465603,
+      "logSHA256": "dd20905b793496d55532e709cf1a1f74d77d6c7f92a9a305eb3bb32cec3ea418",
+      "fixtureIdentity": {
+        "pid": 1148882,
+        "startTicks": 41596691,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-record-saturation-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestBufferedObserverCase$",
+          "-test.timeout=18s",
+          "-test.v"
+        ]
+      },
+      "writerIdentity": {
+        "pid": 1148887,
+        "startTicks": 41596694,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-record-saturation-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestBufferedWriterHelper$",
+          "-test.timeout=1005s"
+        ]
+      },
+      "heartbeatIdentity": {
+        "pid": 1148891,
+        "startTicks": 41596694,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-record-saturation-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestLiveObserverHeartbeat$",
+          "-test.timeout=1005s"
+        ]
+      },
+      "closed": true
+    },
+    {
+      "name": "byte-saturation",
+      "unit": "bv-buffered-byte-saturation-1148716",
+      "command": [
+        "systemd-run",
+        "--user",
+        "--wait",
+        "--pipe",
+        "--collect",
+        "--unit=bv-buffered-byte-saturation-1148716",
+        "--property=KillMode=control-group",
+        "--property=ExitType=cgroup",
+        "--property=CPUAffinity=8",
+        "--property=MemoryMax=512M",
+        "--property=RuntimeMaxSec=20",
+        "--working-directory=/home/tonyredondo/repos/github/tonyredondo/buildopt",
+        "--setenv=BUILDOPT_BUFFERED_CASE=byte-saturation",
+        "--setenv=BUILDOPT_BUFFERED_ROOT=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/runs/byte-saturation",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+        "-test.run=^TestBufferedObserverCase$",
+        "-test.timeout=18s",
+        "-test.v"
+      ],
+      "startBootNS": 415969381290833,
+      "sourceFreeze": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/source",
+        "sha256": "39492f94506364772aa0aa173b65291bd27c55c3aa93b348d50e0a17d4d41a95"
+      },
+      "executable": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+        "sha256": "de23df6b9d6eea93c09961f7b9f479c90a30942b4c16aee90221a6637072a244"
+      },
+      "pid": 1148904,
+      "startTicks": "41596938",
+      "exitCode": 0,
+      "endBootNS": 415969526817285,
+      "logSHA256": "a4e59414fae9b4cd786612c5c626dda3314f9eed232f99d62c817690bcb4dac4",
+      "fixtureIdentity": {
+        "pid": 1148905,
+        "startTicks": 41596938,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-byte-saturation-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestBufferedObserverCase$",
+          "-test.timeout=18s",
+          "-test.v"
+        ]
+      },
+      "writerIdentity": {
+        "pid": 1148910,
+        "startTicks": 41596941,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-byte-saturation-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestBufferedWriterHelper$",
+          "-test.timeout=1005s"
+        ]
+      },
+      "heartbeatIdentity": {
+        "pid": 1148914,
+        "startTicks": 41596941,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-byte-saturation-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestLiveObserverHeartbeat$",
+          "-test.timeout=1005s"
+        ]
+      },
+      "closed": true
+    },
+    {
+      "name": "total-output-limit",
+      "unit": "bv-buffered-total-output-limit-1148716",
+      "command": [
+        "systemd-run",
+        "--user",
+        "--wait",
+        "--pipe",
+        "--collect",
+        "--unit=bv-buffered-total-output-limit-1148716",
+        "--property=KillMode=control-group",
+        "--property=ExitType=cgroup",
+        "--property=CPUAffinity=8",
+        "--property=MemoryMax=512M",
+        "--property=RuntimeMaxSec=20",
+        "--working-directory=/home/tonyredondo/repos/github/tonyredondo/buildopt",
+        "--setenv=BUILDOPT_BUFFERED_CASE=total-output-limit",
+        "--setenv=BUILDOPT_BUFFERED_ROOT=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/runs/total-output-limit",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+        "-test.run=^TestBufferedObserverCase$",
+        "-test.timeout=18s",
+        "-test.v"
+      ],
+      "startBootNS": 415969538887536,
+      "sourceFreeze": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/source",
+        "sha256": "39492f94506364772aa0aa173b65291bd27c55c3aa93b348d50e0a17d4d41a95"
+      },
+      "executable": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+        "sha256": "de23df6b9d6eea93c09961f7b9f479c90a30942b4c16aee90221a6637072a244"
+      },
+      "pid": 1148923,
+      "startTicks": "41596954",
+      "exitCode": 0,
+      "endBootNS": 415969684424548,
+      "logSHA256": "808545bed3bf8dd32352070f9ebd25d53c29acdb4b6cda7df5bdfdc5e6930286",
+      "fixtureIdentity": {
+        "pid": 1148924,
+        "startTicks": 41596954,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-total-output-limit-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestBufferedObserverCase$",
+          "-test.timeout=18s",
+          "-test.v"
+        ]
+      },
+      "writerIdentity": {
+        "pid": 1148929,
+        "startTicks": 41596957,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-total-output-limit-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestBufferedWriterHelper$",
+          "-test.timeout=1005s"
+        ]
+      },
+      "heartbeatIdentity": {
+        "pid": 1148934,
+        "startTicks": 41596957,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-total-output-limit-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestLiveObserverHeartbeat$",
+          "-test.timeout=1005s"
+        ]
+      },
+      "closed": true
+    },
+    {
+      "name": "cancel-before",
+      "unit": "bv-buffered-cancel-before-1148716",
+      "command": [
+        "systemd-run",
+        "--user",
+        "--wait",
+        "--pipe",
+        "--collect",
+        "--unit=bv-buffered-cancel-before-1148716",
+        "--property=KillMode=control-group",
+        "--property=ExitType=cgroup",
+        "--property=CPUAffinity=8",
+        "--property=MemoryMax=512M",
+        "--property=RuntimeMaxSec=20",
+        "--working-directory=/home/tonyredondo/repos/github/tonyredondo/buildopt",
+        "--setenv=BUILDOPT_BUFFERED_CASE=cancel-before",
+        "--setenv=BUILDOPT_BUFFERED_ROOT=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/runs/cancel-before",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+        "-test.run=^TestBufferedObserverCase$",
+        "-test.timeout=18s",
+        "-test.v"
+      ],
+      "startBootNS": 415969715966805,
+      "sourceFreeze": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/source",
+        "sha256": "39492f94506364772aa0aa173b65291bd27c55c3aa93b348d50e0a17d4d41a95"
+      },
+      "executable": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+        "sha256": "de23df6b9d6eea93c09961f7b9f479c90a30942b4c16aee90221a6637072a244"
+      },
+      "pid": 1148942,
+      "startTicks": "41596971",
+      "exitCode": 0,
+      "endBootNS": 415969841516789,
+      "logSHA256": "0cfd6100fafe4dd3910bcb36b8aad0f6b7fa023922c90913f9803bea60de8f22",
+      "fixtureIdentity": {
+        "pid": 1148943,
+        "startTicks": 41596972,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-cancel-before-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestBufferedObserverCase$",
+          "-test.timeout=18s",
+          "-test.v"
+        ]
+      },
+      "writerIdentity": {
+        "pid": 1148948,
+        "startTicks": 41596974,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-cancel-before-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestBufferedWriterHelper$",
+          "-test.timeout=1005s"
+        ]
+      },
+      "heartbeatIdentity": {
+        "pid": 1148952,
+        "startTicks": 41596974,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-cancel-before-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestLiveObserverHeartbeat$",
+          "-test.timeout=1005s"
+        ]
+      },
+      "closed": true
+    },
+    {
+      "name": "cancel-capture",
+      "unit": "bv-buffered-cancel-capture-1148716",
+      "command": [
+        "systemd-run",
+        "--user",
+        "--wait",
+        "--pipe",
+        "--collect",
+        "--unit=bv-buffered-cancel-capture-1148716",
+        "--property=KillMode=control-group",
+        "--property=ExitType=cgroup",
+        "--property=CPUAffinity=8",
+        "--property=MemoryMax=512M",
+        "--property=RuntimeMaxSec=20",
+        "--working-directory=/home/tonyredondo/repos/github/tonyredondo/buildopt",
+        "--setenv=BUILDOPT_BUFFERED_CASE=cancel-capture",
+        "--setenv=BUILDOPT_BUFFERED_ROOT=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/runs/cancel-capture",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+        "-test.run=^TestBufferedObserverCase$",
+        "-test.timeout=18s",
+        "-test.v"
+      ],
+      "startBootNS": 415969852811357,
+      "sourceFreeze": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/source",
+        "sha256": "39492f94506364772aa0aa173b65291bd27c55c3aa93b348d50e0a17d4d41a95"
+      },
+      "executable": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+        "sha256": "de23df6b9d6eea93c09961f7b9f479c90a30942b4c16aee90221a6637072a244"
+      },
+      "pid": 1148961,
+      "startTicks": "41596985",
+      "exitCode": 0,
+      "endBootNS": 415972311029876,
+      "logSHA256": "7ad6d96032d6af807dcf600ca0159b31fc651504beb784453602db3e26df3624",
+      "fixtureIdentity": {
+        "pid": 1148962,
+        "startTicks": 41596986,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-cancel-capture-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestBufferedObserverCase$",
+          "-test.timeout=18s",
+          "-test.v"
+        ]
+      },
+      "writerIdentity": {
+        "pid": 1148967,
+        "startTicks": 41596989,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-cancel-capture-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestBufferedWriterHelper$",
+          "-test.timeout=1005s"
+        ]
+      },
+      "heartbeatIdentity": {
+        "pid": 1148971,
+        "startTicks": 41596989,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-cancel-capture-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestLiveObserverHeartbeat$",
+          "-test.timeout=1005s"
+        ]
+      },
+      "closed": true
+    },
+    {
+      "name": "cancel-drain",
+      "unit": "bv-buffered-cancel-drain-1148716",
+      "command": [
+        "systemd-run",
+        "--user",
+        "--wait",
+        "--pipe",
+        "--collect",
+        "--unit=bv-buffered-cancel-drain-1148716",
+        "--property=KillMode=control-group",
+        "--property=ExitType=cgroup",
+        "--property=CPUAffinity=8",
+        "--property=MemoryMax=512M",
+        "--property=RuntimeMaxSec=20",
+        "--working-directory=/home/tonyredondo/repos/github/tonyredondo/buildopt",
+        "--setenv=BUILDOPT_BUFFERED_CASE=cancel-drain",
+        "--setenv=BUILDOPT_BUFFERED_ROOT=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/runs/cancel-drain",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+        "-test.run=^TestBufferedObserverCase$",
+        "-test.timeout=18s",
+        "-test.v"
+      ],
+      "startBootNS": 415972323132867,
+      "sourceFreeze": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/source",
+        "sha256": "39492f94506364772aa0aa173b65291bd27c55c3aa93b348d50e0a17d4d41a95"
+      },
+      "executable": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+        "sha256": "de23df6b9d6eea93c09961f7b9f479c90a30942b4c16aee90221a6637072a244"
+      },
+      "pid": 1148980,
+      "startTicks": "41597232",
+      "exitCode": 0,
+      "endBootNS": 415974776499778,
+      "logSHA256": "0169f3c7123645185b661cfe812908ba2d8947569ad35c036c9fe41e8b76bb3f",
+      "fixtureIdentity": {
+        "pid": 1148981,
+        "startTicks": 41597233,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-cancel-drain-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestBufferedObserverCase$",
+          "-test.timeout=18s",
+          "-test.v"
+        ]
+      },
+      "writerIdentity": {
+        "pid": 1148986,
+        "startTicks": 41597235,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-cancel-drain-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestBufferedWriterHelper$",
+          "-test.timeout=1005s"
+        ]
+      },
+      "heartbeatIdentity": {
+        "pid": 1148990,
+        "startTicks": 41597235,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-cancel-drain-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestLiveObserverHeartbeat$",
+          "-test.timeout=1005s"
+        ]
+      },
+      "closed": true
+    },
+    {
+      "name": "drain-timeout",
+      "unit": "bv-buffered-drain-timeout-1148716",
+      "command": [
+        "systemd-run",
+        "--user",
+        "--wait",
+        "--pipe",
+        "--collect",
+        "--unit=bv-buffered-drain-timeout-1148716",
+        "--property=KillMode=control-group",
+        "--property=ExitType=cgroup",
+        "--property=CPUAffinity=8",
+        "--property=MemoryMax=512M",
+        "--property=RuntimeMaxSec=20",
+        "--working-directory=/home/tonyredondo/repos/github/tonyredondo/buildopt",
+        "--setenv=BUILDOPT_BUFFERED_CASE=drain-timeout",
+        "--setenv=BUILDOPT_BUFFERED_ROOT=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/runs/drain-timeout",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+        "-test.run=^TestBufferedObserverCase$",
+        "-test.timeout=18s",
+        "-test.v"
+      ],
+      "startBootNS": 415974788516108,
+      "sourceFreeze": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/source",
+        "sha256": "39492f94506364772aa0aa173b65291bd27c55c3aa93b348d50e0a17d4d41a95"
+      },
+      "executable": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+        "sha256": "de23df6b9d6eea93c09961f7b9f479c90a30942b4c16aee90221a6637072a244"
+      },
+      "pid": 1149003,
+      "startTicks": "41597479",
+      "exitCode": 0,
+      "endBootNS": 415975339359233,
+      "logSHA256": "5a4ae2dac4885ca870b0224f6ab1c7e6194f472cb4bd26f4e4e2398839f72996",
+      "fixtureIdentity": {
+        "pid": 1149004,
+        "startTicks": 41597479,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-drain-timeout-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestBufferedObserverCase$",
+          "-test.timeout=18s",
+          "-test.v"
+        ]
+      },
+      "writerIdentity": {
+        "pid": 1149009,
+        "startTicks": 41597482,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-drain-timeout-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestBufferedWriterHelper$",
+          "-test.timeout=1005s"
+        ]
+      },
+      "heartbeatIdentity": {
+        "pid": 1149013,
+        "startTicks": 41597482,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-drain-timeout-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestLiveObserverHeartbeat$",
+          "-test.timeout=1005s"
+        ]
+      },
+      "closed": true
+    },
+    {
+      "name": "writer-exit",
+      "unit": "bv-buffered-writer-exit-1148716",
+      "command": [
+        "systemd-run",
+        "--user",
+        "--wait",
+        "--pipe",
+        "--collect",
+        "--unit=bv-buffered-writer-exit-1148716",
+        "--property=KillMode=control-group",
+        "--property=ExitType=cgroup",
+        "--property=CPUAffinity=8",
+        "--property=MemoryMax=512M",
+        "--property=RuntimeMaxSec=20",
+        "--working-directory=/home/tonyredondo/repos/github/tonyredondo/buildopt",
+        "--setenv=BUILDOPT_BUFFERED_CASE=writer-exit",
+        "--setenv=BUILDOPT_BUFFERED_ROOT=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/runs/writer-exit",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+        "-test.run=^TestBufferedObserverCase$",
+        "-test.timeout=18s",
+        "-test.v"
+      ],
+      "startBootNS": 415975351101403,
+      "sourceFreeze": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/source",
+        "sha256": "39492f94506364772aa0aa173b65291bd27c55c3aa93b348d50e0a17d4d41a95"
+      },
+      "executable": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+        "sha256": "de23df6b9d6eea93c09961f7b9f479c90a30942b4c16aee90221a6637072a244"
+      },
+      "pid": 1149023,
+      "startTicks": "41597535",
+      "exitCode": 0,
+      "endBootNS": 415975698170022,
+      "logSHA256": "0fea070f3c7cba03b23a20b3aa475005c9f01f4ffe8f13c525a7ffb54d803eac",
+      "fixtureIdentity": {
+        "pid": 1149024,
+        "startTicks": 41597535,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-writer-exit-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestBufferedObserverCase$",
+          "-test.timeout=18s",
+          "-test.v"
+        ]
+      },
+      "writerIdentity": {
+        "pid": 1149029,
+        "startTicks": 41597538,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-writer-exit-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestBufferedWriterHelper$",
+          "-test.timeout=1005s"
+        ]
+      },
+      "heartbeatIdentity": {
+        "pid": 1149033,
+        "startTicks": 41597538,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-writer-exit-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestLiveObserverHeartbeat$",
+          "-test.timeout=1005s"
+        ]
+      },
+      "closed": true
+    },
+    {
+      "name": "driver-exit",
+      "unit": "bv-buffered-driver-exit-1148716",
+      "command": [
+        "systemd-run",
+        "--user",
+        "--wait",
+        "--pipe",
+        "--collect",
+        "--unit=bv-buffered-driver-exit-1148716",
+        "--property=KillMode=control-group",
+        "--property=ExitType=cgroup",
+        "--property=CPUAffinity=8",
+        "--property=MemoryMax=512M",
+        "--property=RuntimeMaxSec=20",
+        "--working-directory=/home/tonyredondo/repos/github/tonyredondo/buildopt",
+        "--setenv=BUILDOPT_BUFFERED_CASE=driver-exit",
+        "--setenv=BUILDOPT_BUFFERED_ROOT=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/runs/driver-exit",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+        "-test.run=^TestBufferedObserverCase$",
+        "-test.timeout=18s",
+        "-test.v"
+      ],
+      "startBootNS": 415975709621701,
+      "sourceFreeze": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/source",
+        "sha256": "39492f94506364772aa0aa173b65291bd27c55c3aa93b348d50e0a17d4d41a95"
+      },
+      "executable": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+        "sha256": "de23df6b9d6eea93c09961f7b9f479c90a30942b4c16aee90221a6637072a244"
+      },
+      "pid": 1149043,
+      "startTicks": "41597571",
+      "driverKilledBootNS": 415976050930960,
+      "exitCode": 255,
+      "endBootNS": 415976061013744,
+      "logSHA256": "65b195500ea232288f529bdc4821056186a699267e18c5114ef56d363cc1d896",
+      "fixtureIdentity": {
+        "pid": 1149044,
+        "startTicks": 41597571,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-driver-exit-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestBufferedObserverCase$",
+          "-test.timeout=18s",
+          "-test.v"
+        ]
+      },
+      "writerIdentity": {
+        "pid": 1149049,
+        "startTicks": 41597573,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-driver-exit-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestBufferedWriterHelper$",
+          "-test.timeout=1005s"
+        ]
+      },
+      "heartbeatIdentity": {
+        "pid": 1149053,
+        "startTicks": 41597574,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-driver-exit-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestLiveObserverHeartbeat$",
+          "-test.timeout=1005s"
+        ]
+      },
+      "closed": true,
+      "expectedIncomplete": true
+    },
+    {
+      "name": "scan-error",
+      "unit": "bv-buffered-scan-error-1148716",
+      "command": [
+        "systemd-run",
+        "--user",
+        "--wait",
+        "--pipe",
+        "--collect",
+        "--unit=bv-buffered-scan-error-1148716",
+        "--property=KillMode=control-group",
+        "--property=ExitType=cgroup",
+        "--property=CPUAffinity=8",
+        "--property=MemoryMax=512M",
+        "--property=RuntimeMaxSec=20",
+        "--working-directory=/home/tonyredondo/repos/github/tonyredondo/buildopt",
+        "--setenv=BUILDOPT_BUFFERED_CASE=scan-error",
+        "--setenv=BUILDOPT_BUFFERED_ROOT=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/runs/scan-error",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+        "-test.run=^TestBufferedObserverCase$",
+        "-test.timeout=18s",
+        "-test.v"
+      ],
+      "startBootNS": 415976072791333,
+      "sourceFreeze": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/source",
+        "sha256": "39492f94506364772aa0aa173b65291bd27c55c3aa93b348d50e0a17d4d41a95"
+      },
+      "executable": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+        "sha256": "de23df6b9d6eea93c09961f7b9f479c90a30942b4c16aee90221a6637072a244"
+      },
+      "pid": 1149062,
+      "startTicks": "41597607",
+      "exitCode": 0,
+      "endBootNS": 415976218274282,
+      "logSHA256": "18324f421c7ad5fcb4da69d1a8a1b777672aa605bd3c5fdfcb5fd0591d1a1fcd",
+      "fixtureIdentity": {
+        "pid": 1149063,
+        "startTicks": 41597608,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-scan-error-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestBufferedObserverCase$",
+          "-test.timeout=18s",
+          "-test.v"
+        ]
+      },
+      "writerIdentity": {
+        "pid": 1149068,
+        "startTicks": 41597610,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-scan-error-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestBufferedWriterHelper$",
+          "-test.timeout=1005s"
+        ]
+      },
+      "heartbeatIdentity": {
+        "pid": 1149073,
+        "startTicks": 41597610,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-scan-error-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control.test",
+          "-test.run=^TestLiveObserverHeartbeat$",
+          "-test.timeout=1005s"
+        ]
+      },
+      "closed": true
+    },
+    {
+      "name": "race-writer-delay",
+      "unit": "bv-buffered-race-writer-delay-1148716",
+      "command": [
+        "systemd-run",
+        "--user",
+        "--wait",
+        "--pipe",
+        "--collect",
+        "--unit=bv-buffered-race-writer-delay-1148716",
+        "--property=KillMode=control-group",
+        "--property=ExitType=cgroup",
+        "--property=CPUAffinity=8",
+        "--property=MemoryMax=512M",
+        "--property=RuntimeMaxSec=20",
+        "--working-directory=/home/tonyredondo/repos/github/tonyredondo/buildopt",
+        "--setenv=BUILDOPT_BUFFERED_CASE=race-writer-delay",
+        "--setenv=BUILDOPT_BUFFERED_ROOT=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/runs/race-writer-delay",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control-race.test",
+        "-test.run=^TestBufferedObserverCase$",
+        "-test.timeout=18s",
+        "-test.v"
+      ],
+      "startBootNS": 415976229740241,
+      "sourceFreeze": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/source",
+        "sha256": "39492f94506364772aa0aa173b65291bd27c55c3aa93b348d50e0a17d4d41a95"
+      },
+      "executable": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control-race.test",
+        "sha256": "8c9743650249f4aae1416848793e4efe0380c1eb2b35919d6c9336796546aa08"
+      },
+      "pid": 1149080,
+      "startTicks": "41597623",
+      "exitCode": 0,
+      "endBootNS": 415983311319364,
+      "logSHA256": "0f064420efc0c2629f7e4db39a42c9d8c1fe90432ed5c31e363cf63f4c51758b",
+      "fixtureIdentity": {
+        "pid": 1149081,
+        "startTicks": 41597623,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-race-writer-delay-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control-race.test",
+          "-test.run=^TestBufferedObserverCase$",
+          "-test.timeout=18s",
+          "-test.v"
+        ]
+      },
+      "writerIdentity": {
+        "pid": 1149086,
+        "startTicks": 41597626,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-race-writer-delay-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control-race.test",
+          "-test.run=^TestBufferedWriterHelper$",
+          "-test.timeout=1005s"
+        ]
+      },
+      "heartbeatIdentity": {
+        "pid": 1149090,
+        "startTicks": 41597627,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/bv-buffered-race-writer-delay-1148716.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/control-race.test",
+          "-test.run=^TestLiveObserverHeartbeat$",
+          "-test.timeout=1005s"
+        ]
+      },
+      "closed": true
+    }
+  ],
+  "wallSeconds": 25.26121238298947,
+  "gradleActual": 0,
+  "helperJVMActual": 0
+}

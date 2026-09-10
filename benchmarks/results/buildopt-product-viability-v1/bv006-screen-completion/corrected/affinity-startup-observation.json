@@ -1,0 +1,271 @@
+{
+  "workers": {
+    "1448134": {
+      "pid": 1448134,
+      "startTicks": 43512014,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-a56934382f81dfe9-r1-N-1.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion/bin/history-replay",
+        "worker",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/profiles/8/run/sessions/r1-000-g0-N/worker-config.json",
+        "a628caa317adef8eb2831d062ee5c3a8ab1e4b386341fb90d9041c3ef67a52c9"
+      ]
+    },
+    "1457986": {
+      "pid": 1457986,
+      "startTicks": 43574569,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-a56934382f81dfe9-r1-I-2.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion/bin/history-replay",
+        "worker",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/profiles/8/run/sessions/r1-000-g0-I/worker-config.json",
+        "91abb1c0dae9b249cb80439a499f64e9498a6728b69eb05baa8aae8fa3c5bdf7"
+      ]
+    }
+  },
+  "firstObservations": {
+    "1448134": [
+      {
+        "sample": 435120142463274,
+        "sampleEnd": 435120149287159,
+        "group": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-a56934382f81dfe9-r1-N-1.service",
+        "process": {
+          "identity": {
+            "pid": 1448134,
+            "startTicks": 43512014,
+            "cpuTicks": 0
+          },
+          "command": "(history-replay)                                                                      ",
+          "threadMasks": {
+            "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31": [
+              1448134
+            ]
+          }
+        }
+      },
+      {
+        "sample": 435120649492922,
+        "sampleEnd": 435120650240744,
+        "group": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-a56934382f81dfe9-r1-N-1.service",
+        "process": {
+          "identity": {
+            "pid": 1448134,
+            "startTicks": 43512014,
+            "cpuTicks": 8
+          },
+          "command": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion/bin/history-replay worker /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/profiles/8/run/sessions/r1-000-g0-N/worker-config.json a628caa317adef8eb2831d062ee5c3a8ab1e4b386341fb90d9041c3ef67a52c9 ",
+          "threadMasks": {
+            "8": [
+              1448134,
+              1448136,
+              1448137,
+              1448138,
+              1448170,
+              1448171
+            ]
+          }
+        }
+      },
+      {
+        "sample": 435121150449857,
+        "sampleEnd": 435121151445789,
+        "group": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-a56934382f81dfe9-r1-N-1.service",
+        "process": {
+          "identity": {
+            "pid": 1448134,
+            "startTicks": 43512014,
+            "cpuTicks": 59
+          },
+          "command": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion/bin/history-replay worker /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/profiles/8/run/sessions/r1-000-g0-N/worker-config.json a628caa317adef8eb2831d062ee5c3a8ab1e4b386341fb90d9041c3ef67a52c9 ",
+          "threadMasks": {
+            "8": [
+              1448134,
+              1448136,
+              1448137,
+              1448138,
+              1448170,
+              1448171
+            ]
+          }
+        }
+      },
+      {
+        "sample": 435121651639013,
+        "sampleEnd": 435121652611065,
+        "group": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-a56934382f81dfe9-r1-N-1.service",
+        "process": {
+          "identity": {
+            "pid": 1448134,
+            "startTicks": 43512014,
+            "cpuTicks": 108
+          },
+          "command": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion/bin/history-replay worker /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/profiles/8/run/sessions/r1-000-g0-N/worker-config.json a628caa317adef8eb2831d062ee5c3a8ab1e4b386341fb90d9041c3ef67a52c9 ",
+          "threadMasks": {
+            "8": [
+              1448134,
+              1448136,
+              1448137,
+              1448138,
+              1448170,
+              1448171
+            ]
+          }
+        }
+      }
+    ],
+    "1457986": [
+      {
+        "sample": 435745937889475,
+        "sampleEnd": 435745945969464,
+        "group": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-a56934382f81dfe9-r1-I-2.service",
+        "process": {
+          "identity": {
+            "pid": 1457986,
+            "startTicks": 43574569,
+            "cpuTicks": 0
+          },
+          "command": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion/bin/history-replay worker /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/profiles/8/run/sessions/r1-000-g0-I/worker-config.json 91abb1c0dae9b249cb80439a499f64e9498a6728b69eb05baa8aae8fa3c5bdf7 ",
+          "threadMasks": {
+            "8": [
+              1457986,
+              1457988,
+              1457989,
+              1457990
+            ]
+          }
+        }
+      },
+      {
+        "sample": 435746446229047,
+        "sampleEnd": 435746448828503,
+        "group": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-a56934382f81dfe9-r1-I-2.service",
+        "process": {
+          "identity": {
+            "pid": 1457986,
+            "startTicks": 43574569,
+            "cpuTicks": 27
+          },
+          "command": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion/bin/history-replay worker /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/profiles/8/run/sessions/r1-000-g0-I/worker-config.json 91abb1c0dae9b249cb80439a499f64e9498a6728b69eb05baa8aae8fa3c5bdf7 ",
+          "threadMasks": {
+            "8": [
+              1457986,
+              1457988,
+              1457989,
+              1457990,
+              1458023,
+              1458024
+            ]
+          }
+        }
+      },
+      {
+        "sample": 435746952466053,
+        "sampleEnd": 435746955326950,
+        "group": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-a56934382f81dfe9-r1-I-2.service",
+        "process": {
+          "identity": {
+            "pid": 1457986,
+            "startTicks": 43574569,
+            "cpuTicks": 77
+          },
+          "command": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion/bin/history-replay worker /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/profiles/8/run/sessions/r1-000-g0-I/worker-config.json 91abb1c0dae9b249cb80439a499f64e9498a6728b69eb05baa8aae8fa3c5bdf7 ",
+          "threadMasks": {
+            "8": [
+              1457986,
+              1457988,
+              1457989,
+              1457990,
+              1458023,
+              1458024
+            ]
+          }
+        }
+      },
+      {
+        "sample": 435747455583993,
+        "sampleEnd": 435747458562640,
+        "group": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-a56934382f81dfe9-r1-I-2.service",
+        "process": {
+          "identity": {
+            "pid": 1457986,
+            "startTicks": 43574569,
+            "cpuTicks": 127
+          },
+          "command": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion/bin/history-replay worker /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/profiles/8/run/sessions/r1-000-g0-I/worker-config.json 91abb1c0dae9b249cb80439a499f64e9498a6728b69eb05baa8aae8fa3c5bdf7 ",
+          "threadMasks": {
+            "8": [
+              1457986,
+              1457988,
+              1457989,
+              1457990,
+              1458023,
+              1458024
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "anomalies": [
+    {
+      "sample": 435120142463274,
+      "sampleEnd": 435120149287159,
+      "group": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-a56934382f81dfe9-r1-N-1.service",
+      "process": {
+        "identity": {
+          "pid": 1448134,
+          "startTicks": 43512014,
+          "cpuTicks": 0
+        },
+        "command": "(history-replay)                                                                      ",
+        "threadMasks": {
+          "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31": [
+            1448134
+          ]
+        }
+      }
+    }
+  ],
+  "nativeIntervals": [
+    {
+      "pid": 1448134,
+      "begin": 435120462183393,
+      "end": 435330613095439
+    },
+    {
+      "pid": 1457986,
+      "begin": 435746076435687,
+      "end": 435951549968577
+    },
+    {
+      "pid": 1457986,
+      "begin": 436250146423383,
+      "end": 436283243656860
+    },
+    {
+      "pid": 1448134,
+      "begin": 436354822437961,
+      "end": 436388020953095
+    },
+    {
+      "pid": 1448134,
+      "begin": 436482123967975,
+      "end": 436557184314462
+    },
+    {
+      "pid": 1457986,
+      "begin": 436590750743460,
+      "end": 436625029079824
+    },
+    {
+      "pid": 1457986,
+      "begin": 436721433705170,
+      "end": 436787289036309
+    },
+    {
+      "pid": 1448134,
+      "begin": 436825590287331,
+      "end": 436921249067908
+    }
+  ]
+}

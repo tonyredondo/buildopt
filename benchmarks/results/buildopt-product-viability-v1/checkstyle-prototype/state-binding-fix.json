@@ -1,0 +1,21 @@
+{
+  "status": "verified",
+  "reproduction": "requests/cs-state-binding-reproduction/result.json",
+  "problem": "A caller replacing configProperties can remove the private state binding while preserving the supported native source/rules. Current admission then tries to load unresolved adapter XML.",
+  "observed": "Native checks 2 files and passes; candidate fails before checking.",
+  "correction": "Admit only the exact generated state binding and matching config directory; otherwise use original native Checker.",
+  "failedCorrections": 0,
+  "proofAffected": [
+    "state/config admission",
+    "normal admitted history",
+    "owner integration",
+    "final patch and inverse"
+  ],
+  "proofRetained": "Per-file checker, ordered events, state codec, original native inverse postimage and rule semantics are unchanged.",
+  "regression": "requests/cs-state-binding-regression/result.json",
+  "additionalBoundary": "requests/cs-state-binding-config-directory/result.json",
+  "positiveControls": [
+    "cs-state-binding-admitted",
+    "cs-state-binding-warm"
+  ]
+}

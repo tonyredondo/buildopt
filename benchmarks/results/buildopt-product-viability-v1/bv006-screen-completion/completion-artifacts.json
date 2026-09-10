@@ -1,0 +1,276 @@
+{
+  "status": "verified",
+  "completedUTC": "2026-09-10T00:41:29.552506+00:00",
+  "files": [
+    {
+      "path": "corrected/allocation-at-analysis.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/analysis/allocation-at-analysis.json",
+      "sha256": "b98cad347eb8d03f5bb8c58c24967c909163b165e2240f32f62c5fc148dfd08c",
+      "bytes": 1850
+    },
+    {
+      "path": "corrected/profile-8.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/analysis/profile-8.json",
+      "sha256": "93f2e924680626522e5b1fb53479f1437a7201714c74f0137f5d35f75b04d523",
+      "bytes": 19193
+    },
+    {
+      "path": "corrected/receipts/profile-8-start.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/receipts/profile-8-start.json",
+      "sha256": "347421659ac6597030a254c66014498f0a180071953c17f2c5fb85abe71cea9a",
+      "bytes": 639
+    },
+    {
+      "path": "corrected/receipts/profile-8-end.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/receipts/profile-8-end.json",
+      "sha256": "1695bae9db79cfc3702f3e88480e08a9968a2570c88486228e8c7155506585a3",
+      "bytes": 1000
+    },
+    {
+      "path": "corrected/runtime/8/result.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/profiles/8/run/result.json",
+      "sha256": "37ef9362a1994743bf878aa25b0a2a9dbcb8af16d931d79603bdd1835e67a826",
+      "bytes": 2991
+    },
+    {
+      "path": "corrected/runtime/8/report.md",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/profiles/8/run/report.md",
+      "sha256": "de665beaefbd49ec00487bc22322e9c157f3a040870607134868572e9ba439d2",
+      "bytes": 1025
+    },
+    {
+      "path": "corrected/runtime/8/manifest.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/profiles/8/run/manifest.json",
+      "sha256": "9fea4f45e2ae03df9c8d09d01f000f48e745db27edd6253c8c3ee8c5fefc66ed",
+      "bytes": 11115
+    },
+    {
+      "path": "corrected/profile-4.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/analysis/profile-4.json",
+      "sha256": "82eb70691c4829b95ee0946af20b4d3edf7dd8b98e58b431da2d1bd9a7104f3e",
+      "bytes": 18259
+    },
+    {
+      "path": "corrected/receipts/profile-4-start.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/receipts/profile-4-start.json",
+      "sha256": "f6125025c563b17911c889a5007308f2f92b5e1b2030ec66205a31a0ab10e65e",
+      "bytes": 639
+    },
+    {
+      "path": "corrected/receipts/profile-4-end.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/receipts/profile-4-end.json",
+      "sha256": "3089f2ef55bf7344cd8e7cdd422e2447b6b85d209a595d16fb328b13007fdd87",
+      "bytes": 1000
+    },
+    {
+      "path": "corrected/runtime/4/result.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/profiles/4/run/result.json",
+      "sha256": "da3f2fcb7e40314508df50258b1fef57fd3b59c777ad159aee3ea2f761af5d49",
+      "bytes": 2999
+    },
+    {
+      "path": "corrected/runtime/4/report.md",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/profiles/4/run/report.md",
+      "sha256": "d81beefa266fb29ba983bb4da7bf38f5ef1109ed3cb467d59750fe192149193d",
+      "bytes": 1025
+    },
+    {
+      "path": "corrected/runtime/4/manifest.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/profiles/4/run/manifest.json",
+      "sha256": "fac7eee28c9ae71146a2ba12961adc828e3d3bfd5384e732e6756f0bbfa88ab6",
+      "bytes": 11115
+    },
+    {
+      "path": "corrected/profile-2.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/analysis/profile-2.json",
+      "sha256": "6e6f37548d3106bf70176ff26d1af7758d46c8edb401e8eb80d563571caf7e7d",
+      "bytes": 18370
+    },
+    {
+      "path": "corrected/receipts/profile-2-start.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/receipts/profile-2-start.json",
+      "sha256": "854b591d80ea5a6fb971abebad45181151f5fa0ce6c9a1d35644908702dd27eb",
+      "bytes": 639
+    },
+    {
+      "path": "corrected/receipts/profile-2-end.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/receipts/profile-2-end.json",
+      "sha256": "88dea620640b55698825fdd167e79f9e789fa70fb527258dccb04c7114c0a90c",
+      "bytes": 1001
+    },
+    {
+      "path": "corrected/runtime/2/result.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/profiles/2/run/result.json",
+      "sha256": "a48a715106f1659540e6a78ce2249f32d6dbc5bbb3f7f87378544dc4cdb56b30",
+      "bytes": 3005
+    },
+    {
+      "path": "corrected/runtime/2/report.md",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/profiles/2/run/report.md",
+      "sha256": "933bed37d50c9561921feb6fbe4f1f9f7740e576d4ff986348b3ad375ce168ce",
+      "bytes": 1025
+    },
+    {
+      "path": "corrected/runtime/2/manifest.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/profiles/2/run/manifest.json",
+      "sha256": "b91c01973653ec0a3fc86df9d446862eb02bf7acfc4da61770ee46e3e8c1d807",
+      "bytes": 11115
+    },
+    {
+      "path": "corrected/profile-history-8.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/analysis/profile-history-8.json",
+      "sha256": "1582ce87d92902546212620dc041df0cf3b835c31a0a887c6f4d01c273229eac",
+      "bytes": 61762
+    },
+    {
+      "path": "corrected/receipts/profile-history-8-start.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/receipts/profile-history-8-start.json",
+      "sha256": "4a3e08da2205f1ca3efd905dd4879054025a643d2100b4134fb31ec3ac3cc14c",
+      "bytes": 657
+    },
+    {
+      "path": "corrected/receipts/profile-history-8-end.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/receipts/profile-history-8-end.json",
+      "sha256": "c273d50ce7b64953eef10f866e04e9e1412df30ad3201aa956f8e89d8f1b029b",
+      "bytes": 1020
+    },
+    {
+      "path": "corrected/runtime/history-8/result.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/profiles/history-8/run/result.json",
+      "sha256": "24fd6e9b2c73c2a15c9e7894e5ef00883d1a831a3637ee3e3907c29de5191b43",
+      "bytes": 7320
+    },
+    {
+      "path": "corrected/runtime/history-8/report.md",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/profiles/history-8/run/report.md",
+      "sha256": "cd16fbe98137044f5985c2993b69a67b96879e109e3462070037c626a882a754",
+      "bytes": 1041
+    },
+    {
+      "path": "corrected/runtime/history-8/manifest.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/profiles/history-8/run/manifest.json",
+      "sha256": "d1d455f1c773757720f43df6f7ed0844f5c44800f3e7413291ca53e741d3b94a",
+      "bytes": 14999
+    },
+    {
+      "path": "corrected/time-extension-freeze.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/inputs/time-extension-freeze.json",
+      "sha256": "83fdbdd6970cc0363c917363d4018caa04ac40e6f3f5bd78cdee43445cafe3a6",
+      "bytes": 2049
+    },
+    {
+      "path": "corrected/history-manifest.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/profiles/history-8/manifest-time-v2.json",
+      "sha256": "b28ea36c8d7afb549dd39525ab7939f4a47885c82ae53f40efaf517b28cbda48",
+      "bytes": 14999
+    },
+    {
+      "path": "corrected/run-profile-time-v2.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/run-profile-time-v2.py",
+      "sha256": "703261f168a9d252239b268e42790d20e3504c84d765fe584cc7849b5f4fde23",
+      "bytes": 10148
+    },
+    {
+      "path": "corrected/analyze-time-v2.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/analyze-time-v2.py",
+      "sha256": "8c985eb0eb63739ab0cfc7d20469bcf4d9611ce1e016799415d9cdfd8b6fcb29",
+      "bytes": 16187
+    },
+    {
+      "path": "corrected/complete-v3.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/complete-v3.py",
+      "sha256": "5c1ea6090101234f26063cba22a93031ad7f0e80a7ee19b9bc7e0ea5a4f0ed52",
+      "bytes": 3719
+    },
+    {
+      "path": "corrected/receipts/controller-closeout-v4.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/receipts/controller-closeout-v4.json",
+      "sha256": "13b67d57164f7828bdd95c75e5d4499af086d86e70a2803fec94f15666b7e7fe",
+      "bytes": 1781
+    },
+    {
+      "path": "corrected/receipts/controller-v2-time-replaced.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/receipts/controller-v2-time-replaced.json",
+      "sha256": "2f654dc8a3630afc926fd0a2295d27762e8cd73a3521575944ef52b959e8cd76",
+      "bytes": 1458
+    },
+    {
+      "path": "corrected/receipts/deferred-time-validation.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/receipts/deferred-time-validation.json",
+      "sha256": "4d781b9d586299c8868640d7a42c9d89adb5c53971cca0ac5b1f5f2973cc7619",
+      "bytes": 646
+    },
+    {
+      "path": "corrected/history-task-diagnostic.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/analysis/history-task-diagnostic.json",
+      "sha256": "a971d14e696435ed85a29d266b6d45bc914f0eefdedcc1902c36efbfbd3da60c",
+      "bytes": 19613
+    },
+    {
+      "path": "corrected/history-state-continuity.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/analysis/history-state-continuity.json",
+      "sha256": "ec19c23034a24d766c4bbb54e567f760b50f7461c89d06c8bd085d8f26aa2934",
+      "bytes": 4876
+    },
+    {
+      "path": "corrected/describe-history.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/scripts/describe-history.py",
+      "sha256": "9a72677eeea1f3c6f9a99eb979f88212894e08dde964a918d067f31377a07b84",
+      "bytes": 2473
+    },
+    {
+      "path": "corrected/closeout.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/scripts/closeout.py",
+      "sha256": "9128af2fb8f2c65c0c2097a841e882e349ab74b10a7f95289cc4999d86c4318a",
+      "bytes": 11549
+    },
+    {
+      "path": "corrected/receipts/controller-v3-failed.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/receipts/controller-v3.json",
+      "sha256": "1d4064d30596e8f4a6a36bebaf10c379bfc9e18830adea01f6a6987d718a0b31",
+      "bytes": 710
+    },
+    {
+      "path": "corrected/analyze-history-observed-v4.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/analyze-history-observed-v4.py",
+      "sha256": "48dd6279ba2494a70d506418e0b20cbddac5dd8f42e7e9fe0f144333e53824f6",
+      "bytes": 16673
+    },
+    {
+      "path": "corrected/history-observation-v4-freeze.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/inputs/history-observation-v4-freeze.json",
+      "sha256": "2c32abb35e90a4add6b2ba9fc003a6dc1e5634a87ee37f0326baea7348bb921f",
+      "bytes": 2094
+    },
+    {
+      "path": "corrected/history-worker-affinity-observation.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/analysis/history-worker-affinity-observation.json",
+      "sha256": "43fec8abf04f1bdea1d877493285fcd4126fe4d2f4e8342f0a0fc5692fcd0391",
+      "bytes": 2549
+    },
+    {
+      "path": "corrected/history-reader-v4-test.log",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/logs/history-reader-v4-test.log",
+      "sha256": "2ba774605d06cba666278bbc9cfd54daea4f66913e2d8ce343eda16b70e7cb46",
+      "bytes": 199
+    },
+    {
+      "path": "corrected/test-history-reader-v4.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/scripts/test-history-reader-v4.py",
+      "sha256": "d3750925f39270ebdca95adf593ea4a5842981e8cb8c9f83fd4df8dac736c7a1",
+      "bytes": 2743
+    },
+    {
+      "path": "corrected/reader-v4-fixture-correction.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/analysis/reader-v4-fixture-correction.json",
+      "sha256": "c46df8123874745e5e68f1d6475100abd545b12f4b8d79f839a64a6ab42c9d95",
+      "bytes": 480
+    },
+    {
+      "path": "summary.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/analysis/summary.json",
+      "sha256": "91a34472c0debcaf45cc568ffdb3da9f2e76ccbdcdb825d7be5f9818cc2ff3c2",
+      "bytes": 25365
+    }
+  ]
+}

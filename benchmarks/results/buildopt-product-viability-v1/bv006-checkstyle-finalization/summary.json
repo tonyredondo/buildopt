@@ -1,0 +1,191 @@
+{
+  "schema": "buildopt.checkstyle-finalization/result/v1",
+  "status": "verified bounded comparison; product viability not established",
+  "decision": "FINALIZATION_VALUE_NOT_ESTABLISHED",
+  "materialSignal": false,
+  "productViability": "NOT_ESTABLISHED",
+  "formalReadinessQualified": false,
+  "nativeBaselineComparison": false,
+  "armLabels": {
+    "N": "current optimized implementation",
+    "I": "revised optimized implementation"
+  },
+  "ownerBuilds": 10,
+  "successfulComparisonBuilds": 8,
+  "rejectedV1OwnerBuilds": 2,
+  "warmupBuilds": 4,
+  "measuredBuilds": 4,
+  "measuredPairs": 2,
+  "liveCompleteOutputPairs": 4,
+  "independentCompleteOutputPairs": 4,
+  "customerMetrics": {
+    "baselineMeanMS": 103770.017242,
+    "candidateMeanMS": 90249.651484,
+    "pairedMeanSavingMS": 13520.365758000007,
+    "pairedMedianSavingMS": 13520.365758000007,
+    "savingPercent": 13.029164027668445,
+    "minimumPairedSavingMS": -14336.502464999983,
+    "maximumPairedSavingMS": 41377.233981,
+    "individualDeltasMS": [
+      41377.233981,
+      -14336.502464999983
+    ]
+  },
+  "nativeMetrics": {
+    "baselineMeanMS": 103339.835473,
+    "candidateMeanMS": 89966.238263,
+    "pairedMeanSavingMS": 13373.59721,
+    "pairedMedianSavingMS": 13373.59721,
+    "savingPercent": 12.941376526087243,
+    "minimumPairedSavingMS": -14628.810440000001,
+    "maximumPairedSavingMS": 41376.00486,
+    "individualDeltasMS": [
+      41376.00486,
+      -14628.810440000001
+    ]
+  },
+  "hostFlags": {
+    "r1-000-g0-I": "FLAGGED",
+    "r1-000-g0-N": "FLAGGED",
+    "r1-001-g0-I": "FLAGGED",
+    "r1-001-g0-N": "FLAGGED",
+    "r2-000-g0-I": "FLAGGED",
+    "r2-000-g0-N": "FLAGGED",
+    "r2-001-g0-I": "FLAGGED",
+    "r2-001-g0-N": "FLAGGED"
+  },
+  "hostSamplingQualified": false,
+  "hostSamplingUnqualifiedRequests": [
+    "r1-001-g0-N"
+  ],
+  "sameActualCheckingWork": true,
+  "nativeThreadAffinityVerified": true,
+  "workerExclusiveAffinityVerified": true,
+  "allRequestsRetained": true,
+  "preliminaryControllerOwnerBuilds": 0,
+  "correctness": {
+    "status": "verified strict-warning supported-service lifecycle for bounded owner comparison",
+    "cases": [
+      {
+        "case": "supported-final-cold",
+        "exitCode": 0,
+        "logSHA256": "2d10b72a3e904593e44a3ab8e8779cb7073aded60025573d1367e18112182220",
+        "stateSHA256": "dc76a4d7fc729fd58d5f578e9d42772e57de0c420c9653bcd6dbbebd5ed14599"
+      },
+      {
+        "case": "supported-final-warm",
+        "exitCode": 0,
+        "logSHA256": "6a440257ea197e05d2737b998a43483da104f4ca36ffeefc706d21f9e879ee20",
+        "stateSHA256": "9cfc634629e8eef11a9828ca319c3512220b0dd4a07a9c9717b7036eabfdc522"
+      },
+      {
+        "case": "supported-final-faults",
+        "exitCode": 1,
+        "logSHA256": "af27f668237c07cf0d0c5d984a10aad2d70a89d9e1392eebd694cfea01fab75a",
+        "stateSHA256": "0f6b9d1ac0f672f50fcaf92d41873e17a289af056925a66db4b673dda9d52330"
+      },
+      {
+        "case": "supported-final-cancel",
+        "exitCode": 143,
+        "logSHA256": "2dd4ff94ed16131e2e696250540a6831d1b29c77ae576ee3c4c3cf81c4140588",
+        "stateSHA256": "b90460ae6bd4d2945a34b3057f16956064ebadf585eae332e2fd7338cdb2d9c6"
+      },
+      {
+        "case": "supported-final-recovery",
+        "exitCode": 0,
+        "logSHA256": "b90633fa4cc805fb16f76c7f9a36ef10bae2c45f945c382969a3d37f98104a2e",
+        "stateSHA256": "d161f0bf334af992a99f6434cc767fe3423f4859bfe4f9f188d0fb59346e7b30"
+      },
+      {
+        "case": "supported-final-uptodate",
+        "exitCode": 0,
+        "logSHA256": "abbeda9f210aefd3b08c8f2d24445695dc1cab027a28312f9071705a050ddf1c",
+        "stateSHA256": "d161f0bf334af992a99f6434cc767fe3423f4859bfe4f9f188d0fb59346e7b30"
+      }
+    ],
+    "coreTestsReused": 4,
+    "coreSourceUnchanged": true,
+    "formatter": {
+      "exitCode": 0,
+      "changedFiles": [
+        "CheckstyleSuccessHistory.java"
+      ],
+      "endedUTC": "2026-09-10T08:47:09.686552+00:00"
+    },
+    "sourceSHA256": "19ddb089b59efc7b90e6b5e0fa87ee790d03779813c306992d2e21ab34ae21e1",
+    "guards": [
+      "executed successful task only",
+      "skipped/no-source history unchanged",
+      "native violation and late failure publish no success",
+      "late changed/deleted report rejected",
+      "late context change rejected",
+      "real worker cancellation invalidates history; recovery passes",
+      "UP-TO-DATE preserved",
+      "all task histories independent"
+    ],
+    "scope": "Gradle 9.7.1; existing owner configuration cache disabled; no product value claim",
+    "atUTC": "2026-09-10T08:48:57.990121+00:00"
+  },
+  "historyReconciliation": {
+    "status": "verified static reconciliation of retained prior evidence",
+    "source": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/benchmarks/results/buildopt-product-viability-v1/bv006-screen-completion/corrected/profile-history-8.json",
+      "sha256": "1582ce87d92902546212620dc041df0cf3b835c31a0a887c6f4d01c273229eac"
+    },
+    "measuredTransitions": 13,
+    "activeTransitions": [
+      7
+    ],
+    "inactiveTransitions": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14
+    ],
+    "baselineTotalSeconds": 289.055829233,
+    "oldCandidateTotalLossSeconds": 55.37716220999998,
+    "minimumNetSavingAcrossWindowSeconds": 14.45279146165,
+    "minimumSavingPerActiveTransitionSeconds": 14.45279146165,
+    "interpretation": "Only one of thirteen prior measured transitions executes Checkstyle. At that exact historical mix, a net 1s/build and 5% saving would require 14.453s total saved over the window, before added discovery/adoption/maintenance costs. New current/revised timings must not be substituted into old measurements; repeat actual native/revised lifecycle before claiming value. Twelve inactive transitions constrain persistent overhead and benefit frequency.",
+    "priorTwentyTransitionModel": {
+      "source": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/benchmarks/results/buildopt-product-viability-v1/checkstyle-admission/README.md",
+        "sha256": "77b00a1d491304f665f3768ba7d8c5e85fac21ee28f67c0ba2d5abbd2dd68431"
+      },
+      "activeOrdinals": [
+        7,
+        19,
+        20
+      ],
+      "baselineSeconds": 502.069,
+      "optimisticDependencyModelSavingSeconds": 29.849,
+      "optimisticSavingPercent": 5.9452,
+      "marginAboveFivePercentSeconds": 4.74555,
+      "modeledSavingAtOriginal7Seconds": 0,
+      "modeledSavingAtOriginal19Seconds": 24.22,
+      "modeledSavingAtOriginal20Seconds": 5.629,
+      "limit": "Dependency model retains competing task durations. It is not a measured counterfactual or bound on changed CPU contention."
+    },
+    "nextDecisionConstraint": "Closing finalization can prevent added waiting, but the native dependency model already predicts no direct critical-path saving at original7. Even a selected current/revised improvement does not establish lifetime payback: measure the complete chronological denominator and account for adoption/maintenance before adaptive investment."
+  },
+  "sourceRun": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/profiles/supported/run/result.json",
+    "sha256": "b54f9c41079d5482662ecf439b0057dcaf765f9c3fd646d809bf537f1750a192",
+    "bytes": 4097
+  },
+  "limits": [
+    "Two selected measured pairs; no precision or general product claim",
+    "Both arms are optimized; no new native baseline comparison",
+    "Shared host and symmetric phase agent can influence timing; prospective host flags reported separately",
+    "Task graph duration can end before revised service closure: whole customer envelope remains the primary metric",
+    "Qualification is limited to the pinned Gradle 9.7.1 owner without Configuration Cache"
+  ]
+}

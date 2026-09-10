@@ -1,0 +1,13 @@
+{
+  "status": "verified",
+  "atUTC": "2026-09-09T11:04:29.014881+00:00",
+  "behavior": "2dfa92dbe3cfa2b9abaf08524425a3f1324d91dd67e59ea8b2fa88f3be3c083c",
+  "nativeCache": "520252ec17cd78676e7f1d256210e5b0681ae107da93c14f84cb2d927de986da",
+  "fixture": "65cafb322611572ba338fa0ab336a24a69e888091304a49d2f991126bc905881",
+  "checker": "8fdb721311725b53108af3907872a81a606030c178e7b0798c6d9eab190052f5",
+  "controlFreeze": "1fe079b676fab0dcdbeb9a253685f4559b527dbaa5d773bb1bced54273499a6c",
+  "productionUnchanged": true,
+  "gradleFixtures": 8,
+  "nonGradleNativeFixtures": 104,
+  "affinityChildStarts": 3
+}

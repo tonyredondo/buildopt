@@ -1,0 +1,708 @@
+{
+  "schema": "bv006-existing-overhead-diagnosis/v1",
+  "scope": "Existing fixed qualification records plus a standalone output-sink diagnostic; no new Gradle starts or candidate-value claim",
+  "samples": [
+    {
+      "sample": 1,
+      "arm": "N",
+      "style": "plain",
+      "warmup": true,
+      "pair": -1,
+      "nativeMS": 239845.648103,
+      "launcherToReceivedMS": 1104.9541015625,
+      "daemonCommandMS": 238413,
+      "sampleBinding": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-01.json",
+        "sha256": "0a03c5f77ad8cc0c72fcb117654a3ef5d7957ccca95ee8ab77a1d5b46f98f991"
+      }
+    },
+    {
+      "sample": 2,
+      "arm": "I",
+      "style": "lean",
+      "warmup": true,
+      "pair": -1,
+      "nativeMS": 239705.011904,
+      "launcherToReceivedMS": 13482.06103515625,
+      "daemonCommandMS": 225902,
+      "sampleBinding": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-02.json",
+        "sha256": "b4318a3251f918cf8d887e005197636e4e3bc32bf28b940677a3ef73e4bdefa7"
+      },
+      "rawGraphBytes": 3281922,
+      "rootTasks": 1301,
+      "checkstyleSourceEntries": 8339,
+      "graphToFirstTaskMS": 139.8330078125,
+      "rootTaskWindowMS": 151216.83129882812,
+      "normalizedRootGraphSHA256": "3c37f54685a0a014943d00a8a75976ac564137e50cdab305e458461b6167b6e7",
+      "rootOutcomes": {
+        "EXECUTED": 1249,
+        "FROM-CACHE": 5,
+        "NO-SOURCE": 44,
+        "UP-TO-DATE": 3
+      }
+    },
+    {
+      "sample": 3,
+      "arm": "I",
+      "style": "plain",
+      "warmup": true,
+      "pair": -1,
+      "nativeMS": 7022.75551,
+      "launcherToReceivedMS": 353.05712890625,
+      "daemonCommandMS": 6661,
+      "sampleBinding": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-03.json",
+        "sha256": "6ff223f8af7c26c1b1425196f2259d277ced937ee81541ae61a8e9eac1133d45"
+      }
+    },
+    {
+      "sample": 4,
+      "arm": "N",
+      "style": "lean",
+      "warmup": true,
+      "pair": -1,
+      "nativeMS": 10383.718251,
+      "launcherToReceivedMS": 1611.617919921875,
+      "daemonCommandMS": 8763,
+      "sampleBinding": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-04.json",
+        "sha256": "e0572e0c133d8757a19e01bcdb996d8b5b2147473d2a5c3d3a5ba1bcf9ac2e55"
+      },
+      "rawGraphBytes": 3285564,
+      "rootTasks": 1301,
+      "checkstyleSourceEntries": 8339,
+      "graphToFirstTaskMS": 54.79296875,
+      "rootTaskWindowMS": 802.7099609375,
+      "normalizedRootGraphSHA256": "3c37f54685a0a014943d00a8a75976ac564137e50cdab305e458461b6167b6e7",
+      "rootOutcomes": {
+        "UP-TO-DATE": 1256,
+        "NO-SOURCE": 44,
+        "EXECUTED": 1
+      }
+    },
+    {
+      "sample": 5,
+      "arm": "N",
+      "style": "plain",
+      "warmup": false,
+      "pair": 0,
+      "nativeMS": 6000.237616,
+      "launcherToReceivedMS": 355.014892578125,
+      "daemonCommandMS": 5636,
+      "sampleBinding": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-05.json",
+        "sha256": "8a789dc91ca58f09ba066eb756efa4f971d8735e75dd8efec0a9c75180212abc"
+      },
+      "stdoutRootOutcomes": {
+        "UP-TO-DATE": 1256,
+        "NO-SOURCE": 44,
+        "EXECUTED": 1
+      },
+      "checkstyleOutcomes": {
+        ":server:checkstyleInternalClusterTest": "UP-TO-DATE",
+        ":server:checkstyleMain": "UP-TO-DATE",
+        ":server:checkstyleTest": "UP-TO-DATE"
+      }
+    },
+    {
+      "sample": 6,
+      "arm": "N",
+      "style": "lean",
+      "warmup": false,
+      "pair": 0,
+      "nativeMS": 6118.318054,
+      "launcherToReceivedMS": 349.201171875,
+      "daemonCommandMS": 5758,
+      "sampleBinding": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-06.json",
+        "sha256": "229eda24fd8bd4cd4bd25ad155c023ed4dea1870bc641a90794ed06cb0a574df"
+      },
+      "rawGraphBytes": 3285549,
+      "rootTasks": 1301,
+      "checkstyleSourceEntries": 8339,
+      "graphToFirstTaskMS": 149.528076171875,
+      "rootTaskWindowMS": 786.30078125,
+      "normalizedRootGraphSHA256": "3c37f54685a0a014943d00a8a75976ac564137e50cdab305e458461b6167b6e7",
+      "rootOutcomes": {
+        "UP-TO-DATE": 1256,
+        "NO-SOURCE": 44,
+        "EXECUTED": 1
+      },
+      "stdoutRootOutcomes": {
+        "UP-TO-DATE": 1256,
+        "NO-SOURCE": 44,
+        "EXECUTED": 1
+      },
+      "checkstyleOutcomes": {
+        ":server:checkstyleInternalClusterTest": "UP-TO-DATE",
+        ":server:checkstyleMain": "UP-TO-DATE",
+        ":server:checkstyleTest": "UP-TO-DATE"
+      }
+    },
+    {
+      "sample": 7,
+      "arm": "I",
+      "style": "lean",
+      "warmup": false,
+      "pair": 0,
+      "nativeMS": 6297.57122,
+      "launcherToReceivedMS": 355.85888671875,
+      "daemonCommandMS": 5923,
+      "sampleBinding": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-07.json",
+        "sha256": "b0d2ee16199692038fcc0ee9019f623bd57acd33d289535158d5cff35a7067fe"
+      },
+      "rawGraphBytes": 3285732,
+      "rootTasks": 1301,
+      "checkstyleSourceEntries": 8339,
+      "graphToFirstTaskMS": 47.969970703125,
+      "rootTaskWindowMS": 761.305908203125,
+      "normalizedRootGraphSHA256": "3c37f54685a0a014943d00a8a75976ac564137e50cdab305e458461b6167b6e7",
+      "rootOutcomes": {
+        "UP-TO-DATE": 1256,
+        "NO-SOURCE": 44,
+        "EXECUTED": 1
+      },
+      "stdoutRootOutcomes": {
+        "UP-TO-DATE": 1256,
+        "NO-SOURCE": 44,
+        "EXECUTED": 1
+      },
+      "checkstyleOutcomes": {
+        ":server:checkstyleInternalClusterTest": "UP-TO-DATE",
+        ":server:checkstyleMain": "UP-TO-DATE",
+        ":server:checkstyleTest": "UP-TO-DATE"
+      }
+    },
+    {
+      "sample": 8,
+      "arm": "I",
+      "style": "plain",
+      "warmup": false,
+      "pair": 0,
+      "nativeMS": 5526.56281,
+      "launcherToReceivedMS": 346.802978515625,
+      "daemonCommandMS": 5161,
+      "sampleBinding": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-08.json",
+        "sha256": "081d635009b6420540a8051afa1f802697195f9fb5cae7b9f3523162e06e4bcb"
+      },
+      "stdoutRootOutcomes": {
+        "UP-TO-DATE": 1256,
+        "NO-SOURCE": 44,
+        "EXECUTED": 1
+      },
+      "checkstyleOutcomes": {
+        ":server:checkstyleInternalClusterTest": "UP-TO-DATE",
+        ":server:checkstyleMain": "UP-TO-DATE",
+        ":server:checkstyleTest": "UP-TO-DATE"
+      }
+    },
+    {
+      "sample": 9,
+      "arm": "I",
+      "style": "plain",
+      "warmup": false,
+      "pair": 1,
+      "nativeMS": 5770.013271,
+      "launcherToReceivedMS": 347.570068359375,
+      "daemonCommandMS": 5414,
+      "sampleBinding": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-09.json",
+        "sha256": "71743774812e410dff21ce764392465ba042c4d054e43734a2bf2482cca09d0f"
+      },
+      "stdoutRootOutcomes": {
+        "UP-TO-DATE": 1256,
+        "NO-SOURCE": 44,
+        "EXECUTED": 1
+      },
+      "checkstyleOutcomes": {
+        ":server:checkstyleInternalClusterTest": "UP-TO-DATE",
+        ":server:checkstyleMain": "UP-TO-DATE",
+        ":server:checkstyleTest": "UP-TO-DATE"
+      }
+    },
+    {
+      "sample": 10,
+      "arm": "I",
+      "style": "lean",
+      "warmup": false,
+      "pair": 1,
+      "nativeMS": 5868.814211,
+      "launcherToReceivedMS": 349.282958984375,
+      "daemonCommandMS": 5511,
+      "sampleBinding": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-10.json",
+        "sha256": "5e0d81602b625bb07840130fb008e88d751e5f393b7aadae0b55825c81017eea"
+      },
+      "rawGraphBytes": 3285729,
+      "rootTasks": 1301,
+      "checkstyleSourceEntries": 8339,
+      "graphToFirstTaskMS": 119.35595703125,
+      "rootTaskWindowMS": 579.8271484375,
+      "normalizedRootGraphSHA256": "3c37f54685a0a014943d00a8a75976ac564137e50cdab305e458461b6167b6e7",
+      "rootOutcomes": {
+        "UP-TO-DATE": 1256,
+        "NO-SOURCE": 44,
+        "EXECUTED": 1
+      },
+      "stdoutRootOutcomes": {
+        "UP-TO-DATE": 1256,
+        "NO-SOURCE": 44,
+        "EXECUTED": 1
+      },
+      "checkstyleOutcomes": {
+        ":server:checkstyleInternalClusterTest": "UP-TO-DATE",
+        ":server:checkstyleMain": "UP-TO-DATE",
+        ":server:checkstyleTest": "UP-TO-DATE"
+      }
+    },
+    {
+      "sample": 11,
+      "arm": "N",
+      "style": "lean",
+      "warmup": false,
+      "pair": 1,
+      "nativeMS": 5815.278865,
+      "launcherToReceivedMS": 352.7890625,
+      "daemonCommandMS": 5454,
+      "sampleBinding": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-11.json",
+        "sha256": "c2078db6103c0ec84c165cb6f9525670567ce4d9370ac8fbac8c171dafea3af6"
+      },
+      "rawGraphBytes": 3285561,
+      "rootTasks": 1301,
+      "checkstyleSourceEntries": 8339,
+      "graphToFirstTaskMS": 36.94580078125,
+      "rootTaskWindowMS": 663.564208984375,
+      "normalizedRootGraphSHA256": "3c37f54685a0a014943d00a8a75976ac564137e50cdab305e458461b6167b6e7",
+      "rootOutcomes": {
+        "UP-TO-DATE": 1256,
+        "NO-SOURCE": 44,
+        "EXECUTED": 1
+      },
+      "stdoutRootOutcomes": {
+        "UP-TO-DATE": 1256,
+        "NO-SOURCE": 44,
+        "EXECUTED": 1
+      },
+      "checkstyleOutcomes": {
+        ":server:checkstyleInternalClusterTest": "UP-TO-DATE",
+        ":server:checkstyleMain": "UP-TO-DATE",
+        ":server:checkstyleTest": "UP-TO-DATE"
+      }
+    },
+    {
+      "sample": 12,
+      "arm": "N",
+      "style": "plain",
+      "warmup": false,
+      "pair": 1,
+      "nativeMS": 5675.945362,
+      "launcherToReceivedMS": 345.859130859375,
+      "daemonCommandMS": 5322,
+      "sampleBinding": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-12.json",
+        "sha256": "3422fb8c85446e00c062a225ed3a6e3ff3b9bb0aa98e4dc8392877666a3c2bd0"
+      },
+      "stdoutRootOutcomes": {
+        "UP-TO-DATE": 1256,
+        "NO-SOURCE": 44,
+        "EXECUTED": 1
+      },
+      "checkstyleOutcomes": {
+        ":server:checkstyleInternalClusterTest": "UP-TO-DATE",
+        ":server:checkstyleMain": "UP-TO-DATE",
+        ":server:checkstyleTest": "UP-TO-DATE"
+      }
+    },
+    {
+      "sample": 13,
+      "arm": "N",
+      "style": "plain",
+      "warmup": false,
+      "pair": 2,
+      "nativeMS": 5904.120221,
+      "launcherToReceivedMS": 478.22705078125,
+      "daemonCommandMS": 5415,
+      "sampleBinding": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-13.json",
+        "sha256": "f94b21bfaeade11347fca9b55d856a57995422586d6a2838aec3eb8df0e2b405"
+      },
+      "stdoutRootOutcomes": {
+        "UP-TO-DATE": 1256,
+        "NO-SOURCE": 44,
+        "EXECUTED": 1
+      },
+      "checkstyleOutcomes": {
+        ":server:checkstyleInternalClusterTest": "UP-TO-DATE",
+        ":server:checkstyleMain": "UP-TO-DATE",
+        ":server:checkstyleTest": "UP-TO-DATE"
+      }
+    },
+    {
+      "sample": 14,
+      "arm": "N",
+      "style": "lean",
+      "warmup": false,
+      "pair": 2,
+      "nativeMS": 6670.193866,
+      "launcherToReceivedMS": 374.069091796875,
+      "daemonCommandMS": 6280,
+      "sampleBinding": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-14.json",
+        "sha256": "cccfdb9b6d70f237f8d88ebf246a22424de96c018acb4b032479aa6c6c6815b4"
+      },
+      "rawGraphBytes": 3285561,
+      "rootTasks": 1301,
+      "checkstyleSourceEntries": 8339,
+      "graphToFirstTaskMS": 165.9912109375,
+      "rootTaskWindowMS": 783.222900390625,
+      "normalizedRootGraphSHA256": "3c37f54685a0a014943d00a8a75976ac564137e50cdab305e458461b6167b6e7",
+      "rootOutcomes": {
+        "UP-TO-DATE": 1256,
+        "NO-SOURCE": 44,
+        "EXECUTED": 1
+      },
+      "stdoutRootOutcomes": {
+        "UP-TO-DATE": 1256,
+        "NO-SOURCE": 44,
+        "EXECUTED": 1
+      },
+      "checkstyleOutcomes": {
+        ":server:checkstyleInternalClusterTest": "UP-TO-DATE",
+        ":server:checkstyleMain": "UP-TO-DATE",
+        ":server:checkstyleTest": "UP-TO-DATE"
+      }
+    },
+    {
+      "sample": 15,
+      "arm": "I",
+      "style": "lean",
+      "warmup": false,
+      "pair": 2,
+      "nativeMS": 6311.605641,
+      "launcherToReceivedMS": 412.409912109375,
+      "daemonCommandMS": 5877,
+      "sampleBinding": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-15.json",
+        "sha256": "b4ae4a7b4c74871409debea8f0252aaa83916c39f98007bf21c2bdad8bc878be"
+      },
+      "rawGraphBytes": 3285729,
+      "rootTasks": 1301,
+      "checkstyleSourceEntries": 8339,
+      "graphToFirstTaskMS": 105.126953125,
+      "rootTaskWindowMS": 646.364013671875,
+      "normalizedRootGraphSHA256": "3c37f54685a0a014943d00a8a75976ac564137e50cdab305e458461b6167b6e7",
+      "rootOutcomes": {
+        "UP-TO-DATE": 1256,
+        "NO-SOURCE": 44,
+        "EXECUTED": 1
+      },
+      "stdoutRootOutcomes": {
+        "UP-TO-DATE": 1256,
+        "NO-SOURCE": 44,
+        "EXECUTED": 1
+      },
+      "checkstyleOutcomes": {
+        ":server:checkstyleInternalClusterTest": "UP-TO-DATE",
+        ":server:checkstyleMain": "UP-TO-DATE",
+        ":server:checkstyleTest": "UP-TO-DATE"
+      }
+    },
+    {
+      "sample": 16,
+      "arm": "I",
+      "style": "plain",
+      "warmup": false,
+      "pair": 2,
+      "nativeMS": 5357.476066,
+      "launcherToReceivedMS": 346.93115234375,
+      "daemonCommandMS": 5000,
+      "sampleBinding": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-16.json",
+        "sha256": "d8eb8113579d9db50cd0792f2d2d49e1f6de25f95f258020f303032c1dc5a4a6"
+      },
+      "stdoutRootOutcomes": {
+        "UP-TO-DATE": 1256,
+        "NO-SOURCE": 44,
+        "EXECUTED": 1
+      },
+      "checkstyleOutcomes": {
+        ":server:checkstyleInternalClusterTest": "UP-TO-DATE",
+        ":server:checkstyleMain": "UP-TO-DATE",
+        ":server:checkstyleTest": "UP-TO-DATE"
+      }
+    },
+    {
+      "sample": 17,
+      "arm": "I",
+      "style": "plain",
+      "warmup": false,
+      "pair": 3,
+      "nativeMS": 5489.550113,
+      "launcherToReceivedMS": 360.27001953125,
+      "daemonCommandMS": 5119,
+      "sampleBinding": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-17.json",
+        "sha256": "2c346733f90b689840aa81ab8898e67efe385e6ff763cd8342ce28c55817defc"
+      },
+      "stdoutRootOutcomes": {
+        "UP-TO-DATE": 1256,
+        "NO-SOURCE": 44,
+        "EXECUTED": 1
+      },
+      "checkstyleOutcomes": {
+        ":server:checkstyleInternalClusterTest": "UP-TO-DATE",
+        ":server:checkstyleMain": "UP-TO-DATE",
+        ":server:checkstyleTest": "UP-TO-DATE"
+      }
+    },
+    {
+      "sample": 18,
+      "arm": "I",
+      "style": "lean",
+      "warmup": false,
+      "pair": 3,
+      "nativeMS": 6217.566114,
+      "launcherToReceivedMS": 360.2880859375,
+      "daemonCommandMS": 5847,
+      "sampleBinding": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-18.json",
+        "sha256": "24d1b020b74a776e6e70cbb7866acbb95feb4281d0a05cd9bbf720f437b39d6f"
+      },
+      "rawGraphBytes": 3285738,
+      "rootTasks": 1301,
+      "checkstyleSourceEntries": 8339,
+      "graphToFirstTaskMS": 41.19384765625,
+      "rootTaskWindowMS": 769.18505859375,
+      "normalizedRootGraphSHA256": "3c37f54685a0a014943d00a8a75976ac564137e50cdab305e458461b6167b6e7",
+      "rootOutcomes": {
+        "UP-TO-DATE": 1256,
+        "NO-SOURCE": 44,
+        "EXECUTED": 1
+      },
+      "stdoutRootOutcomes": {
+        "UP-TO-DATE": 1256,
+        "NO-SOURCE": 44,
+        "EXECUTED": 1
+      },
+      "checkstyleOutcomes": {
+        ":server:checkstyleInternalClusterTest": "UP-TO-DATE",
+        ":server:checkstyleMain": "UP-TO-DATE",
+        ":server:checkstyleTest": "UP-TO-DATE"
+      }
+    },
+    {
+      "sample": 19,
+      "arm": "N",
+      "style": "lean",
+      "warmup": false,
+      "pair": 3,
+      "nativeMS": 5848.123278,
+      "launcherToReceivedMS": 365.3740234375,
+      "daemonCommandMS": 5472,
+      "sampleBinding": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-19.json",
+        "sha256": "f3532e35255dc7a35cc24bfd0153960156a406c9270c719f799ba297b56746f0"
+      },
+      "rawGraphBytes": 3285552,
+      "rootTasks": 1301,
+      "checkstyleSourceEntries": 8339,
+      "graphToFirstTaskMS": 111.9111328125,
+      "rootTaskWindowMS": 580.409912109375,
+      "normalizedRootGraphSHA256": "3c37f54685a0a014943d00a8a75976ac564137e50cdab305e458461b6167b6e7",
+      "rootOutcomes": {
+        "UP-TO-DATE": 1256,
+        "NO-SOURCE": 44,
+        "EXECUTED": 1
+      },
+      "stdoutRootOutcomes": {
+        "UP-TO-DATE": 1256,
+        "NO-SOURCE": 44,
+        "EXECUTED": 1
+      },
+      "checkstyleOutcomes": {
+        ":server:checkstyleInternalClusterTest": "UP-TO-DATE",
+        ":server:checkstyleMain": "UP-TO-DATE",
+        ":server:checkstyleTest": "UP-TO-DATE"
+      }
+    },
+    {
+      "sample": 20,
+      "arm": "N",
+      "style": "plain",
+      "warmup": false,
+      "pair": 3,
+      "nativeMS": 5466.605089,
+      "launcherToReceivedMS": 359.473876953125,
+      "daemonCommandMS": 5086,
+      "sampleBinding": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-overhead-03/run/overhead/sample-20.json",
+        "sha256": "4170762662a16316ab37e0f31248a6f6d7390aaa38072106cef5be8ec4f4e204"
+      },
+      "stdoutRootOutcomes": {
+        "UP-TO-DATE": 1256,
+        "NO-SOURCE": 44,
+        "EXECUTED": 1
+      },
+      "checkstyleOutcomes": {
+        ":server:checkstyleInternalClusterTest": "UP-TO-DATE",
+        ":server:checkstyleMain": "UP-TO-DATE",
+        ":server:checkstyleTest": "UP-TO-DATE"
+      }
+    }
+  ],
+  "pairedDeltasMS": [
+    {
+      "arm": "N",
+      "pair": 0,
+      "nativeMS": 118.08043799999996,
+      "launcherToReceivedMS": -5.813720703125,
+      "daemonCommandMS": 122
+    },
+    {
+      "arm": "N",
+      "pair": 1,
+      "nativeMS": 139.33350299999984,
+      "launcherToReceivedMS": 6.929931640625,
+      "daemonCommandMS": 132
+    },
+    {
+      "arm": "N",
+      "pair": 2,
+      "nativeMS": 766.0736449999995,
+      "launcherToReceivedMS": -104.157958984375,
+      "daemonCommandMS": 865
+    },
+    {
+      "arm": "N",
+      "pair": 3,
+      "nativeMS": 381.51818900000035,
+      "launcherToReceivedMS": 5.900146484375,
+      "daemonCommandMS": 386
+    },
+    {
+      "arm": "I",
+      "pair": 0,
+      "nativeMS": 771.0084099999995,
+      "launcherToReceivedMS": 9.055908203125,
+      "daemonCommandMS": 762
+    },
+    {
+      "arm": "I",
+      "pair": 1,
+      "nativeMS": 98.80094000000008,
+      "launcherToReceivedMS": 1.712890625,
+      "daemonCommandMS": 97
+    },
+    {
+      "arm": "I",
+      "pair": 2,
+      "nativeMS": 954.1295749999999,
+      "launcherToReceivedMS": 65.478759765625,
+      "daemonCommandMS": 877
+    },
+    {
+      "arm": "I",
+      "pair": 3,
+      "nativeMS": 728.016001,
+      "launcherToReceivedMS": 0.01806640625,
+      "daemonCommandMS": 728
+    }
+  ],
+  "sameNormalizedGraph": true,
+  "sameMeasuredRootOutcomes": {
+    "UP-TO-DATE": 1256,
+    "NO-SOURCE": 44,
+    "EXECUTED": 1
+  },
+  "writeSinkDiagnostic": {
+    "plan": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/writer-sink-diagnostic-01/plan.json",
+      "sha256": "cb93c47c55ce99609ad84ce05e345565b8f6d21d2208cc702ba7a091c20cff23"
+    },
+    "samples": [
+      {
+        "dataset": 0,
+        "index": 0,
+        "persistent": false,
+        "records": 1330,
+        "bytes": 3285549,
+        "durationNS": 31562264,
+        "exactBytesVerified": true
+      },
+      {
+        "dataset": 0,
+        "index": 1,
+        "persistent": true,
+        "records": 1330,
+        "bytes": 3285549,
+        "durationNS": 9251164,
+        "exactBytesVerified": true
+      },
+      {
+        "dataset": 0,
+        "index": 2,
+        "persistent": true,
+        "records": 1330,
+        "bytes": 3285549,
+        "durationNS": 8877824,
+        "exactBytesVerified": true
+      },
+      {
+        "dataset": 0,
+        "index": 3,
+        "persistent": false,
+        "records": 1330,
+        "bytes": 3285549,
+        "durationNS": 16734687,
+        "exactBytesVerified": true
+      },
+      {
+        "dataset": 1,
+        "index": 0,
+        "persistent": false,
+        "records": 1330,
+        "bytes": 3285732,
+        "durationNS": 14564486,
+        "exactBytesVerified": true
+      },
+      {
+        "dataset": 1,
+        "index": 1,
+        "persistent": true,
+        "records": 1330,
+        "bytes": 3285732,
+        "durationNS": 7997424,
+        "exactBytesVerified": true
+      },
+      {
+        "dataset": 1,
+        "index": 2,
+        "persistent": true,
+        "records": 1330,
+        "bytes": 3285732,
+        "durationNS": 7849153,
+        "exactBytesVerified": true
+      },
+      {
+        "dataset": 1,
+        "index": 3,
+        "persistent": false,
+        "records": 1330,
+        "bytes": 3285732,
+        "durationNS": 14362466,
+        "exactBytesVerified": true
+      }
+    ],
+    "totalCopiedRecords": 10640,
+    "largestPerRecordChannelMS": 31.562264,
+    "limitation": "Pre-serialized records in one JVM; excludes Groovy dispatch, graph materialization, JSON serialization and full-build scheduling"
+  },
+  "observed": "All16 measured requests have the same1301 root-task outcome counts, and all3 Checkstyle tasks are UP-TO-DATE. All8 measured lean root graphs match after exact root normalization and removing the approved candidate-only config.",
+  "inference": "The failed100ms gate is not explained by differing measured Checkstyle execution or declared graph size. Most paired variation is inside the daemon. These records do not distinguish materialization/serialization cost, Groovy/JIT/GC variation and other daemon scheduling.",
+  "discardedPrimaryFix": "Changing only the Java file-channel open/close pattern is not supported as the main cure: its entire measured cost is14.36-31.56ms on these retained records, much smaller than588.68ms. No production writer change was made.",
+  "next": "Instrument graph materialization, serialization, callbacks and daemon phase variation in a separate bounded diagnostic version. Change the collector only after attribution; qualify a fresh complete fixed allocation before engineering replay. Preserve the10ms/100ms gates and all original samples."
+}

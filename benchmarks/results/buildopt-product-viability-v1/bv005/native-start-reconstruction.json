@@ -1,0 +1,77 @@
+{
+  "schema": "buildopt.viability/replay-native-starts/v1",
+  "status": "verified",
+  "actualGradleStarts": 50,
+  "nestedStarts": 8,
+  "overheadStarts": 20,
+  "fixtures": [
+    {
+      "fixture": "fixtures/TestGradleNativeUpToDateAndCacheRestore-3598396511",
+      "outerStarts": 6,
+      "nestedStarts": 0,
+      "buildIDs": [
+        "212d6872-b5f6-4129-8def-091f0446c2cb",
+        "28b4df17-8d25-45cb-bf7d-eec7ed493a9e",
+        "3b3af8c2-a660-4e31-9cdf-559dbff11b91",
+        "63a890be-95b8-4c0b-90e8-cebf77ba6f4e",
+        "99b5d8b4-31c6-4006-baba-1d753d6233f6",
+        "eb61a568-42d6-41a3-b7b3-05c97f9d00e3"
+      ]
+    },
+    {
+      "fixture": "fixtures/TestGradleNestedTestKitAccounting-1532900917",
+      "outerStarts": 2,
+      "nestedStarts": 4,
+      "buildIDs": [
+        "1ae24d70-ff6a-4336-bf42-8c6de7ec0486",
+        "3625b9d5-a421-4246-bd35-b16de015f448",
+        "837ef20e-db24-4af9-b23f-5e5b6f31bd32",
+        "b16bcaf1-364b-42d8-aefd-0eb7d22a228b",
+        "c11db20d-e4f2-458a-81eb-101fce310618",
+        "d447bfdc-2869-422d-be47-5220aeab9e74"
+      ]
+    },
+    {
+      "fixture": "fixtures/TestGradleNestedTestKitAccounting-3590085174",
+      "outerStarts": 2,
+      "nestedStarts": 4,
+      "buildIDs": [
+        "288388ca-4589-4c61-bf76-a5c2d7bbeb28",
+        "576f3623-6069-4776-baff-e29c0485f72c",
+        "91ed7370-2fff-4286-95e5-534a2bb1892f",
+        "a06f4432-e75a-494b-94f7-d9b030344620",
+        "b61d7d5e-d39e-4f21-b7d6-6abb0853c8ed",
+        "e830d12c-63ff-4549-9621-05a24617d50c"
+      ]
+    },
+    {
+      "fixture": "fixtures/TestGradlePersistentNoActionReplay-324136932",
+      "outerStarts": 6,
+      "nestedStarts": 0,
+      "buildIDs": [
+        "3bc6f354-15ee-4d5c-994a-b818ab1b97c0",
+        "91cb5142-9c91-4d09-9824-8a133e3ea744",
+        "9f6eb29c-73a8-4a30-a817-509faa4372b6",
+        "b69bc10b-75f8-4078-99f8-8e896437865a",
+        "eaec44cb-6640-4905-8425-24edf9be51d2",
+        "f7176a12-ba8c-4828-922d-b5865483fd74"
+      ]
+    },
+    {
+      "fixture": "fixtures/TestGradlePersistentNoActionReplay-3395465558",
+      "outerStarts": 6,
+      "nestedStarts": 0,
+      "buildIDs": [
+        "13ce044a-b6d4-49ff-b9f5-1fb6c09744e3",
+        "53c1f18a-231e-4dd9-b486-18b5b8c596ad",
+        "64fb5bcb-8ee2-4f7b-9770-d71257deeff0",
+        "c2b5edb2-f49b-4e35-a7d5-9183512b7fe5",
+        "c9378f0b-e228-4754-bb5e-81a92bedc694",
+        "e6577575-5391-4d80-8e80-4ed7b18fc3d3"
+      ]
+    }
+  ],
+  "standaloneJavacStarts": 2,
+  "testKitHelperJVMStarts": 4,
+  "note": "Native command UUIDs count reused-daemon TestKit requests individually. Counts include both early and final retained native qualifications."
+}

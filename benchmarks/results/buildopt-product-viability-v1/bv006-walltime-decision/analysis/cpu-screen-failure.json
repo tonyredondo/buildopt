@@ -1,0 +1,87 @@
+{
+  "schema": "buildopt.cpu-screen/failure/v1",
+  "evidenceStatus": "verified",
+  "screenStatus": "partial",
+  "decision": "INCONCLUSIVE_HARNESS_OWNERSHIP_FAILURE",
+  "profile": 8,
+  "gradleReserved": 12,
+  "gradleActual": 2,
+  "metadataJVMActual": 0,
+  "runnerActualGradleStarts": 2,
+  "runnerUnknownGradleReservations": 1,
+  "runnerNestedStarts": 0,
+  "attempts": [
+    {
+      "attempt": "r1-000-g0-I",
+      "arm": "I",
+      "originalOrdinal": 15,
+      "warmup": true,
+      "nativeMS": 333912.462904,
+      "requestMS": 334323.339843,
+      "researchCaptureMS": 607494.669317,
+      "exitCode": -1,
+      "signal": 9,
+      "outcome": "OWNERSHIP_OR_LIMIT_FAILURE",
+      "error": "read /proc/1282075/cgroup: no such process",
+      "native": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-screen/profiles/8/run/attempts/r1-000-g0-I/native-finish.json",
+        "sha256": "3e4d6e8d79610a96efde52a3c4cfc6621db20e6e383b58dd938693ae3f8680f2"
+      }
+    },
+    {
+      "attempt": "r1-000-g0-N",
+      "arm": "N",
+      "originalOrdinal": 15,
+      "warmup": true,
+      "nativeMS": 202400.593043,
+      "requestMS": 202698.157937,
+      "researchCaptureMS": 561140.383288,
+      "exitCode": 0,
+      "signal": 0,
+      "outcome": "EXITED",
+      "error": "",
+      "native": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-screen/profiles/8/run/attempts/r1-000-g0-N/native-finish.json",
+        "sha256": "ed6e309ca3f4d01abdad84f893be28970180cc1e9caba542218bb91c7518eb69"
+      }
+    }
+  ],
+  "measuredPairs": 0,
+  "completedComparableWarmupPairs": 0,
+  "customerSavingMS": null,
+  "customerSavingPercent": null,
+  "materialSignalEstablished": false,
+  "candidateRejectedForValue": false,
+  "profilesNotLaunched": [
+    4,
+    2
+  ],
+  "independentHistoryStarts": 0,
+  "validationOrdinalsConsumed": 0,
+  "diagnosticQualityQualified": false,
+  "readinessQualified": false,
+  "valueQualified": false,
+  "interpretation": "Supervisor aborted the candidate warmup on ESRCH reading a disappearing process. Failed or incomplete warmups cannot supply paired value evidence. This does not establish a candidate correctness failure or an actual process escape.",
+  "sourceFinding": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-isolation/control/source/process_linux.go",
+    "sha256": "b68121779ace8dafc7a863210e2bae334602f7850217be224d27de27f1363bf4",
+    "processIdentityLines": "50-87",
+    "cgroupEnumerationLines": "94-143",
+    "observation": "processIdentity propagates cgroup read errors; cgroupProcesses skips os.IsNotExist only; the observed ESRCH error propagates to the ownership watchdog"
+  },
+  "closedIdentities": 87,
+  "unloadedUnits": [
+    "buildopt-replay-6cc236ec0bec0a3e-r1-N-1.service",
+    "buildopt-replay-6cc236ec0bec0a3e-r1-I-2.service"
+  ],
+  "researchCostsNS": 1771412000458,
+  "rawResult": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-screen/profiles/8/run/result.json",
+    "sha256": "54dc454363dec6b67a86be8dc56d732e2e709c574ea871f67e524cb9b7ce4e92"
+  },
+  "receipt": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-cpu-screen/receipts/profile-8-end.json",
+    "sha256": "321aaa8b9d15b33f888a75678e6846bb3b7b3fbfdf8fbe8bfb2ae90e4d149372"
+  },
+  "atUTC": "2026-09-09T15:30:30.725976+00:00"
+}

@@ -1,0 +1,251 @@
+{
+  "schema": "buildopt.observer-pause/result/v1",
+  "status": "verified",
+  "decision": "ORIGINAL_PAUSE_NOT_REPRODUCED",
+  "controlsVerified": true,
+  "cases": [
+    {
+      "name": "file",
+      "classification": "NO_GAP_REPRODUCED",
+      "measurements": {
+        "encode": {
+          "count": 600,
+          "medianMS": 0.1673655,
+          "p95MS": 0.19912,
+          "maximumMS": 0.712022
+        },
+        "write": {
+          "count": 600,
+          "medianMS": 0.05471,
+          "p95MS": 0.06724,
+          "maximumMS": 0.145241
+        },
+        "encodeReturn": {
+          "count": 600,
+          "medianMS": 0.01909,
+          "p95MS": 0.02199,
+          "maximumMS": 0.120681
+        },
+        "interIterationWait": {
+          "count": 599,
+          "medianMS": 99.817488,
+          "p95MS": 100.525989,
+          "maximumMS": 100.841121
+        },
+        "observationGap": {
+          "count": 599,
+          "medianMS": 100.070488,
+          "p95MS": 100.766299,
+          "maximumMS": 101.098591
+        },
+        "internalHeartbeatGap": {
+          "count": 5999,
+          "medianMS": 10.164232,
+          "p95MS": 10.379683,
+          "maximumMS": 11.094665
+        },
+        "externalHeartbeatGap": {
+          "count": 5997,
+          "medianMS": 10.152913,
+          "p95MS": 10.515054,
+          "maximumMS": 11.280785
+        }
+      },
+      "payloadsVerified": 600,
+      "utilityWallMS": 60000.720247,
+      "utilityCPUMS": 459.161,
+      "bootMonoOffsetSpreadNS": 83880,
+      "gcCycles": 4,
+      "gcPauseMS": 0.17308,
+      "finalDiagnosticFsyncMS": 54.502879,
+      "probeSHA256": "3701cc71f0fb4f640104b7c0d45aa0a5fa2372cbc12ab99cb1a16426494ecbe4",
+      "heartbeatSHA256": "525e0a164ff5154d0c638ab71994f18b55904a4ea6004e9352ad71bf59a84952"
+    },
+    {
+      "name": "discard",
+      "classification": "NO_GAP_REPRODUCED",
+      "measurements": {
+        "encode": {
+          "count": 600,
+          "medianMS": 0.1615605,
+          "p95MS": 0.19723,
+          "maximumMS": 1.221593
+        },
+        "write": {
+          "count": 600,
+          "medianMS": 0.00276,
+          "p95MS": 0.00399,
+          "maximumMS": 0.0198
+        },
+        "encodeReturn": {
+          "count": 600,
+          "medianMS": 0.0181855,
+          "p95MS": 0.01944,
+          "maximumMS": 0.04403
+        },
+        "interIterationWait": {
+          "count": 599,
+          "medianMS": 99.897449,
+          "p95MS": 100.45214,
+          "maximumMS": 100.88444
+        },
+        "observationGap": {
+          "count": 599,
+          "medianMS": 100.102399,
+          "p95MS": 100.64692,
+          "maximumMS": 101.083081
+        },
+        "internalHeartbeatGap": {
+          "count": 5999,
+          "medianMS": 10.139872,
+          "p95MS": 10.510792,
+          "maximumMS": 10.816674
+        },
+        "externalHeartbeatGap": {
+          "count": 5999,
+          "medianMS": 10.152792,
+          "p95MS": 10.374772,
+          "maximumMS": 10.949014
+        }
+      },
+      "payloadsVerified": 600,
+      "utilityWallMS": 60000.386707,
+      "utilityCPUMS": 433.062,
+      "bootMonoOffsetSpreadNS": 20930,
+      "gcCycles": 5,
+      "gcPauseMS": 0.356291,
+      "finalDiagnosticFsyncMS": 0.00335,
+      "probeSHA256": "0e1f3d36d11fff1c2d303cc349fd704b270a358414ad62e89664af5dbfccbe31",
+      "heartbeatSHA256": "9bb59c3b68eb6b54449c517111cc3688ab08d18fd5d80b09c687162a1e6d8071"
+    },
+    {
+      "name": "write-pause",
+      "classification": "WRITE_BOUNDARY_PAUSE",
+      "measurements": {
+        "encode": {
+          "count": 80,
+          "medianMS": 0.167965,
+          "p95MS": 0.19895,
+          "maximumMS": 0.259311
+        },
+        "write": {
+          "count": 80,
+          "medianMS": 0.054715,
+          "p95MS": 0.07408,
+          "maximumMS": 2104.466417
+        },
+        "encodeReturn": {
+          "count": 80,
+          "medianMS": 0.019185,
+          "p95MS": 0.0206,
+          "maximumMS": 0.02966
+        },
+        "interIterationWait": {
+          "count": 79,
+          "medianMS": 99.815459,
+          "p95MS": 100.4561,
+          "maximumMS": 100.526271
+        },
+        "observationGap": {
+          "count": 79,
+          "medianMS": 100.07322,
+          "p95MS": 100.728961,
+          "maximumMS": 2104.696537
+        },
+        "internalHeartbeatGap": {
+          "count": 999,
+          "medianMS": 10.156572,
+          "p95MS": 10.520263,
+          "maximumMS": 10.645423
+        },
+        "externalHeartbeatGap": {
+          "count": 999,
+          "medianMS": 10.153872,
+          "p95MS": 10.378223,
+          "maximumMS": 10.538323
+        }
+      },
+      "payloadsVerified": 80,
+      "utilityWallMS": 10000.511103,
+      "utilityCPUMS": 81.491,
+      "bootMonoOffsetSpreadNS": 21020,
+      "gcCycles": 1,
+      "gcPauseMS": 0.0486,
+      "finalDiagnosticFsyncMS": 57.465726,
+      "probeSHA256": "c06805dce911dec46621549f084bd78abc26d5993e4068ef29b68f62cd3bbdf5",
+      "heartbeatSHA256": "b3bdc14a541eea1b5825f61ca22f38e5fecfb36eac25176e71d617f9845960b2"
+    },
+    {
+      "name": "process-pause",
+      "classification": "PROCESS_OR_RUNTIME_PAUSE",
+      "measurements": {
+        "encode": {
+          "count": 80,
+          "medianMS": 0.1671405,
+          "p95MS": 0.19484,
+          "maximumMS": 0.622041
+        },
+        "write": {
+          "count": 80,
+          "medianMS": 0.0500805,
+          "p95MS": 0.06331,
+          "maximumMS": 0.06705
+        },
+        "encodeReturn": {
+          "count": 80,
+          "medianMS": 0.018685,
+          "p95MS": 0.0198,
+          "maximumMS": 0.05327
+        },
+        "interIterationWait": {
+          "count": 79,
+          "medianMS": 99.834559,
+          "p95MS": 100.501119,
+          "maximumMS": 2190.835344
+        },
+        "observationGap": {
+          "count": 79,
+          "medianMS": 100.06379,
+          "p95MS": 100.72829,
+          "maximumMS": 2191.060835
+        },
+        "internalHeartbeatGap": {
+          "count": 789,
+          "medianMS": 10.143632,
+          "p95MS": 10.507294,
+          "maximumMS": 2112.303102
+        },
+        "externalHeartbeatGap": {
+          "count": 999,
+          "medianMS": 10.124293,
+          "p95MS": 10.463684,
+          "maximumMS": 11.147514
+        }
+      },
+      "payloadsVerified": 80,
+      "utilityWallMS": 10001.280674,
+      "utilityCPUMS": 62.267,
+      "bootMonoOffsetSpreadNS": 6800,
+      "gcCycles": 1,
+      "gcPauseMS": 0.06811,
+      "finalDiagnosticFsyncMS": 37.523022,
+      "probeSHA256": "f2674e618e9b081814a6f3c3f5fd96dc3f9909e6ec08f69eb14be75a4de7561b",
+      "heartbeatSHA256": "d25853f73b996ab822bf5ec79e418ea1d06f391caa00559ecea7fb007d1c9597"
+    }
+  ],
+  "originalCauseEstablished": false,
+  "productionCorrectionApplied": false,
+  "observationQualified": false,
+  "screenBlocked": true,
+  "gradleActual": 0,
+  "helperJVMActual": 0,
+  "probeProcessesActual": 4,
+  "heartbeatProcessesActual": 4,
+  "limits": [
+    "Recorded snapshots replace live /proc collection and its allocations",
+    "Original Go driver heap, concurrent workers and host load are not reproduced",
+    "Two60-second nominal trials are a bounded diagnostic, not rare-pause reliability proof",
+    "Deliberate pauses verify diagnostic distinctions, not historical cause",
+    "No prior failed row or threshold is changed"
+  ]
+}

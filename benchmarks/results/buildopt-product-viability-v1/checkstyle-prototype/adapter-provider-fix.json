@@ -1,0 +1,30 @@
+{
+  "status": "verified",
+  "problem": "Unsupported build-conventions provider can preserve known rule classes while omitting adapter implementation",
+  "reproduction": "requests/cs-missing-adapter-reproduction/result.json",
+  "observed": "N checks both files successfully; I fails before processing because ContentAwareChecker is absent from checking classpath",
+  "hypothesis": "qualifiedRules validates only active rules, not required adapter implementation availability/identity",
+  "correction": "Require the adapter and its helper classes to match the active owner implementation resources before admission; otherwise original native Checker",
+  "failedCorrections": 0,
+  "proofAffected": [
+    "checking provider admission",
+    "normal admitted provider smoke",
+    "C18 unsupported provider"
+  ],
+  "proofRetained": "Per-file algorithm, state codec and report/event implementation unchanged; earlier boundary receipts retain their precise prior bridge input hashes.",
+  "regression": "requests/cs-provider-fix-regression/result.json",
+  "positiveControls": [
+    "cs-provider-fix-cold",
+    "cs-provider-fix-warm",
+    "cs-provider-fix-edit"
+  ],
+  "compatibility": [
+    "cs-final-checker-bytecode",
+    "cs-final-checker-bytecode-repeat",
+    "cs-final-checker-bytecode-restore",
+    "cs-final-java25",
+    "cs-final-java21-restore",
+    "cs-final-legacy-checkstyle",
+    "cs-final-engine-restore"
+  ]
+}

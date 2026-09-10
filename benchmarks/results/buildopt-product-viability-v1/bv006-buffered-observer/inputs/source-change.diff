@@ -1,0 +1,719 @@
+diff --git 1/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/source/buffered_observer_case_test.go 2/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/source/buffered_observer_case_test.go
+new file mode 100644
+index 00000000..1f367a08
+--- /dev/null
++++ 2/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/source/buffered_observer_case_test.go
+@@ -0,0 +1,137 @@
++//go:build linux && amd64 && replay_integration && replay_gradle
++
++package main
++
++import (
++	"encoding/json"
++	"errors"
++	"os"
++	"path/filepath"
++	"strings"
++	"testing"
++	"time"
++)
++
++// The independent checker also reconstructs every payload and acknowledgement.
++// Restoring synchronous writes must fail the unchanged 500-ms delay criterion.
++func TestBufferedObserverCase(t *testing.T) {
++	name := os.Getenv("BUILDOPT_BUFFERED_CASE")
++	root := os.Getenv("BUILDOPT_BUFFERED_ROOT")
++	if !filepath.IsAbs(root) {
++		t.Fatal("explicit fixture root required")
++	}
++	self, err := processIdentity(os.Getpid())
++	if err != nil {
++		t.Fatal(err)
++	}
++	if err = observerSave(filepath.Join(root, "fixture-identity.json"), self); err != nil {
++		t.Fatal(err)
++	}
++	config := defaultBufferedConfig()
++	options := samplerOptions{maxRows: 10000, maxBytes: 512 << 20, stopAfter: 40, buffered: &config}
++	stop := make(chan struct{})
++	timerDone := make(chan struct{})
++	cancelAfter := time.Duration(0)
++	observe := cgroupProcesses
++	expected := ""
++	switch name {
++	case "normal":
++	case "writer-delay", "race-writer-delay":
++		config.Fault = "delay"
++	case "writer-error":
++		config.Fault = "error"
++		expected = "deliberate writer error"
++	case "short-write":
++		config.Fault = "short"
++		expected = "short write"
++	case "record-saturation":
++		config.Fault = "delay"
++		config.PendingRecords = 3
++		expected = "writer pending record limit"
++	case "byte-saturation":
++		config.PendingBytes = 1
++		expected = "writer pending byte limit"
++	case "total-output-limit":
++		config.TotalBytes = 1
++		expected = "writer total byte limit"
++	case "cancel-before":
++		close(stop)
++	case "cancel-capture":
++		config.Fault = "delay"
++		cancelAfter = 750 * time.Millisecond
++	case "cancel-drain":
++		config.Fault = "delay"
++		options.stopAfter = 3
++		cancelAfter = 600 * time.Millisecond
++	case "drain-timeout":
++		config.Fault = "stall"
++		config.DrainNS = int64(200 * time.Millisecond)
++		options.stopAfter = 3
++		expected = "writer drain deadline"
++	case "writer-exit":
++		config.Fault = "exit"
++		expected = "writer acknowledgement"
++	case "driver-exit":
++		config.Fault = "stall"
++	case "scan-error":
++		observe = func(string) ([]ProcessIdentity, error) { return nil, errors.New("deliberate scan error") }
++		expected = "deliberate scan error"
++	default:
++		t.Fatal("unregistered case", name)
++	}
++	if cancelAfter > 0 {
++		go func() {
++			defer close(timerDone)
++			time.Sleep(cancelAfter)
++			observerSave(filepath.Join(root, "cancel.json"), observerClock())
++			close(stop)
++		}()
++	} else {
++		close(timerDone)
++	}
++	begin := observerClock()
++	err = observeSampler(workerSession{Cgroup: self.Cgroup}, filepath.Join(root, "proc-samples.jsonl"), stop, observe, options)
++	end := observerClock()
++	<-timerDone
++	if name == "driver-exit" {
++		t.Fatal("driver-exit must be interrupted by its registered controller")
++	}
++	if (expected == "" && err != nil) || (expected != "" && (err == nil || !strings.Contains(err.Error(), expected))) {
++		t.Fatalf("expected %q; got %v", expected, err)
++	}
++	var report struct {
++		Rows        []observerPhase `json:"rows"`
++		Persistence bufferedSummary `json:"persistence"`
++	}
++	// This assertion reads a projection; the independent checker validates the
++	// full report. readJSON intentionally rejects unknown protocol fields.
++	raw, err := os.ReadFile(filepath.Join(root, "proc-samples.jsonl.phases.json"))
++	if err != nil {
++		t.Fatal(err)
++	}
++	if err = json.Unmarshal(raw, &report); err != nil {
++		t.Fatal(err)
++	}
++	if expected == "" && report.Persistence.Accepted != report.Persistence.Acknowledged {
++		t.Fatal("accepted payloads lost")
++	}
++	if name == "normal" || name == "writer-delay" || name == "race-writer-delay" {
++		if len(report.Rows) != 40 || report.Persistence.Acknowledged != 40 {
++			t.Fatal("wrong complete record count")
++		}
++		for i := 1; i < len(report.Rows); i++ {
++			if report.Rows[i].Wake.BootNS-report.Rows[i-1].Wake.BootNS > int64(500*time.Millisecond) {
++				t.Fatal("writer delay blocked live sampling")
++			}
++		}
++	}
++	if report.Persistence.PeakPendingRecords > config.PendingRecords || report.Persistence.PeakPendingBytes > config.PendingBytes {
++		t.Fatal("queue exceeded bounds")
++	}
++	if end.MonoNS-begin.MonoNS > int64(9*time.Second) {
++		t.Fatal("unbounded collection or drain")
++	}
++	if err = observerSave(filepath.Join(root, "case-result.json"), map[string]interface{}{"name": name, "begin": begin, "end": end, "expectedError": expected}); err != nil {
++		t.Fatal(err)
++	}
++}
+diff --git 1/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/source/buffered_writer_test.go 2/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/source/buffered_writer_test.go
+new file mode 100644
+index 00000000..cf315434
+--- /dev/null
++++ 2/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/source/buffered_writer_test.go
+@@ -0,0 +1,454 @@
++//go:build linux && amd64 && replay_integration && replay_gradle
++
++package main
++
++import (
++	"crypto/sha256"
++	"encoding/binary"
++	"encoding/hex"
++	"encoding/json"
++	"errors"
++	"fmt"
++	"io"
++	"os"
++	"os/exec"
++	"path/filepath"
++	"sync"
++	"testing"
++	"time"
++)
++
++type bufferedConfig struct {
++	PendingRecords int    `json:"pendingRecords"`
++	PendingBytes   int64  `json:"pendingBytes"`
++	FrameBytes     int    `json:"frameBytes"`
++	TotalBytes     int64  `json:"totalBytes"`
++	DrainNS        int64  `json:"drainNS"`
++	Fault          string `json:"fault"` // Controlled fixture fault, empty in owner dispatch.
++}
++
++func defaultBufferedConfig() bufferedConfig {
++	return bufferedConfig{128, 16 << 20, 512 << 10, 512 << 20, int64(5 * time.Second), ""}
++}
++func (c bufferedConfig) validate() error {
++	if c.PendingRecords < 1 || c.PendingRecords > 128 || c.PendingBytes < 1 || c.PendingBytes > 16<<20 || c.FrameBytes < 1 || c.FrameBytes > 512<<10 || c.TotalBytes < 1 || c.TotalBytes > 512<<20 || c.DrainNS <= 0 || c.DrainNS > int64(5*time.Second) {
++		return errors.New("invalid buffered writer bounds")
++	}
++	switch c.Fault {
++	case "", "delay", "error", "short", "stall", "exit":
++		return nil
++	default:
++		return errors.New("unknown writer fixture fault")
++	}
++}
++
++type writeAck struct {
++	Index         int           `json:"index"`
++	Bytes         int           `json:"bytes"`
++	PayloadSHA256 string        `json:"payloadSHA256"`
++	WrittenSHA256 string        `json:"writtenSHA256"`
++	Begin         observerStamp `json:"begin"`
++	End           observerStamp `json:"end"`
++	Error         string        `json:"error"`
++}
++type bufferedSummary struct {
++	Config             bufferedConfig  `json:"config"`
++	Accepted           int             `json:"accepted"`
++	Acknowledged       int             `json:"acknowledged"`
++	AcceptedBytes      int64           `json:"acceptedBytes"`
++	PersistedBytes     int64           `json:"persistedBytes"`
++	PendingRecords     int             `json:"pendingRecords"`
++	PendingBytes       int64           `json:"pendingBytes"`
++	PeakPendingRecords int             `json:"peakPendingRecords"`
++	PeakPendingBytes   int64           `json:"peakPendingBytes"`
++	Writes             []writeAck      `json:"writes"`
++	Writer             ProcessIdentity `json:"writer"`
++	WriterExit         int             `json:"writerExit"`
++	WriterCPUNS        int64           `json:"writerCPUNS"`
++	Error              string          `json:"error"`
++	DrainBegin         observerStamp   `json:"drainBegin"`
++	DrainEnd           observerStamp   `json:"drainEnd"`
++}
++type payloadFrame struct {
++	index  int
++	data   []byte
++	digest string
++}
++
++// Exactly one pump owns transport I/O; admission never waits for that I/O.
++// A record remains pending until its successful, exact acknowledgement.
++type bufferedWriter struct {
++	mu                         sync.Mutex
++	summary                    bufferedSummary
++	err                        error
++	accepting                  bool
++	queue                      chan payloadFrame
++	failed                     chan struct{}
++	pumped                     chan struct{}
++	cmd                        *exec.Cmd
++	input, acks, lifetime, log *os.File
++}
++
++func payloadDigest(data []byte) string { h := sha256.Sum256(data); return hex.EncodeToString(h[:]) }
++func startBufferedWriter(path string, config bufferedConfig) (*bufferedWriter, error) {
++	if err := config.validate(); err != nil {
++		return nil, err
++	}
++	executable, err := os.Executable()
++	if err != nil {
++		return nil, err
++	}
++	if err = observerSave(path+".writer-config.json", config); err != nil {
++		return nil, err
++	}
++	files := []*os.File{}
++	pipe := func() (*os.File, *os.File, error) {
++		r, w, e := os.Pipe()
++		if e == nil {
++			files = append(files, r, w)
++		}
++		return r, w, e
++	}
++	inRead, inWrite, err := pipe()
++	if err != nil {
++		return nil, err
++	}
++	success := false
++	defer func() {
++		if !success {
++			for _, f := range files {
++				f.Close()
++			}
++		}
++	}()
++	ackRead, ackWrite, err := pipe()
++	if err != nil {
++		return nil, err
++	}
++	lifeRead, lifeWrite, err := pipe()
++	if err != nil {
++		return nil, err
++	}
++	readyRead, readyWrite, err := pipe()
++	if err != nil {
++		return nil, err
++	}
++	log, err := os.OpenFile(path+".writer.log", os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0600)
++	if err != nil {
++		return nil, err
++	}
++	files = append(files, log)
++	cmd := exec.Command(executable, "-test.run=^TestBufferedWriterHelper$", "-test.timeout=1005s")
++	cmd.Env = append(os.Environ(), "BUILDOPT_WRITER_OUTPUT="+path)
++	cmd.ExtraFiles = []*os.File{inRead, ackWrite, lifeRead, readyWrite}
++	cmd.Stdout = log
++	cmd.Stderr = log
++	if err = cmd.Start(); err != nil {
++		return nil, err
++	}
++	inRead.Close()
++	ackWrite.Close()
++	lifeRead.Close()
++	readyWrite.Close()
++	if err = readyRead.SetReadDeadline(time.Now().Add(5 * time.Second)); err == nil {
++		var b [1]byte
++		_, err = io.ReadFull(readyRead, b[:])
++		if err == nil && b[0] != 1 {
++			err = errors.New("invalid writer ready receipt")
++		}
++	}
++	readyRead.Close()
++	if err != nil {
++		cmd.Process.Kill()
++		cmd.Wait()
++		return nil, fmt.Errorf("writer startup: %w", err)
++	}
++	var identity ProcessIdentity
++	if err = readJSON(path+".writer-identity.json", &identity); err != nil {
++		cmd.Process.Kill()
++		cmd.Wait()
++		return nil, err
++	}
++	if identity.PID != cmd.Process.Pid || !sameProcess(identity) {
++		cmd.Process.Kill()
++		cmd.Wait()
++		return nil, errors.New("writer identity mismatch")
++	}
++	w := &bufferedWriter{summary: bufferedSummary{Config: config, Writes: make([]writeAck, 0, 10000), Writer: identity}, accepting: true, queue: make(chan payloadFrame, config.PendingRecords), failed: make(chan struct{}), pumped: make(chan struct{}), cmd: cmd, input: inWrite, acks: ackRead, lifetime: lifeWrite, log: log}
++	success = true
++	go w.pump()
++	return w, nil
++}
++func (w *bufferedWriter) failure(err error) {
++	w.mu.Lock()
++	defer w.mu.Unlock()
++	if w.err == nil {
++		w.err = err
++		close(w.failed)
++	}
++}
++func (w *bufferedWriter) Error() error { w.mu.Lock(); defer w.mu.Unlock(); return w.err }
++func (w *bufferedWriter) Write(data []byte) (int, error) {
++	w.mu.Lock()
++	defer w.mu.Unlock()
++	s := &w.summary
++	c := s.Config
++	if w.err != nil {
++		return 0, w.err
++	}
++	if !w.accepting {
++		return 0, errors.New("writer admission closed")
++	}
++	if len(data) > c.FrameBytes {
++		return 0, errors.New("writer frame byte limit")
++	}
++	if int64(len(data)) > c.TotalBytes-s.AcceptedBytes {
++		return 0, errors.New("writer total byte limit")
++	}
++	if s.PendingRecords == c.PendingRecords {
++		return 0, errors.New("writer pending record limit")
++	}
++	if int64(len(data)) > c.PendingBytes-s.PendingBytes {
++		return 0, errors.New("writer pending byte limit")
++	}
++	frame := payloadFrame{s.Accepted, append([]byte(nil), data...), payloadDigest(data)}
++	// PendingRecords includes the in-flight frame, so a queue slot must exist.
++	select {
++	case w.queue <- frame:
++	default:
++		return 0, errors.New("writer queue invariant violated")
++	}
++	s.Accepted++
++	s.AcceptedBytes += int64(len(data))
++	s.PendingRecords++
++	s.PendingBytes += int64(len(data))
++	if s.PendingRecords > s.PeakPendingRecords {
++		s.PeakPendingRecords = s.PendingRecords
++	}
++	if s.PendingBytes > s.PeakPendingBytes {
++		s.PeakPendingBytes = s.PendingBytes
++	}
++	return len(data), nil
++}
++func (w *bufferedWriter) pump() {
++	defer close(w.pumped)
++	decoder := json.NewDecoder(w.acks)
++	for frame := range w.queue {
++		var header [4]byte
++		binary.BigEndian.PutUint32(header[:], uint32(len(frame.data)))
++		if _, err := w.input.Write(header[:]); err != nil {
++			w.failure(fmt.Errorf("writer transport: %w", err))
++			return
++		}
++		if n, err := w.input.Write(frame.data); err != nil || n != len(frame.data) {
++			w.failure(fmt.Errorf("writer transport: %v (%d/%d)", err, n, len(frame.data)))
++			return
++		}
++		var ack writeAck
++		if err := decoder.Decode(&ack); err != nil {
++			w.failure(fmt.Errorf("writer acknowledgement: %w", err))
++			return
++		}
++		if ack.Index != frame.index || ack.PayloadSHA256 != frame.digest || ack.Bytes < 0 || ack.Bytes > len(frame.data) || ack.End.MonoNS < ack.Begin.MonoNS || ack.WrittenSHA256 != payloadDigest(frame.data[:ack.Bytes]) {
++			w.failure(errors.New("writer acknowledgement mismatch"))
++			return
++		}
++		w.mu.Lock()
++		w.summary.Writes = append(w.summary.Writes, ack)
++		w.summary.PersistedBytes += int64(ack.Bytes)
++		if ack.Error == "" && ack.Bytes == len(frame.data) {
++			w.summary.Acknowledged++
++			w.summary.PendingRecords--
++			w.summary.PendingBytes -= int64(len(frame.data))
++		}
++		w.mu.Unlock()
++		if ack.Error != "" {
++			w.failure(errors.New(ack.Error))
++			return
++		}
++		if ack.Bytes != len(frame.data) {
++			w.failure(io.ErrShortWrite)
++			return
++		}
++	}
++	if err := w.input.Close(); err != nil {
++		w.failure(err)
++	}
++}
++
++func (w *bufferedWriter) Close() (bufferedSummary, error) {
++	w.mu.Lock()
++	w.accepting = false
++	w.summary.DrainBegin = observerClock()
++	close(w.queue)
++	w.mu.Unlock()
++	timer := time.NewTimer(time.Duration(w.summary.Config.DrainNS))
++	defer timer.Stop()
++	timedOut := false
++	select {
++	case <-w.pumped:
++	case <-timer.C:
++		w.failure(errors.New("writer drain deadline"))
++		timedOut = true
++	}
++	if w.Error() != nil {
++		// Closing pollable pipes also releases a pump blocked in transport I/O.
++		w.cmd.Process.Kill()
++		w.input.Close()
++		w.acks.Close()
++	}
++	<-w.pumped
++	wait := make(chan error, 1)
++	go func() { wait <- w.cmd.Wait() }()
++	var waitErr error
++	// Remaining lifetime shares the original drain deadline.
++	if timedOut {
++		waitErr = <-wait
++	} else {
++		select {
++		case waitErr = <-wait:
++		case <-timer.C:
++			w.failure(errors.New("writer exit deadline"))
++			w.cmd.Process.Kill()
++			waitErr = <-wait
++		}
++	}
++	w.input.Close()
++	w.acks.Close()
++	w.lifetime.Close()
++	logErr := w.log.Close()
++	if waitErr != nil && w.Error() == nil {
++		w.failure(fmt.Errorf("writer exit: %w", waitErr))
++	}
++	if logErr != nil {
++		w.failure(logErr)
++	}
++	w.mu.Lock()
++	defer w.mu.Unlock()
++	if w.cmd.ProcessState != nil {
++		w.summary.WriterExit = w.cmd.ProcessState.ExitCode()
++		w.summary.WriterCPUNS = (w.cmd.ProcessState.UserTime() + w.cmd.ProcessState.SystemTime()).Nanoseconds()
++	}
++	if w.err == nil && (w.summary.Accepted != w.summary.Acknowledged || w.summary.PendingRecords != 0 || w.summary.PendingBytes != 0) {
++		w.err = errors.New("writer closed with unacknowledged data")
++	}
++	if w.err != nil {
++		w.summary.Error = w.err.Error()
++	}
++	w.summary.DrainEnd = observerClock()
++	// Release owned payload buffers after the pump has stopped; failure counts remain.
++	for range w.queue {
++	}
++	return w.summary, w.err
++}
++
++func TestBufferedWriterHelper(t *testing.T) {
++	path := os.Getenv("BUILDOPT_WRITER_OUTPUT")
++	if !filepath.IsAbs(path) {
++		t.Fatal("explicit writer output required")
++	}
++	var config bufferedConfig
++	if err := readJSON(path+".writer-config.json", &config); err != nil {
++		t.Fatal(err)
++	}
++	if err := config.validate(); err != nil {
++		t.Fatal(err)
++	}
++	input := os.NewFile(3, "payloads")
++	acks := os.NewFile(4, "acknowledgements")
++	life := os.NewFile(5, "parent lifetime")
++	ready := os.NewFile(6, "ready")
++	// Independent of a slow file write. EOF is a failed parent lifetime, not drain.
++	go func() { io.Copy(io.Discard, life); fmt.Fprintln(os.Stderr, "WRITER_PARENT_EOF"); os.Exit(88) }()
++	identity, err := processIdentity(os.Getpid())
++	if err != nil {
++		t.Fatal(err)
++	}
++	if err = observerSave(path+".writer-identity.json", identity); err != nil {
++		t.Fatal(err)
++	}
++	output, err := os.OpenFile(path, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0600)
++	if err != nil {
++		t.Fatal(err)
++	}
++	encoder := json.NewEncoder(acks)
++	if _, err = ready.Write([]byte{1}); err != nil {
++		t.Fatal(err)
++	}
++	ready.Close()
++	begin := observerClock()
++	count := 0
++	total := int64(0)
++	message := ""
++	for {
++		var header [4]byte
++		_, err = io.ReadFull(input, header[:])
++		if err == io.EOF {
++			break
++		}
++		if err != nil {
++			message = err.Error()
++			break
++		}
++		length := int(binary.BigEndian.Uint32(header[:]))
++		if length < 1 || length > config.FrameBytes || int64(length) > config.TotalBytes-total || count == 10000 {
++			message = "writer protocol bound"
++			break
++		}
++		data := make([]byte, length)
++		if _, err = io.ReadFull(input, data); err != nil {
++			message = err.Error()
++			break
++		}
++		ack := writeAck{Index: count, PayloadSHA256: payloadDigest(data), Begin: observerClock()}
++		if count == 2 {
++			switch config.Fault {
++			case "delay":
++				time.Sleep(2104 * time.Millisecond)
++			case "stall":
++				if err = observerSave(path+".stall-ready.json", map[string]interface{}{"identity": identity, "at": observerClock()}); err != nil {
++					t.Fatal(err)
++				}
++				time.Sleep(20 * time.Second)
++			case "exit":
++				os.Exit(89)
++			}
++		}
++		if count == 2 && config.Fault == "error" {
++			err = errors.New("deliberate writer error")
++		} else if count == 2 && config.Fault == "short" {
++			ack.Bytes, err = output.Write(data[:len(data)/2])
++			if err == nil {
++				err = io.ErrShortWrite
++			}
++		} else {
++			ack.Bytes, err = output.Write(data)
++		}
++		ack.End = observerClock()
++		ack.WrittenSHA256 = payloadDigest(data[:ack.Bytes])
++		total += int64(ack.Bytes)
++		if err != nil {
++			ack.Error = err.Error()
++		}
++		if e := encoder.Encode(ack); e != nil {
++			message = e.Error()
++			break
++		}
++		count++
++		if err != nil {
++			message = err.Error()
++			break
++		}
++	}
++	closeErr := output.Close()
++	if closeErr != nil {
++		message = closeErr.Error()
++	}
++	end := observerClock()
++	if err = observerSave(path+".writer-result.json", map[string]interface{}{"begin": begin, "end": end, "recordsAttempted": count, "bytes": total, "error": message}); err != nil {
++		t.Fatal(err)
++	}
++	if message != "" {
++		t.Fatal(message)
++	}
++}
+diff --git 1/.tools/state/buildopt-product-viability-v1/bv006-live-observer/control/source/isolation_control_test.go 2/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/source/isolation_control_test.go
+index 3f5ad036..fc31f546 100644
+--- 1/.tools/state/buildopt-product-viability-v1/bv006-live-observer/control/source/isolation_control_test.go
++++ 2/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/source/isolation_control_test.go
+@@ -64,7 +64,8 @@ func sampleOwnedProcesses(worker workerSession, path string, stop <-chan struct{
+ }
+ 
+ func sampleOwnedProcessesWithObserver(worker workerSession, path string, stop <-chan struct{}, finished chan<- error, observe func(string) ([]ProcessIdentity, error)) {
+-	finished <- observeSampler(worker, path, stop, observe, samplerOptions{maxRows: 10000, maxBytes: 512 << 20})
++	config := defaultBufferedConfig()
++	finished <- observeSampler(worker, path, stop, observe, samplerOptions{maxRows: 10000, maxBytes: 512 << 20, buffered: &config})
+ }
+ 
+ // Preserve the original object construction and process-exit error policy.
+diff --git 1/.tools/state/buildopt-product-viability-v1/bv006-live-observer/control/source/live_observer_test.go 2/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/source/live_observer_test.go
+index bd4d330b..8b8ff164 100644
+--- 1/.tools/state/buildopt-product-viability-v1/bv006-live-observer/control/source/live_observer_test.go
++++ 2/.tools/state/buildopt-product-viability-v1/bv006-buffered-observer/control/source/live_observer_test.go
+@@ -133,6 +133,7 @@ type samplerOptions struct {
+ 	maxBytes  int64
+ 	stopAfter int // Fixed fixture completion only; zero for actual owner.
+ 	writer    func(io.Writer) io.Writer
++	buffered  *bufferedConfig
+ }
+ 
+ func observerSave(path string, value interface{}) error {
+@@ -253,14 +254,27 @@ func TestLiveObserverHeartbeat(t *testing.T) {
+ // All test and owner cases consume the same live collector, encoder and file.
+ // Diagnostic records are buffered with hard limits, then saved after sampling.
+ func observeSampler(worker workerSession, path string, stop <-chan struct{}, observe func(string) ([]ProcessIdentity, error), options samplerOptions) (resultErr error) {
+-	f, err := os.OpenFile(path, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0600)
++	var f *os.File
++	var queued *bufferedWriter
++	var sink io.Writer
++	var err error
++	if options.buffered != nil {
++		queued, err = startBufferedWriter(path, *options.buffered)
++		sink = queued
++	} else {
++		f, err = os.OpenFile(path, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0600)
++		sink = f
++	}
+ 	if err != nil {
+ 		return err
+ 	}
+ 	external, err := startExternalObserver(path + ".external.json")
+ 	if err != nil {
+-		f.Close()
+-		return err
++		if queued != nil {
++			_, closeErr := queued.Close()
++			return errors.Join(err, closeErr)
++		}
++		return errors.Join(err, f.Close())
+ 	}
+ 	heartStop := make(chan struct{})
+ 	heartDone := make(chan observerBeats, 1)
+@@ -268,7 +282,6 @@ func observeSampler(worker workerSession, path string, stop <-chan struct{}, obs
+ 	rows := make([]observerPhase, 0, options.maxRows)
+ 	pausesBefore := observerPauses()
+ 	begin := observerClock()
+-	var sink io.Writer = f
+ 	if options.writer != nil {
+ 		sink = options.writer(sink)
+ 	}
+@@ -277,9 +290,17 @@ func observeSampler(worker workerSession, path string, stop <-chan struct{}, obs
+ 	defer func() {
+ 		end := observerClock()
+ 		pausesAfter := observerPauses()
++		var persistence *bufferedSummary
++		if queued != nil {
++			summary, closeErr := queued.Close()
++			persistence = &summary
++			resultErr = errors.Join(resultErr, closeErr)
++		} else {
++			resultErr = errors.Join(resultErr, f.Close())
++		}
+ 		close(heartStop)
+ 		beats := <-heartDone
+-		resultErr = errors.Join(resultErr, f.Close(), external.stop())
++		resultErr = errors.Join(resultErr, external.stop())
+ 		if beats.Error != "" {
+ 			resultErr = errors.Join(resultErr, errors.New(beats.Error))
+ 		}
+@@ -287,8 +308,21 @@ func observeSampler(worker workerSession, path string, stop <-chan struct{}, obs
+ 		if resultErr != nil {
+ 			message = resultErr.Error()
+ 		}
+-		resultErr = errors.Join(resultErr, observerSave(path+".phases.json", map[string]interface{}{"schema": "buildopt.live-observer/phases/v1", "pid": os.Getpid(), "begin": begin, "end": end, "rows": rows, "heartbeat": beats, "runtimePausesBefore": pausesBefore, "runtimePausesAfter": pausesAfter, "bytes": writer.total, "error": message, "maxRows": options.maxRows, "maxBytes": options.maxBytes}))
++		schema, boundary := "buildopt.live-observer/phases/v1", "synchronous-file-write"
++		if queued != nil {
++			schema, boundary = "buildopt.buffered-observer/phases/v1", "queue-admission"
++		}
++		resultErr = errors.Join(resultErr, observerSave(path+".phases.json", map[string]interface{}{
++			"schema": schema, "writeBoundary": boundary, "pid": os.Getpid(), "begin": begin, "end": end, "closeEnd": observerClock(),
++			"rows": rows, "heartbeat": beats, "runtimePausesBefore": pausesBefore, "runtimePausesAfter": pausesAfter,
++			"bytes": writer.total, "error": message, "maxRows": options.maxRows, "maxBytes": options.maxBytes, "persistence": persistence,
++		}))
+ 	}()
++	var failed <-chan struct{}
++	if queued != nil {
++		failed = queued.failed
++	}
++
+ 	ticker := time.NewTicker(100 * time.Millisecond)
+ 	defer ticker.Stop()
+ 	for {
+@@ -301,6 +335,8 @@ func observeSampler(worker workerSession, path string, stop <-chan struct{}, obs
+ 		select {
+ 		case <-stop:
+ 			return nil
++		case <-failed:
++			return queued.Error()
+ 		case tick := <-ticker.C:
+ 			if len(rows) == options.maxRows {
+ 				return errors.New("sampler record limit")

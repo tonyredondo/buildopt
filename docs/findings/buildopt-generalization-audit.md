@@ -1,5 +1,11 @@
 # BuildOpt Generalization Audit
 
+> **Research disposition: HISTORICAL evidence (2026-09-08).** Original
+> findings, limits and outcomes are preserved below. Old recommendations and
+> successor instructions are scoped to that campaign. Use the
+> [research status register](../research-status.md) and
+> [current tracker](../plans/buildopt-product-viability-v1-tracker.md) for new work.
+
 The fourth CNC attempt now supplies complete fresh native evidence and a
 [terminal admission rejection](../../benchmarks/results/complete-native-correction-v1/cnc004-native-admission/README.md)
 (`E-556`). Six starts reconstruct two complete five-problem reports and native

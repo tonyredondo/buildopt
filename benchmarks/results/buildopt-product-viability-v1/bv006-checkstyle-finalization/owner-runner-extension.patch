@@ -1,0 +1,525 @@
+--- a/affinity_test.go
++++ b/affinity_test.go
+@@ -53,11 +53,21 @@
+ 	for _, mode := range []string{"success", "launch-failure", "set-failure", "restore-failure", "cancel"} {
+ 		t.Run(mode, func(t *testing.T) {
+ 			// The actual failure path must dispose of its locked thread. Exercise
+-			// it in a separate goroutine and observe the kernel thread afterward.
++			// it on a secondary OS thread and observe its removal afterward.
++			// Go parks m0 instead of removing it (runtime.mexit); /proc presence
++			// alone would incorrectly classify that retired main thread as reused.
+ 			result := make(chan error, 1)
+ 			tidResult := make(chan int, 1)
+-			go func() {
++			var exercise func()
++			exercise = func() {
+ 				runtime.LockOSThread()
++				if unix.Gettid() == os.Getpid() {
++					defer runtime.UnlockOSThread()
++					done := make(chan struct{})
++					go func() { exercise(); close(done) }()
++					<-done
++					return
++				}
+ 				var initial unix.CPUSet
+ 				if err := unix.SchedGetaffinity(0, &initial); err != nil {
+ 					result <- err
+@@ -73,6 +83,7 @@
+ 					result <- err
+ 					return
+ 				}
++				t.Logf("affinity mode=%s tid=%d pid=%d", mode, unix.Gettid(), os.Getpid())
+ 				tidResult <- unix.Gettid()
+ 				defer func() {
+ 					scope.release()
+@@ -152,7 +163,8 @@
+ 					return
+ 				}
+ 				result <- nil
+-			}()
++			}
++			go exercise()
+ 			select {
+ 			case err := <-result:
+ 				if err != nil {
+@@ -169,7 +181,9 @@
+ 					}
+ 					time.Sleep(time.Millisecond)
+ 				}
+-				t.Fatal("unrestored thread returned to runtime")
++				status, _ := os.ReadFile(fmt.Sprintf("/proc/self/task/%d/status", tid))
++				wchan, _ := os.ReadFile(fmt.Sprintf("/proc/self/task/%d/wchan", tid))
++				t.Fatalf("unrestored thread remains tid=%d pid=%d wchan=%s status=%s", tid, os.Getpid(), wchan, status)
+ 			}
+ 		})
+ 	}
+--- a/contract.go
++++ b/contract.go
+@@ -50,6 +50,24 @@
+ 	Prerequisites map[string]string `json:"prerequisites"`
+ }
+ 
++// A qualification may compare an already installed control against a revision.
++// Its control baseline replaces the shared baseline in N; I still uses Baseline
++// followed by Candidate. Omission preserves historical manifest semantics.
++func baselineForArm(m Manifest, arm string) Patch {
++	if arm == "N" && m.ControlBaseline != nil {
++		return *m.ControlBaseline
++	}
++	return m.Baseline
++}
++
++func allRecipes(m Manifest) []Patch {
++	patches := []Patch{m.Baseline, m.Candidate}
++	if m.ControlBaseline != nil {
++		patches = append(patches, *m.ControlBaseline)
++	}
++	return patches
++}
++
+ type Layer struct {
+ 	Kind        string  `json:"kind"`
+ 	Source      Binding `json:"source"`
+@@ -91,37 +109,38 @@
+ }
+ 
+ type Manifest struct {
+-	Schema         string            `json:"schema"`
+-	Phase          string            `json:"phase"`
+-	Experiment     string            `json:"experiment"`
+-	Mode           string            `json:"mode"`
+-	FrozenUTC      string            `json:"frozenUTC"`
+-	Protocol       Binding           `json:"protocol"`
+-	Executable     Binding           `json:"executable"`
+-	Package        []Binding         `json:"package"`
+-	Subject        string            `json:"subject"`
+-	CommonGit      string            `json:"commonGit"`
+-	History        []Revision        `json:"history"`
+-	RunRoot        string            `json:"runRoot"`
+-	Replications   int               `json:"replications"`
+-	PrefixEnd      int               `json:"prefixEnd"`
+-	ExecutionEnd   int               `json:"executionEnd"`
+-	DaemonPolicy   string            `json:"daemonPolicy"`
+-	Driver         string            `json:"driver"`
+-	Command        []string          `json:"command"`
+-	Environment    map[string]string `json:"environment"`
+-	Runtime        []Binding         `json:"runtime"`
+-	GeneratedPaths []string          `json:"generatedPaths"`
+-	Acquisition    []Layer           `json:"acquisition"`
+-	Baseline       Patch             `json:"baseline"`
+-	Candidate      Patch             `json:"candidate"`
+-	Outputs        OutputPolicy      `json:"outputs"`
+-	Affinity       string            `json:"affinity"`
+-	Limits         Limits            `json:"limits"`
+-	Correctness    Binding           `json:"correctness"`
+-	Overhead       Binding           `json:"overhead"`
+-	Subjects       Binding           `json:"subjects"`
+-	ExternalCosts  []Binding         `json:"externalCosts"`
++	ControlBaseline *Patch            `json:"controlBaseline,omitempty"`
++	Schema          string            `json:"schema"`
++	Phase           string            `json:"phase"`
++	Experiment      string            `json:"experiment"`
++	Mode            string            `json:"mode"`
++	FrozenUTC       string            `json:"frozenUTC"`
++	Protocol        Binding           `json:"protocol"`
++	Executable      Binding           `json:"executable"`
++	Package         []Binding         `json:"package"`
++	Subject         string            `json:"subject"`
++	CommonGit       string            `json:"commonGit"`
++	History         []Revision        `json:"history"`
++	RunRoot         string            `json:"runRoot"`
++	Replications    int               `json:"replications"`
++	PrefixEnd       int               `json:"prefixEnd"`
++	ExecutionEnd    int               `json:"executionEnd"`
++	DaemonPolicy    string            `json:"daemonPolicy"`
++	Driver          string            `json:"driver"`
++	Command         []string          `json:"command"`
++	Environment     map[string]string `json:"environment"`
++	Runtime         []Binding         `json:"runtime"`
++	GeneratedPaths  []string          `json:"generatedPaths"`
++	Acquisition     []Layer           `json:"acquisition"`
++	Baseline        Patch             `json:"baseline"`
++	Candidate       Patch             `json:"candidate"`
++	Outputs         OutputPolicy      `json:"outputs"`
++	Affinity        string            `json:"affinity"`
++	Limits          Limits            `json:"limits"`
++	Correctness     Binding           `json:"correctness"`
++	Overhead        Binding           `json:"overhead"`
++	Subjects        Binding           `json:"subjects"`
++	ExternalCosts   []Binding         `json:"externalCosts"`
+ }
+ 
+ // parseJSON rejects duplicate keys before decoding: encoding/json alone keeps
+@@ -203,6 +222,9 @@
+ 			allowed[n] = true
+ 			x, ok := m[n]
+ 			if !ok {
++				if t == reflect.TypeOf(Manifest{}) && n == "controlBaseline" {
++					continue
++				}
+ 				return fmt.Errorf("missing %s.%s", path, n)
+ 			}
+ 			if err := requiredJSON(x, f.Type, path+"."+n); err != nil {
+@@ -288,6 +310,9 @@
+ 	}
+ 	if m.Phase != "QUALIFICATION" && m.Phase != "ENGINEERING" && m.Phase != "CONFIRMATION" {
+ 		return errors.New("unsupported phase")
++	}
++	if m.ControlBaseline != nil && m.Phase != "QUALIFICATION" {
++		return errors.New("control baseline override is qualification-only")
+ 	}
+ 	if m.DaemonPolicy != "REQUEST" && m.DaemonPolicy != "REPLICATION" {
+ 		return errors.New("unsupported daemon policy")
+@@ -396,7 +421,7 @@
+ 			return errors.New("input cannot derive from run state")
+ 		}
+ 	}
+-	for _, p := range []Patch{m.Baseline, m.Candidate} {
++	for _, p := range allRecipes(m) {
+ 		if !namePattern.MatchString(p.Identity) {
+ 			return errors.New("invalid recipe identity")
+ 		}
+--- /dev/null
++++ b/control_baseline_test.go
+@@ -0,0 +1,97 @@
++//go:build linux && amd64 && replay_integration
++
++package main
++
++import (
++	"os"
++	"path/filepath"
++	"strings"
++	"testing"
++)
++
++func TestControlBaselineChronologicalReplay(t *testing.T) {
++	m := runnableFixture(t, 2, "success")
++	current := filepath.Join(filepath.Dir(m.RunRoot), "current.txt")
++	mustWrite(t, current, []byte("installed control implementation\n"))
++	m.ControlBaseline = &Patch{Identity: "installed-control", Prerequisites: map[string]string{}, Files: []FilePatch{
++		{Path: "candidate.txt", After: bound(t, current), AfterMode: 0644},
++	}}
++	m.Replications = 2
++	r := runFixture(t, m)
++	// Exercise checkpoint recovery while each arm owns a different postimage
++	// of the same source path, then independent fresh reverse-order replication.
++	if err := r.execute(1, 0, 0); err != nil {
++		t.Fatal(err)
++	}
++	next, rep, ordinal, err := resumeRunner(m.RunRoot)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if err = next.execute(rep, ordinal, -1); err != nil {
++		t.Fatal(err)
++	}
++	result, err := writeResult(m.RunRoot)
++	if err != nil || result.WorkflowStarts != 8 || result.Decision != "FIXTURE_VERIFIED" {
++		t.Fatalf("incomplete current/revised replay: %+v %v", result, err)
++	}
++	if err = checkResult(m.RunRoot, filepath.Join(m.RunRoot, "result.json")); err != nil {
++		t.Fatal(err)
++	}
++	for _, state := range next.states {
++		want := m.Candidate.Files[0].After.SHA256
++		if state.Arm == "N" {
++			want = m.ControlBaseline.Files[0].After.SHA256
++		}
++		found := false
++		for _, entry := range state.Entries {
++			if entry.Path == "repo/candidate.txt" {
++				found = entry.SHA256 == want
++			}
++		}
++		if !found {
++			t.Fatalf("wrong installed source in %s", state.Arm)
++		}
++	}
++	// The offline checker must reject a changed control definition, even when
++	// the candidate and claimed timing totals are otherwise untouched.
++	changed := m
++	bad := *m.ControlBaseline
++	bad.Files = append([]FilePatch{}, bad.Files...)
++	bad.Files[0].After.SHA256 = strings.Repeat("a", 64)
++	changed.ControlBaseline = &bad
++	for _, state := range next.states {
++		if state.Arm == "N" && checkRecordedSource(changed, state, map[string]string{}) == nil {
++			t.Fatal("accepted forged control source")
++		}
++	}
++	mustWrite(t, current, []byte("drifted installed source\n"))
++	if checkInputs(m) == nil {
++		t.Fatal("accepted control postimage drift")
++	}
++}
++
++func TestControlBaselineContract(t *testing.T) {
++	m := fixtureManifest(t, 2)
++	raw := jsonBytes(m)
++	if strings.Contains(string(raw), "controlBaseline") {
++		t.Fatal("omission changed historical manifest serialization")
++	}
++	var decoded Manifest
++	if err := decodeStrict(raw, &decoded); err != nil {
++		t.Fatal(err)
++	}
++	for _, value := range []string{"null", "{}"} {
++		invalid := strings.Replace(string(raw), `"baseline":`, `"controlBaseline": `+value+`, "baseline":`, 1)
++		if decodeStrict([]byte(invalid), &decoded) == nil {
++			t.Fatal("accepted incomplete control baseline", value)
++		}
++	}
++	m.ControlBaseline = &m.Baseline
++	m.Phase = "ENGINEERING"
++	if err := validateManifest(m); err == nil || !strings.Contains(err.Error(), "qualification-only") {
++		t.Fatalf("control override escaped qualification scope: %v", err)
++	}
++	if _, err := os.Stat(m.RunRoot); !os.IsNotExist(err) {
++		t.Fatal("contract validation created run state")
++	}
++}
+--- a/owner_compare.py
++++ b/owner_compare.py
+@@ -223,17 +223,18 @@
+         raise ValueError("no earlier executed origin for reused output: " + path)
+ 
+ 
+-def graph_contract(captures, candidate_applied):
++def graph_contract(captures, candidate_applied, control_adapted=False):
+     n, i = captures
+     require(n.tasks.keys() == i.tasks.keys(), "owner task identity set differs")
+     for identity in n.tasks:
+         left, right = n.tasks[identity], i.tasks[identity]
+         require(left["taskClass"] == right["taskClass"] and left["dependencies"] == right["dependencies"] and left["path"] == right["path"], "required task contract differs: " + identity)
+         output_sets = [set(rooted(path, c.root) for path in c.tasks[identity]["outputs"]) for c in captures]
+-        require(EXTRA not in output_sets[0], "native declares candidate-only output")
++        if EXTRA in output_sets[0]:
++            require(control_adapted and identity == EXTRA_OWNER, "native declares candidate-only output")
+         if EXTRA in output_sets[1]:
+             require(candidate_applied and identity == EXTRA_OWNER, "unapproved extra output producer")
+-        require(output_sets[0] == output_sets[1] - {EXTRA}, "declared output roots differ: " + identity)
++        require(output_sets[0] - {EXTRA} == output_sets[1] - {EXTRA}, "declared output roots differ: " + identity)
+         contracts = []
+         for c in captures:
+             inputs = c.tasks[identity]["checkstyle"]
+@@ -245,21 +246,21 @@
+     require(failures[0] == failures[1], "task failure coverage differs")
+ 
+ 
+-def extra_contract(captures, candidate_applied):
+-    n, i = captures
+-    require(EXTRA not in n.outputs, "native has candidate-only output")
+-    if EXTRA not in i.outputs:
+-        require(not candidate_applied, "candidate config declaration missing")
+-        return
+-    extra = i.outputs[EXTRA]
+-    require(candidate_applied and extra["producer"] == EXTRA_OWNER, "unapproved candidate-only output")
+-    if extra["entry"]["kind"] == "absent":
+-        require(i.native["exitCode"] != 0, "successful candidate is missing generated config")
+-        return
+-    original = i.data("server/build/checkstyle/checkstyle.xml")
+-    require(original.count(b'<module name="Checker">') == 1, "ambiguous original Checkstyle config")
+-    require(i.data(EXTRA) == original.replace(b'<module name="Checker">', REPLACEMENT.encode()), "generated candidate config differs")
+-    require(extra["entry"]["mode"] == i.outputs["server/build/checkstyle/checkstyle.xml"]["entry"]["mode"], "generated config mode differs")
++def extra_contract(captures, candidate_applied, control_adapted=False):
++    for capture, adapted in zip(captures, (control_adapted, candidate_applied)):
++        if not adapted:
++            require(EXTRA not in capture.outputs, "native has candidate-only output")
++            continue
++        require(EXTRA in capture.outputs, "candidate config declaration missing")
++        extra = capture.outputs[EXTRA]
++        require(extra["producer"] == EXTRA_OWNER, "unapproved candidate-only output")
++        if extra["entry"]["kind"] == "absent":
++            require(capture.native["exitCode"] != 0, "successful candidate is missing generated config")
++            continue
++        original = capture.data("server/build/checkstyle/checkstyle.xml")
++        require(original.count(b'<module name="Checker">') == 1, "ambiguous original Checkstyle config")
++        require(capture.data(EXTRA) == original.replace(b'<module name="Checker">', REPLACEMENT.encode()), "generated candidate config differs")
++        require(extra["entry"]["mode"] == capture.outputs["server/build/checkstyle/checkstyle.xml"]["entry"]["mode"], "generated config mode differs")
+ 
+ 
+ def member(capture, path, name):
+@@ -282,9 +283,11 @@
+     captures = [Capture(request[arm]) for arm in ("native", "candidate")]
+     n, i = captures
+     require(n.native["exitCode"] == i.native["exitCode"], "workflow exit differs")
+-    graph_contract(captures, request["candidate"]["candidateApplied"])
+-    extra_contract(captures, request["candidate"]["candidateApplied"])
+-    require(set(n.outputs) == set(i.outputs) - {EXTRA}, "required output coverage differs")
++    control_adapted = request.get("controlAdapted", False)
++    require(type(control_adapted) is bool, "invalid control adapter declaration")
++    graph_contract(captures, request["candidate"]["candidateApplied"], control_adapted)
++    extra_contract(captures, request["candidate"]["candidateApplied"], control_adapted)
++    require(set(n.outputs) - {EXTRA} == set(i.outputs) - {EXTRA}, "required output coverage differs")
+     origins = Origins(request["runRoot"], captures)
+     counts = Counter()
+     requests, metadata = [], []
+@@ -344,7 +347,7 @@
+         for left, right in zip(values[::2], values[1::2]):
+             require(left[1] == right[1], "complete compilation-state values differ")
+     counts["causalOrigins"] = origins.reused
+-    counts["candidateOnly"] = int(EXTRA in i.outputs)
++    counts["candidateOnly"] = int(EXTRA in i.outputs and EXTRA not in n.outputs)
+     return {"status": "equivalent", "policySHA256": request["policy"]["sha256"],
+             "captures": [c.end["capture"] for c in captures], "counts": dict(counts), "metadataJVMStarts": int(bool(metadata))}
+ 
+--- a/owner_compare_test.py
++++ b/owner_compare_test.py
+@@ -32,7 +32,7 @@
+         self.policy_binding = save(self.root / "policy.json", self.policy)
+         print("retained owner fixture:", self.root, flush=True)
+ 
+-    def arm(self, arm, ordinal=0, outcome="EXECUTED"):
++    def arm(self, arm, ordinal=0, outcome="EXECUTED", control_adapted=False):
+         directory = self.root / "attempts" / f"r1-{ordinal:03d}-{arm}"
+         directory.mkdir()
+         (directory / "outputs").mkdir()
+@@ -41,7 +41,7 @@
+                 "outputs": [root + "/server/build/reports/checkstyle/main.xml"],
+                 "checkstyle": {"source": [root + "/src/Main.java"], "classpath": [], "reports": [{"name": "xml", "required": True, "path": root + "/server/build/reports/checkstyle/main.xml"}]}}
+         config = {"identity": owner.EXTRA_OWNER, "path": owner.EXTRA_OWNER, "taskClass": "org.gradle.api.tasks.Copy_Decorated", "dependencies": [],
+-                  "outputs": [root + "/server/build/checkstyle/checkstyle.xml"] + ([root + "/" + owner.EXTRA] if arm == "I" else []), "checkstyle": {"source": [], "classpath": [], "reports": []}}
++                  "outputs": [root + "/server/build/checkstyle/checkstyle.xml"] + ([root + "/" + owner.EXTRA] if arm == "I" or control_adapted else []), "checkstyle": {"source": [], "classpath": [], "reports": []}}
+         tasks = [config, task]
+         results = [{"identity": t["identity"], "outcome": outcome, "action": outcome == "EXECUTED"} for t in tasks]
+         start = f"2026-09-08T12:{ordinal:02d}:00Z"
+@@ -51,7 +51,7 @@
+         (directory / "graph.jsonl").write_text("".join(json.dumps(event) + "\n" for event in events))
+         raw = {"server/build/reports/checkstyle/main.xml": (f'<checkstyle version="10.26.1"><file name="{root}/src/Main.java"></file></checkstyle>\n'.encode(), ":server:checkstyleMain"),
+                "server/build/checkstyle/checkstyle.xml": (b'<module name="Checker">\n</module>\n', owner.EXTRA_OWNER)}
+-        if arm == "I":
++        if arm == "I" or control_adapted:
+             raw[owner.EXTRA] = (raw["server/build/checkstyle/checkstyle.xml"][0].replace(b'<module name="Checker">', owner.REPLACEMENT.encode()), owner.EXTRA_OWNER)
+         outputs = []
+         for index, (path, (data, producer)) in enumerate(sorted(raw.items())):
+@@ -112,6 +112,39 @@
+         self.assertEqual(result["counts"], {"exact": 1, "checkstyle": 1, "causalOrigins": 0, "candidateOnly": 1})
+         self.assertEqual(result["metadataJVMStarts"], 0)
+ 
++    def adapted_pair(self):
++        return {"policy": self.policy_binding, "runRoot": str(self.root),
++                "native": self.arm("N", control_adapted=True), "candidate": self.arm("I"), "controlAdapted": True}
++
++    def test_adapted_control_complete_reports_and_config(self):
++        result = owner.compare(self.adapted_pair())
++        self.assertEqual(result["counts"], {"exact": 2, "checkstyle": 1, "causalOrigins": 0, "candidateOnly": 0})
++        self.assertEqual(result["metadataJVMStarts"], 0)
++
++    def test_adapted_control_requires_explicit_declaration(self):
++        request = self.adapted_pair()
++        del request["controlAdapted"]
++        with self.assertRaisesRegex(ValueError, "native declares candidate-only output"):
++            owner.compare(request)
++
++    def test_adapted_control_config_corruption_is_rejected(self):
++        request = self.adapted_pair()
++        self.mutate(request["native"], owner.EXTRA, lambda raw: raw+b"tampered")
++        with self.assertRaisesRegex(ValueError, "generated candidate config differs"):
++            owner.compare(request)
++
++    def test_adapted_control_missing_config_is_rejected(self):
++        request = self.pair()
++        request["controlAdapted"] = True
++        with self.assertRaisesRegex(ValueError, "candidate config declaration missing"):
++            owner.compare(request)
++
++    def test_adapted_control_keeps_full_finding_checks(self):
++        request = self.adapted_pair()
++        self.mutate(request["native"], "server/build/reports/checkstyle/main.xml", lambda raw: raw.replace(b"</file>", b'<error line="1" message="violation"/></file>'))
++        with self.assertRaisesRegex(ValueError, "non-permitted projected difference"):
++            owner.compare(request)
++
+     def test_finding_is_not_normalized_away(self):
+         request = self.pair()
+         self.mutate(request["candidate"], "server/build/reports/checkstyle/main.xml", lambda raw: raw.replace(b"</file>", b'<error line="1" message="violation"/></file>'))
+--- a/owner_policy.go
++++ b/owner_policy.go
+@@ -106,7 +106,7 @@
+ 	defer cancel()
+ 	cmd := exec.CommandContext(ctx, p.Interpreter.Path, "-I", p.Comparator.Path)
+ 	cmd.Env = []string{"PATH=/usr/bin:/bin", "LANG=C.UTF-8", "TZ=UTC", "PYTHONDONTWRITEBYTECODE=1"}
+-	cmd.Stdin = bytes.NewReader(jsonBytes(map[string]any{"policy": m.Outputs.Owner, "runRoot": m.RunRoot, "native": n, "candidate": i}))
++	cmd.Stdin = bytes.NewReader(jsonBytes(map[string]any{"policy": m.Outputs.Owner, "runRoot": m.RunRoot, "native": n, "candidate": i, "controlAdapted": m.ControlBaseline != nil}))
+ 	var diagnostic bytes.Buffer
+ 	cmd.Stderr = &diagnostic
+ 	output, err := cmd.Output()
+--- a/records.go
++++ b/records.go
+@@ -114,7 +114,7 @@
+ 		source["repo/"+f.path] = true
+ 	}
+ 	if s.BaselineApplied {
+-		for _, f := range m.Baseline.Files {
++		for _, f := range baselineForArm(m, s.Arm).Files {
+ 			source["repo/"+f.Path] = true
+ 		}
+ 	}
+@@ -178,7 +178,7 @@
+ 			source["repo/"+f.path] = true
+ 		}
+ 	}
+-	for _, p := range []Patch{m.Baseline, m.Candidate} {
++	for _, p := range []Patch{baselineForArm(m, next.Arm), m.Candidate} {
+ 		for _, f := range p.Files {
+ 			source["repo/"+f.Path] = true
+ 		}
+--- a/runner.go
++++ b/runner.go
+@@ -63,7 +63,7 @@
+ 	}
+ 	bindings := append([]Binding{m.Protocol, m.Executable}, m.Package...)
+ 	bindings = append(bindings, m.Runtime...)
+-	for _, p := range []Patch{m.Baseline, m.Candidate} {
++	for _, p := range allRecipes(m) {
+ 		for _, f := range p.Files {
+ 			bindings = append(bindings, f.After)
+ 		}
+@@ -185,12 +185,12 @@
+ 			if _, err := gitAt(m.CommonGit, "worktree", "add", "--quiet", "-b", branch, repo, m.History[0].Commit); err != nil {
+ 				return err
+ 			}
+-			ok, err := patchApplicable(repo, m.Baseline)
++			ok, err := patchApplicable(repo, baselineForArm(m, arm))
+ 			if err != nil {
+ 				return err
+ 			}
+ 			if ok {
+-				if err = applyPatch(repo, m.Baseline); err != nil {
++				if err = applyPatch(repo, baselineForArm(m, arm)); err != nil {
+ 					return err
+ 				}
+ 			}
+@@ -217,7 +217,7 @@
+ func patchesFor(m Manifest, s StatePin) []Patch {
+ 	p := []Patch{}
+ 	if s.BaselineApplied {
+-		p = append(p, m.Baseline)
++		p = append(p, baselineForArm(m, s.Arm))
+ 	}
+ 	if s.CandidateApplied {
+ 		p = append(p, m.Candidate)
+@@ -249,7 +249,7 @@
+ 	}
+ 	return r.phase(Cost{ID: slotKey(rep, ordinal) + "-" + arm + "-source", Class: "research", Purpose: "neutral-source-advancement", Replication: rep, Ordinal: ordinal, Arm: arm}, func() error {
+ 		if s.BaselineApplied {
+-			if err := reversePatch(m.CommonGit, repo, s.Revision, m.Baseline); err != nil {
++			if err := reversePatch(m.CommonGit, repo, s.Revision, baselineForArm(m, arm)); err != nil {
+ 				return err
+ 			}
+ 		}
+@@ -260,12 +260,12 @@
+ 		if _, err := gitAt(repo, "switch", "--quiet", "--no-overwrite-ignore", "-c", branch, m.History[ordinal].Commit); err != nil {
+ 			return err
+ 		}
+-		ok, err := patchApplicable(repo, m.Baseline)
++		ok, err := patchApplicable(repo, baselineForArm(m, arm))
+ 		if err != nil {
+ 			return err
+ 		}
+ 		if ok {
+-			if err = applyPatch(repo, m.Baseline); err != nil {
++			if err = applyPatch(repo, baselineForArm(m, arm)); err != nil {
+ 				return err
+ 			}
+ 		}

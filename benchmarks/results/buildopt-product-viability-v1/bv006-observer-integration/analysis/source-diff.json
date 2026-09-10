@@ -1,0 +1,97 @@
+[
+  {
+    "file": "README.md",
+    "added": 62,
+    "removed": 0
+  },
+  {
+    "file": "checker.go",
+    "added": 13,
+    "removed": 0
+  },
+  {
+    "file": "contract.go",
+    "added": 11,
+    "removed": 1
+  },
+  {
+    "file": "export.go",
+    "added": 28,
+    "removed": 0
+  },
+  {
+    "file": "main.go",
+    "added": 15,
+    "removed": 0
+  },
+  {
+    "file": "observer_affinity.go",
+    "added": 153,
+    "removed": 0
+  },
+  {
+    "file": "observer_affinity_test.go",
+    "added": 190,
+    "removed": 0
+  },
+  {
+    "file": "observer_check.go",
+    "added": 303,
+    "removed": 0
+  },
+  {
+    "file": "observer_collect.go",
+    "added": 73,
+    "removed": 0
+  },
+  {
+    "file": "observer_integration_test.go",
+    "added": 439,
+    "removed": 0
+  },
+  {
+    "file": "observer_policy.go",
+    "added": 71,
+    "removed": 0
+  },
+  {
+    "file": "observer_process.go",
+    "added": 271,
+    "removed": 0
+  },
+  {
+    "file": "observer_sampler.go",
+    "added": 380,
+    "removed": 0
+  },
+  {
+    "file": "observer_writer.go",
+    "added": 452,
+    "removed": 0
+  },
+  {
+    "file": "process_linux.go",
+    "added": 35,
+    "removed": 2
+  },
+  {
+    "file": "records.go",
+    "added": 1,
+    "removed": 1
+  },
+  {
+    "file": "recovery.go",
+    "added": 27,
+    "removed": 0
+  },
+  {
+    "file": "runner.go",
+    "added": 34,
+    "removed": 1
+  },
+  {
+    "file": "runner_test.go",
+    "added": 11,
+    "removed": 1
+  }
+]

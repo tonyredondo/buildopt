@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "buildopt.viability/replication-endpoints/v1",
+  "program": "BUILDOPT-VIABILITY-V1",
+  "frozenDate": "2026-09-08",
+  "status": "ENDPOINTS_FROZEN_HISTORY_PENDING",
+  "selectionPolicy": "Inspect all six engineering prefixes; select first two causally admitted in this order; retain every outcome; no replacement family",
+  "repositories": [
+    {
+      "order": 1,
+      "repository": "https://github.com/apache/groovy.git",
+      "defaultBranch": "master",
+      "endpoint": "fe0f8c2232e9e0b0d1453559840bb51070a430ab",
+      "rawResponse": "ref: refs/heads/master\tHEAD\nfe0f8c2232e9e0b0d1453559840bb51070a430ab\tHEAD\n",
+      "historyStatus": "pending verification before seed confirmation",
+      "opportunity": "unmeasured",
+      "selectedForReplay": false
+    },
+    {
+      "order": 2,
+      "repository": "https://github.com/apache/kafka.git",
+      "defaultBranch": "trunk",
+      "endpoint": "5ce7e34250273652e5496846a5278e87e78b13fd",
+      "rawResponse": "ref: refs/heads/trunk\tHEAD\n5ce7e34250273652e5496846a5278e87e78b13fd\tHEAD\n",
+      "historyStatus": "pending verification before seed confirmation",
+      "opportunity": "unmeasured",
+      "selectedForReplay": false
+    },
+    {
+      "order": 3,
+      "repository": "https://github.com/spring-projects/spring-framework.git",
+      "defaultBranch": "main",
+      "endpoint": "4c8c6409a27a62ab163d3b6196ad862b7c835440",
+      "rawResponse": "ref: refs/heads/main\tHEAD\n4c8c6409a27a62ab163d3b6196ad862b7c835440\tHEAD\n",
+      "historyStatus": "pending verification before seed confirmation",
+      "opportunity": "unmeasured",
+      "selectedForReplay": false
+    },
+    {
+      "order": 4,
+      "repository": "https://github.com/open-telemetry/opentelemetry-java.git",
+      "defaultBranch": "main",
+      "endpoint": "c87b50ec476f6589a362403a6753ba98514045cf",
+      "rawResponse": "ref: refs/heads/main\tHEAD\nc87b50ec476f6589a362403a6753ba98514045cf\tHEAD\n",
+      "historyStatus": "pending verification before seed confirmation",
+      "opportunity": "unmeasured",
+      "selectedForReplay": false
+    },
+    {
+      "order": 5,
+      "repository": "https://github.com/micronaut-projects/micronaut-core.git",
+      "defaultBranch": "5.2.x",
+      "endpoint": "605d679849f07f7ac221cfb4fb236dfe34689fb1",
+      "rawResponse": "ref: refs/heads/5.2.x\tHEAD\n605d679849f07f7ac221cfb4fb236dfe34689fb1\tHEAD\n",
+      "historyStatus": "pending verification before seed confirmation",
+      "opportunity": "unmeasured",
+      "selectedForReplay": false
+    },
+    {
+      "order": 6,
+      "repository": "https://github.com/hibernate/hibernate-orm.git",
+      "defaultBranch": "main",
+      "endpoint": "f2c20adb6125a30b8c5f8cdf0d119248218f89e4",
+      "rawResponse": "ref: refs/heads/main\tHEAD\nf2c20adb6125a30b8c5f8cdf0d119248218f89e4\tHEAD\n",
+      "historyStatus": "pending verification before seed confirmation",
+      "opportunity": "unmeasured",
+      "selectedForReplay": false
+    }
+  ]
+}

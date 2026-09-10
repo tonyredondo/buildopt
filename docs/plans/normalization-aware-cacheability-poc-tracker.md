@@ -1,5 +1,11 @@
 # Normalization-Aware Cacheability POC Tracker
 
+> **Research disposition: HISTORICAL; closed research (2026-09-08).**
+> Original outcomes and evidence are preserved below. Old phase instructions
+> and unchecked boxes do not reopen this route. Use the
+> [research status register](../research-status.md) and
+> [current tracker](./buildopt-product-viability-v1-tracker.md) for new work.
+
 **Status:** closed — `STOP_NORMALIZATION_AWARE_CACHEABILITY_POC`<br>
 **Current block:** none; all seven blocks are resolved<br>
 **Terminal outcomes:** `CONTINUE_NORMALIZATION_AWARE_CACHEABILITY_POC` or

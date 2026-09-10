@@ -1,0 +1,38 @@
+{
+  "kind": "ACTUAL_COMPILER_VERSION_PROBES",
+  "installations": [
+    {
+      "home": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/native-state/gradle/jdks/eclipse_adoptium-22-amd64-linux.2",
+      "declaredVersion": "22.0.2",
+      "probes": {
+        "java": "openjdk version \"22.0.2\" 2024-07-16\nOpenJDK Runtime Environment Temurin-22.0.2+9 (build 22.0.2+9)\nOpenJDK 64-Bit Server VM Temurin-22.0.2+9 (build 22.0.2+9, mixed mode, sharing)",
+        "javac": "javac 22.0.2"
+      }
+    },
+    {
+      "home": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/native-state/gradle/jdks/eclipse_adoptium-25-amd64-linux.2",
+      "declaredVersion": "25.0.4.1",
+      "probes": {
+        "java": "openjdk version \"25.0.4.1\" 2026-08-18 LTS\nOpenJDK Runtime Environment Temurin-25.0.4.1+1 (build 25.0.4.1+1-LTS)\nOpenJDK 64-Bit Server VM Temurin-25.0.4.1+1 (build 25.0.4.1+1-LTS, mixed mode, sharing)",
+        "javac": "javac 25.0.4.1"
+      }
+    },
+    {
+      "home": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/native-state/gradle/jdks/oracle_corporation-26-amd64-linux.2",
+      "declaredVersion": "26.0.2",
+      "probes": {
+        "java": "openjdk version \"26.0.2\" 2026-07-21\nOpenJDK Runtime Environment (build 26.0.2+10-55)\nOpenJDK 64-Bit Server VM (build 26.0.2+10-55, mixed mode, sharing)",
+        "javac": "javac 26.0.2"
+      }
+    },
+    {
+      "home": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/native-state/gradle/jdks/oracle_corporation-27-amd64-linux.2",
+      "declaredVersion": "27",
+      "probes": {
+        "java": "openjdk version \"27\" 2026-09-15\nOpenJDK Runtime Environment (build 27+35-2325)\nOpenJDK 64-Bit Server VM (build 27+35-2325, mixed mode, sharing)",
+        "javac": "javac 27"
+      }
+    }
+  ],
+  "sourceReceiptSHA256": "e3552d20d7d6b10b6968848744a54e51140db1cf09dbf338886089e32427222c"
+}

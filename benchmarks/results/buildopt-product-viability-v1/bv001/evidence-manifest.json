@@ -1,0 +1,195 @@
+{
+  "program": "BUILDOPT-VIABILITY-V1",
+  "step": "BV-001",
+  "capturedUTC": "2026-09-08T08:56:49.352981+00:00",
+  "rawStateLocator": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/task-state.json",
+  "portableFiles": [
+    {
+      "path": "allocation.json",
+      "bytes": 842,
+      "sha256": "4e89c633549cfc9cce1f1dc21c1c14d7afbc1a1ca62d409c1304bdfdd45b3cab"
+    },
+    {
+      "path": "closeout.json",
+      "bytes": 1296,
+      "sha256": "d1da9e7bac838ad2996c610e97601e3ca494dc5584f420cf255ba9d0adf9a9fe"
+    },
+    {
+      "path": "inputs.md",
+      "bytes": 9398,
+      "sha256": "2ca0257aaeb9b2246927d2789e12d6e5441c804cfd5ec7e136a3ba3b112eb099"
+    },
+    {
+      "path": "logs/buildopt-core-tests.log",
+      "bytes": 211,
+      "sha256": "a4996e61de2406c088ce3cc5bbb476ee83f81623430379042119a53cbcf23580"
+    },
+    {
+      "path": "logs/buildopt-go-build.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "logs/buildopt-patcher-build-tests.log",
+      "bytes": 1088,
+      "sha256": "cc4e299606111152a040a26d4a25de9e10595d04e35a1f5f79065543e8a205f0"
+    },
+    {
+      "path": "logs/buildopt-patcher-fresh-proof.log",
+      "bytes": 2192,
+      "sha256": "71f932447f2e08c5fabfb7a1ae82d18043d6294813c299916ad4008e3e0e2a54"
+    },
+    {
+      "path": "logs/fetch-seed-history.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "logs/longitudinal-verifier-tests.log",
+      "bytes": 78,
+      "sha256": "00dba3521ca57cdcc760fd5f9a329e090a36c09a59eee27a4bea939ef87eac2e"
+    },
+    {
+      "path": "logs/seed-anchor-precommit-v2.log",
+      "bytes": 9820,
+      "sha256": "a25aa56a8be5452c7107ac52bbde1d03a14f7eb2f2fbb467fd667a705ed245d2"
+    },
+    {
+      "path": "logs/seed-anchor-precommit-v3.log",
+      "bytes": 98345,
+      "sha256": "cbc0c3df0127a2357b45137bd9b5a93057c3f461f4b5cb7d6b9aed45f282df97"
+    },
+    {
+      "path": "logs/seed-anchor-precommit.log",
+      "bytes": 49,
+      "sha256": "a651d36c6b8ff3d7fd2189dd20d1b1c82a283221125e2032f5a31cd1ce0da871"
+    },
+    {
+      "path": "patcher-spike.json",
+      "bytes": 2529,
+      "sha256": "9cb3b05569e09c28dbe8983b7d834b1a416982b0dac4176203a76daf8ed78d9e"
+    },
+    {
+      "path": "prior-causal-diagnostics.json",
+      "bytes": 3511,
+      "sha256": "4b39d4a84e7cf15501ec0f0f09a5dfb64bfe6a69a2cc31ba6a22be7861b93cbb"
+    },
+    {
+      "path": "receipts/buildopt-core-tests.json",
+      "bytes": 1396,
+      "sha256": "2490e093e692b156a121a85296de3170c76fa53dc24871fad608d3aed2693111"
+    },
+    {
+      "path": "receipts/buildopt-go-build.json",
+      "bytes": 1139,
+      "sha256": "390059238654fd5188a9e9f15f17463b9b952b9da86ec568fb5666fcdd8869c6"
+    },
+    {
+      "path": "receipts/buildopt-patcher-build-tests.json",
+      "bytes": 1750,
+      "sha256": "bab5a80f1da1f079a3d642d88fe24fbe47a6b4b3adde87b4aaede9c3b3ff3f2d"
+    },
+    {
+      "path": "receipts/buildopt-patcher-fresh-proof.json",
+      "bytes": 1827,
+      "sha256": "9ce153f3dfacefef18265d9f7cd2b35cf92d78ef9814f8b74e94b7ab15d9ebca"
+    },
+    {
+      "path": "receipts/bv001-prerequisite-check.json",
+      "bytes": 952,
+      "sha256": "95ebcded33104168eb6b0977a80b733613873c26301dbd2c1d4904bea4027276"
+    },
+    {
+      "path": "receipts/fetch-seed-history.json",
+      "bytes": 1246,
+      "sha256": "52f02f7e971e91486ab4d3ac62a50f84f5193c536e96b3e2729aec4867ddd316"
+    },
+    {
+      "path": "receipts/longitudinal-verifier-tests.json",
+      "bytes": 1259,
+      "sha256": "a06e9e4422d7f40812c862e482da5354bb1f6ca200d8b519ce99eb4bb8195168"
+    },
+    {
+      "path": "receipts/prepare-native-compiler-toolchains.json",
+      "bytes": 4546,
+      "sha256": "e3552d20d7d6b10b6968848744a54e51140db1cf09dbf338886089e32427222c"
+    },
+    {
+      "path": "receipts/prepare-native-dependencies.json",
+      "bytes": 2784,
+      "sha256": "5bf7471af536a87274ac8cb216b52136e6f7635ca0734ee2bd505de2c507fac7"
+    },
+    {
+      "path": "receipts/seed-anchor-precommit-v2.json",
+      "bytes": 5242,
+      "sha256": "a178841f33791e854f82a3cd621e3eadf217b62632c41699204c3f0dd9c906a4"
+    },
+    {
+      "path": "receipts/seed-anchor-precommit-v3.json",
+      "bytes": 5291,
+      "sha256": "4320e9b07823ccbb85c25b6e1685aa844c8a80b627bb29532e1ecf58cedff844"
+    },
+    {
+      "path": "receipts/seed-anchor-precommit.json",
+      "bytes": 5350,
+      "sha256": "e2a1bc177fa441bc1da56ea77f5feeb7d144211b05e88033da4fec401cc0681c"
+    },
+    {
+      "path": "receipts/subject-compiler-version-probes.json",
+      "bytes": 2039,
+      "sha256": "54798f9e366981b1e030c27dd1cb13fc7071c612d29339803128a52ccde24271"
+    },
+    {
+      "path": "replication-endpoints.json",
+      "bytes": 2991,
+      "sha256": "7b93ad2aa30ca3ebdbe13ef41b98af9dc4f054a4718d85a0a77c371f50cb0753"
+    },
+    {
+      "path": "seed-history.json",
+      "bytes": 297899,
+      "sha256": "3521f7a3e41278a47578857ab58cb6a3a5bfa9f1e9be3a2f4ec029c1470c5a8d"
+    },
+    {
+      "path": "source-manifest.json",
+      "bytes": 1349172,
+      "sha256": "d0a7682fad7bc5ac08f09be96eea3ec2891d09137b276332613f98a55cefde35"
+    },
+    {
+      "path": "source-workflow-inventory.json",
+      "bytes": 8572,
+      "sha256": "07861eea8629e71214a803fbc9607f0f71b8f7b6641093e6d875efefc79617ba"
+    },
+    {
+      "path": "toolchains.json",
+      "bytes": 2228,
+      "sha256": "ffcd7b23ee5a217fd5ea3ad7611a8c2c7bbaaccd270e0144bc7c8eb1807ae969"
+    }
+  ],
+  "hostLocalDiagnostics": [
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/diagnostics/anchor-000/operations-log.txt",
+      "bytes": 75520066,
+      "sha256": "1d683a0c46d38f8742f7210d9265f9e44b6c2e8fcb972ddd6e4b8051558296ab",
+      "retention": "host-local immutable prerequisite attempt"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/diagnostics/anchor-000/task-graph.jsonl",
+      "bytes": 619786,
+      "sha256": "068fca482eb20b1ce8ad4524097673fdef008edecef2fa19dff995a16223944d",
+      "retention": "host-local immutable prerequisite attempt"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/diagnostics/anchor-000-compiler-ready/operations-log.txt",
+      "bytes": 273696037,
+      "sha256": "d9d8794f362e20a4def13155b121414d99d93305911ff3ef02d383e3698cff87",
+      "retention": "host-local immutable prerequisite attempt"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/diagnostics/anchor-000-compiler-ready/task-graph.jsonl",
+      "bytes": 619786,
+      "sha256": "068fca482eb20b1ce8ad4524097673fdef008edecef2fa19dff995a16223944d",
+      "retention": "host-local immutable prerequisite attempt"
+    }
+  ],
+  "limits": "Only the declared local native path is verified; no new optimization or speedup. Source manifest predates progress-only Markdown updates; all non-document inputs remain identical."
+}

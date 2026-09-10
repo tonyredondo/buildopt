@@ -1,0 +1,65 @@
+=== RUN   TestRawEvidenceTampering
+=== RUN   TestRawEvidenceTampering/native-duration
+    adversarial_integration_test.go:213: expected raw refusal: binding drift: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion/tmp/TestRawEvidenceTampering3220779502/001/run/attempts/r1-000-g0-N/native-finish.json
+=== RUN   TestRawEvidenceTampering/output-bytes
+    adversarial_integration_test.go:213: expected raw refusal: binding drift: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion/tmp/TestRawEvidenceTampering3220779502/001/run/attempts/r1-000-g0-N/outputs/000000
+=== RUN   TestRawEvidenceTampering/hidden-preparation
+    adversarial_integration_test.go:213: expected raw refusal: cost differs from independent boundary records
+=== RUN   TestRawEvidenceTampering/normalization
+    adversarial_integration_test.go:213: expected raw refusal: binding drift: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion/tmp/TestRawEvidenceTampering3220779502/001/run/attempts/r1-000-g0-N/capture.json
+=== RUN   TestRawEvidenceTampering/missing-maintenance
+    adversarial_integration_test.go:233: expected semantic accounting refusal: missing/changed required phase: r1-001-I-inverse
+=== RUN   TestRawEvidenceTampering/rebound-duration-forgery
+    adversarial_integration_test.go:264: expected semantic duration refusal: forged request duration
+=== RUN   TestRawEvidenceTampering/hidden-retry
+    adversarial_integration_test.go:280: expected hidden retry refusal: hidden/unaccounted retry attempt
+--- PASS: TestRawEvidenceTampering (18.28s)
+    --- PASS: TestRawEvidenceTampering/native-duration (0.03s)
+    --- PASS: TestRawEvidenceTampering/output-bytes (0.03s)
+    --- PASS: TestRawEvidenceTampering/hidden-preparation (0.02s)
+    --- PASS: TestRawEvidenceTampering/normalization (0.03s)
+    --- PASS: TestRawEvidenceTampering/missing-maintenance (0.04s)
+    --- PASS: TestRawEvidenceTampering/rebound-duration-forgery (0.02s)
+    --- PASS: TestRawEvidenceTampering/hidden-retry (0.05s)
+=== RUN   TestAffinityScope
+=== RUN   TestAffinityScope/success
+=== RUN   TestAffinityScope/launch-failure
+=== RUN   TestAffinityScope/set-failure
+=== RUN   TestAffinityScope/restore-failure
+=== RUN   TestAffinityScope/cancel
+--- PASS: TestAffinityScope (0.14s)
+    --- PASS: TestAffinityScope/success (0.03s)
+    --- PASS: TestAffinityScope/launch-failure (0.00s)
+    --- PASS: TestAffinityScope/set-failure (0.00s)
+    --- PASS: TestAffinityScope/restore-failure (0.00s)
+    --- PASS: TestAffinityScope/cancel (0.10s)
+=== RUN   TestEvidenceCopiesPreserveCompleteIndependentFiles
+--- PASS: TestEvidenceCopiesPreserveCompleteIndependentFiles (0.98s)
+=== RUN   TestEvidenceCopyFailureNeverOverwritesExistingBytes
+--- PASS: TestEvidenceCopyFailureNeverOverwritesExistingBytes (0.00s)
+=== RUN   TestOutputRetentionReuseAndNativeIndependence
+--- PASS: TestOutputRetentionReuseAndNativeIndependence (0.55s)
+=== RUN   TestOutputRetentionRejectsTamperingAndOverwrite
+--- PASS: TestOutputRetentionRejectsTamperingAndOverwrite (0.14s)
+=== RUN   TestCgroupEnumerationProcessDeparture
+=== RUN   TestCgroupEnumerationProcessDeparture/no_such_file_or_directory
+=== RUN   TestCgroupEnumerationProcessDeparture/no_such_process
+--- PASS: TestCgroupEnumerationProcessDeparture (0.00s)
+    --- PASS: TestCgroupEnumerationProcessDeparture/no_such_file_or_directory (0.00s)
+    --- PASS: TestCgroupEnumerationProcessDeparture/no_such_process (0.00s)
+=== RUN   TestCgroupEnumerationRejectsUnknownOwnership
+--- PASS: TestCgroupEnumerationRejectsUnknownOwnership (0.00s)
+=== RUN   TestRetainedObjectSizing
+    retention_sizing_test.go:18: mode=reference files=128 elapsedNS=854173104 exactIndependent=true
+    retention_sizing_test.go:18: mode=populate files=128 elapsedNS=1932047933 exactIndependent=true
+    retention_sizing_test.go:18: mode=reuse files=128 elapsedNS=94724290 exactIndependent=true
+--- PASS: TestRetainedObjectSizing (3.63s)
+=== RUN   TestOwnedReplayAndIndependentChecker
+=== RUN   TestOwnedReplayAndIndependentChecker/positive-summary
+=== RUN   TestOwnedReplayAndIndependentChecker/payback
+=== RUN   TestOwnedReplayAndIndependentChecker/duration
+--- PASS: TestOwnedReplayAndIndependentChecker (26.68s)
+    --- PASS: TestOwnedReplayAndIndependentChecker/positive-summary (0.07s)
+    --- PASS: TestOwnedReplayAndIndependentChecker/payback (0.07s)
+    --- PASS: TestOwnedReplayAndIndependentChecker/duration (0.07s)
+PASS

@@ -1,0 +1,59 @@
+import groovy.json.JsonOutput
+import java.nio.ByteBuffer
+import java.nio.channels.FileChannel
+import java.nio.charset.StandardCharsets
+import java.nio.file.StandardOpenOption
+
+// Symmetric lean capture. No action/input/output mutation. Configuration cache
+// is explicitly disabled by this version's supported native workflow contract.
+def destination = System.getenv('BUILDOPT_REPLAY_CAPTURE')
+if (destination == null) throw new GradleException('Missing replay capture destination')
+def append = { record ->
+    def bytes = (JsonOutput.toJson(record) + '\n').getBytes(StandardCharsets.UTF_8)
+    synchronized (destination.intern()) {
+        FileChannel.open(new File(destination).toPath(), StandardOpenOption.CREATE,
+            StandardOpenOption.WRITE, StandardOpenOption.APPEND).withCloseable { channel ->
+            channel.lock().withCloseable {
+                def buffer = ByteBuffer.wrap(bytes)
+                while (buffer.hasRemaining()) channel.write(buffer)
+            }
+        }
+    }
+}
+def identity = { Task task ->
+    def build = task.project.gradle.identityPath.toString()
+    build == ':' ? task.path : build + task.path
+}
+def started = new java.util.concurrent.ConcurrentHashMap<String, String>()
+gradle.taskGraph.beforeTask { task -> started.put(identity(task), java.time.Instant.now().toString()) }
+gradle.taskGraph.whenReady { graph ->
+    def root = gradle.rootProject.projectDir.toPath().toAbsolutePath().normalize()
+    def members = graph.allTasks as Set
+    def tasks = graph.allTasks.collect { task ->
+        def checkstyle = [source: [], classpath: [], reports: []]
+        if (task instanceof org.gradle.api.plugins.quality.Checkstyle) {
+            checkstyle = [source: task.source.files.collect { it.absolutePath },
+                classpath: task.classpath.files.collect { it.absolutePath },
+                reports: task.reports.collect {
+                    [name: it.name, required: it.required.get(), path: it.outputLocation.get().asFile.absolutePath]
+                }]
+        }
+        [identity: identity(task), path: task.path, taskClass: task.class.name, checkstyle: checkstyle,
+            dependencies: graph.getDependencies(task).findAll { members.contains(it) }
+                .collect { identity(it) }.unique().sort(),
+            outputs: task.outputs.files.files.collect {
+                it.toPath().toAbsolutePath().normalize().toString()
+            }.unique().sort()]
+    }.sort { a, b -> a.identity <=> b.identity }
+    append([kind: 'graph', root: root.toString(), buildPath: gradle.identityPath.toString(),
+        tasks: tasks, task: [identity: '', outcome: '', action: false],
+        utc: java.time.Instant.now().toString(), startedUTC: ''])
+}
+gradle.taskGraph.afterTask { task, state ->
+    def outcome = state.failure != null ? 'FAILED' : state.noSource ? 'NO-SOURCE' :
+        state.skipped ? (state.skipMessage ?: 'SKIPPED') : 'EXECUTED'
+    append([kind: 'task', root: gradle.rootProject.projectDir.absolutePath,
+        buildPath: gradle.identityPath.toString(), tasks: [],
+        task: [identity: identity(task), outcome: outcome, action: !state.skipped],
+        utc: java.time.Instant.now().toString(), startedUTC: started.remove(identity(task)) ?: ''])
+}

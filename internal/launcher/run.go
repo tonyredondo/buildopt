@@ -40,6 +40,9 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 	stickyRoot := os.Getenv(stickyWrapperRootEnvironment)
 	if stickyRoot != "" {
 		childArgs := ordinaryChildArguments(args)
+		if os.Getenv(stickyObservationModeEnvironment) == stickyWCNCPMode && len(childArgs) > 0 {
+			return runStickyWCNCP(stickyRoot, childArgs, stdin, stdout, stderr)
+		}
 		requestPortfolio = newRequestPortfolioStateAt(stickyRoot, childArgs, runStartedAt)
 		if requestPortfolio != nil {
 			defer func() {
@@ -130,6 +133,9 @@ func Run(args []string, stdin io.Reader, stdout, stderr io.Writer) (runExitCode 
 		return runProfileDiscovery(args[1:], stdout, stderr)
 	}
 	if len(args) > 0 && args[0] == "wrapper" {
+		if os.Getenv(stickyObservationModeEnvironment) == stickyWCNCPMode {
+			return stickywrapper.RunCLIWithStatus(args[1:], stdout, stderr, installedWCNCPStatus)
+		}
 		return stickywrapper.RunCLI(args[1:], stdout, stderr)
 	}
 	if isHelp(args) {
@@ -881,6 +887,7 @@ func managedSharedAuthorityEnabled(
 }
 
 type childExecution struct {
+	pid         int
 	started     bool
 	startedAt   time.Time
 	completedAt time.Time

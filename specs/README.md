@@ -1,5 +1,12 @@
 # Executable specifications
 
+> **Retained executable contracts.** Research disposition is tracked in the
+> [current register](../docs/research-status.md). Closed POC specs remain
+> available for verification; their old phase instructions do not reopen a
+> campaign. New research follows the
+> [viability tracker](../docs/plans/buildopt-product-viability-v1-tracker.md).
+> This index update changes no versioned contract or result.
+
 Operational contracts connecting multiple components: CI orchestration, Gradle correlation, Test Optimization integration, PatchBundle, and the capability matrix.
 
 Specifications are normative executable behavior, not the recommended learning
@@ -7,13 +14,19 @@ path. Start with the [documentation portal](../docs/README.md) or
 [architecture overview](../docs/architecture/overview.md), then return here for
 the exact cross-component contract.
 
+The [fixed historical replay contract](./poc-product-viability-v1.md) and
+[machine protocol](./poc-product-viability-v1.json) define the new BV-005
+instrument. Its [runner reference](../dev/history-replay/README.md) documents
+strict manifests, isolated state, crash recovery, raw evidence and bounded
+qualification. Fixture qualification does not establish product value.
+
 The [Complete Native Correction contract](./poc-complete-native-correction-v1.md),
 [machine contract](./poc-complete-native-correction-v1.json) and
 [subject manifest](./poc-complete-native-correction-v1.subjects.json) freeze the
 accepted local non-CI scope, 60 starts maximum within two hours and review at
 30 minutes. `./dev/check-complete-native-correction contract` verifies static
-bindings and proof slots with negative tests. Qualified public execution remains
-later work in the [CNC tracker](../docs/plans/complete-native-correction-poc-tracker.md).
+bindings and proof slots with negative tests. Public execution closed at native
+admission in the [CNC tracker](../docs/plans/complete-native-correction-poc-tracker.md).
 The [CNC-003 runbook](../docs/reference/complete-native-correction-capture.md)
 documents qualified generic/host fixture proof and the guarded native interface.
 The first CNC-004 window recovered exact source/runtime inputs but refused
@@ -31,7 +44,7 @@ and stopped at admission: warmed configuration is 362 ms, below 500 ms, and two
 native JAR manifests differ. All four windows/costs remain retained. No recipe,
 candidate or value comparison exists; the frozen thresholds are unchanged.
 
-The active product pivot is the
+The closed wrapper-coordination experiment is specified by
 [`Wrapper-Coordinated Native Corrections v1`](./poc-wrapper-coordinated-native-corrections-v1.md).
 `WCNCP-000` freezes wrapper/backend observation, coordination, validation, and
 owner review while leaving native Gradle as the build runtime. Its exact

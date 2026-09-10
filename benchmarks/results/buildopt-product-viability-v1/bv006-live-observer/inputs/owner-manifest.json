@@ -1,0 +1,162 @@
+{
+  "schema": "buildopt.history-replay/manifest/v2",
+  "phase": "QUALIFICATION",
+  "experiment": "FIXED_NI",
+  "mode": "P",
+  "frozenUTC": "2026-09-09T12:16:17.554940+00:00",
+  "protocol": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-attribution/versions/owner-precision-v6/protocol.json",
+    "sha256": "616e2e0cfbc276450cba000fe9afd1132a7c41bf772e5e070bf4547e5feeef41"
+  },
+  "executable": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-live-observer/control/control.test",
+    "sha256": "3441e60612d777f8cd9df9eb56a885a74018732527b88414dcc25851bb52a317"
+  },
+  "package": [
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-live-observer/control/source",
+      "sha256": "bf6d519d3a046dffd66c64776b018fcf37f30020f95c8e1e9b4c0f594f025616"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-live-observer/control/control.test",
+      "sha256": "3441e60612d777f8cd9df9eb56a885a74018732527b88414dcc25851bb52a317"
+    }
+  ],
+  "subject": "elasticsearch-cpu-isolation-control",
+  "commonGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/eic-native-v1/repos/elasticsearch.git",
+  "history": [
+    {
+      "ordinal": 0,
+      "commit": "53a80bec683ad0b065ed9ebe6a57f984e6a91ed1",
+      "parent": "3a8c67414071153e4bcceaefb3bf99ba21e51997",
+      "tree": "ecc8766c0b4686bd4c11ed1d596dd60e52ace79e",
+      "committedUTC": "2026-08-31T14:12:17Z",
+      "changedPathsSHA256": "ea5108d565755e2e2dd5cf35adfb86ff0d597e092ab600157c5bf3c50f7233d9"
+    }
+  ],
+  "runRoot": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-live-observer/owner/run",
+  "replications": 1,
+  "prefixEnd": 0,
+  "executionEnd": 0,
+  "daemonPolicy": "REPLICATION",
+  "driver": "GRADLE",
+  "command": [
+    "{repo}/gradlew",
+    "--offline",
+    "--no-scan",
+    "--max-workers=8",
+    ":server:precommit",
+    "--continue"
+  ],
+  "environment": {
+    "PATH": "/usr/bin:/bin",
+    "CI": "false",
+    "LANG": "C.UTF-8",
+    "LC_ALL": "C.UTF-8",
+    "TZ": "UTC",
+    "JAVA_HOME": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155",
+    "RUNTIME_JAVA_HOME": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155",
+    "JAVA_TOOL_OPTIONS": "-Dfile.encoding=UTF-8"
+  },
+  "runtime": [
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155",
+      "sha256": "c69ab0352c502f5b8fc4a55a2bbcd9a6b8161a16f17badcecea8d00f0e1e47f2"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-25-69264a7a211bf502",
+      "sha256": "e73f1d9f2124c013382dce6754cf3c8f0216ffd8536e78f7e4483e8e3cc628ad"
+    }
+  ],
+  "generatedPaths": [
+    "**/build/**",
+    "**/.gradle/**",
+    "build/**",
+    ".gradle/**"
+  ],
+  "acquisition": [
+    {
+      "kind": "dependencies",
+      "source": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/inputs/layers/dependencies",
+        "sha256": "3d274c28c7664604b7bbb1a5c4cf5daf358dfa34ef8b742f0d1699227eb47ee6"
+      },
+      "destination": "gradle/caches/modules-2"
+    },
+    {
+      "kind": "wrapper",
+      "source": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/inputs/layers/wrapper",
+        "sha256": "4d7ccd09b72a62f9f79fc7fe65c65ff3079072c74b6558d2fa51238480da0d7b"
+      },
+      "destination": "gradle/wrapper/dists"
+    },
+    {
+      "kind": "jdks",
+      "source": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/inputs/layers/jdks",
+        "sha256": "e5b06733551b07c70299a2893b3e3b24f264cc9a02da22b8119a9b382ff3a878"
+      },
+      "destination": "gradle/jdks"
+    }
+  ],
+  "baseline": {
+    "identity": "retained-native-forbidden-patterns-baseline",
+    "files": [
+      {
+        "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/ForbiddenPatternsTask.java",
+        "beforeSHA256": "61fe2eaa06ff463c2a49cea656b147889060855acfa094288ebb8b31567e11b6",
+        "beforeMode": 420,
+        "after": {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/inputs/postimages/ForbiddenPatternsTask.java",
+          "sha256": "d6858f5ac43ad671496cf1e54e7af309cb98ebda4a9be53e61578df8baefa2d0"
+        },
+        "afterMode": 420
+      }
+    ],
+    "prerequisites": {}
+  },
+  "candidate": {
+    "identity": "no-native-candidate",
+    "files": [],
+    "prerequisites": {}
+  },
+  "outputs": {
+    "rules": [],
+    "graphCapture": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-attribution/versions/owner-precision-v6/source/capture.init.gradle",
+      "sha256": "cac81f720c86919c57b6a8478007c075db41b4365630f16b99c2b50b41d2c240"
+    },
+    "projectors": [],
+    "diagnostics": [],
+    "owner": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-attribution/versions/owner-precision-v6/owner-policy.json",
+      "sha256": "57bd098c6c3a74930012035de3a56415fd8970d7e287005d5a1a515f7d45636e"
+    }
+  },
+  "affinity": "0-7",
+  "limits": {
+    "deadlineUTC": "2026-09-09T13:01:17.554940+00:00",
+    "maxRequestNS": 900000000000,
+    "maxRunNS": 2700000000000,
+    "maxBytes": 37580963840,
+    "minimumFreeBytes": 42949672960,
+    "maxWorkflowStarts": 2,
+    "maxGradleStarts": 2,
+    "nestedReservePerRequest": 0,
+    "retryPairs": 0
+  },
+  "correctness": {
+    "path": "",
+    "sha256": ""
+  },
+  "overhead": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-live-observer/inputs/owner-design.json",
+    "sha256": "b662c0012e6a18e724db53e4ff993405fcc2b86b8adf138fc986e26472c77f35"
+  },
+  "subjects": {
+    "path": "",
+    "sha256": ""
+  },
+  "externalCosts": []
+}

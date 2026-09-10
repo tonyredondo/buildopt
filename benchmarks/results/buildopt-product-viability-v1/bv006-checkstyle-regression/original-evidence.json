@@ -1,0 +1,1550 @@
+{
+  "status": "retained observations verified; fresh diagnostic pending",
+  "history": [
+    {
+      "ordinal": 0,
+      "sameActionIdentities": true,
+      "N": {
+        "customerEnvelopeSeconds": 209.735231814,
+        "mainOutcome": "EXECUTED",
+        "mainSeconds": 82.5379409790039
+      },
+      "I": {
+        "customerEnvelopeSeconds": 220.653147593,
+        "mainOutcome": "EXECUTED",
+        "mainSeconds": 142.67216110229492
+      }
+    },
+    {
+      "ordinal": 1,
+      "sameActionIdentities": true,
+      "N": {
+        "customerEnvelopeSeconds": 7.400661339,
+        "mainOutcome": "UP-TO-DATE",
+        "mainSeconds": 0.0058629512786865234
+      },
+      "I": {
+        "customerEnvelopeSeconds": 7.623316352,
+        "mainOutcome": "UP-TO-DATE",
+        "mainSeconds": 0.011072874069213867
+      }
+    },
+    {
+      "ordinal": 2,
+      "sameActionIdentities": true,
+      "N": {
+        "customerEnvelopeSeconds": 7.578549869,
+        "mainOutcome": "UP-TO-DATE",
+        "mainSeconds": 0.009184837341308594
+      },
+      "I": {
+        "customerEnvelopeSeconds": 6.82311256,
+        "mainOutcome": "UP-TO-DATE",
+        "mainSeconds": 0.008240938186645508
+      }
+    },
+    {
+      "ordinal": 3,
+      "sameActionIdentities": true,
+      "N": {
+        "customerEnvelopeSeconds": 19.634149214,
+        "mainOutcome": "UP-TO-DATE",
+        "mainSeconds": 0.007796049118041992
+      },
+      "I": {
+        "customerEnvelopeSeconds": 19.634400964,
+        "mainOutcome": "UP-TO-DATE",
+        "mainSeconds": 0.009397029876708984
+      }
+    },
+    {
+      "ordinal": 4,
+      "sameActionIdentities": true,
+      "N": {
+        "customerEnvelopeSeconds": 22.956470201,
+        "mainOutcome": "UP-TO-DATE",
+        "mainSeconds": 0.012059926986694336
+      },
+      "I": {
+        "customerEnvelopeSeconds": 18.067510225,
+        "mainOutcome": "UP-TO-DATE",
+        "mainSeconds": 0.0059909820556640625
+      }
+    },
+    {
+      "ordinal": 5,
+      "sameActionIdentities": true,
+      "N": {
+        "customerEnvelopeSeconds": 5.623118796,
+        "mainOutcome": "UP-TO-DATE",
+        "mainSeconds": 0.012807846069335938
+      },
+      "I": {
+        "customerEnvelopeSeconds": 6.311868605,
+        "mainOutcome": "UP-TO-DATE",
+        "mainSeconds": 0.007370948791503906
+      }
+    },
+    {
+      "ordinal": 6,
+      "sameActionIdentities": true,
+      "N": {
+        "customerEnvelopeSeconds": 7.068512672,
+        "mainOutcome": "UP-TO-DATE",
+        "mainSeconds": 0.009397029876708984
+      },
+      "I": {
+        "customerEnvelopeSeconds": 6.113275444,
+        "mainOutcome": "UP-TO-DATE",
+        "mainSeconds": 0.008875131607055664
+      }
+    },
+    {
+      "ordinal": 7,
+      "sameActionIdentities": true,
+      "N": {
+        "customerEnvelopeSeconds": 110.724472013,
+        "mainOutcome": "EXECUTED",
+        "mainSeconds": 72.71828699111938
+      },
+      "I": {
+        "customerEnvelopeSeconds": 151.815356367,
+        "mainOutcome": "EXECUTED",
+        "mainSeconds": 117.33969402313232
+      }
+    },
+    {
+      "ordinal": 8,
+      "sameActionIdentities": true,
+      "N": {
+        "customerEnvelopeSeconds": 7.478502221,
+        "mainOutcome": "UP-TO-DATE",
+        "mainSeconds": 0.005937099456787109
+      },
+      "I": {
+        "customerEnvelopeSeconds": 9.011991406,
+        "mainOutcome": "UP-TO-DATE",
+        "mainSeconds": 0.011048078536987305
+      }
+    },
+    {
+      "ordinal": 9,
+      "sameActionIdentities": true,
+      "N": {
+        "customerEnvelopeSeconds": 6.756271321,
+        "mainOutcome": "UP-TO-DATE",
+        "mainSeconds": 0.0074307918548583984
+      },
+      "I": {
+        "customerEnvelopeSeconds": 8.23389313,
+        "mainOutcome": "UP-TO-DATE",
+        "mainSeconds": 0.012188911437988281
+      }
+    },
+    {
+      "ordinal": 10,
+      "sameActionIdentities": true,
+      "N": {
+        "customerEnvelopeSeconds": 18.145204464,
+        "mainOutcome": "UP-TO-DATE",
+        "mainSeconds": 0.00839090347290039
+      },
+      "I": {
+        "customerEnvelopeSeconds": 24.768005387,
+        "mainOutcome": "UP-TO-DATE",
+        "mainSeconds": 0.007661104202270508
+      }
+    },
+    {
+      "ordinal": 11,
+      "sameActionIdentities": true,
+      "N": {
+        "customerEnvelopeSeconds": 6.956281009,
+        "mainOutcome": "UP-TO-DATE",
+        "mainSeconds": 0.0070497989654541016
+      },
+      "I": {
+        "customerEnvelopeSeconds": 5.867382638,
+        "mainOutcome": "UP-TO-DATE",
+        "mainSeconds": 0.005739927291870117
+      }
+    },
+    {
+      "ordinal": 12,
+      "sameActionIdentities": true,
+      "N": {
+        "customerEnvelopeSeconds": 34.245584082,
+        "mainOutcome": "UP-TO-DATE",
+        "mainSeconds": 0.005853891372680664
+      },
+      "I": {
+        "customerEnvelopeSeconds": 47.512610199,
+        "mainOutcome": "UP-TO-DATE",
+        "mainSeconds": 0.00945281982421875
+      }
+    },
+    {
+      "ordinal": 13,
+      "sameActionIdentities": true,
+      "N": {
+        "customerEnvelopeSeconds": 22.500925669,
+        "mainOutcome": "UP-TO-DATE",
+        "mainSeconds": 0.015149116516113281
+      },
+      "I": {
+        "customerEnvelopeSeconds": 22.167710753,
+        "mainOutcome": "UP-TO-DATE",
+        "mainSeconds": 0.006085872650146484
+      }
+    },
+    {
+      "ordinal": 14,
+      "sameActionIdentities": true,
+      "N": {
+        "customerEnvelopeSeconds": 19.387787702,
+        "mainOutcome": "UP-TO-DATE",
+        "mainSeconds": 0.006538867950439453
+      },
+      "I": {
+        "customerEnvelopeSeconds": 18.067732503,
+        "mainOutcome": "UP-TO-DATE",
+        "mainSeconds": 0.006479978561401367
+      }
+    }
+  ],
+  "original7": {
+    "N": {
+      "tasks": [
+        {
+          "task": ":server:compileJava",
+          "startUTC": "2026-09-09T23:22:04.793118730Z",
+          "endUTC": "2026-09-09T23:22:29.905334695Z"
+        },
+        {
+          "task": ":server:generateTestBuildInfo",
+          "startUTC": "2026-09-09T23:22:29.906427558Z",
+          "endUTC": "2026-09-09T23:22:29.937847617Z"
+        },
+        {
+          "task": ":server:classes",
+          "startUTC": "2026-09-09T23:22:29.945725065Z",
+          "endUTC": "2026-09-09T23:22:29.945775775Z"
+        },
+        {
+          "task": ":server:filepermissions",
+          "startUTC": "2026-09-09T23:22:30.369766249Z",
+          "endUTC": "2026-09-09T23:22:30.706244108Z"
+        },
+        {
+          "task": ":server:forbiddenPatterns",
+          "startUTC": "2026-09-09T23:22:32.715265760Z",
+          "endUTC": "2026-09-09T23:22:37.831163631Z"
+        },
+        {
+          "task": ":server:licenseHeaders",
+          "startUTC": "2026-09-09T23:22:37.831659812Z",
+          "endUTC": "2026-09-09T23:22:40.811652138Z"
+        },
+        {
+          "task": ":server:splitPackagesAudit",
+          "startUTC": "2026-09-09T23:22:40.812354080Z",
+          "endUTC": "2026-09-09T23:22:41.001473101Z"
+        },
+        {
+          "task": ":server:spotlessJava",
+          "startUTC": "2026-09-09T23:22:40.856120707Z",
+          "endUTC": "2026-09-09T23:22:42.081396366Z"
+        },
+        {
+          "task": ":server:spotlessJavaCheck",
+          "startUTC": "2026-09-09T23:22:42.082835659Z",
+          "endUTC": "2026-09-09T23:22:42.083225820Z"
+        },
+        {
+          "task": ":server:validateModule",
+          "startUTC": "2026-09-09T23:22:42.089579524Z",
+          "endUTC": "2026-09-09T23:22:42.244319839Z"
+        },
+        {
+          "task": ":server:generatePomFileForElasticPublication",
+          "startUTC": "2026-09-09T23:22:42.244850250Z",
+          "endUTC": "2026-09-09T23:22:42.263222461Z"
+        },
+        {
+          "task": ":server:collectTransportVersionReferences",
+          "startUTC": "2026-09-09T23:22:42.265707247Z",
+          "endUTC": "2026-09-09T23:22:53.533442632Z"
+        },
+        {
+          "task": ":server:forbiddenApisMain",
+          "startUTC": "2026-09-09T23:22:30.726122882Z",
+          "endUTC": "2026-09-09T23:22:54.459100415Z"
+        },
+        {
+          "task": ":server:checkstyleTest",
+          "startUTC": "2026-09-09T23:22:30.269613876Z",
+          "endUTC": "2026-09-09T23:23:30.838050996Z"
+        },
+        {
+          "task": ":server:compileTestJava",
+          "startUTC": "2026-09-09T23:22:53.540703388Z",
+          "endUTC": "2026-09-09T23:23:36.371691145Z"
+        },
+        {
+          "task": ":server:testClasses",
+          "startUTC": "2026-09-09T23:23:36.372436286Z",
+          "endUTC": "2026-09-09T23:23:36.372513907Z"
+        },
+        {
+          "task": ":server:checkstyleMain",
+          "startUTC": "2026-09-09T23:22:29.950700036Z",
+          "endUTC": "2026-09-09T23:23:42.668987763Z"
+        },
+        {
+          "task": ":server:compileInternalClusterTestJava",
+          "startUTC": "2026-09-09T23:23:36.373079588Z",
+          "endUTC": "2026-09-09T23:23:46.046551260Z"
+        },
+        {
+          "task": ":server:internalClusterTestClasses",
+          "startUTC": "2026-09-09T23:23:46.046867841Z",
+          "endUTC": "2026-09-09T23:23:46.046924081Z"
+        },
+        {
+          "task": ":server:checkstyle",
+          "startUTC": "2026-09-09T23:23:46.047111472Z",
+          "endUTC": "2026-09-09T23:23:46.047158212Z"
+        },
+        {
+          "task": ":server:jarHell",
+          "startUTC": "2026-09-09T23:23:46.184967320Z",
+          "endUTC": "2026-09-09T23:23:46.542741979Z"
+        },
+        {
+          "task": ":server:internalClusterTestTestingConventions",
+          "startUTC": "2026-09-09T23:23:46.565178299Z",
+          "endUTC": "2026-09-09T23:23:46.938703034Z"
+        },
+        {
+          "task": ":server:forbiddenApisInternalClusterTest",
+          "startUTC": "2026-09-09T23:23:46.047679663Z",
+          "endUTC": "2026-09-09T23:23:46.793947061Z"
+        },
+        {
+          "task": ":server:testTestingConventions",
+          "startUTC": "2026-09-09T23:23:46.599319886Z",
+          "endUTC": "2026-09-09T23:23:47.799482308Z"
+        },
+        {
+          "task": ":server:forbiddenApisTest",
+          "startUTC": "2026-09-09T23:23:46.097726765Z",
+          "endUTC": "2026-09-09T23:23:48.378323462Z"
+        },
+        {
+          "task": ":server:jar",
+          "startUTC": "2026-09-09T23:23:47.019179674Z",
+          "endUTC": "2026-09-09T23:23:48.879833493Z"
+        },
+        {
+          "task": ":server:forbiddenApis",
+          "startUTC": "2026-09-09T23:23:48.880313424Z",
+          "endUTC": "2026-09-09T23:23:48.880386334Z"
+        },
+        {
+          "task": ":server:testingConventions",
+          "startUTC": "2026-09-09T23:23:48.880610544Z",
+          "endUTC": "2026-09-09T23:23:48.880644324Z"
+        },
+        {
+          "task": ":server:loggerUsageCheck",
+          "startUTC": "2026-09-09T23:23:46.543216600Z",
+          "endUTC": "2026-09-09T23:23:50.118391481Z"
+        },
+        {
+          "task": ":server:precommit",
+          "startUTC": "2026-09-09T23:23:50.118765042Z",
+          "endUTC": "2026-09-09T23:23:50.118813812Z"
+        }
+      ],
+      "observedProcesses": [
+        {
+          "pid": 1865855,
+          "startTicks": 44975255,
+          "role": "supervisor",
+          "firstSampleNS": 453046402056777,
+          "firstCPU": 27239,
+          "lastCPU": 37657,
+          "lastSampleNS": 453156250233973,
+          "samples": 206,
+          "observedCPUSeconds": 104.18,
+          "observedSpanSeconds": 109.848177196
+        },
+        {
+          "pid": 1865990,
+          "startTicks": 44975343,
+          "role": "gradle-daemon",
+          "firstSampleNS": 453046402056777,
+          "firstCPU": 79656,
+          "lastCPU": 108151,
+          "lastSampleNS": 453156250233973,
+          "samples": 206,
+          "observedCPUSeconds": 284.95,
+          "observedSpanSeconds": 109.848177196
+        },
+        {
+          "pid": 1866948,
+          "startTicks": 44981810,
+          "role": "worker-1",
+          "firstSampleNS": 453046402056777,
+          "firstCPU": 394,
+          "lastCPU": 403,
+          "lastSampleNS": 453156250233973,
+          "samples": 206,
+          "observedCPUSeconds": 0.09,
+          "observedSpanSeconds": 109.848177196
+        },
+        {
+          "pid": 1867039,
+          "startTicks": 44981979,
+          "role": "worker-3",
+          "firstSampleNS": 453046402056777,
+          "firstCPU": 879,
+          "lastCPU": 883,
+          "lastSampleNS": 453156250233973,
+          "samples": 206,
+          "observedCPUSeconds": 0.04,
+          "observedSpanSeconds": 109.848177196
+        },
+        {
+          "pid": 1867120,
+          "startTicks": 44982144,
+          "role": "worker-5",
+          "firstSampleNS": 453046402056777,
+          "firstCPU": 650,
+          "lastCPU": 657,
+          "lastSampleNS": 453156250233973,
+          "samples": 206,
+          "observedCPUSeconds": 0.07,
+          "observedSpanSeconds": 109.848177196
+        },
+        {
+          "pid": 1867259,
+          "startTicks": 44982431,
+          "role": "worker-7",
+          "firstSampleNS": 453046402056777,
+          "firstCPU": 355,
+          "lastCPU": 361,
+          "lastSampleNS": 453156250233973,
+          "samples": 206,
+          "observedCPUSeconds": 0.06,
+          "observedSpanSeconds": 109.848177196
+        },
+        {
+          "pid": 1867372,
+          "startTicks": 44982718,
+          "role": "worker-8",
+          "firstSampleNS": 453046402056777,
+          "firstCPU": 373,
+          "lastCPU": 379,
+          "lastSampleNS": 453156250233973,
+          "samples": 206,
+          "observedCPUSeconds": 0.06,
+          "observedSpanSeconds": 109.848177196
+        },
+        {
+          "pid": 1959632,
+          "startTicks": 45304616,
+          "role": "other",
+          "firstSampleNS": 453046402056777,
+          "firstCPU": 45,
+          "lastCPU": 143,
+          "lastSampleNS": 453156250233973,
+          "samples": 206,
+          "observedCPUSeconds": 0.98,
+          "observedSpanSeconds": 109.848177196
+        },
+        {
+          "pid": 1960641,
+          "startTicks": 45307591,
+          "role": "worker-9",
+          "firstSampleNS": 453076027438212,
+          "firstCPU": 8,
+          "lastCPU": 11173,
+          "lastSampleNS": 453156250233973,
+          "samples": 151,
+          "observedCPUSeconds": 111.65,
+          "observedSpanSeconds": 80.222795761
+        },
+        {
+          "pid": 1960667,
+          "startTicks": 45307617,
+          "role": "worker-10",
+          "firstSampleNS": 453076536299445,
+          "firstCPU": 43,
+          "lastCPU": 8430,
+          "lastSampleNS": 453156250233973,
+          "samples": 150,
+          "observedCPUSeconds": 83.87,
+          "observedSpanSeconds": 79.713934528
+        },
+        {
+          "pid": 1961337,
+          "startTicks": 45315201,
+          "role": "other",
+          "firstSampleNS": 453152195222120,
+          "firstCPU": 22,
+          "lastCPU": 22,
+          "lastSampleNS": 453152195222120,
+          "samples": 1,
+          "observedCPUSeconds": 0.0,
+          "observedSpanSeconds": 0.0
+        },
+        {
+          "pid": 1961367,
+          "startTicks": 45315237,
+          "role": "other",
+          "firstSampleNS": 453152701843752,
+          "firstCPU": 85,
+          "lastCPU": 696,
+          "lastSampleNS": 453155744159072,
+          "samples": 7,
+          "observedCPUSeconds": 6.11,
+          "observedSpanSeconds": 3.04231532
+        }
+      ],
+      "fiveSecondCPUBins": {
+        "0": {
+          "supervisor": 4.5,
+          "gradle-daemon": 8.719999999999999,
+          "worker-1": 0.01,
+          "worker-3": 0.0,
+          "worker-5": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "other": 0.5900000000000001
+        },
+        "1": {
+          "supervisor": 5.0,
+          "gradle-daemon": 6.380000000000001,
+          "worker-1": 0.01,
+          "worker-3": 0.0,
+          "worker-5": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "other": 0.0
+        },
+        "2": {
+          "supervisor": 5.01,
+          "gradle-daemon": 14.15,
+          "worker-1": 0.0,
+          "worker-3": 0.0,
+          "worker-5": 0.01,
+          "worker-7": 0.0,
+          "worker-8": 0.01,
+          "other": 0.01
+        },
+        "3": {
+          "supervisor": 4.5,
+          "gradle-daemon": 5.140000000000001,
+          "worker-1": 0.0,
+          "worker-3": 0.0,
+          "worker-5": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "other": 0.01
+        },
+        "4": {
+          "supervisor": 3.87,
+          "gradle-daemon": 2.74,
+          "worker-1": 0.0,
+          "worker-3": 0.0,
+          "worker-5": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "other": 0.0
+        },
+        "5": {
+          "supervisor": 4.93,
+          "gradle-daemon": 15.030000000000001,
+          "worker-1": 0.0,
+          "worker-3": 0.0,
+          "worker-5": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "other": 0.05,
+          "worker-9": 0.0
+        },
+        "6": {
+          "supervisor": 4.67,
+          "gradle-daemon": 14.34,
+          "worker-1": 0.01,
+          "worker-3": 0.01,
+          "worker-5": 0.0,
+          "worker-7": 0.02,
+          "worker-8": 0.0,
+          "other": 0.06,
+          "worker-9": 7.91,
+          "worker-10": 7.93
+        },
+        "7": {
+          "supervisor": 4.75,
+          "gradle-daemon": 24.159999999999997,
+          "worker-1": 0.0,
+          "worker-3": 0.0,
+          "worker-5": 0.01,
+          "worker-7": 0.0,
+          "worker-8": 0.01,
+          "other": 0.03,
+          "worker-9": 6.55,
+          "worker-10": 7.879999999999999
+        },
+        "8": {
+          "supervisor": 4.5,
+          "gradle-daemon": 14.39,
+          "worker-1": 0.0,
+          "worker-3": 0.0,
+          "worker-5": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "other": 0.01,
+          "worker-9": 7.449999999999999,
+          "worker-10": 7.1
+        },
+        "9": {
+          "supervisor": 4.449999999999999,
+          "gradle-daemon": 8.51,
+          "worker-1": 0.01,
+          "worker-3": 0.0,
+          "worker-5": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "other": 0.02,
+          "worker-9": 7.369999999999999,
+          "worker-10": 7.98
+        },
+        "10": {
+          "supervisor": 4.24,
+          "gradle-daemon": 22.26,
+          "worker-1": 0.01,
+          "worker-3": 0.0,
+          "worker-5": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "other": 0.07,
+          "worker-9": 6.359999999999999,
+          "worker-10": 5.1499999999999995
+        },
+        "11": {
+          "supervisor": 3.8,
+          "gradle-daemon": 12.7,
+          "worker-1": 0.0,
+          "worker-3": 0.01,
+          "worker-5": 0.02,
+          "worker-7": 0.01,
+          "worker-8": 0.0,
+          "other": 0.0,
+          "worker-9": 3.1199999999999997,
+          "worker-10": 2.48
+        },
+        "12": {
+          "supervisor": 5.760000000000001,
+          "gradle-daemon": 24.450000000000003,
+          "worker-1": 0.01,
+          "worker-3": 0.0,
+          "worker-5": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.01,
+          "other": 0.08,
+          "worker-9": 6.359999999999999,
+          "worker-10": 6.1899999999999995
+        },
+        "13": {
+          "supervisor": 4.96,
+          "gradle-daemon": 20.740000000000002,
+          "worker-1": 0.0,
+          "worker-3": 0.0,
+          "worker-5": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "other": 0.01,
+          "worker-9": 4.91,
+          "worker-10": 3.24
+        },
+        "14": {
+          "supervisor": 4.57,
+          "gradle-daemon": 10.259999999999998,
+          "worker-1": 0.0,
+          "worker-3": 0.0,
+          "worker-5": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "other": 0.0,
+          "worker-9": 7.510000000000001,
+          "worker-10": 8.74
+        },
+        "15": {
+          "supervisor": 4.69,
+          "gradle-daemon": 16.32,
+          "worker-1": 0.0,
+          "worker-3": 0.0,
+          "worker-5": 0.0,
+          "worker-7": 0.01,
+          "worker-8": 0.0,
+          "other": 0.01,
+          "worker-9": 9.4,
+          "worker-10": 9.089999999999998
+        },
+        "16": {
+          "supervisor": 5.029999999999999,
+          "gradle-daemon": 11.08,
+          "worker-1": 0.01,
+          "worker-3": 0.0,
+          "worker-5": 0.01,
+          "worker-7": 0.0,
+          "worker-8": 0.01,
+          "other": 0.0,
+          "worker-9": 10.030000000000001,
+          "worker-10": 9.45
+        },
+        "17": {
+          "supervisor": 4.930000000000001,
+          "gradle-daemon": 13.070000000000002,
+          "worker-1": 0.0,
+          "worker-3": 0.0,
+          "worker-5": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "other": 0.02,
+          "worker-9": 8.870000000000001,
+          "worker-10": 8.209999999999999
+        },
+        "18": {
+          "supervisor": 5.0,
+          "gradle-daemon": 12.27,
+          "worker-1": 0.0,
+          "worker-3": 0.01,
+          "worker-5": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "other": 0.0,
+          "worker-9": 8.99,
+          "worker-10": 0.41
+        },
+        "19": {
+          "supervisor": 5.02,
+          "gradle-daemon": 11.790000000000001,
+          "worker-1": 0.01,
+          "worker-3": 0.0,
+          "worker-5": 0.0,
+          "worker-7": 0.01,
+          "worker-8": 0.0,
+          "other": 0.0,
+          "worker-9": 11.280000000000001,
+          "worker-10": 0.01
+        },
+        "20": {
+          "supervisor": 4.52,
+          "gradle-daemon": 5.38,
+          "worker-1": 0.0,
+          "worker-3": 0.0,
+          "worker-5": 0.01,
+          "worker-7": 0.0,
+          "worker-8": 0.01,
+          "other": 0.0,
+          "worker-9": 5.539999999999999,
+          "worker-10": 0.01
+        },
+        "21": {
+          "supervisor": 4.99,
+          "gradle-daemon": 10.63,
+          "worker-1": 0.01,
+          "worker-3": 0.01,
+          "worker-5": 0.01,
+          "worker-7": 0.01,
+          "worker-8": 0.01,
+          "other": 6.119999999999999,
+          "worker-9": 0.0,
+          "worker-10": 0.0
+        },
+        "22": {
+          "supervisor": 0.49,
+          "gradle-daemon": 0.44,
+          "worker-1": 0.0,
+          "worker-3": 0.0,
+          "worker-5": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "other": 0.0,
+          "worker-9": 0.0,
+          "worker-10": 0.0
+        }
+      },
+      "hostContext": [
+        {
+          "hostLoadAverage": "5.46 8.45 9.66 3/2293 1959631",
+          "hostMemoryAvailable": "29057384 kB"
+        },
+        {
+          "hostLoadAverage": "10.86 9.65 9.96 5/2318 1961417",
+          "hostMemoryAvailable": "27876836 kB"
+        }
+      ],
+      "ioAccounting": "UNAVAILABLE: io controller is not delegated to this user service",
+      "nativeReceiptSHA256": "ca624c24bc9c7d280e0cdb5e407e3b0f41a09e67ce7704e8f5292f3001dc11b5"
+    },
+    "I": {
+      "tasks": [
+        {
+          "task": ":server:compileJava",
+          "startUTC": "2026-09-09T23:18:05.902174311Z",
+          "endUTC": "2026-09-09T23:18:28.204697786Z"
+        },
+        {
+          "task": ":server:generateTestBuildInfo",
+          "startUTC": "2026-09-09T23:18:28.205748318Z",
+          "endUTC": "2026-09-09T23:18:28.230280152Z"
+        },
+        {
+          "task": ":server:classes",
+          "startUTC": "2026-09-09T23:18:28.234487111Z",
+          "endUTC": "2026-09-09T23:18:28.234537561Z"
+        },
+        {
+          "task": ":server:filepermissions",
+          "startUTC": "2026-09-09T23:18:28.602046485Z",
+          "endUTC": "2026-09-09T23:18:28.823204628Z"
+        },
+        {
+          "task": ":server:forbiddenPatterns",
+          "startUTC": "2026-09-09T23:18:29.387893243Z",
+          "endUTC": "2026-09-09T23:18:35.743368338Z"
+        },
+        {
+          "task": ":server:licenseHeaders",
+          "startUTC": "2026-09-09T23:18:35.744185259Z",
+          "endUTC": "2026-09-09T23:18:37.715126803Z"
+        },
+        {
+          "task": ":server:checkstyleTest",
+          "startUTC": "2026-09-09T23:18:28.520247556Z",
+          "endUTC": "2026-09-09T23:18:37.803768537Z"
+        },
+        {
+          "task": ":server:splitPackagesAudit",
+          "startUTC": "2026-09-09T23:18:37.715780404Z",
+          "endUTC": "2026-09-09T23:18:37.842663702Z"
+        },
+        {
+          "task": ":server:spotlessJava",
+          "startUTC": "2026-09-09T23:18:37.804156798Z",
+          "endUTC": "2026-09-09T23:18:38.817625616Z"
+        },
+        {
+          "task": ":server:spotlessJavaCheck",
+          "startUTC": "2026-09-09T23:18:38.818221418Z",
+          "endUTC": "2026-09-09T23:18:38.818657549Z"
+        },
+        {
+          "task": ":server:validateModule",
+          "startUTC": "2026-09-09T23:18:38.821189544Z",
+          "endUTC": "2026-09-09T23:18:38.923181237Z"
+        },
+        {
+          "task": ":server:generatePomFileForElasticPublication",
+          "startUTC": "2026-09-09T23:18:38.923702168Z",
+          "endUTC": "2026-09-09T23:18:38.930067512Z"
+        },
+        {
+          "task": ":server:forbiddenApisMain",
+          "startUTC": "2026-09-09T23:18:28.832830609Z",
+          "endUTC": "2026-09-09T23:18:44.372489119Z"
+        },
+        {
+          "task": ":server:collectTransportVersionReferences",
+          "startUTC": "2026-09-09T23:18:38.931250825Z",
+          "endUTC": "2026-09-09T23:19:26.050925884Z"
+        },
+        {
+          "task": ":server:compileTestJava",
+          "startUTC": "2026-09-09T23:19:26.056615467Z",
+          "endUTC": "2026-09-09T23:20:14.327654077Z"
+        },
+        {
+          "task": ":server:testClasses",
+          "startUTC": "2026-09-09T23:20:14.328308319Z",
+          "endUTC": "2026-09-09T23:20:14.328373819Z"
+        },
+        {
+          "task": ":server:compileInternalClusterTestJava",
+          "startUTC": "2026-09-09T23:20:14.328847890Z",
+          "endUTC": "2026-09-09T23:20:25.206727729Z"
+        },
+        {
+          "task": ":server:internalClusterTestClasses",
+          "startUTC": "2026-09-09T23:20:25.207392561Z",
+          "endUTC": "2026-09-09T23:20:25.207459121Z"
+        },
+        {
+          "task": ":server:checkstyleMain",
+          "startUTC": "2026-09-09T23:18:28.238767900Z",
+          "endUTC": "2026-09-09T23:20:25.578461610Z"
+        },
+        {
+          "task": ":server:checkstyle",
+          "startUTC": "2026-09-09T23:20:25.578882591Z",
+          "endUTC": "2026-09-09T23:20:25.578971391Z"
+        },
+        {
+          "task": ":server:jarHell",
+          "startUTC": "2026-09-09T23:20:25.666341364Z",
+          "endUTC": "2026-09-09T23:20:25.952578076Z"
+        },
+        {
+          "task": ":server:forbiddenApisInternalClusterTest",
+          "startUTC": "2026-09-09T23:20:25.208049852Z",
+          "endUTC": "2026-09-09T23:20:25.969396683Z"
+        },
+        {
+          "task": ":server:internalClusterTestTestingConventions",
+          "startUTC": "2026-09-09T23:20:25.975860507Z",
+          "endUTC": "2026-09-09T23:20:26.325311129Z"
+        },
+        {
+          "task": ":server:testTestingConventions",
+          "startUTC": "2026-09-09T23:20:26.010482044Z",
+          "endUTC": "2026-09-09T23:20:27.814919259Z"
+        },
+        {
+          "task": ":server:forbiddenApisTest",
+          "startUTC": "2026-09-09T23:20:25.579522602Z",
+          "endUTC": "2026-09-09T23:20:28.703590921Z"
+        },
+        {
+          "task": ":server:jar",
+          "startUTC": "2026-09-09T23:20:26.056772356Z",
+          "endUTC": "2026-09-09T23:20:31.469018410Z"
+        },
+        {
+          "task": ":server:forbiddenApis",
+          "startUTC": "2026-09-09T23:20:31.469813031Z",
+          "endUTC": "2026-09-09T23:20:31.469885091Z"
+        },
+        {
+          "task": ":server:testingConventions",
+          "startUTC": "2026-09-09T23:20:31.470060292Z",
+          "endUTC": "2026-09-09T23:20:31.470096832Z"
+        },
+        {
+          "task": ":server:loggerUsageCheck",
+          "startUTC": "2026-09-09T23:20:25.953101407Z",
+          "endUTC": "2026-09-09T23:20:32.979765987Z"
+        },
+        {
+          "task": ":server:precommit",
+          "startUTC": "2026-09-09T23:20:32.980274019Z",
+          "endUTC": "2026-09-09T23:20:32.980360049Z"
+        }
+      ],
+      "observedProcesses": [
+        {
+          "pid": 1876412,
+          "startTicks": 45058543,
+          "role": "supervisor",
+          "firstSampleNS": 452807628812541,
+          "firstCPU": 28011,
+          "lastCPU": 42739,
+          "lastSampleNS": 452959043928502,
+          "samples": 295,
+          "observedCPUSeconds": 147.28,
+          "observedSpanSeconds": 151.415115961
+        },
+        {
+          "pid": 1876549,
+          "startTicks": 45058660,
+          "role": "gradle-daemon",
+          "firstSampleNS": 452807628812541,
+          "firstCPU": 81030,
+          "lastCPU": 113101,
+          "lastSampleNS": 452959043928502,
+          "samples": 295,
+          "observedCPUSeconds": 320.71,
+          "observedSpanSeconds": 151.415115961
+        },
+        {
+          "pid": 1877378,
+          "startTicks": 45065188,
+          "role": "worker-1",
+          "firstSampleNS": 452807628812541,
+          "firstCPU": 207,
+          "lastCPU": 211,
+          "lastSampleNS": 452959043928502,
+          "samples": 295,
+          "observedCPUSeconds": 0.04,
+          "observedSpanSeconds": 151.415115961
+        },
+        {
+          "pid": 1877452,
+          "startTicks": 45065300,
+          "role": "worker-3",
+          "firstSampleNS": 452807628812541,
+          "firstCPU": 300,
+          "lastCPU": 310,
+          "lastSampleNS": 452959043928502,
+          "samples": 295,
+          "observedCPUSeconds": 0.1,
+          "observedSpanSeconds": 151.415115961
+        },
+        {
+          "pid": 1877482,
+          "startTicks": 45065326,
+          "role": "worker-4",
+          "firstSampleNS": 452807628812541,
+          "firstCPU": 820,
+          "lastCPU": 826,
+          "lastSampleNS": 452959043928502,
+          "samples": 295,
+          "observedCPUSeconds": 0.06,
+          "observedSpanSeconds": 151.415115961
+        },
+        {
+          "pid": 1877662,
+          "startTicks": 45065579,
+          "role": "worker-7",
+          "firstSampleNS": 452807628812541,
+          "firstCPU": 240,
+          "lastCPU": 242,
+          "lastSampleNS": 452959043928502,
+          "samples": 295,
+          "observedCPUSeconds": 0.02,
+          "observedSpanSeconds": 151.415115961
+        },
+        {
+          "pid": 1877724,
+          "startTicks": 45065787,
+          "role": "worker-8",
+          "firstSampleNS": 452807628812541,
+          "firstCPU": 481,
+          "lastCPU": 482,
+          "lastSampleNS": 452959043928502,
+          "samples": 295,
+          "observedCPUSeconds": 0.01,
+          "observedSpanSeconds": 151.415115961
+        },
+        {
+          "pid": 1877778,
+          "startTicks": 45065868,
+          "role": "worker-9",
+          "firstSampleNS": 452807628812541,
+          "firstCPU": 300,
+          "lastCPU": 308,
+          "lastSampleNS": 452959043928502,
+          "samples": 295,
+          "observedCPUSeconds": 0.08,
+          "observedSpanSeconds": 151.415115961
+        },
+        {
+          "pid": 1877875,
+          "startTicks": 45066133,
+          "role": "worker-10",
+          "firstSampleNS": 452807628812541,
+          "firstCPU": 322,
+          "lastCPU": 329,
+          "lastSampleNS": 452959043928502,
+          "samples": 295,
+          "observedCPUSeconds": 0.07,
+          "observedSpanSeconds": 151.415115961
+        },
+        {
+          "pid": 1948003,
+          "startTicks": 45280757,
+          "role": "other",
+          "firstSampleNS": 452807628812541,
+          "firstCPU": 0,
+          "lastCPU": 142,
+          "lastSampleNS": 452959043928502,
+          "samples": 295,
+          "observedCPUSeconds": 1.42,
+          "observedSpanSeconds": 151.415115961
+        },
+        {
+          "pid": 1948377,
+          "startTicks": 45283414,
+          "role": "worker-11",
+          "firstSampleNS": 452834429460865,
+          "firstCPU": 45,
+          "lastCPU": 1598,
+          "lastSampleNS": 452959043928502,
+          "samples": 242,
+          "observedCPUSeconds": 15.53,
+          "observedSpanSeconds": 124.614467637
+        },
+        {
+          "pid": 1948439,
+          "startTicks": 45283441,
+          "role": "worker-12",
+          "firstSampleNS": 452834429460865,
+          "firstCPU": 0,
+          "lastCPU": 1178,
+          "lastSampleNS": 452959043928502,
+          "samples": 242,
+          "observedCPUSeconds": 11.78,
+          "observedSpanSeconds": 124.614467637
+        },
+        {
+          "pid": 1958067,
+          "startTicks": 45295178,
+          "role": "other",
+          "firstSampleNS": 452951914929735,
+          "firstCPU": 12,
+          "lastCPU": 732,
+          "lastSampleNS": 452958538066784,
+          "samples": 14,
+          "observedCPUSeconds": 7.2,
+          "observedSpanSeconds": 6.623137049
+        }
+      ],
+      "fiveSecondCPUBins": {
+        "0": {
+          "supervisor": 4.46,
+          "gradle-daemon": 12.319999999999999,
+          "worker-1": 0.0,
+          "worker-3": 0.0,
+          "worker-4": 0.0,
+          "worker-7": 0.01,
+          "worker-8": 0.0,
+          "worker-9": 0.0,
+          "worker-10": 0.0,
+          "other": 1.01
+        },
+        "1": {
+          "supervisor": 4.97,
+          "gradle-daemon": 9.209999999999999,
+          "worker-1": 0.0,
+          "worker-3": 0.0,
+          "worker-4": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "worker-9": 0.02,
+          "worker-10": 0.01,
+          "other": 0.0
+        },
+        "2": {
+          "supervisor": 5.01,
+          "gradle-daemon": 10.780000000000001,
+          "worker-1": 0.0,
+          "worker-3": 0.02,
+          "worker-4": 0.01,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "worker-9": 0.0,
+          "worker-10": 0.0,
+          "other": 0.01
+        },
+        "3": {
+          "supervisor": 5.01,
+          "gradle-daemon": 8.7,
+          "worker-1": 0.01,
+          "worker-3": 0.0,
+          "worker-4": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "worker-9": 0.0,
+          "worker-10": 0.0,
+          "other": 0.01
+        },
+        "4": {
+          "supervisor": 5.01,
+          "gradle-daemon": 6.51,
+          "worker-1": 0.0,
+          "worker-3": 0.0,
+          "worker-4": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "worker-9": 0.0,
+          "worker-10": 0.0,
+          "other": 0.0
+        },
+        "5": {
+          "supervisor": 4.6899999999999995,
+          "gradle-daemon": 18.06,
+          "worker-1": 0.0,
+          "worker-3": 0.0,
+          "worker-4": 0.01,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "worker-9": 0.0,
+          "worker-10": 0.0,
+          "other": 0.12,
+          "worker-11": 4.6,
+          "worker-12": 4.779999999999999
+        },
+        "6": {
+          "supervisor": 4.76,
+          "gradle-daemon": 20.68,
+          "worker-1": 0.0,
+          "worker-3": 0.01,
+          "worker-4": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "worker-9": 0.0,
+          "worker-10": 0.01,
+          "other": 0.03,
+          "worker-11": 5.04,
+          "worker-12": 6.91
+        },
+        "7": {
+          "supervisor": 4.3999999999999995,
+          "gradle-daemon": 12.26,
+          "worker-1": 0.0,
+          "worker-3": 0.0,
+          "worker-4": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "worker-9": 0.01,
+          "worker-10": 0.0,
+          "other": 0.02,
+          "worker-11": 5.82,
+          "worker-12": 0.01
+        },
+        "8": {
+          "supervisor": 5.0,
+          "gradle-daemon": 15.769999999999998,
+          "worker-1": 0.0,
+          "worker-3": 0.0,
+          "worker-4": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "worker-9": 0.0,
+          "worker-10": 0.0,
+          "other": 0.01,
+          "worker-11": 0.0,
+          "worker-12": 0.0
+        },
+        "9": {
+          "supervisor": 4.98,
+          "gradle-daemon": 26.27,
+          "worker-1": 0.0,
+          "worker-3": 0.0,
+          "worker-4": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "worker-9": 0.0,
+          "worker-10": 0.01,
+          "other": 0.06999999999999999,
+          "worker-11": 0.0,
+          "worker-12": 0.01
+        },
+        "10": {
+          "supervisor": 4.91,
+          "gradle-daemon": 26.790000000000003,
+          "worker-1": 0.0,
+          "worker-3": 0.01,
+          "worker-4": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "worker-9": 0.0,
+          "worker-10": 0.0,
+          "other": 0.03,
+          "worker-11": 0.01,
+          "worker-12": 0.0
+        },
+        "11": {
+          "supervisor": 5.0,
+          "gradle-daemon": 6.550000000000001,
+          "worker-1": 0.01,
+          "worker-3": 0.0,
+          "worker-4": 0.01,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "worker-9": 0.0,
+          "worker-10": 0.0,
+          "other": 0.01,
+          "worker-11": 0.01,
+          "worker-12": 0.0
+        },
+        "12": {
+          "supervisor": 5.01,
+          "gradle-daemon": 3.02,
+          "worker-1": 0.01,
+          "worker-3": 0.01,
+          "worker-4": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "worker-9": 0.0,
+          "worker-10": 0.0,
+          "other": 0.0,
+          "worker-11": 0.0,
+          "worker-12": 0.01
+        },
+        "13": {
+          "supervisor": 3.54,
+          "gradle-daemon": 3.2899999999999996,
+          "worker-1": 0.0,
+          "worker-3": 0.0,
+          "worker-4": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "worker-9": 0.01,
+          "worker-10": 0.0,
+          "other": 0.0,
+          "worker-11": 0.0,
+          "worker-12": 0.0
+        },
+        "14": {
+          "supervisor": 5.02,
+          "gradle-daemon": 7.17,
+          "worker-1": 0.0,
+          "worker-3": 0.0,
+          "worker-4": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "worker-9": 0.0,
+          "worker-10": 0.01,
+          "other": 0.01,
+          "worker-11": 0.01,
+          "worker-12": 0.0
+        },
+        "15": {
+          "supervisor": 4.99,
+          "gradle-daemon": 15.99,
+          "worker-1": 0.0,
+          "worker-3": 0.01,
+          "worker-4": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "worker-9": 0.0,
+          "worker-10": 0.0,
+          "other": 0.0,
+          "worker-11": 0.0,
+          "worker-12": 0.0
+        },
+        "16": {
+          "supervisor": 5.02,
+          "gradle-daemon": 8.360000000000001,
+          "worker-1": 0.0,
+          "worker-3": 0.0,
+          "worker-4": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "worker-9": 0.01,
+          "worker-10": 0.01,
+          "other": 0.01,
+          "worker-11": 0.0,
+          "worker-12": 0.01
+        },
+        "17": {
+          "supervisor": 4.27,
+          "gradle-daemon": 13.46,
+          "worker-1": 0.0,
+          "worker-3": 0.0,
+          "worker-4": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.01,
+          "worker-9": 0.01,
+          "worker-10": 0.0,
+          "other": 0.02,
+          "worker-11": 0.0,
+          "worker-12": 0.0
+        },
+        "18": {
+          "supervisor": 5.02,
+          "gradle-daemon": 1.1300000000000001,
+          "worker-1": 0.0,
+          "worker-3": 0.01,
+          "worker-4": 0.01,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "worker-9": 0.0,
+          "worker-10": 0.0,
+          "other": 0.01,
+          "worker-11": 0.01,
+          "worker-12": 0.01
+        },
+        "19": {
+          "supervisor": 5.01,
+          "gradle-daemon": 3.0700000000000003,
+          "worker-1": 0.0,
+          "worker-3": 0.0,
+          "worker-4": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "worker-9": 0.0,
+          "worker-10": 0.0,
+          "other": 0.0,
+          "worker-11": 0.0,
+          "worker-12": 0.01
+        },
+        "20": {
+          "supervisor": 5.02,
+          "gradle-daemon": 12.579999999999998,
+          "worker-1": 0.0,
+          "worker-3": 0.0,
+          "worker-4": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "worker-9": 0.0,
+          "worker-10": 0.0,
+          "other": 0.01,
+          "worker-11": 0.0,
+          "worker-12": 0.0
+        },
+        "21": {
+          "supervisor": 5.02,
+          "gradle-daemon": 5.32,
+          "worker-1": 0.01,
+          "worker-3": 0.0,
+          "worker-4": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "worker-9": 0.0,
+          "worker-10": 0.0,
+          "other": 0.0,
+          "worker-11": 0.01,
+          "worker-12": 0.0
+        },
+        "22": {
+          "supervisor": 5.02,
+          "gradle-daemon": 4.599999999999999,
+          "worker-1": 0.0,
+          "worker-3": 0.01,
+          "worker-4": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "worker-9": 0.0,
+          "worker-10": 0.01,
+          "other": 0.0,
+          "worker-11": 0.0,
+          "worker-12": 0.01
+        },
+        "23": {
+          "supervisor": 4.529999999999999,
+          "gradle-daemon": 10.82,
+          "worker-1": 0.0,
+          "worker-3": 0.01,
+          "worker-4": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "worker-9": 0.01,
+          "worker-10": 0.0,
+          "other": 0.0,
+          "worker-11": 0.0,
+          "worker-12": 0.0
+        },
+        "24": {
+          "supervisor": 5.01,
+          "gradle-daemon": 6.39,
+          "worker-1": 0.0,
+          "worker-3": 0.0,
+          "worker-4": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "worker-9": 0.0,
+          "worker-10": 0.0,
+          "other": 0.02,
+          "worker-11": 0.01,
+          "worker-12": 0.0
+        },
+        "25": {
+          "supervisor": 5.01,
+          "gradle-daemon": 5.67,
+          "worker-1": 0.0,
+          "worker-3": 0.0,
+          "worker-4": 0.01,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "worker-9": 0.0,
+          "worker-10": 0.0,
+          "other": 0.0,
+          "worker-11": 0.01,
+          "worker-12": 0.0
+        },
+        "26": {
+          "supervisor": 5.01,
+          "gradle-daemon": 6.71,
+          "worker-1": 0.0,
+          "worker-3": 0.0,
+          "worker-4": 0.0,
+          "worker-7": 0.01,
+          "worker-8": 0.0,
+          "worker-9": 0.0,
+          "worker-10": 0.0,
+          "other": 0.0,
+          "worker-11": 0.0,
+          "worker-12": 0.0
+        },
+        "27": {
+          "supervisor": 5.01,
+          "gradle-daemon": 14.060000000000002,
+          "worker-1": 0.0,
+          "worker-3": 0.0,
+          "worker-4": 0.01,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "worker-9": 0.0,
+          "worker-10": 0.01,
+          "other": 0.01,
+          "worker-11": 0.0,
+          "worker-12": 0.01
+        },
+        "28": {
+          "supervisor": 5.02,
+          "gradle-daemon": 8.5,
+          "worker-1": 0.0,
+          "worker-3": 0.01,
+          "worker-4": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "worker-9": 0.0,
+          "worker-10": 0.0,
+          "other": 1.54,
+          "worker-11": 0.0,
+          "worker-12": 0.0
+        },
+        "29": {
+          "supervisor": 5.05,
+          "gradle-daemon": 11.58,
+          "worker-1": 0.0,
+          "worker-3": 0.0,
+          "worker-4": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "worker-9": 0.01,
+          "worker-10": 0.0,
+          "other": 4.55,
+          "worker-11": 0.0,
+          "worker-12": 0.01
+        },
+        "30": {
+          "supervisor": 1.5,
+          "gradle-daemon": 5.09,
+          "worker-1": 0.0,
+          "worker-3": 0.0,
+          "worker-4": 0.0,
+          "worker-7": 0.0,
+          "worker-8": 0.0,
+          "worker-9": 0.0,
+          "worker-10": 0.0,
+          "other": 1.12,
+          "worker-11": 0.0,
+          "worker-12": 0.0
+        }
+      },
+      "hostContext": [
+        {
+          "hostLoadAverage": "3.93 8.76 9.94 2/2279 1948002",
+          "hostMemoryAvailable": "31383404 kB"
+        },
+        {
+          "hostLoadAverage": "10.31 9.93 10.21 6/2316 1958169",
+          "hostMemoryAvailable": "28999732 kB"
+        }
+      ],
+      "ioAccounting": "UNAVAILABLE: io controller is not delegated to this user service",
+      "nativeReceiptSHA256": "658dc22249c211b604bd48d70ad1d0aef67eac45f69ddfcf90c847b2e00abd5c"
+    }
+  },
+  "limitations": [
+    "No original per-process I/O or JFR trace exists; missing I/O controller accounting is explicit in native receipts.",
+    "Task walltime includes asynchronous completion and scheduling; CPU samples cannot identify exact per-task work."
+  ]
+}

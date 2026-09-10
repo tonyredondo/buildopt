@@ -1,0 +1,605 @@
+{
+  "status": "descriptive",
+  "originalOrdinal": 7,
+  "rows": {
+    "N": {
+      "customerEnvelopeSeconds": 110.724472013,
+      "nativeSeconds": 110.580040539,
+      "taskGraphSpanSeconds": 109.24473905563354,
+      "nativeOutsideGraphSpanSeconds": 1.3353014833664503,
+      "tasks": 1326,
+      "actions": 385,
+      "lastActions": [
+        {
+          "task": ":server:precommit",
+          "seconds": 4.792213439941406e-05,
+          "action": true,
+          "outcome": "EXECUTED",
+          "startUTC": "2026-09-09T23:23:50.118765042Z",
+          "endUTC": "2026-09-09T23:23:50.118813812Z"
+        },
+        {
+          "task": ":server:loggerUsageCheck",
+          "seconds": 3.5751750469207764,
+          "action": true,
+          "outcome": "EXECUTED",
+          "startUTC": "2026-09-09T23:23:46.543216600Z",
+          "endUTC": "2026-09-09T23:23:50.118391481Z"
+        },
+        {
+          "task": ":x-pack:plugin:prometheus:classes",
+          "seconds": 3.600120544433594e-05,
+          "action": true,
+          "outcome": "EXECUTED",
+          "startUTC": "2026-09-09T23:23:49.223949412Z",
+          "endUTC": "2026-09-09T23:23:49.223985422Z"
+        },
+        {
+          "task": ":x-pack:plugin:prometheus:compileJava",
+          "seconds": 0.32768702507019043,
+          "action": true,
+          "outcome": "EXECUTED",
+          "startUTC": "2026-09-09T23:23:48.891772689Z",
+          "endUTC": "2026-09-09T23:23:49.219459272Z"
+        },
+        {
+          "task": ":x-pack:plugin:sql:classes",
+          "seconds": 3.910064697265625e-05,
+          "action": true,
+          "outcome": "EXECUTED",
+          "startUTC": "2026-09-09T23:23:48.886144697Z",
+          "endUTC": "2026-09-09T23:23:48.886183387Z"
+        },
+        {
+          "task": ":x-pack:plugin:esql:classes",
+          "seconds": 3.910064697265625e-05,
+          "action": true,
+          "outcome": "EXECUTED",
+          "startUTC": "2026-09-09T23:23:48.884111412Z",
+          "endUTC": "2026-09-09T23:23:48.884150852Z"
+        },
+        {
+          "task": ":x-pack:plugin:deprecation:qa:deprecation-plugin:classes",
+          "seconds": 4.00543212890625e-05,
+          "action": true,
+          "outcome": "EXECUTED",
+          "startUTC": "2026-09-09T23:23:48.883445091Z",
+          "endUTC": "2026-09-09T23:23:48.883485281Z"
+        },
+        {
+          "task": ":server:testingConventions",
+          "seconds": 3.409385681152344e-05,
+          "action": true,
+          "outcome": "EXECUTED",
+          "startUTC": "2026-09-09T23:23:48.880610544Z",
+          "endUTC": "2026-09-09T23:23:48.880644324Z"
+        }
+      ]
+    },
+    "I": {
+      "customerEnvelopeSeconds": 151.815356367,
+      "nativeSeconds": 151.710613656,
+      "taskGraphSpanSeconds": 150.74469804763794,
+      "nativeOutsideGraphSpanSeconds": 0.965915608362053,
+      "tasks": 1326,
+      "actions": 385,
+      "lastActions": [
+        {
+          "task": ":server:precommit",
+          "seconds": 8.606910705566406e-05,
+          "action": true,
+          "outcome": "EXECUTED",
+          "startUTC": "2026-09-09T23:20:32.980274019Z",
+          "endUTC": "2026-09-09T23:20:32.980360049Z"
+        },
+        {
+          "task": ":server:loggerUsageCheck",
+          "seconds": 7.0266640186309814,
+          "action": true,
+          "outcome": "EXECUTED",
+          "startUTC": "2026-09-09T23:20:25.953101407Z",
+          "endUTC": "2026-09-09T23:20:32.979765987Z"
+        },
+        {
+          "task": ":x-pack:plugin:prometheus:classes",
+          "seconds": 3.981590270996094e-05,
+          "action": true,
+          "outcome": "EXECUTED",
+          "startUTC": "2026-09-09T23:20:32.007311659Z",
+          "endUTC": "2026-09-09T23:20:32.007351669Z"
+        },
+        {
+          "task": ":x-pack:plugin:prometheus:compileJava",
+          "seconds": 0.4607861042022705,
+          "action": true,
+          "outcome": "EXECUTED",
+          "startUTC": "2026-09-09T23:20:31.520459943Z",
+          "endUTC": "2026-09-09T23:20:31.981245641Z"
+        },
+        {
+          "task": ":x-pack:plugin:esql:classes",
+          "seconds": 6.699562072753906e-05,
+          "action": true,
+          "outcome": "EXECUTED",
+          "startUTC": "2026-09-09T23:20:31.515881283Z",
+          "endUTC": "2026-09-09T23:20:31.515948103Z"
+        },
+        {
+          "task": ":x-pack:plugin:deprecation:qa:deprecation-plugin:classes",
+          "seconds": 3.218650817871094e-05,
+          "action": true,
+          "outcome": "EXECUTED",
+          "startUTC": "2026-09-09T23:20:31.498458625Z",
+          "endUTC": "2026-09-09T23:20:31.498490305Z"
+        },
+        {
+          "task": ":x-pack:plugin:sql:classes",
+          "seconds": 3.790855407714844e-05,
+          "action": true,
+          "outcome": "EXECUTED",
+          "startUTC": "2026-09-09T23:20:31.498274514Z",
+          "endUTC": "2026-09-09T23:20:31.498312464Z"
+        },
+        {
+          "task": ":server:testingConventions",
+          "seconds": 3.600120544433594e-05,
+          "action": true,
+          "outcome": "EXECUTED",
+          "startUTC": "2026-09-09T23:20:31.470060292Z",
+          "endUTC": "2026-09-09T23:20:31.470096832Z"
+        }
+      ]
+    }
+  },
+  "largestTaskSpanDifferences": [
+    {
+      "task": ":server:checkstyleTest",
+      "N": {
+        "seconds": 60.56843686103821,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:22:30.269613876Z",
+        "endUTC": "2026-09-09T23:23:30.838050996Z"
+      },
+      "I": {
+        "seconds": 9.283520936965942,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:18:28.520247556Z",
+        "endUTC": "2026-09-09T23:18:37.803768537Z"
+      },
+      "candidateMinusNativeSeconds": -51.284915924072266
+    },
+    {
+      "task": ":server:checkstyleMain",
+      "N": {
+        "seconds": 72.71828699111938,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:22:29.950700036Z",
+        "endUTC": "2026-09-09T23:23:42.668987763Z"
+      },
+      "I": {
+        "seconds": 117.33969402313232,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:18:28.238767900Z",
+        "endUTC": "2026-09-09T23:20:25.578461610Z"
+      },
+      "candidateMinusNativeSeconds": 44.62140703201294
+    },
+    {
+      "task": ":server:collectTransportVersionReferences",
+      "N": {
+        "seconds": 11.267735004425049,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:22:42.265707247Z",
+        "endUTC": "2026-09-09T23:22:53.533442632Z"
+      },
+      "I": {
+        "seconds": 47.11967492103577,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:18:38.931250825Z",
+        "endUTC": "2026-09-09T23:19:26.050925884Z"
+      },
+      "candidateMinusNativeSeconds": 35.85193991661072
+    },
+    {
+      "task": ":server:forbiddenApisMain",
+      "N": {
+        "seconds": 23.732978105545044,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:22:30.726122882Z",
+        "endUTC": "2026-09-09T23:22:54.459100415Z"
+      },
+      "I": {
+        "seconds": 15.539659023284912,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:18:28.832830609Z",
+        "endUTC": "2026-09-09T23:18:44.372489119Z"
+      },
+      "candidateMinusNativeSeconds": -8.193319082260132
+    },
+    {
+      "task": ":server:compileTestJava",
+      "N": {
+        "seconds": 42.83098793029785,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:22:53.540703388Z",
+        "endUTC": "2026-09-09T23:23:36.371691145Z"
+      },
+      "I": {
+        "seconds": 48.27103877067566,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:19:26.056615467Z",
+        "endUTC": "2026-09-09T23:20:14.327654077Z"
+      },
+      "candidateMinusNativeSeconds": 5.440050840377808
+    },
+    {
+      "task": ":x-pack:plugin:esql:compute:compileJava",
+      "N": {
+        "seconds": 10.77834701538086,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:23:00.480936439Z",
+        "endUTC": "2026-09-09T23:23:11.259283257Z"
+      },
+      "I": {
+        "seconds": 15.414355039596558,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:18:53.027402671Z",
+        "endUTC": "2026-09-09T23:19:08.441757989Z"
+      },
+      "candidateMinusNativeSeconds": 4.636008024215698
+    },
+    {
+      "task": ":x-pack:plugin:rollup:compileJava",
+      "N": {
+        "seconds": 4.218285083770752,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:22:56.253830185Z",
+        "endUTC": "2026-09-09T23:23:00.472115179Z"
+      },
+      "I": {
+        "seconds": 0.4053199291229248,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:18:50.531640892Z",
+        "endUTC": "2026-09-09T23:18:50.936960340Z"
+      },
+      "candidateMinusNativeSeconds": -3.812965154647827
+    },
+    {
+      "task": ":x-pack:plugin:otel-data:compileJava",
+      "N": {
+        "seconds": 6.021886825561523,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:22:54.490745955Z",
+        "endUTC": "2026-09-09T23:23:00.512632010Z"
+      },
+      "I": {
+        "seconds": 2.21294903755188,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:18:49.078606978Z",
+        "endUTC": "2026-09-09T23:18:51.291555047Z"
+      },
+      "candidateMinusNativeSeconds": -3.8089377880096436
+    },
+    {
+      "task": ":x-pack:plugin:ml:compileJava",
+      "N": {
+        "seconds": 9.535188913345337,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:22:50.945359844Z",
+        "endUTC": "2026-09-09T23:23:00.480548028Z"
+      },
+      "I": {
+        "seconds": 5.7827229499816895,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:18:47.244004199Z",
+        "endUTC": "2026-09-09T23:18:53.026727790Z"
+      },
+      "candidateMinusNativeSeconds": -3.7524659633636475
+    },
+    {
+      "task": ":server:jar",
+      "N": {
+        "seconds": 1.8606538772583008,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:23:47.019179674Z",
+        "endUTC": "2026-09-09T23:23:48.879833493Z"
+      },
+      "I": {
+        "seconds": 5.412245988845825,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:20:26.056772356Z",
+        "endUTC": "2026-09-09T23:20:31.469018410Z"
+      },
+      "candidateMinusNativeSeconds": 3.5515921115875244
+    },
+    {
+      "task": ":server:loggerUsageCheck",
+      "N": {
+        "seconds": 3.5751750469207764,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:23:46.543216600Z",
+        "endUTC": "2026-09-09T23:23:50.118391481Z"
+      },
+      "I": {
+        "seconds": 7.0266640186309814,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:20:25.953101407Z",
+        "endUTC": "2026-09-09T23:20:32.979765987Z"
+      },
+      "candidateMinusNativeSeconds": 3.451488971710205
+    },
+    {
+      "task": ":x-pack:plugin:inference:compileJava",
+      "N": {
+        "seconds": 8.583166122436523,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:22:52.521129946Z",
+        "endUTC": "2026-09-09T23:23:01.104295399Z"
+      },
+      "I": {
+        "seconds": 5.182443857192993,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:18:48.162816702Z",
+        "endUTC": "2026-09-09T23:18:53.345260458Z"
+      },
+      "candidateMinusNativeSeconds": -3.4007222652435303
+    },
+    {
+      "task": ":x-pack:plugin:searchable-snapshots:compileJava",
+      "N": {
+        "seconds": 3.9633989334106445,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:22:56.500417385Z",
+        "endUTC": "2026-09-09T23:23:00.463816591Z"
+      },
+      "I": {
+        "seconds": 0.7036430835723877,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:18:50.548008108Z",
+        "endUTC": "2026-09-09T23:18:51.251651430Z"
+      },
+      "candidateMinusNativeSeconds": -3.259755849838257
+    },
+    {
+      "task": ":server:compileJava",
+      "N": {
+        "seconds": 25.112215995788574,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:22:04.793118730Z",
+        "endUTC": "2026-09-09T23:22:29.905334695Z"
+      },
+      "I": {
+        "seconds": 22.302522897720337,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:18:05.902174311Z",
+        "endUTC": "2026-09-09T23:18:28.204697786Z"
+      },
+      "candidateMinusNativeSeconds": -2.8096930980682373
+    },
+    {
+      "task": ":x-pack:plugin:stateless:compileJava",
+      "N": {
+        "seconds": 2.758373975753784,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:23:02.126645298Z",
+        "endUTC": "2026-09-09T23:23:04.885019909Z"
+      },
+      "I": {
+        "seconds": 5.371181964874268,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:18:51.840630600Z",
+        "endUTC": "2026-09-09T23:18:57.211812084Z"
+      },
+      "candidateMinusNativeSeconds": 2.6128079891204834
+    },
+    {
+      "task": ":x-pack:extras:plugins:microsoft-graph-authz:compileJava",
+      "N": {
+        "seconds": 3.5358638763427734,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:23:05.390655287Z",
+        "endUTC": "2026-09-09T23:23:08.926519953Z"
+      },
+      "I": {
+        "seconds": 1.3199851512908936,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:18:54.514885292Z",
+        "endUTC": "2026-09-09T23:18:55.834870185Z"
+      },
+      "candidateMinusNativeSeconds": -2.21587872505188
+    },
+    {
+      "task": ":x-pack:plugin:security:compileJava",
+      "N": {
+        "seconds": 8.281317949295044,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:23:00.477850702Z",
+        "endUTC": "2026-09-09T23:23:08.759168310Z"
+      },
+      "I": {
+        "seconds": 10.387319803237915,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:18:50.895311329Z",
+        "endUTC": "2026-09-09T23:19:01.282631531Z"
+      },
+      "candidateMinusNativeSeconds": 2.106001853942871
+    },
+    {
+      "task": ":x-pack:plugin:esql:compileJava",
+      "N": {
+        "seconds": 18.090909957885742,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:23:11.260454610Z",
+        "endUTC": "2026-09-09T23:23:29.351364486Z"
+      },
+      "I": {
+        "seconds": 20.034588098526,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:19:08.442371460Z",
+        "endUTC": "2026-09-09T23:19:28.476959847Z"
+      },
+      "candidateMinusNativeSeconds": 1.9436781406402588
+    },
+    {
+      "task": ":modules:aggregations:compileJava",
+      "N": {
+        "seconds": 2.3727498054504395,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:22:30.382903848Z",
+        "endUTC": "2026-09-09T23:22:32.755653950Z"
+      },
+      "I": {
+        "seconds": 0.9637451171875,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:18:28.620045524Z",
+        "endUTC": "2026-09-09T23:18:29.583790822Z"
+      },
+      "candidateMinusNativeSeconds": -1.4090046882629395
+    },
+    {
+      "task": ":modules:streams:compileJava",
+      "N": {
+        "seconds": 0.27953100204467773,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:22:36.809609916Z",
+        "endUTC": "2026-09-09T23:22:37.089140548Z"
+      },
+      "I": {
+        "seconds": 1.5379068851470947,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:18:34.270342194Z",
+        "endUTC": "2026-09-09T23:18:35.808249400Z"
+      },
+      "candidateMinusNativeSeconds": 1.258375883102417
+    }
+  ],
+  "checkstyle": [
+    {
+      "task": ":server:checkstyleTest",
+      "N": {
+        "seconds": 60.56843686103821,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:22:30.269613876Z",
+        "endUTC": "2026-09-09T23:23:30.838050996Z"
+      },
+      "I": {
+        "seconds": 9.283520936965942,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:18:28.520247556Z",
+        "endUTC": "2026-09-09T23:18:37.803768537Z"
+      },
+      "candidateMinusNativeSeconds": -51.284915924072266
+    },
+    {
+      "task": ":server:checkstyleMain",
+      "N": {
+        "seconds": 72.71828699111938,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:22:29.950700036Z",
+        "endUTC": "2026-09-09T23:23:42.668987763Z"
+      },
+      "I": {
+        "seconds": 117.33969402313232,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:18:28.238767900Z",
+        "endUTC": "2026-09-09T23:20:25.578461610Z"
+      },
+      "candidateMinusNativeSeconds": 44.62140703201294
+    },
+    {
+      "task": ":server:checkstyleInternalClusterTest",
+      "N": {
+        "seconds": 0.0016090869903564453,
+        "action": false,
+        "outcome": "UP-TO-DATE",
+        "startUTC": "2026-09-09T23:22:29.948838742Z",
+        "endUTC": "2026-09-09T23:22:29.950447066Z"
+      },
+      "I": {
+        "seconds": 0.0014560222625732422,
+        "action": false,
+        "outcome": "UP-TO-DATE",
+        "startUTC": "2026-09-09T23:18:28.237104967Z",
+        "endUTC": "2026-09-09T23:18:28.238560180Z"
+      },
+      "candidateMinusNativeSeconds": -0.00015306472778320312
+    },
+    {
+      "task": ":server:checkstyle",
+      "N": {
+        "seconds": 4.696846008300781e-05,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:23:46.047111472Z",
+        "endUTC": "2026-09-09T23:23:46.047158212Z"
+      },
+      "I": {
+        "seconds": 8.893013000488281e-05,
+        "action": true,
+        "outcome": "EXECUTED",
+        "startUTC": "2026-09-09T23:20:25.578882591Z",
+        "endUTC": "2026-09-09T23:20:25.578971391Z"
+      },
+      "candidateMinusNativeSeconds": 4.1961669921875e-05
+    }
+  ],
+  "graphBindings": [
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/profiles/history-8/run/attempts/r1-007-g0-N/graph.jsonl",
+      "sha256": "535767ea11430f52c3d8c74f1d58cb5503c14595f3676d1ae78ade4845456b05"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-screen-completion-fixed/profiles/history-8/run/attempts/r1-007-g0-I/graph.jsonl",
+      "sha256": "7804550caf5936879715fd8edd1a167766f8162c75be4471108ecf2560777f33"
+    }
+  ],
+  "limits": [
+    "Task wall spans overlap; differences cannot be summed into workflow attribution",
+    "One chronological action pair; this is not replication or proof of a causal regression",
+    "Final independent replay reconstruction and profile analysis must pass before using this diagnostic in the decision"
+  ]
+}

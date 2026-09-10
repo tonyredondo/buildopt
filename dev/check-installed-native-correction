@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if (($# != 0)); then
+    printf 'usage: %s\n' "$0" >&2
+    exit 64
+fi
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+buildopt_repo_root=$(cd -- "${buildopt_script_dir}/.." && pwd)
+cd "${buildopt_repo_root}"
+if [[ "$(uname -s)/$(uname -m)" != Linux/x86_64 ]]; then
+    printf 'installed native correction package proof requires Linux x86_64\n' >&2
+    exit 69
+fi
+# Local functional proof only: no public subject, remote delivery, or value claim.
+# Each stage has a deadline; total stage limits are at most 15 minutes. The
+# regenerable package directory is capped at 1 GiB and never clears user caches.
+buildopt_output="${buildopt_repo_root}/.tools/state/eic-local-integration/package"
+mkdir -p -- "${buildopt_output}"
+if (( $(du -sb "${buildopt_output}" | awk '{print $1}') > 1073741824 )); then
+    printf 'local package directory exceeds the 1-GiB budget\n' >&2
+    exit 75
+fi
+export GRADLE_USER_HOME="${GRADLE_USER_HOME:-${buildopt_repo_root}/.tools/state/gradle-home}"
+timeout --signal=TERM --kill-after=5s 180s ./dev/check-patch-autopilot-recipe-registry
+timeout --signal=TERM --kill-after=5s 300s ./packaging/linux/package.sh \
+    --version 0.0.1 --output "${buildopt_output}"
+if (( $(du -sb "${buildopt_output}" | awk '{print $1}') > 1073741824 )); then
+    printf 'local package directory exceeded the 1-GiB budget\n' >&2
+    exit 75
+fi
+export EIC_TEST_PACKAGE="${buildopt_output}/buildopt-0.0.1-linux-amd64.tar.gz"
+timeout --signal=TERM --kill-after=5s 360s ./dev/run -- ./dev/run --toolchain go -- \
+    go test ./internal/launcher -run '^TestStickyWCNCP' -count=1 -timeout=330s -v
+printf 'installed native correction: exact recipe, signed inverse, real package/Gradle/TLS and native fallback verified locally\n'

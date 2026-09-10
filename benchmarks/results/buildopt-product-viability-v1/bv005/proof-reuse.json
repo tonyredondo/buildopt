@@ -1,0 +1,88 @@
+{
+  "schema": "buildopt.viability/replay-proof-reuse/v1",
+  "currentProduction": [
+    {
+      "label": "core-final-01",
+      "allProductionGoInputsMatchFinal": true,
+      "limitation": ""
+    },
+    {
+      "label": "adversarial-final-01",
+      "allProductionGoInputsMatchFinal": true,
+      "limitation": ""
+    },
+    {
+      "label": "limits-recovery-final-01",
+      "allProductionGoInputsMatchFinal": true,
+      "limitation": "limits-recovery-final-01 has one failed shutdown test; all other selected test cases pass and the revised shutdown assertion has its own five-run final proof."
+    },
+    {
+      "label": "build-all-01",
+      "allProductionGoInputsMatchFinal": true,
+      "limitation": ""
+    },
+    {
+      "label": "build-cli-01",
+      "allProductionGoInputsMatchFinal": true,
+      "limitation": ""
+    }
+  ],
+  "nativeLifecycle": {
+    "command": "gradle-lifecycles-02",
+    "unchangedComponents": [
+      "process_linux.go",
+      "resources_linux.go",
+      "capture.init.gradle",
+      "capture.go",
+      "gradle_logs.go",
+      "records.go",
+      "files.go",
+      "metrics.go"
+    ],
+    "laterChanges": [
+      "strict manifest launcher and running driver admission",
+      "full checkpoint state validation",
+      "required phase and nested accounting checks"
+    ],
+    "laterProof": [
+      "core-final-01",
+      "adversarial-final-01",
+      "limits-recovery-final-01",
+      "standalone-cli-03"
+    ]
+  },
+  "overhead": {
+    "schema": "bv005-proof-reuse/v1",
+    "measuredPlatform": "linux-amd64",
+    "affectedPaths": [
+      {
+        "path": "dev/history-replay/process_linux.go",
+        "measuredSHA256": "b3c274d14bdf1ec970b867a7c044509e9d4341ef128ea0aff5889154431cc669",
+        "currentSHA256": "5b04e49b45d821390bcb43c3d3a3bb2ffcd1b1a7be5cd9b1f4224ae179ef0520",
+        "matchingTransformation": [
+          "same implementation with explicit AMD64 build constraint"
+        ]
+      },
+      {
+        "path": "dev/history-replay/capture.init.gradle",
+        "measuredSHA256": "42cc643d1b8ec1f5fee2d5952aad8322bd2cb90190da1696dc952eb472d7d2bf",
+        "currentSHA256": "42cc643d1b8ec1f5fee2d5952aad8322bd2cb90190da1696dc952eb472d7d2bf",
+        "matchingTransformation": [
+          "exact",
+          "same implementation with explicit AMD64 build constraint",
+          "same implementation with Linux AMD64 build constraint"
+        ]
+      },
+      {
+        "path": "dev/history-replay/resources_linux.go",
+        "measuredSHA256": "a058adacb57fa021ca824c5c689078687fbf71806e172cf2a149ce7dd0001c02",
+        "currentSHA256": "15afaceedb3a426989146b1c70198f6c62464c90b4e00ffb970da42314148df0",
+        "matchingTransformation": [
+          "same implementation with Linux AMD64 build constraint"
+        ]
+      }
+    ],
+    "scope": "Native request timing, IPC completion, resource capture and lean Gradle hook unchanged; only explicit platform build constraints differ. Manifest/checker extensions are separately requalified."
+  },
+  "overheadScope": "Measured interval is worker invoke/native completion only. guard/workflow preparation, output collection and final metrics are outside that interval; raw samples are independently recomputed in overhead-reconstruction.json."
+}

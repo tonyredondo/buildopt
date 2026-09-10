@@ -1,0 +1,38 @@
+{
+  "schema": "buildopt.viability/replay-overhead-reconstruction/v1",
+  "status": "verified",
+  "measuredGradleStarts": 20,
+  "warmups": 4,
+  "pairedSamplesPerArm": 4,
+  "nativeMedianExtraNS": 23645480,
+  "candidateMedianExtraNS": 12670142,
+  "armImbalanceNS": 10975338,
+  "wrapperP95NS": 1486684,
+  "limits": {
+    "maximumWrapperNS": 10000000,
+    "maximumArmImbalanceNS": 100000000
+  },
+  "interpretation": "Small no-action fixture instrument overhead only; no customer build saving or actual owner overhead claim.",
+  "nativeBuildIDs": [
+    "12e07636-29c0-4372-af96-2dc52a274547",
+    "18e26eb1-0a5f-4e65-a386-105165ebff59",
+    "57838522-692b-4c33-881e-7ee4057114c1",
+    "6122d241-2679-4123-9aa0-2c7071546bd9",
+    "7462e6b4-db93-4c4d-b86c-7ec3e17fe666",
+    "7b5e6770-5b15-4a40-abc3-e94136767bf7",
+    "88f8b8a6-5896-45ef-a066-906fbc30b0c1",
+    "99b4d215-3bb7-4f9d-89d6-5c6c3393c585",
+    "99faacb7-0b4b-4060-8595-20e76b9788d6",
+    "9d1c6afa-85bd-487d-a2a0-a98a223c1d7a",
+    "a145500b-9862-49ff-9da2-a05945e6d998",
+    "a3f4d306-f8e1-466f-adfe-6c5a72488107",
+    "b5181252-e920-41df-b206-865214ba8344",
+    "b5347f80-b37f-4bda-84d8-cbc167a21ab1",
+    "c5422204-c04c-4cc9-bcd9-37932cf4e916",
+    "c6cf12f0-6f99-46e9-bd74-0f5ae31d9c2c",
+    "cd6b94c4-7e00-4a72-9a93-93fb6674b516",
+    "e176cfc2-e033-495b-b14e-6d25abe8fb30",
+    "e9e63f3f-0367-4d3b-9927-36c123ecf043",
+    "f22fc8a1-307a-4946-9158-08dca731c28a"
+  ]
+}

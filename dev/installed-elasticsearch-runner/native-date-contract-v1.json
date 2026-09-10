@@ -1,0 +1,927 @@
+{
+  "schemaVersion": "buildopt.eic/native-date-output-contract/v1",
+  "sourceRevision": "16bd5bc5355ac7c6ad736f8a6f93281b24a05ab7",
+  "acceptedProposalSha256": "df7b302bdde8c79cfb82f82bb0e6e48825456c78213234d7f694d84ef6f3a17b",
+  "allowedFields": [
+    "Build-Date",
+    "Build-Date-UTC"
+  ],
+  "rules": [
+    "Raw captures and exact inventory results remain mandatory",
+    "Paths, types, modes, graph and output producers stay identical",
+    "Only listed manifests may vary, and only both exact canonical UTC date values",
+    "Every differing manifest and propagated source requires an EXECUTED producer in both arms",
+    "Dates must lie inside their own recorded native invocation; changed cached dates fail closed",
+    "Propagated manifests must be byte-identical to the declared source jar manifest",
+    "All other manifest bytes, ZIP metadata, entry order and compressed payloads stay exact",
+    "CRC, sizes and offsets may vary only as validated consequences of approved manifest bytes",
+    "Unsupported archive forms, missing or duplicate fields, new paths and malformed data fail closed",
+    "Freeze before fresh native/native validation and candidate correctness; calibration does not validate candidate acceptance"
+  ],
+  "allowlist": [
+    {
+      "path": "client/rest/build/distributions/elasticsearch-rest-client-9.6.0-SNAPSHOT.jar",
+      "producer": ":client:rest:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "client/rest/build/distributions/elasticsearch-rest-client-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":client:rest:jar"
+        }
+      ]
+    },
+    {
+      "path": "client/sniffer/build/distributions/elasticsearch-rest-client-sniffer-9.6.0-SNAPSHOT.jar",
+      "producer": ":client:sniffer:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "client/sniffer/build/distributions/elasticsearch-rest-client-sniffer-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":client:sniffer:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/arrow/build/distributions/elasticsearch-arrow-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:arrow:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/arrow/build/distributions/elasticsearch-arrow-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:arrow:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/cli-terminal/build/distributions/elasticsearch-cli-terminal-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:cli-terminal:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/cli-terminal/build/distributions/elasticsearch-cli-terminal-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:cli-terminal:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/cli/build/distributions/elasticsearch-cli-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:cli:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/cli/build/distributions/elasticsearch-cli-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:cli:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/columnar/build/distributions/elasticsearch-columnar-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:columnar:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/columnar/build/distributions/elasticsearch-columnar-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:columnar:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/core/build/distributions/elasticsearch-core-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:core:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/core/build/distributions/elasticsearch-core-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:core:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/dissect/build/distributions/elasticsearch-dissect-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:dissect:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/dissect/build/distributions/elasticsearch-dissect-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:dissect:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/entitlement/asm-provider/build/distributions/elasticsearch-entitlement-asm-provider-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:entitlement:asm-provider:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/entitlement/asm-provider/build/distributions/elasticsearch-entitlement-asm-provider-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:entitlement:asm-provider:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/entitlement/bridge/build/distributions/elasticsearch-entitlement-bridge-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:entitlement:bridge:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/entitlement/bridge/build/distributions/elasticsearch-entitlement-bridge-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:entitlement:bridge:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/entitlement/build/distributions/elasticsearch-entitlement-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:entitlement:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF",
+        "IMPL-JARS/entitlement/elasticsearch-entitlement-asm-provider-9.6.0-SNAPSHOT.jar/META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/entitlement/build/distributions/elasticsearch-entitlement-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:entitlement:jar"
+        },
+        {
+          "member": "IMPL-JARS/entitlement/elasticsearch-entitlement-asm-provider-9.6.0-SNAPSHOT.jar/META-INF/MANIFEST.MF",
+          "sourceJar": "libs/entitlement/asm-provider/build/distributions/elasticsearch-entitlement-asm-provider-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:entitlement:asm-provider:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/entitlement/build/generated-resources/generateAsm-providerProviderImpl/IMPL-JARS/entitlement/elasticsearch-entitlement-asm-provider-9.6.0-SNAPSHOT.jar/META-INF/MANIFEST.MF",
+      "producer": ":libs:entitlement:generateAsm-providerProviderImpl",
+      "allowedMembers": [],
+      "manifestProvenance": [
+        {
+          "member": "",
+          "sourceJar": "libs/entitlement/asm-provider/build/distributions/elasticsearch-entitlement-asm-provider-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:entitlement:asm-provider:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/exponential-histogram/build/distributions/elasticsearch-exponential-histogram-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:exponential-histogram:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/exponential-histogram/build/distributions/elasticsearch-exponential-histogram-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:exponential-histogram:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/exponential-histogram/build/distributions/elasticsearch-exponential-histogram-test-artifacts-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:exponential-histogram:testJar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/exponential-histogram/build/distributions/elasticsearch-exponential-histogram-test-artifacts-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:exponential-histogram:testJar"
+        }
+      ]
+    },
+    {
+      "path": "libs/foreign-adapter/build/distributions/elasticsearch-foreign-adapter-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:foreign-adapter:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/foreign-adapter/build/distributions/elasticsearch-foreign-adapter-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:foreign-adapter:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/foreign-library/build/distributions/elasticsearch-foreign-library-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:foreign-library:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/foreign-library/build/distributions/elasticsearch-foreign-library-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:foreign-library:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/foreign-library/processor/build/distributions/elasticsearch-foreign-library-processor-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:foreign-library:processor:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/foreign-library/processor/build/distributions/elasticsearch-foreign-library-processor-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:foreign-library:processor:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/geo/build/distributions/elasticsearch-geo-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:geo:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/geo/build/distributions/elasticsearch-geo-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:geo:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/gpu-codec/build/distributions/elasticsearch-gpu-codec-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:gpu-codec:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/gpu-codec/build/distributions/elasticsearch-gpu-codec-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:gpu-codec:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/grok/build/distributions/elasticsearch-grok-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:grok:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/grok/build/distributions/elasticsearch-grok-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:grok:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/h3/build/distributions/elasticsearch-h3-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:h3:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/h3/build/distributions/elasticsearch-h3-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:h3:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/ip-location-api/build/distributions/elasticsearch-ip-location-api-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:ip-location-api:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/ip-location-api/build/distributions/elasticsearch-ip-location-api-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:ip-location-api:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/logging/build/distributions/elasticsearch-logging-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:logging:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/logging/build/distributions/elasticsearch-logging-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:logging:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/lucene-store/build/distributions/elasticsearch-lucene-store-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:lucene-store:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/lucene-store/build/distributions/elasticsearch-lucene-store-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:lucene-store:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/lz4/build/distributions/elasticsearch-lz4-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:lz4:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/lz4/build/distributions/elasticsearch-lz4-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:lz4:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/native/build/distributions/elasticsearch-native-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:native:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/native/build/distributions/elasticsearch-native-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:native:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/plugin-analysis-api/build/distributions/elasticsearch-plugin-analysis-api-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:plugin-analysis-api:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/plugin-analysis-api/build/distributions/elasticsearch-plugin-analysis-api-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:plugin-analysis-api:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/plugin-api/build/distributions/elasticsearch-plugin-api-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:plugin-api:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/plugin-api/build/distributions/elasticsearch-plugin-api-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:plugin-api:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/simdvec/build/distributions/elasticsearch-simdvec-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:simdvec:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/simdvec/build/distributions/elasticsearch-simdvec-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:simdvec:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/ssl-config/build/distributions/elasticsearch-ssl-config-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:ssl-config:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/ssl-config/build/distributions/elasticsearch-ssl-config-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:ssl-config:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/swisshash/build/distributions/elasticsearch-swisshash-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:swisshash:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/swisshash/build/distributions/elasticsearch-swisshash-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:swisshash:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/tdigest/build/distributions/elasticsearch-tdigest-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:tdigest:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/tdigest/build/distributions/elasticsearch-tdigest-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:tdigest:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/user-agent-api/build/distributions/elasticsearch-user-agent-api-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:user-agent-api:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/user-agent-api/build/distributions/elasticsearch-user-agent-api-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:user-agent-api:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/web-utils/build/distributions/elasticsearch-web-utils-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:web-utils:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/web-utils/build/distributions/elasticsearch-web-utils-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:web-utils:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/workload-identity-aws/build/distributions/elasticsearch-workload-identity-aws-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:workload-identity-aws:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/workload-identity-aws/build/distributions/elasticsearch-workload-identity-aws-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:workload-identity-aws:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/x-content/build/distributions/elasticsearch-x-content-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:x-content:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF",
+        "IMPL-JARS/x-content/x-content-impl-9.6.0-SNAPSHOT.jar/META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/x-content/build/distributions/elasticsearch-x-content-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:x-content:jar"
+        },
+        {
+          "member": "IMPL-JARS/x-content/x-content-impl-9.6.0-SNAPSHOT.jar/META-INF/MANIFEST.MF",
+          "sourceJar": "libs/x-content/impl/build/distributions/x-content-impl-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:x-content:impl:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/x-content/build/generated-resources/generateImplProviderImpl/IMPL-JARS/x-content/x-content-impl-9.6.0-SNAPSHOT.jar/META-INF/MANIFEST.MF",
+      "producer": ":libs:x-content:generateImplProviderImpl",
+      "allowedMembers": [],
+      "manifestProvenance": [
+        {
+          "member": "",
+          "sourceJar": "libs/x-content/impl/build/distributions/x-content-impl-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:x-content:impl:jar"
+        }
+      ]
+    },
+    {
+      "path": "libs/x-content/impl/build/distributions/x-content-impl-9.6.0-SNAPSHOT.jar",
+      "producer": ":libs:x-content:impl:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "libs/x-content/impl/build/distributions/x-content-impl-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":libs:x-content:impl:jar"
+        }
+      ]
+    },
+    {
+      "path": "modules/aggregations/build/distributions/aggregations-9.6.0-SNAPSHOT.jar",
+      "producer": ":modules:aggregations:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "modules/aggregations/build/distributions/aggregations-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":modules:aggregations:jar"
+        }
+      ]
+    },
+    {
+      "path": "modules/data-streams/build/distributions/data-streams-9.6.0-SNAPSHOT.jar",
+      "producer": ":modules:data-streams:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "modules/data-streams/build/distributions/data-streams-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":modules:data-streams:jar"
+        }
+      ]
+    },
+    {
+      "path": "modules/lang-mustache/build/distributions/lang-mustache-9.6.0-SNAPSHOT.jar",
+      "producer": ":modules:lang-mustache:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "modules/lang-mustache/build/distributions/lang-mustache-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":modules:lang-mustache:jar"
+        }
+      ]
+    },
+    {
+      "path": "modules/mapper-extras/build/distributions/mapper-extras-9.6.0-SNAPSHOT.jar",
+      "producer": ":modules:mapper-extras:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "modules/mapper-extras/build/distributions/mapper-extras-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":modules:mapper-extras:jar"
+        }
+      ]
+    },
+    {
+      "path": "modules/reindex/build/distributions/reindex-9.6.0-SNAPSHOT.jar",
+      "producer": ":modules:reindex:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "modules/reindex/build/distributions/reindex-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":modules:reindex:jar"
+        }
+      ]
+    },
+    {
+      "path": "modules/transport-netty4/build/distributions/transport-netty4-9.6.0-SNAPSHOT.jar",
+      "producer": ":modules:transport-netty4:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "modules/transport-netty4/build/distributions/transport-netty4-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":modules:transport-netty4:jar"
+        }
+      ]
+    },
+    {
+      "path": "modules/workload-identity/spi/build/distributions/elasticsearch-workload-identity-spi-9.6.0-SNAPSHOT.jar",
+      "producer": ":modules:workload-identity:spi:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "modules/workload-identity/spi/build/distributions/elasticsearch-workload-identity-spi-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":modules:workload-identity:spi:jar"
+        }
+      ]
+    },
+    {
+      "path": "server/build/distributions/elasticsearch-9.6.0-SNAPSHOT.jar",
+      "producer": ":server:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "server/build/distributions/elasticsearch-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":server:jar"
+        }
+      ]
+    },
+    {
+      "path": "test/external-modules/multi-project/build/distributions/test-multi-project-9.6.0-SNAPSHOT.jar",
+      "producer": ":test:external-modules:test-multi-project:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "test/external-modules/multi-project/build/distributions/test-multi-project-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":test:external-modules:test-multi-project:jar"
+        }
+      ]
+    },
+    {
+      "path": "test/framework/build/distributions/framework-9.6.0-SNAPSHOT.jar",
+      "producer": ":test:framework:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "test/framework/build/distributions/framework-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":test:framework:jar"
+        }
+      ]
+    },
+    {
+      "path": "test/logger-usage/build/distributions/logger-usage-9.6.0-SNAPSHOT.jar",
+      "producer": ":test:logger-usage:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "test/logger-usage/build/distributions/logger-usage-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":test:logger-usage:jar"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/extras/plugins/microsoft-graph-authz/kiota-merged/build/distributions/kiota-merged-9.6.0-SNAPSHOT.jar",
+      "producer": ":x-pack:extras:plugins:microsoft-graph-authz:kiota-merged:shadowJar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "x-pack/extras/plugins/microsoft-graph-authz/kiota-merged/build/distributions/kiota-merged-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":x-pack:extras:plugins:microsoft-graph-authz:kiota-merged:shadowJar"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/libs/es-opensaml-security-api/build/distributions/es-opensaml-security-api-9.6.0-SNAPSHOT.jar",
+      "producer": ":x-pack:libs:es-opensaml-security-api:shadowJar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "x-pack/libs/es-opensaml-security-api/build/distributions/es-opensaml-security-api-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":x-pack:libs:es-opensaml-security-api:shadowJar"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/core/build/distributions/x-pack-core-9.6.0-SNAPSHOT.jar",
+      "producer": ":x-pack:plugin:core:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "x-pack/plugin/core/build/distributions/x-pack-core-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":x-pack:plugin:core:jar"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/core/template-resources/build/distributions/x-pack-template-resources-9.6.0-SNAPSHOT.jar",
+      "producer": ":x-pack:plugin:core:template-resources:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "x-pack/plugin/core/template-resources/build/distributions/x-pack-template-resources-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":x-pack:plugin:core:template-resources:jar"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/deprecation/qa/common/build/distributions/common-9.6.0-SNAPSHOT.jar",
+      "producer": ":x-pack:plugin:deprecation:qa:common:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "x-pack/plugin/deprecation/qa/common/build/distributions/common-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":x-pack:plugin:deprecation:qa:common:jar"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/encryption/spi/build/distributions/elasticsearch-x-pack-encryption-spi-9.6.0-SNAPSHOT.jar",
+      "producer": ":x-pack:plugin:encryption:spi:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "x-pack/plugin/encryption/spi/build/distributions/elasticsearch-x-pack-encryption-spi-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":x-pack:plugin:encryption:spi:jar"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql/compute/ann/build/distributions/x-pack-esql-compute-ann-9.6.0-SNAPSHOT.jar",
+      "producer": ":x-pack:plugin:esql:compute:ann:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "x-pack/plugin/esql/compute/ann/build/distributions/x-pack-esql-compute-ann-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":x-pack:plugin:esql:compute:ann:jar"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql/compute/build/distributions/x-pack-esql-compute-9.6.0-SNAPSHOT.jar",
+      "producer": ":x-pack:plugin:esql:compute:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "x-pack/plugin/esql/compute/build/distributions/x-pack-esql-compute-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":x-pack:plugin:esql:compute:jar"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/esql/compute/gen/build/distributions/gen-9.6.0-SNAPSHOT.jar",
+      "producer": ":x-pack:plugin:esql:compute:gen:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "x-pack/plugin/esql/compute/gen/build/distributions/gen-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":x-pack:plugin:esql:compute:gen:jar"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/kql/build/distributions/x-pack-kql-9.6.0-SNAPSHOT.jar",
+      "producer": ":x-pack:plugin:kql:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "x-pack/plugin/kql/build/distributions/x-pack-kql-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":x-pack:plugin:kql:jar"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/mapper-version/build/distributions/x-pack-mapper-version-9.6.0-SNAPSHOT.jar",
+      "producer": ":x-pack:plugin:mapper-version:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "x-pack/plugin/mapper-version/build/distributions/x-pack-mapper-version-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":x-pack:plugin:mapper-version:jar"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/ql/build/distributions/x-pack-ql-9.6.0-SNAPSHOT.jar",
+      "producer": ":x-pack:plugin:ql:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "x-pack/plugin/ql/build/distributions/x-pack-ql-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":x-pack:plugin:ql:jar"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/shutdown/build/distributions/x-pack-shutdown-9.6.0-SNAPSHOT.jar",
+      "producer": ":x-pack:plugin:shutdown:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "x-pack/plugin/shutdown/build/distributions/x-pack-shutdown-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":x-pack:plugin:shutdown:jar"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/sql/sql-action/build/distributions/sql-action-9.6.0-SNAPSHOT.jar",
+      "producer": ":x-pack:plugin:sql:sql-action:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "x-pack/plugin/sql/sql-action/build/distributions/sql-action-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":x-pack:plugin:sql:sql-action:jar"
+        }
+      ]
+    },
+    {
+      "path": "x-pack/plugin/sql/sql-proto/build/distributions/sql-proto-9.6.0-SNAPSHOT.jar",
+      "producer": ":x-pack:plugin:sql:sql-proto:jar",
+      "allowedMembers": [
+        "META-INF/MANIFEST.MF"
+      ],
+      "manifestProvenance": [
+        {
+          "member": "META-INF/MANIFEST.MF",
+          "sourceJar": "x-pack/plugin/sql/sql-proto/build/distributions/sql-proto-9.6.0-SNAPSHOT.jar",
+          "sourceProducer": ":x-pack:plugin:sql:sql-proto:jar"
+        }
+      ]
+    }
+  ]
+}

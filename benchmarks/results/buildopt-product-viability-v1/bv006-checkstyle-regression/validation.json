@@ -1,0 +1,40 @@
+{
+  "status": "verified within diagnostic scope; historical attribution and qualification remain partial",
+  "atUTC": "2026-09-10T06:24:18.541014+00:00",
+  "checks": {
+    "freeze.json": 7,
+    "freeze-fixed.json": 7,
+    "priorRootRepairFilesUnchanged": 5,
+    "candidateUnchanged": true,
+    "nativeBuilds": 7,
+    "pairedNativeBuilds": 6,
+    "liveAndIndependentPairs": 3,
+    "allNativeScopesClosed": true,
+    "helperExitReceiptsPassed": 3,
+    "linksChecked": 179,
+    "markdownFilesChecked": 6,
+    "oldRepositoryWideDocFailuresRetained": 1623,
+    "gitWhitespace": "passed",
+    "worktreeIdentities": [
+      {
+        "arm": "N",
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-regression/profiles/fixed/run/r1/N/repo",
+        "head": "a48778e0c3fcd8c0e1eef8eea0b61b5656a20d67",
+        "commonGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/eic-native-v1/repos/elasticsearch.git"
+      },
+      {
+        "arm": "I",
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-regression/profiles/fixed/run/r1/I/repo",
+        "head": "a48778e0c3fcd8c0e1eef8eea0b61b5656a20d67",
+        "commonGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/eic-native-v1/repos/elasticsearch.git"
+      }
+    ],
+    "currentPhaseInactiveVerified": true,
+    "taskDiffInspected": true
+  },
+  "limitations": [
+    "No full repository documentation rerun: unchanged older1623 diagnostics remain outside this task",
+    "No product timing/resource qualification: original cause unresolved, target daemon interval evicted, post-run export exceeded its bound",
+    "One earlier helper completion receipt remains missing; its observed start is counted and process absent"
+  ]
+}

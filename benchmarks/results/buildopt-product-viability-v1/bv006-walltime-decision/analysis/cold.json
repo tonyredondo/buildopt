@@ -1,0 +1,53 @@
+{
+  "status": "verified",
+  "decision": "COLD_DIAGNOSTIC_CLOSED_WITH_FAILURE",
+  "gradleReserved": 2,
+  "gradleActual": 1,
+  "helperJVMReserved": 4,
+  "helperJVMActual": 0,
+  "rows": [
+    {
+      "attempt": "r1-000-g0-N",
+      "nativeExit": 0,
+      "nativeOutcome": "EXITED",
+      "nativeMS": 206323.304156,
+      "nativeIdentity": {
+        "pid": 1249096,
+        "startTicks": 42195395,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-f9ba25cfe73d3cc1-r1-N-1.service",
+        "command": [
+          "/bin/sh",
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-walltime-decision/cold/run/r1/N/repo/gradlew",
+          "--offline",
+          "--no-scan",
+          "--max-workers=8",
+          ":server:precommit",
+          "--continue",
+          "--no-configuration-cache",
+          "--build-cache",
+          "--console=plain",
+          "--init-script",
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/versions/owner-readiness-v5/source/capture.init.gradle",
+          "--daemon"
+        ]
+      },
+      "daemonSamples": 2058,
+      "firstDaemonGapMS": 615.789834,
+      "lastDaemonGapMS": 7.639284,
+      "maxDaemonCoverageGapMS": 615.789834,
+      "diagnosticCoverageQualified": false,
+      "samplerRows": 2066,
+      "observerError": "",
+      "persistenceError": "",
+      "pendingRecords": 0,
+      "pendingBytes": 0
+    }
+  ],
+  "unloadedUnits": [
+    "buildopt-replay-f9ba25cfe73d3cc1-r1-N-1.service"
+  ],
+  "driverExit": 1,
+  "formalReadinessQualified": false,
+  "walltimeScreenAdmitted": "Under the approved independent timing amendment; this diagnostic is not relabeled as passed",
+  "atUTC": "2026-09-09T14:48:52.535429+00:00"
+}

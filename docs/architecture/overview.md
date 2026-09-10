@@ -1,9 +1,14 @@
 # Architecture overview
 
+> **Retained implementation reference.** Research sequencing below is
+> historical. Use the [research status register](../research-status.md) and
+> [current plan](../plans/buildopt-product-viability-v1.md) for new work;
+> its adaptive native-correction design is still unimplemented.
+
 ## Wrapper-coordinated native-corrections pivot
 
-The active POC keeps the repository wrapper above the customer's unchanged
-Gradle command. The wrapper observes and reports; reviewed corrections are
+The closed wrapper-coordination POC keeps the repository wrapper above the
+customer's unchanged Gradle command. The wrapper observes and reports; reviewed corrections are
 validated separately and, after owner acceptance, native Gradle remains the
 runtime. Gradle cache objects stay in the existing opaque data plane. Typed
 observations, opportunities, proposals, validations and decisions use the

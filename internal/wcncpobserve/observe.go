@@ -71,7 +71,11 @@ func RedactArguments(repositoryScope string, args []string) ([]string, error) {
 	}
 	out := make([]string, 0, len(args))
 	for _, arg := range args {
-		if len(arg) == 0 || len(arg) > 256 {
+		if arg == "" {
+			out = append(out, hashArgument(repositoryScope, arg))
+			continue
+		}
+		if len(arg) > 256 {
 			return nil, ErrObservationInvalid
 		}
 		if secretHintPattern.MatchString(arg) {
@@ -308,8 +312,8 @@ func (facts ObservationFacts) Validate() error {
 // distinguishes UNAVAILABLE, QUEUED, OBSERVING, and proposal states without
 // becoming an authorization path.
 type Status struct {
-	State  string
-	Detail string
+	State  string `json:"state"`
+	Detail string `json:"detail"`
 }
 
 // DeriveStatus maps verified local outbox depth and remote projection to a
@@ -327,7 +331,7 @@ func DeriveStatus(outboxQueued int, remoteState string, remoteVerified bool) Sta
 			return Status{State: "QUEUED", Detail: "local items queued behind verified observing state"}
 		}
 		return Status{State: "OBSERVING", Detail: "observing native builds"}
-	case "OPPORTUNITY_DETECTED", "VALIDATION_QUEUED", "VALIDATING", "REVIEW_READY", "OWNER_ACCEPTED":
+	case "OPPORTUNITY_DETECTED", "VALIDATION_QUEUED", "VALIDATING", "REVIEW_READY", "OWNER_ACCEPTED", "OWNER_REJECTED", "OWNER_DEFERRED":
 		return Status{State: remoteState, Detail: "derived from verified remote projection"}
 	default:
 		return Status{State: "OBSERVING", Detail: "unknown remote state retains observing"}
