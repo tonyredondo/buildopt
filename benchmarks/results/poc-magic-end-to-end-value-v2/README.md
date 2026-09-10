@@ -1,42 +1,65 @@
-# Published one-command terminal evidence
+# Build Impact on Ktor and Apache Beam
 
-This bundle closes the customer-shaped POC gate using the immutable public
-[`v0.6.1`](https://github.com/tonyredondo/buildopt/releases/tag/v0.6.1)
-package. The package was installed into a fresh prefix and used from fresh
-Ktor and Apache Beam checkouts with fresh BuildOpt state and no hand-authored
-BuildOpt files.
+Build Impact tries to reduce the parts of a project that Gradle needs to prepare
+for a requested build. In this experiment, it made a selected Ktor library build
+79.82% faster and Apache Beam compilation 61.65% faster. Both produced the
+required files. These are results for those two commands; the experiment did
+not establish how often the same improvements would help on later code changes.
 
-| Repository / workflow | Graph | Native mean | BuildOpt mean | Saving | 95% saving interval | p95 | Payback |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Ktor `jvmJar --max-workers=12` | 133 -> 10 | 38.810 s | 7.830 s | **30.979 s / 79.82%** | 24.679..38.922 s | 61.575 -> 11.957 s | 26 builds |
-| Beam `classes --max-workers=12` | 316 -> 6 | 65.081 s | 24.958 s | **40.123 s / 61.65%** | 33.867..51.470 s | 102.621 -> 25.946 s | 28 builds |
+## What ran
 
-Both rows have 8/8 positive alternating pairs, exact required-output hashes in
-every pair, stable task-outcome fingerprints, lower candidate p95, successful
-full-graph fallback and zero product-attributable failures. The percentages
-are not averaged.
+The published [BuildOpt v0.6.1 package](https://github.com/tonyredondo/buildopt/releases/tag/v0.6.1)
+was installed in a new directory and used with fresh copies of both repositories.
+BuildOpt started without saved state or manually prepared configuration files.
 
-The required negative is a Ktor root `settings.gradle.kts` change. Its full
-native `jvmJar` build succeeded, and BuildOpt retained native with
-`GLOBAL_CHANGE_REQUIRES_FULL_GRAPH` before calibration. This demonstrates safe
-non-activation, not a performance regression.
+Ktor ran `jvmJar --max-workers=12`, which builds its JVM library packages. Beam
+ran `classes --max-workers=12`, which compiles production classes. Each command
+was compared with ordinary Gradle eight times, alternating which version ran
+first. Both versions started with the same dependencies and saved Gradle build
+results. Warmup runs were excluded from timing.
 
-The package, checkout and BuildOpt state were fresh. Both measurement arms used
-the same content-bound Gradle dependencies and the same immutable native-cache
-seed, with unmeasured daemon/configuration warmup. The comparison is therefore
-against optimized native Gradle rather than a download or cache-state mismatch.
+## Results
 
-Two rejected `v0.6.0` attempts are retained. One records an unusable sandbox
-network namespace; the other records the Configuration Cache output-discovery
-defect that led to the `v0.6.1` correction. Neither contributes timing data.
+| Repository | Average with Gradle | Average with BuildOpt | Time saved | Projects in the build plan, before → after |
+| --- | ---: | ---: | ---: | ---: |
+| Ktor | 38.810 s | 7.830 s | 30.979 s / 79.82% | 133 → 10 |
+| Apache Beam | 65.081 s | 24.958 s | 40.123 s / 61.65% | 316 → 6 |
 
-Validate the summary, raw results, pair data, output hashes, p95, economics,
-fallback, package binding and negative case with:
+BuildOpt was faster in all eight comparisons for each repository. Every pair
+produced matching required files, and the recorded task outcomes were stable.
+There were no failures attributed to BuildOpt. The two percentages describe
+different commands and must not be averaged.
+
+The statistical checks also supported a saving. The 95% interval was
+24.679–38.922 seconds for Ktor and 33.867–51.470 seconds for Beam. The p95, a
+measure of the slower builds, fell from 61.575 to 11.957 seconds for Ktor and
+from 102.621 to 25.946 seconds for Beam.
+
+At these measured savings, recovering the recorded setup time would take
+26 applicable Ktor builds or 28 applicable Beam builds. Those are estimates:
+this experiment did not follow either project through that many later changes.
+
+## Checks and limits
+
+A separate Ktor check changed the root `settings.gradle.kts` file, which can
+affect the whole build. BuildOpt declined to use the reduced plan, and the full
+Gradle build succeeded. The recorded reason was
+`GLOBAL_CHANGE_REQUIRES_FULL_GRAPH`. This checked the decision to leave Gradle
+in control when a saved plan could not safely apply; it was not a timing result.
+
+Two earlier v0.6.0 attempts remain in the records. One could not use the network
+inside its sandbox. The other exposed a defect in finding output files when
+Gradle's Configuration Cache was enabled; v0.6.1 fixed it. Neither attempt
+contributed to the reported timings.
+
+The [experiment data](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/poc-magic-end-to-end-value-v2/summary.json)
+records the comparisons, output checks and setup calculation. To verify those
+records from the repository root:
 
 ```bash
 ./dev/check-magic-end-to-end-value-v2
 ```
 
-This is POC evidence, not a production or universal-performance claim. Test
-Optimization, soak qualification and design-partner evidence remain outside
-scope.
+This establishes selected Build Impact savings and a working installation.
+It does not establish a general saving across everyday development or measure
+test selection.

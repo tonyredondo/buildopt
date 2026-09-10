@@ -1,42 +1,46 @@
-# Generic POC Functional-Coverage Decision
+# Why the saved build-plan approach stopped
 
-The frozen terminal decision is **`STOP_GENERIC_POC`**.
+Build Impact can save a reduced plan for building only the parts needed by a
+request. This study asked whether those plans helped often enough across five
+repositories to justify using the approach more broadly. Only one repository
+saved time after preparation was counted, and a plan was reused on only one
+of six later builds where it might have applied. The approach did not meet
+the requirements set before the experiment.
 
-The result passes five of eight criteria:
+## What worked
 
-- all five public repository families were observed;
-- 27 requested-build/output observations are exact, with zero measurement-only
-  builds and zero product failures;
-- selection contains no repository-specific product rule;
-- Kafka's qualified target is robust at 8/8 positive pairs, a positive interval
-  and a lower candidate p95; and
-- Kafka projects and observes payback at match two, ending 82.527 seconds net
-  positive.
+All five repositories were observed, and all 27 requested-build observations
+produced the required output. There were no extra builds run solely to collect
+measurements and no failures attributed to BuildOpt. Plan selection used the
+same rules across repositories.
 
-It fails the three criteria that make the claim generic:
+Kafka provided the positive result. Its selected build was faster in all eight
+comparisons, with a statistical interval that supported a saving and an
+improvement in slower builds. It recovered its preparation time on the second
+matching build and ended 82.527 seconds ahead after the recorded costs.
 
-| Criterion | Required | Observed |
-|---|---:|---:|
-| Net-positive repository families | at least 3/5 | 1/5 |
-| Eligible descendant selection | at least 50% | 1/6 (16.67%) |
-| Pre-Gradle native-retention overhead | median <500 ms, p95 <1,000 ms | one sample: median/p95 4,098 ms |
+## What failed
 
-The single early-decision observation is not presented as a distribution. With
-one observed value, its nearest-rank median and p95 are both 4,098 ms, and the
-criterion fails. Post-Gradle discovery fallbacks are excluded because the
-frozen criterion applies only where a decision is available before Gradle.
+| Question | Requirement fixed before measurement | Observed result |
+| --- | --- | --- |
+| Did enough repositories save time after costs? | At least three of five. | One of five. |
+| Was a saved plan useful on later eligible builds? | At least half of those builds. | One of six, or 16.67%. |
+| Was declining an optimization cheap enough? | Before Gradle started, median delay below 500 ms and p95 below 1,000 ms. | The only eligible observation took 4,098 ms. |
 
-This stops the current generic structural-profile hypothesis and withdraws a
-broad customer-value claim. It preserves the measured Kafka and Spring wins,
-safe fallback/correctness controls, cache/central-state infrastructure and all
-negative evidence. It does not authorize repository-specific rules,
-production hardening, soak or design-partner work.
+The last row contains one observation, so it does not describe a distribution
+of delays. The reported median and p95 are both that same value. Decisions
+made after Gradle had already started were outside this particular check.
 
-Recompute and verify the decision with:
+Five of the eight criteria passed, but these three failures prevented a claim
+that saved plans delivered general value. The recorded decision is
+`STOP_GENERIC_POC`: stop developing this approach to selecting and reusing
+plans. The selected Kafka and Spring savings, output checks and fallback code
+remain useful evidence. Keeping that code does not reopen the stopped research.
+
+The [decision data](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/poc-functional-coverage-decision-v1/summary.json)
+and [original experiment rules](https://github.com/tonyredondo/buildopt/blob/main/specs/poc-functional-coverage-decision-v1.md)
+provide the details. To recompute the decision from the repository root:
 
 ```bash
 ./dev/check-functional-coverage-decision
 ```
-
-The machine-readable result is [summary.json](./summary.json), and the frozen
-contract is [poc-functional-coverage-decision-v1.md](../../../specs/poc-functional-coverage-decision-v1.md).
