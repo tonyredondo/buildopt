@@ -1,0 +1,13 @@
+{
+  "status": "verified",
+  "priorBindingsMatched": 19,
+  "nativeStarts": 0,
+  "metadataJVMStarts": 0,
+  "sameEffectiveFiles": true,
+  "effectiveFileCount": 6,
+  "samePrerequisites": true,
+  "syntaxChecked": 5,
+  "deadlineUTC": "2026-09-14T13:24:04.949276+00:00",
+  "freeBytes": 794071674880,
+  "helperAccounting": "Source inspection: run invokes writeResult, which reconstructs all pairs; no extra check invocation needed."
+}

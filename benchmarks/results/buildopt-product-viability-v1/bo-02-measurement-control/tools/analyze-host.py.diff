@@ -1,0 +1,18 @@
+--- /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/analyze-host-v2.py
++++ /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/analyze-host.py
+@@ -87,13 +87,13 @@
+                          averageOwnedCoreEquivalentsLowerBound=average('ownedCoreEquivalents'),
+                          averagePressure={resource:sum(interval['pressure'][resource]*seconds for interval,seconds in selected)/duration
+                                           for resource in ('cpu','io','memory')}))
+-assert len(requests) == 8
++assert len(requests) == 4
+ result = dict(status='verified observation and registered flag reconstruction', requests=requests,
+               samples=len(samples), intervals=intervals, analyzerSHA256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+               limits=['Shared CPU affinity is not host isolation',
+                       'Counter reads are sequential and quantized; CPU estimates have sampling error',
+                       'Host PSI includes the experiment itself and does not prove external interference',
+-                      'External workload is inferred, not attributed to Rust, .NET or a named process',
++                      'External workload is inferred; no specific process is identified',
+                       'Owned service lifecycle gaps bound external CPU; they remain unqualified for precise attribution',
+                       'Every interval and request retained; contention flags do not remove measurements'])
+ output = D / 'analysis/host-pressure.json'

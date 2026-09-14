@@ -1,0 +1,42 @@
+--- /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/analyze-comparison-v2.py
++++ /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/analyze-control.py
+@@ -127,7 +127,7 @@
+             assert ready['cpuAffinity'] == '8' and ready['at']['ns'] < native['start']['ns']
+             if identity not in readiness or ready['at']['ns'] < readiness[identity]['atNS']:
+                 readiness[identity] = dict(atNS=ready['at']['ns'],nativeStartNS=native['start']['ns'],cpuAffinity=ready['cpuAffinity'])
+-    assert len(workers) == 4
++    assert len(workers) == 2
+     masks = validate_masks(samples, workers, cpus, readiness)
+     pairs = []
+     previous_states = {}
+@@ -206,16 +206,23 @@
+     assert helper <= starts
+     active = sum(task['action'] for pair in measured for task in pair['N']['checkstyle'])
+     reusable = sum(state['inferredReusableFiles'] for pair in measured for state in pair['I']['candidateSuccessState'])
+-    report = dict(allThreeCandidateTaskStatesVerified=True, measuredReusableFiles=reusable, analyzer=dict(path=str(Path(__file__).resolve()),sha256=sha(__file__)), schema='buildopt.cpu-screen/profile/v1', status='verified', profile=label, workers=cpus, gradleActual=starts, metadataJVMActual=helper, metadataAccounting='Live and independent reconstruction both completed with equal per-pair metadata count; two comparator passes, no third pass', warmupBuilds=4, measuredPairs=len(measured), pairs=pairs, summary=metrics, masks=masks, baselineCheckstyleActions=active, materialSignal=bool(active and reusable > 0 and metrics['customerMS']['savingPercent'] >= 5 and metrics['customerMS']['pairedMeanSavingMS'] >= 1000 and sum(pair['customerSavingMS'] > 0 for pair in measured) >= 2), diagnosticQualityQualified=False, decision='EXPLORATORY_MATERIAL_SIGNAL' if active and reusable > 0 and metrics['customerMS']['savingPercent'] >= 5 and metrics['customerMS']['pairedMeanSavingMS'] >= 1000 and sum(pair['customerSavingMS'] > 0 for pair in measured) >= 2 else 'POSITIVE_BUT_BELOW_MATERIALITY' if active and metrics['customerMS']['pairedMeanSavingMS'] > 0 else 'NO_OBSERVED_BENEFIT' if active else 'INSUFFICIENT_OPPORTUNITY', readinessQualified=False, valueQualified=False, limits=['Exploratory pairs; no interval or precision claim', 'Diagnostic starts fresh at original6; original cache and daemon age are not reconstructed', 'Symmetric worker instrumentation can alter timing; no performance confirmation', 'Isolated observer CPU is additional research resource; total service CPU includes it', 'Selection targets the observed regression; no new value or product gate'], rawResult=dict(path=str(run/'result.json'),sha256=sha(run/'result.json')))
+-    report['schema'] = 'buildopt.checkstyle-finalization/profile/v1'
+-    report['armLabels'] = {'N':'current optimized implementation', 'I':'revised optimized implementation'}
+-    report['materialSignal'] = all(pair['customerSavingMS'] >= 1000 for pair in measured) and metrics['customerMS']['savingPercent'] >= 5
+-    report['decision'] = 'EXPLORATORY_FINALIZATION_SAVING' if report['materialSignal'] else 'FINALIZATION_VALUE_NOT_ESTABLISHED'
++    report = dict(allThreeCandidateTaskStatesVerified=True, measuredReusableFiles=reusable, analyzer=dict(path=str(Path(__file__).resolve()),sha256=sha(__file__)), schema='buildopt.cpu-screen/profile/v1', status='verified', profile=label, workers=cpus, gradleActual=starts, metadataJVMActual=helper, metadataAccounting='Live and independent reconstruction both completed with equal per-pair metadata count; two comparator passes, no third pass', warmupBuilds=2, measuredPairs=len(measured), pairs=pairs, summary=metrics, masks=masks, baselineCheckstyleActions=active, materialSignal=bool(active and reusable > 0 and metrics['customerMS']['savingPercent'] >= 5 and metrics['customerMS']['pairedMeanSavingMS'] >= 1000 and sum(pair['customerSavingMS'] > 0 for pair in measured) >= 2), diagnosticQualityQualified=False, decision='EXPLORATORY_MATERIAL_SIGNAL' if active and reusable > 0 and metrics['customerMS']['savingPercent'] >= 5 and metrics['customerMS']['pairedMeanSavingMS'] >= 1000 and sum(pair['customerSavingMS'] > 0 for pair in measured) >= 2 else 'POSITIVE_BUT_BELOW_MATERIALITY' if active and metrics['customerMS']['pairedMeanSavingMS'] > 0 else 'NO_OBSERVED_BENEFIT' if active else 'INSUFFICIENT_OPPORTUNITY', readinessQualified=False, valueQualified=False, limits=['Exploratory pairs; no interval or precision claim', 'Diagnostic starts fresh at original6; original cache and daemon age are not reconstructed', 'Symmetric worker instrumentation can alter timing; no performance confirmation', 'Isolated observer CPU is additional research resource; total service CPU includes it', 'Selection targets the observed regression; no new value or product gate'], rawResult=dict(path=str(run/'result.json'),sha256=sha(run/'result.json')))
++    report['schema'] = 'buildopt.identical-code-control/profile/v1'
++    report['armLabels'] = {'N':'supported V2', 'I':'identical supported V2'}
++    assert len(measured) == 1
++    pair = measured[0]
++    delta = pair['customerSavingMS']
++    faster = min(pair['N']['customerMS'], pair['I']['customerMS'])
++    report['absoluteDifferenceMS'] = abs(delta)
++    report['signedDifferenceMS'] = delta
++    report['differencePercentOfFaster'] = 100 * abs(delta) / faster
++    report['materialSignal'] = abs(delta) >= 1000 and 100 * abs(delta) / faster >= 5
++    report['decision'] = 'SPURIOUS_MATERIAL_SIGNAL_IN_AA' if report['materialSignal'] else 'NO_SPURIOUS_MATERIAL_SIGNAL_IN_THIS_CONTROL'
+     report['valueQualified'] = False
+     report['productViability'] = 'NOT_ESTABLISHED'
+     report['cpuIsolationQualified'] = masks['nativeAndRunningWorkerAffinityVerified']
+-    report['limits'] = ['Two selected measured pairs; no precision or general product claim',
+-                        'Both arms are optimized; no new native baseline comparison',
++    report['limits'] = ['One selected measured pair; no precision or general product claim',
++                        'Both arms use identical supported V2; this measures a false signal, not optimization value',
+                         'Shared host and symmetric phase agent can influence timing; prospective host flags reported separately',
+                         'Task graph duration can end before revised service closure: whole customer envelope remains the primary metric',
+                         'Qualification is limited to the pinned Gradle 9.7.1 owner without Configuration Cache']

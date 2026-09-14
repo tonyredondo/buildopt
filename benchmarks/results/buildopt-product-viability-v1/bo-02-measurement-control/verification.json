@@ -1,0 +1,55 @@
+{
+  "status": "verified",
+  "decision": "NO_SPURIOUS_MATERIAL_SIGNAL_IN_THIS_CONTROL",
+  "sourceIdentity": [
+    {
+      "originalOrdinal": 6,
+      "revision": "b653442570bc16718c8b75b6bd318dd98e5599b8",
+      "sourceFiles": 47560,
+      "onlyDeclaredPatchApplied": true,
+      "identicalEffectiveSourcesBetweenArms": true,
+      "entriesSHA256": "c7a1f99029289fffc53fa59cfd1940e360181bf6576c02d63fe9a6987236eae8"
+    },
+    {
+      "originalOrdinal": 7,
+      "revision": "3a00a9167b54dc298e015cf92ef692d6ddacab77",
+      "sourceFiles": 47559,
+      "onlyDeclaredPatchApplied": true,
+      "identicalEffectiveSourcesBetweenArms": true,
+      "entriesSHA256": "9e0f8a3e295f3a5c1ee0a253efdb8176e8ec82664197061b16e3a869a070321e"
+    }
+  ],
+  "worktrees": [
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/profiles/supported/run/r1/N/repo",
+      "head": "3a00a9167b54dc298e015cf92ef692d6ddacab77",
+      "branch": "bv-replay-49d5342098a9-r1-N-001",
+      "commonGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/eic-native-v1/repos/elasticsearch.git"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/profiles/supported/run/r1/I/repo",
+      "head": "3a00a9167b54dc298e015cf92ef692d6ddacab77",
+      "branch": "bv-replay-49d5342098a9-r1-I-001",
+      "commonGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/eic-native-v1/repos/elasticsearch.git"
+    }
+  ],
+  "frozenBindingsMatched": 27,
+  "actualOwnerStarts": 4,
+  "liveComparatorJVMs": 2,
+  "independentComparatorJVMs": 2,
+  "extraComparatorPasses": 0,
+  "retryStarts": 0,
+  "ownedSessionsClosed": 2,
+  "historicalStatePreserved": true,
+  "sourceCorrectnessQualified": true,
+  "measurementPrecisionQualified": false,
+  "productValueQualified": false,
+  "allocatedBytes": 12985196544,
+  "freeBytes": 790992728064,
+  "withinDeadline": true,
+  "verificationUTC": "2026-09-14T12:36:15.985712+00:00",
+  "analyzer": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/verify-closeout.py",
+    "sha256": "dd9a864a413320c2a3f615cc56636fa4cba271e832fc99673db1ff049f369ef3"
+  }
+}

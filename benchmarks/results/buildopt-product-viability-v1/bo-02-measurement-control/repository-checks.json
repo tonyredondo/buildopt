@@ -1,0 +1,26 @@
+{
+  "status": "verified",
+  "exportFiles": 28,
+  "scriptSyntaxChecks": 8,
+  "localLinksChecked": 129,
+  "priorBO01FilesPreserved": 4,
+  "indexEmpty": true,
+  "headUnchanged": true,
+  "documentation": {
+    "command": "timeout 300 ./dev/check-documentation",
+    "exitCode": 1,
+    "seconds": 133.72406712797238,
+    "preExistingUntrackedBrokenLinks": 1620,
+    "newDiagnostics": 0,
+    "sameCompleteLogAsBeforeBO02": true,
+    "logSHA256": "ab75d0368cf8bfc4c33baf01f5ce654dad9d80f1cda630fde2a089a190587833",
+    "firstCheck": "Retained one new README-title violation, corrected and rechecked"
+  },
+  "diffCheck": "passed",
+  "completedUTC": "2026-09-14T12:47:47.048084+00:00",
+  "nativeBuilds": 4,
+  "metadataJVMs": 4,
+  "extraNativeStartsForDocumentation": 0,
+  "exportBytesBeforeThisReceipt": 3354380,
+  "publication": "Local only; index and HEAD unchanged"
+}

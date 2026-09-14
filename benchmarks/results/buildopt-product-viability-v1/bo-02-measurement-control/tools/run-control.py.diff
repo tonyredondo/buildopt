@@ -1,0 +1,93 @@
+--- /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/run-comparison-supported.py
++++ /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/run-control.py
+@@ -1,4 +1,4 @@
+-"""Run the frozen current-versus-revised 6-to-7 comparison; retain every sample."""
++"""Run the frozen identical-code 6-to-7 control; retain every sample."""
+ from pathlib import Path
+ import datetime, hashlib, importlib.util, json, os, shutil, signal, subprocess, sys, time
+ sys.dont_write_bytecode = True
+@@ -6,6 +6,7 @@
+ P = Path(__file__).resolve().parent
+ R = P.parents[3]
+ I = P.parent / 'bv006-cpu-isolation'
++F = P.parent / 'bv006-checkstyle-finalization'
+ def load(f): return json.loads(Path(f).read_text())
+ def sha(f): return hashlib.sha256(Path(f).read_bytes()).hexdigest()
+ def now(): return datetime.datetime.now(datetime.timezone.utc).isoformat()
+@@ -25,13 +26,13 @@
+ spec = importlib.util.spec_from_file_location('bindings', I / 'bindings.py')
+ bindings = importlib.util.module_from_spec(spec)
+ spec.loader.exec_module(bindings)
+-for binding in load(P / 'inputs/comparison-supported-final-freeze.json'):
++for binding in load(P / 'inputs/launch-freeze.json'):
+     assert bindings.bind(binding['path']) == binding, binding['path']
+-assert load(P / 'analysis/preliminary-controller.json')['actualOwnerStarts'] == 0
+-assert load(P / 'receipts/owner-runner-final-proof.json')['status'].startswith('verified')
+-assert load(P / 'analysis/correctness-v2.json')['status'].startswith('verified')
+-assert load(P / 'receipts/agent-proof-v2-verified.json')['exitCode'] == 0
+-assert load(P / 'receipts/agent-proof-v2-verified.json')['contextEvents']
++assert load(F / 'analysis/preliminary-controller.json')['actualOwnerStarts'] == 0
++assert load(F / 'receipts/owner-runner-final-proof.json')['status'].startswith('verified')
++assert load(F / 'analysis/correctness-v2.json')['status'].startswith('verified')
++assert load(F / 'receipts/agent-proof-v2-verified.json')['exitCode'] == 0
++assert load(F / 'receipts/agent-proof-v2-verified.json')['contextEvents']
+ profile = P / 'profiles' / label
+ run = profile / 'run'
+ assert not run.exists()
+@@ -39,7 +40,10 @@
+ allocation = load(P / 'allocation.json')
+ starts = 2 * len(m['history']) * m['replications']
+ offset = 6
+-assert starts == 8 and allocation['ownerReserved'] == 16 and allocation['actualOwnerStarts'] == 2
++assert starts == 4 and allocation['ownerReserved'] == allocation['actualOwnerStarts'] == 0
++assert m['controlBaseline']['files'] == m['baseline']['files'] + m['candidate']['files']
++assert m['controlBaseline']['prerequisites'] == m['candidate']['prerequisites']
++assert m['replications'] == 1 and m['limits']['retryPairs'] == 0
+ assert allocation['actualHelpers'] + starts <= allocation['maxStandaloneHelpers']
+ allocation['ownerReserved'] += starts
+ assert allocation['ownerReserved'] <= allocation['maxOwnerControllerReservations']
+@@ -52,7 +56,7 @@
+ receipt = dict(profile=cpus, command=command, cwd=str(R), startUTC=now(), startBootNS=time.clock_gettime_ns(time.CLOCK_BOOTTIME), gradleReserved=starts, helperJVMReserved=starts, driverAndSamplerAffinity=[9])
+ logpath = P / f'logs/profile-{label}.log'
+ samplepath = profile / 'process-samples.jsonl'
+-statepath = P.parent / 'task-state.json'
++statepath = P / 'task-state.json'
+ groups = {}
+ completed = set()
+ identities = {}
+@@ -74,7 +78,7 @@
+             assert head in {row['commit'] for row in m['history']} and record['commonGit'] == m['commonGit']
+             identities[key] = record
+             state = load(statepath)
+-            state['engineeringPrefix']['checkstyleFinalization']['worktrees'] = list(identities.values())
++            state['worktrees'] = list(identities.values())
+             atomic(statepath, state)
+             atomic(profile / 'worktree-identities.json', list(identities.values()))
+ 
+@@ -176,7 +180,7 @@
+     receipt.update(pid=child.pid, procStartTicks=stat(child.pid)['startTicks'])
+     save(P / f'receipts/profile-{label}-start.json', receipt)
+     s = load(statepath)
+-    s['engineeringPrefix']['checkstyleFinalization'].update(runningProcesses=[dict(pid=child.pid, procStartTicks=receipt['procStartTicks'], receipt=str(P / f'receipts/profile-{label}-start.json'))], activeProfile=label, gradleReserved=allocation['ownerReserved'])
++    s.update(runningProcesses=[dict(pid=child.pid, procStartTicks=receipt['procStartTicks'], receipt=str(P / f'receipts/profile-{label}-start.json'))], activeProfile=label, gradleReserved=allocation['ownerReserved'])
+     atomic(statepath, s)
+     deadline = time.monotonic() + m['limits']['maxRunNS'] / 1e9
+     next_identity = 0
+@@ -206,13 +210,13 @@
+ allocation = load(P / 'allocation.json')
+ if (run / 'result.json').exists():
+     result = load(run / 'result.json')
+-    allocation['actualOwnerStarts'] = 2 + result['actualGradleStarts']
++    allocation['actualOwnerStarts'] = result['actualGradleStarts']
+ else:
+-    allocation['actualOwnerStarts'] = 2 + len(list((run / 'attempts').glob('*/native-start.json')))
+-allocation['completedOwnerRequests'] = 2 + len(completed)
++    allocation['actualOwnerStarts'] = len(list((run / 'attempts').glob('*/native-start.json')))
++allocation['completedOwnerRequests'] = len(completed)
+ atomic(P / 'allocation.json', allocation)
+ s = load(statepath)
+-s['engineeringPrefix']['checkstyleFinalization']['runningProcesses'] = []
++s['runningProcesses'] = []
+ atomic(statepath, s)
+ print(json.dumps(receipt))
+ if receipt['exitCode'] != 0 or failure: print(logpath.read_text()[-5000:])

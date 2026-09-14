@@ -1,0 +1,13 @@
+{
+  "command": [
+    "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/history-replay-owner",
+    "validate",
+    "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/profiles/supported/manifest.json"
+  ],
+  "startUTC": "2026-09-14T11:54:24.142254+00:00",
+  "nativeStarts": 0,
+  "metadataJVMStarts": 0,
+  "exitCode": 0,
+  "seconds": 11.734965718002059,
+  "logSHA256": "80644d452e1297dbe3321152174d47efd044dfdf02fff9bc9701778893da8c0d"
+}

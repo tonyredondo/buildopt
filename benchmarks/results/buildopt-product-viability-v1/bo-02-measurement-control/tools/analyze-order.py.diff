@@ -1,0 +1,37 @@
+--- /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/analyze-order-v2.py
++++ /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/analyze-order.py
+@@ -11,7 +11,7 @@
+ phase={row['attempt']:row for row in phases['attempts']}
+ pressure={row['attempt']:row for row in host['requests']}
+ rows=[]
+-for rep in (1,2):
++for rep in (1,):
+     measured=[]
+     for arm in ('N','I'):
+         name=f'r{rep}-001-g0-{arm}'
+@@ -39,18 +39,18 @@
+     rows.extend(measured)
+ first=[row['customerSeconds'] for row in rows if row['measuredOrder']==1]
+ second=[row['customerSeconds'] for row in rows if row['measuredOrder']==2]
+-result=dict(status='verified descriptive order and idle-age reconstruction; causal attribution unverified',
++result=dict(status='verified descriptive order and idle-age reconstruction for one A/A pair; causal attribution unverified',
+     primaryDecision=profile['decision'],rows=rows,firstMeasuredCustomerSeconds=first,secondMeasuredCustomerSeconds=second,
+     firstMeanCustomerSeconds=statistics.mean(first),secondMeanCustomerSeconds=statistics.mean(second),
+-    bothSecondRequestsSlower=all(rows[i+1]['customerSeconds']>rows[i]['customerSeconds'] for i in (0,2)),
++    secondRequestSlower=rows[1]['customerSeconds']>rows[0]['customerSeconds'],
+     sameActualCheckingWork=phases['actualProcessedAndReusedCountsEquivalent'],
+-    observation='The first measured arm is I in replication1 and N in replication2. Both first requests are near83s; both second requests are slower. Their private daemons also have longer idle ages. This is an association, not proof that capture, cache eviction or another process caused the delay.',
+-    implication='The original both-pairs saving criterion fails. No first-only comparison, outlier removal, timing replacement or new value gate is permitted. A small identical-code A/A control should precede additional native-value claims.',
+-    nextControl='Four owner builds: identical correctness-qualified code on both arms, same6->7 schedule and observation. Predeclare whether it produces a spurious material difference; do not expand to native17..20 until this measurement concern is resolved.',
+-    limits=['Only two replications; no variance or causal estimate',
++    observation='Same-code 6-to-7 control; order and idle intervals are descriptive, not a causal explanation.',
++    implication='Apply the predeclared A/A threshold to the whole request. No sample removal, timing retry or value gate is permitted.',
++    nextControl='No control rerun authorized by this result. Record the measurement disposition before another timing allocation.',
++    limits=['Only one replication; no variance or causal estimate',
+             'Cold-to-measured interval contains capture, comparison and other-arm work; it is not pure daemon sleep',
+             'Sampled process reads/faults omit unobserved boundary work and do not identify a cache layer',
+-            'Whole-build comparisons across replications are descriptive and cannot replace the registered paired decision'],
++            'This control cannot establish measurement precision or optimization value'],
+     analyzerSHA256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest())
+ output=D/'analysis/order-and-idle-age.json';assert not output.exists();output.write_text(json.dumps(result,indent=2)+'\n')
+ for row in rows:print(row['attempt'],'order',row['measuredOrder'],'customer',round(row['customerSeconds'],3),'idle',round(row['idleSinceOwnColdNativeCompletionSeconds'],1),'host',row['hostFlag'],'daemon major faults',row['daemonObservedMajorFaults'])

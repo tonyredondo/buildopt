@@ -1,0 +1,17 @@
+{
+  "question": "Does the preserved schedule produce a material difference with identical supported V2 code?",
+  "absoluteThresholdMS": 1000,
+  "percentThresholdOfFaster": 5,
+  "falseSignal": "SPURIOUS_MATERIAL_SIGNAL_IN_AA",
+  "noFalseSignal": "NO_SPURIOUS_MATERIAL_SIGNAL_IN_THIS_CONTROL",
+  "correctnessFailure": "INCOMPLETE_CONTROL",
+  "primaryMetric": "Attempt duration plus all customer-machine costs outside that request envelope",
+  "builds": 4,
+  "measuredPairs": 1,
+  "timingRetry": false,
+  "sourceIdentityRequired": true,
+  "referenceProtocol": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/docs/plans/buildopt-checkstyle-measurement-control-v1.md",
+    "sha256": "bfa04a6313d88ede99a7973f7fc21d2530724dcf26a8fc0bb1b2348d227b037b"
+  }
+}

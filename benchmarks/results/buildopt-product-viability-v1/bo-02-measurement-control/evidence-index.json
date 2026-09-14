@@ -1,0 +1,182 @@
+{
+  "status": "verified exact copies",
+  "rawStateRoot": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14",
+  "files": [
+    {
+      "path": "result.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/analysis/profile-supported.json",
+      "bytes": 14048,
+      "sha256": "eb4e4b3e5fca11924646282df8a943ea6c9eb2e6664c2bf6600d59432a39c8c3"
+    },
+    {
+      "path": "verification.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/analysis/verification.json",
+      "bytes": 2376,
+      "sha256": "92684a88d4d56825a7cb66e4782e67206c7720bb23cbfdff6fa00b252eb67137"
+    },
+    {
+      "path": "host-pressure.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/analysis/host-pressure.json",
+      "bytes": 1208329,
+      "sha256": "eeeaa8b5a7ed9bfac60d328ac7d30c9a4ae0e0240e4caab307f0bf40f3f2e00d"
+    },
+    {
+      "path": "task-execution.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/analysis/diagnostic-phases.json",
+      "bytes": 1981556,
+      "sha256": "46adeebdb2ed8a3aff6bda1ede99b32b3850cb0facb074496234ca6f3b75c837"
+    },
+    {
+      "path": "order-and-idle-age.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/analysis/order-and-idle-age.json",
+      "bytes": 4851,
+      "sha256": "2033cc2ccee862e0af32cf93d36b3bcd1fa8561b24b1393083393b8ade3d0b8c"
+    },
+    {
+      "path": "manifest.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/profiles/supported/manifest.json",
+      "bytes": 15861,
+      "sha256": "38ef666dbb25f4d43a6bebae5edb7893e1accc396732b614030574978be075e4"
+    },
+    {
+      "path": "runner-result.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/profiles/supported/run/result.json",
+      "bytes": 2218,
+      "sha256": "89413902f80f1dcb011a07778e9e14893697f6d4a3ad863fe77e5c63db1e1d17"
+    },
+    {
+      "path": "allocation.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/allocation.json",
+      "bytes": 827,
+      "sha256": "86fc8cf35b7aa0c2185af1f49afa3e61dbc18fcf61a34ca493b81600b493e8b1"
+    },
+    {
+      "path": "protocol.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/inputs/protocol.json",
+      "bytes": 770,
+      "sha256": "eaac503f1bead091edf54fbe329b37e2aef23736e98a007e4a880a7047df2718"
+    },
+    {
+      "path": "launch-freeze.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/inputs/launch-freeze.json",
+      "bytes": 7002,
+      "sha256": "2469723a588afb8cc1b677318deffb6c8c4dfc07dec5b5ab1b4cb759a94c4603"
+    },
+    {
+      "path": "receipts/preparation.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/receipts/preparation.json",
+      "bytes": 427,
+      "sha256": "2c899a4ad634d9cb27fb76fc646e91308d3efd3495ac4834dca719fbf9fd8906"
+    },
+    {
+      "path": "receipts/static-checks.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/receipts/static-checks.json",
+      "bytes": 599,
+      "sha256": "acb5e90d791d0068451b7e2084314704c97349263d72adfe1bfbf466d73059d8"
+    },
+    {
+      "path": "receipts/manifest-validation.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/receipts/manifest-validation.json",
+      "bytes": 593,
+      "sha256": "88f92d0720a4f1942659018579be996dc72f4ac4e01451e21a5770ea57c44376"
+    },
+    {
+      "path": "receipts/run-start.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/receipts/profile-supported-start.json",
+      "bytes": 662,
+      "sha256": "274ea93a8db86b1cb5fac1f67da4c5618dd4087093ed8132916dd430b75dcadb"
+    },
+    {
+      "path": "receipts/run-end.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/receipts/profile-supported-end.json",
+      "bytes": 1023,
+      "sha256": "b68f353bf82c78fe04ca87dffde7af2f50dfde1687fd4f478324c15933ccba54"
+    },
+    {
+      "path": "tools/run-control.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/run-control.py",
+      "bytes": 12986,
+      "sha256": "ff389838cbaee4309e7f03ec5cec5df406b08982817bb2ef96c3068f8baa252f"
+    },
+    {
+      "path": "tools/run-control.py.diff",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/inputs/run-control.py.diff",
+      "bytes": 5644,
+      "sha256": "0811ecf1d41da9623f2df27eacdb82e3453a42d150e260d3079d27d589bc4804"
+    },
+    {
+      "path": "tools/analyze-control.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/analyze-control.py",
+      "bytes": 17615,
+      "sha256": "e512c03c112c984e0b5e58a2b2fadb0ba7f663b88dc9847cf61b337bd27fd995"
+    },
+    {
+      "path": "tools/analyze-control.py.diff",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/inputs/analyze-control.py.diff",
+      "bytes": 6665,
+      "sha256": "3e153f80d62dcb1beb688d61f4ce8800534332985d056a20f1febea86732eb56"
+    },
+    {
+      "path": "tools/analyze-host.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/analyze-host.py",
+      "bytes": 6379,
+      "sha256": "ea3e55b18bd32ed09c9f8d3724b9f551367e059f9c7c15fd036ac930f0ec6744"
+    },
+    {
+      "path": "tools/analyze-host.py.diff",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/inputs/analyze-host.py.diff",
+      "bytes": 1673,
+      "sha256": "567ab6ce6b7df9435f1d24e27d6072904e33aab89251a7bf6dba4d9087d1bbb4"
+    },
+    {
+      "path": "tools/analyze-phases.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/analyze-phases.py",
+      "bytes": 10373,
+      "sha256": "2c362a96203641c1982be1b889846514ec35cf5a6f3048bd8cf0e3377e4d4361"
+    },
+    {
+      "path": "tools/analyze-phases.py.diff",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/inputs/analyze-phases.py.diff",
+      "bytes": 945,
+      "sha256": "5c5bf120952fa04bf7b80c51567dbc5b1069f7f2c12066e55bcf581e31a0f96d"
+    },
+    {
+      "path": "tools/analyze-order.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/analyze-order.py",
+      "bytes": 4225,
+      "sha256": "713363877592b41ee752790a0da6e10352f0e136a88a9d4879ad16b08e412e0d"
+    },
+    {
+      "path": "tools/analyze-order.py.diff",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/inputs/analyze-order.py.diff",
+      "bytes": 3724,
+      "sha256": "18fa748cae760d8747ad62e7c1323923721c38bbe62be3ecc1b3ab8fd3195dec"
+    },
+    {
+      "path": "tools/prepare.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/prepare.py",
+      "bytes": 11376,
+      "sha256": "b7987b737c4d6117c3587cdda90f6a6244409309846626ded25f775dc5e01825"
+    },
+    {
+      "path": "tools/verify-closeout.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/verify-closeout.py",
+      "bytes": 7362,
+      "sha256": "dd9a864a413320c2a3f615cc56636fa4cba271e832fc99673db1ff049f369ef3"
+    },
+    {
+      "path": "tools/export-evidence.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/export-evidence.py",
+      "bytes": 9166,
+      "sha256": "9be6123e8ffca8918db926d459c93a62aa1562b5fce6bb6802f6d7bfd4536acd"
+    },
+    {
+      "path": "repository-checks.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/receipts/repository-checks.json",
+      "bytes": 862,
+      "sha256": "a635002a737a295d89e07e8c80ae8de4a891f72cce7644cb6899b61bb0ebd6c1"
+    }
+  ],
+  "rawEvidenceRetainedLocally": true,
+  "portability": "Reports and execution inputs are included. Full output inventories, retained files and process samples remain at their bound local paths; this export alone cannot rerun C5."
+}

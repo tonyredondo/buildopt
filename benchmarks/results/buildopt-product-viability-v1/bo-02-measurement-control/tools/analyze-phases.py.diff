@@ -1,0 +1,13 @@
+--- /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/analyze-phases-v2.py
++++ /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/analyze-phases.py
+@@ -136,8 +136,8 @@
+                customerEnvelopeSeconds=end['durationNS'] / 1e9, startUTC=iso(begin_epoch), endUTC=iso(end_epoch),
+                tasks=tasks, phases=phases, adapterTasks=adapter_tasks, resources=resources, fiveSecondCPUBins=dict(bins))
+     rows.append(row)
+-assert len(rows) == 8
+-for replication in (1,2):
++assert len(rows) == 4
++for replication in (1,):
+     for ordinal in (6,7):
+         pair = {row['arm']: row for row in rows if row['replication'] == replication and row['originalOrdinal'] == ordinal}
+         actions = {arm:sorted(k for k,t in row['tasks'].items() if t['action']) for arm,row in pair.items()}

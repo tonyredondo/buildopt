@@ -1,0 +1,120 @@
+{
+  "status": "verified descriptive order and idle-age reconstruction for one A/A pair; causal attribution unverified",
+  "primaryDecision": "NO_SPURIOUS_MATERIAL_SIGNAL_IN_THIS_CONTROL",
+  "rows": [
+    {
+      "attempt": "r1-001-g0-I",
+      "replication": 1,
+      "arm": "I",
+      "startBootNS": 265262263832899,
+      "endBootNS": 265343445654286,
+      "nativeSeconds": 81.181821387,
+      "customerSeconds": 81.293585444,
+      "idleSinceOwnColdNativeCompletionSeconds": 156.130210774,
+      "hostFlag": "FLAGGED",
+      "hostObservation": {
+        "attempt": "r1-001-g0-I",
+        "replication": 1,
+        "originalOrdinal": 7,
+        "arm": "I",
+        "nativeSeconds": 81.181821387,
+        "coverageSeconds": 81.181821387,
+        "maximumSampleGapSeconds": 1.011773185,
+        "samplingQualified": true,
+        "incompleteOwnershipSeconds": 0,
+        "externalCPUAttributionQualified": true,
+        "contendedFractionUpperBound": 0.27322778219351407,
+        "contendedFractionLowerBound": 0.27322778219351407,
+        "contention": "FLAGGED",
+        "averageExternalCoreEquivalentsUpperBound": 0.351397825487036,
+        "averageHostBusyCoreEquivalents": 4.788466132994648,
+        "averageOwnedCoreEquivalentsLowerBound": 4.437068307507611,
+        "averagePressure": {
+          "cpu": 0.07306426300760387,
+          "io": 0.034857035898476565,
+          "memory": 7.748040007645413e-05
+        }
+      },
+      "observedProcessReadBytes": 12288,
+      "observedProcessMajorFaults": 0,
+      "daemonObservedReadBytes": 12288,
+      "daemonObservedMajorFaults": 0,
+      "selectedTaskSeconds": {
+        ":server:compileJava": 20.654681088,
+        ":server:compileTestJava": 32.83705728,
+        ":server:collectTransportVersionReferences": 0.370501888,
+        ":server:checkstyleMain": 10.455588864,
+        ":server:checkstyleTest": 7.685207808
+      },
+      "measuredOrder": 1,
+      "gapFromPriorMeasuredNativeSeconds": null
+    },
+    {
+      "attempt": "r1-001-g0-N",
+      "replication": 1,
+      "arm": "N",
+      "startBootNS": 265401468170118,
+      "endBootNS": 265485414837946,
+      "nativeSeconds": 83.946667828,
+      "customerSeconds": 84.03525843,
+      "idleSinceOwnColdNativeCompletionSeconds": 1106.282350206,
+      "hostFlag": "FLAGGED",
+      "hostObservation": {
+        "attempt": "r1-001-g0-N",
+        "replication": 1,
+        "originalOrdinal": 7,
+        "arm": "N",
+        "nativeSeconds": 83.946667828,
+        "coverageSeconds": 83.946667828,
+        "maximumSampleGapSeconds": 1.732305133,
+        "samplingQualified": true,
+        "incompleteOwnershipSeconds": 0,
+        "externalCPUAttributionQualified": true,
+        "contendedFractionUpperBound": 0.24598152717995697,
+        "contendedFractionLowerBound": 0.24598152717995697,
+        "contention": "FLAGGED",
+        "averageExternalCoreEquivalentsUpperBound": 0.29064129714382875,
+        "averageHostBusyCoreEquivalents": 4.45437363020875,
+        "averageOwnedCoreEquivalentsLowerBound": 4.163732333064922,
+        "averagePressure": {
+          "cpu": 0.06979428431961703,
+          "io": 0.02388434846510292,
+          "memory": 0.00012038595767382196
+        }
+      },
+      "observedProcessReadBytes": 344064,
+      "observedProcessMajorFaults": 0,
+      "daemonObservedReadBytes": 180224,
+      "daemonObservedMajorFaults": 0,
+      "selectedTaskSeconds": {
+        ":server:compileJava": 21.1464,
+        ":server:compileTestJava": 35.041431808,
+        ":server:collectTransportVersionReferences": 0.324822784,
+        ":server:checkstyleMain": 10.841041152,
+        ":server:checkstyleTest": 7.634959872
+      },
+      "measuredOrder": 2,
+      "gapFromPriorMeasuredNativeSeconds": 58.022515832
+    }
+  ],
+  "firstMeasuredCustomerSeconds": [
+    81.293585444
+  ],
+  "secondMeasuredCustomerSeconds": [
+    84.03525843
+  ],
+  "firstMeanCustomerSeconds": 81.293585444,
+  "secondMeanCustomerSeconds": 84.03525843,
+  "secondRequestSlower": true,
+  "sameActualCheckingWork": true,
+  "observation": "Same-code 6-to-7 control; order and idle intervals are descriptive, not a causal explanation.",
+  "implication": "Apply the predeclared A/A threshold to the whole request. No sample removal, timing retry or value gate is permitted.",
+  "nextControl": "No control rerun authorized by this result. Record the measurement disposition before another timing allocation.",
+  "limits": [
+    "Only one replication; no variance or causal estimate",
+    "Cold-to-measured interval contains capture, comparison and other-arm work; it is not pure daemon sleep",
+    "Sampled process reads/faults omit unobserved boundary work and do not identify a cache layer",
+    "This control cannot establish measurement precision or optimization value"
+  ],
+  "analyzerSHA256": "713363877592b41ee752790a0da6e10352f0e136a88a9d4879ad16b08e412e0d"
+}

@@ -1,0 +1,84 @@
+{
+  "schema": "buildopt.history-replay/result/v2",
+  "manifestSHA256": "d080be37ab478cb91d14e58050c3750bf6f897c62b8abdfa35ee413a8e471308",
+  "replications": [
+    {
+      "replication": 1,
+      "scheduled": 1,
+      "comparable": 1,
+      "adoptionNS": 0,
+      "maintenanceNS": 2294564,
+      "unpairedCandidateNS": 0,
+      "nativeNS": 84035258430,
+      "netSavedNS": 2741672986,
+      "netFraction": 0.032625269883399824,
+      "netPerScheduledNS": 2741672986,
+      "nativeP50NS": 84035258430,
+      "nativeP95NS": 84035258430,
+      "candidateP50NS": 81291290880,
+      "candidateP95NS": 81291290880,
+      "worstRegressionNS": 0,
+      "noActionSlots": 0,
+      "noActionDeltaNS": 0,
+      "noActionAttributedSavingNS": 0,
+      "paybackOrdinal": 1,
+      "temporaryCrossings": [],
+      "curveNS": [
+        2741672986
+      ],
+      "intervals": [],
+      "customerHumanNS": 0,
+      "researchNS": 1572003109158,
+      "researchRecordingAndOtherNS": 86187352345,
+      "studyMachineNS": 2166114415428,
+      "wholeStudySensitivityNetNS": -2163372742442,
+      "fullyLoadedNetNS": -1569261436172,
+      "complete": true,
+      "gate": "NOT_QUALIFIED",
+      "reasons": [
+        "qualification/engineering is not confirmation"
+      ]
+    }
+  ],
+  "slots": [
+    [
+      {
+        "ownerMetadataJVMStarts": 1,
+        "ordinal": 0,
+        "class": "COMPARABLE",
+        "reason": "",
+        "nativeNS": 220782117221,
+        "candidateNS": 208000345175,
+        "extraCandidateNS": 0,
+        "nativeActions": 1249,
+        "candidateActions": 1249,
+        "attempts": [
+          "r1-000-g0-N",
+          "r1-000-g0-I"
+        ]
+      },
+      {
+        "ownerMetadataJVMStarts": 1,
+        "ordinal": 1,
+        "class": "COMPARABLE",
+        "reason": "",
+        "nativeNS": 84035258430,
+        "candidateNS": 81291290880,
+        "extraCandidateNS": 0,
+        "nativeActions": 385,
+        "candidateActions": 385,
+        "attempts": [
+          "r1-001-g0-N",
+          "r1-001-g0-I"
+        ]
+      }
+    ]
+  ],
+  "workflowStarts": 4,
+  "gradleReservations": 4,
+  "actualGradleStarts": 4,
+  "nestedStarts": 0,
+  "unknownGradleReservations": 0,
+  "decision": "FIXTURE_VERIFIED",
+  "reasons": []
+}

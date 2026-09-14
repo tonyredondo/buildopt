@@ -1,0 +1,21 @@
+{
+  "status": "verified",
+  "manifestChangedTopLevelFields": [
+    "frozenUTC",
+    "subject",
+    "runRoot",
+    "replications",
+    "limits",
+    "controlBaseline"
+  ],
+  "allOtherManifestFieldsUnchanged": true,
+  "identicalEffectiveSourceFiles": 6,
+  "thresholdBoundaryCases": 8,
+  "syntaxChecked": 5,
+  "priorAllocationUntouched": true,
+  "nativeStarts": 0,
+  "metadataJVMStarts": 0,
+  "controllerDiffReviewed": true,
+  "analysisDiffReviewed": true,
+  "sourceIdentity": "All six effective source patches and candidate prerequisites equal in both arms; materialization checked by runner later"
+}
