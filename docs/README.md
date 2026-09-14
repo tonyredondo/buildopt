@@ -4,10 +4,12 @@ This portal organizes the repository by the task a reader is trying to
 complete. You do not need to read the master RFC or the implementation tracker
 before running the product.
 
-For research, start with the [current status register](./research-status.md).
-It identifies the only current program, discarded directions, retained
-foundations and every historical plan. Old handoffs and pending boxes do not
-reopen a closed experiment.
+For research, start with the
+[governing execution plan](./plans/buildopt-research-execution-plan-2026-09-14.md)
+and its [step tracker](./plans/buildopt-research-execution-plan-2026-09-14.md#execution-tracker).
+The [status register](./research-status.md) distinguishes discarded directions,
+retained foundations and historical plans. Old handoffs and pending boxes do
+not reopen a closed experiment.
 
 ## Choose a path
 
@@ -20,9 +22,9 @@ reopen a closed experiment.
 | Operate self-hosted or Edge | [Operations guide](./guides/operations.md) | [Runbooks](../runbooks/README.md) |
 | Diagnose a problem | [Troubleshooting](./troubleshooting.md) | [CLI reference](./reference/cli.md) |
 | Decide next-quarter investment | [Build Optimization investment review](./findings/buildopt-next-quarter-investment-review-2026-09-10.md) | [Supporting evidence and experiment map](./findings/buildopt-next-quarter-evidence-2026-09-10.md) |
-| Check what to pursue or discard | [Research status register](./research-status.md) | [Current tracker](./plans/buildopt-product-viability-v1-tracker.md), [evidence ledger](./plans/buildopt-product-viability-v1-evidence.md) |
+| Check what to pursue or discard | [Governing research plan](./plans/buildopt-research-execution-plan-2026-09-14.md) | [Step tracker](./plans/buildopt-research-execution-plan-2026-09-14.md#execution-tracker), [research status register](./research-status.md) |
 | Review historical POC mechanisms and measured value | [Historical POC one-pager](./findings/buildopt-poc-handoff.md) | [Detailed performance findings](./findings/build-optimization-performance.md), [benchmark evidence](../benchmarks/README.md) |
-| Plan the next product viability study | [Product Viability v1](./plans/buildopt-product-viability-v1.md) | [Detailed tracker](./plans/buildopt-product-viability-v1-tracker.md), [historical replay contract](./plans/buildopt-product-viability-v1-replay.md), [evidence and investment decisions](./plans/buildopt-product-viability-v1-evidence.md) |
+| Execute the next product viability step | [Current plan and tracker](./plans/buildopt-research-execution-plan-2026-09-14.md#execution-tracker) | [Historical replay contract](./plans/buildopt-product-viability-v1-replay.md), [prior execution evidence](./plans/buildopt-product-viability-v1-tracker.md) |
 | Review the closed complete native-correction study | [Complete Native Correction POC](./plans/complete-native-correction-poc.md) | [Execution tracker](./plans/complete-native-correction-poc-tracker.md), [terminal evidence](../benchmarks/results/complete-native-correction-v1/cnc004-native-admission/README.md); six native captures complete, admission rejected |
 | Review the previous cross-machine handoff | [Historical handoff, 2026-09-07](./findings/buildopt-cross-machine-handoff-2026-09-07.md) | Retained baseline and evidence; resume new work from the current viability tracker |
 | Review the closed source-bound correction experiment | [Source-Bound Configuration-Input Corrections POC](./plans/source-bound-configuration-input-corrections-poc.md) | [Contract](../specs/poc-source-bound-configuration-input-corrections-v1.md), [evidence index](../benchmarks/results/source-bound-configuration-input-corrections-v1/README.md), [generalization audit](./findings/buildopt-generalization-audit.md) |
@@ -62,8 +64,9 @@ reopen a closed experiment.
 
 ### Findings and recommendations
 
-These are retained historical findings. Current investment decisions live in
-the [research status register](./research-status.md) and viability plan.
+These are retained historical findings. Current research decisions live in
+the [governing plan](./plans/buildopt-research-execution-plan-2026-09-14.md)
+and [research status register](./research-status.md).
 
 - [Installed Elasticsearch experiment, 2026-09-08](./findings/buildopt-elasticsearch-installed-experiment-2026-09-08.md):
   verified C12/M24 and 52 owner methods; terminal persistent-delivery failure
@@ -89,24 +92,18 @@ the [research status register](./research-status.md) and viability plan.
 
 #### Current research
 
-- [Product Viability v1](./plans/buildopt-product-viability-v1.md)
-  and [detailed tracker](./plans/buildopt-product-viability-v1-tracker.md):
-  proposed native incremental corrections and adaptive management, retired research
-  routes, a [100-transition replay contract](./plans/buildopt-product-viability-v1-replay.md),
-  a required native/fixed/adaptive comparison, and separate technical and
-  paid-customer gates backed by an
-  [evidence ledger](./plans/buildopt-product-viability-v1-evidence.md).
-  [BV-001 prerequisite evidence](../benchmarks/results/buildopt-product-viability-v1/bv001/inputs.md)
-  is verified. The [20-transition native audit](../benchmarks/results/buildopt-product-viability-v1/bv002/opportunity.md)
-  rejects the ForbiddenPatterns seed at G1; the
-  [technical decision](../benchmarks/results/buildopt-product-viability-v1/viability-decision.md)
-  preserves the original negative result and its unrun downstream phases.
-  The later [Checkstyle admission](../benchmarks/results/buildopt-product-viability-v1/checkstyle-admission/README.md)
-  permits a bounded content-aware prototype, with no measured candidate saving.
-  The [prototype correctness proof](../benchmarks/results/buildopt-product-viability-v1/checkstyle-prototype/README.md)
-  now verifies BV-003/BV-004 for the frozen owner. BV-005 replay qualification
-  is next; candidate lifecycle saving and adaptive/customer gates remain unproved.
-  All six other repository histories are verified; their value remains unmeasured.
+- [Research execution plan, 2026-09-14](./plans/buildopt-research-execution-plan-2026-09-14.md)
+  owns `BUILDOPT-VIABILITY-V1` priorities and its twelve-step tracker. Prove
+  sustained fixed-correction savings, measure a manual MVP, then establish
+  added value from adaptation. Build Impact receives only its bounded admission
+  review; retired generic mechanisms remain closed. The next timing step is the
+  [four-build Checkstyle control](./plans/buildopt-checkstyle-measurement-control-v1.md).
+- The [replay contract](./plans/buildopt-product-viability-v1-replay.md) retains
+  the technical acceptance rules. The [earlier plan](./plans/buildopt-product-viability-v1.md),
+  [execution record](./plans/buildopt-product-viability-v1-tracker.md) and
+  [evidence ledger](./plans/buildopt-product-viability-v1-evidence.md) retain
+  scoped results and source bindings. Their conflicting priorities and commercial
+  phases are superseded; no experiment is started by registering the new plan.
 
 #### Closed research and historical substudies
 

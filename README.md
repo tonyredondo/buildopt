@@ -1,18 +1,15 @@
 # BuildOpt
 
-> **Current research, 2026-09-08:** [Product Viability v1](./docs/plans/buildopt-product-viability-v1.md)
-> is the only current research program: native incremental corrections, real
-> Git-history replay and adaptive management. BV-001 prerequisites are verified;
-> the first 20-commit native replay rejects the ForbiddenPatterns seed at G1.
-> See the [technical decision](./benchmarks/results/buildopt-product-viability-v1/viability-decision.md).
-> The subsequent [Checkstyle prototype](./benchmarks/results/buildopt-product-viability-v1/checkstyle-prototype/README.md)
-> passes the frozen owner correctness gate. A qualified chronological replay
-> instrument is next; actual lifecycle savings remain unproved.
-> Product viability remains unproven.
-> Use its [tracker](./docs/plans/buildopt-product-viability-v1-tracker.md) for
-> next work and the [research status register](./docs/research-status.md) for
-> discarded routes. The POC results below are historical; the usage guides
-> describe retained implementation.
+> **Current research, 2026-09-14:** follow the
+> [governing execution plan](./docs/plans/buildopt-research-execution-plan-2026-09-14.md)
+> and its [step tracker](./docs/plans/buildopt-research-execution-plan-2026-09-14.md#execution-tracker).
+> `BUILDOPT-VIABILITY-V1` first tests sustained savings, then a manual MVP, then
+> added adaptive value. Build Impact has a bounded admission review; generic
+> plan reuse remains closed. The next timing experiment is the pending
+> four-build Checkstyle control. Product viability remains unproven.
+> The [research status register](./docs/research-status.md) distinguishes current
+> work from retired routes. POC results and older next-step instructions below
+> are historical; usage guides describe retained implementation.
 
 BuildOpt makes Gradle builds faster without changing their expected outputs.
 It runs the existing Gradle command, observes what happened, and activates

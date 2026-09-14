@@ -1,10 +1,36 @@
 # BuildOpt research status
 
-Updated: 2026-09-10. This is the current research disposition register. It
-implements the decision to mark discarded work and preserve its evidence.
-It changes research priority, not executable contracts or historical results.
+Updated: 2026-09-14. This is the current research disposition register.
+The [governing execution plan](./plans/buildopt-research-execution-plan-2026-09-14.md)
+owns priorities and sequencing within `BUILDOPT-VIABILITY-V1`. Executable
+contracts, frozen inputs and historical results retain their original scope.
 
 ## Current work
+
+Follow the governing plan's
+[execution tracker](./plans/buildopt-research-execution-plan-2026-09-14.md#execution-tracker):
+prove sustained fixed-correction savings, measure a usable manual MVP, then
+prove added adaptive value. The plan is registered; no new experiment has run.
+BO-01 recovers inputs and existing proof. BO-02 is the pending four-build
+identical-code Checkstyle control. Read-only candidate reviews may proceed
+without starting competing builds or opening the protected validation history.
+
+Build Impact has a bounded admission review at BO-04 for the known Ktor and
+Beam cases. A new trial requires a concrete question not already answered by
+the retired studies and a prospective protocol. Generic plan selection/reuse,
+adaptive fragments, runtime sweeps and another general cache remain retired.
+
+The earlier BV plan/tracker preserve execution evidence; their conflicting
+next-step and commercial instructions are superseded. Their old references to
+the "current tracker" do not create another work queue. Use the new tracker
+for future steps and retain the old replay contract's technical acceptance
+criteria. Product viability remains **NOT_ESTABLISHED**.
+
+## Research evidence through 2026-09-10
+
+The sequence below preserves the completed experiments and their original
+qualifications. Its historical "next" and "current" wording is subordinate to
+the governing plan above. No previous negative or incomplete result is promoted.
 
 **Latest completed experiment:** [supported Checkstyle finalization](../benchmarks/results/buildopt-product-viability-v1/bv006-checkstyle-finalization/README.md)
 passes affected correctness and all eight comparison builds, including four live
@@ -67,10 +93,10 @@ repositories remain unconsumed. Older candidate, reader and resource-audit
 failures stay retained. Its locator remains `engineeringPrefix.screenCompletionFixed`.
 Earlier “next” statements below are historical when superseded by these closeouts.
 
-**The only current research program is `BUILDOPT-VIABILITY-V1`.** Start with
-the [plan](./plans/buildopt-product-viability-v1.md) and resume from the
-[execution tracker](./plans/buildopt-product-viability-v1-tracker.md).
-Planning is verified and the owner requested execution on 2026-09-08.
+**Prior execution of `BUILDOPT-VIABILITY-V1`:** the
+[earlier plan](./plans/buildopt-product-viability-v1.md) and
+[execution record](./plans/buildopt-product-viability-v1-tracker.md)
+retain work authorized on 2026-09-08 and its completed planning proof.
 BV-001 verified the actual source tree, required builds and 100 history edges.
 The [20-transition native audit](../benchmarks/results/buildopt-product-viability-v1/bv002/opportunity.md)
 rejects the registered ForbiddenPatterns intervention at G1. Its generous
@@ -166,9 +192,10 @@ available, with their builds and opportunities still unmeasured.
 
 | Route | Disposition | Required outcome |
 |---|---|---|
-| H1: incremental work inside a native Gradle task | CURRENT; Checkstyle G2 verified for the frozen owner | Original ForbiddenPatterns case stays negative; resolve the ordinal7 Checkstyle regression and measurement prerequisites before lifecycle confirmation |
+| H1: incremental work inside a native Gradle task | CURRENT; Checkstyle G2 verified for the frozen owner | Original ForbiddenPatterns case stays negative; complete BO-01/BO-02 recovery and measurement disposition before a fresh value screen |
 | H2: repair observed unnecessary native invalidation | CONDITIONAL | Admit a concrete native cause first; at most two causes, with the same correctness and lifecycle gates |
-| H3: adaptive management of native corrections | CURRENT, required product behavior | Detect lost applicability/value, suspend, search, validate and replace within bounded policy; prove its full cost against both native and fixed correction |
+| H3: adaptive management of native corrections | REQUIRED LATER; implementation deferred | BO-11 follows fixed-correction value, manual MVP and sufficient lifetime evidence; prove added value over both native and fixed correction |
+| Selected Build Impact results in Ktor and Beam | CONDITIONAL; BO-04 admission review only | Establish an unanswered, discriminating question before any new timing; generic plan reuse and fragment variants remain retired |
 
 The [replay contract](./plans/buildopt-product-viability-v1-replay.md) starts
 with 100 consecutive first-parent transitions, split into 20 engineering and
@@ -230,7 +257,7 @@ baselines. Their presence is not an investment decision or activation proof.
 
 | Location | How to use it now |
 |---|---|
-| [Implementation tracker](../implementation-tracker.md) and [master RFC](../gradle-build-optimization-platform.md) | Retained implementation/decision baseline. Historical phase and roadmap language does not schedule new research; use the current BV tracker |
+| [Implementation tracker](../implementation-tracker.md) and [master RFC](../gradle-build-optimization-platform.md) | Retained implementation/decision baseline. Historical phase and roadmap language does not schedule new research; use the governing plan's BO tracker |
 | [Specifications](../specs/README.md), [contracts](../contracts/README.md) and [ADRs](../adr/README.md) | Preserve executable invariants. A closed POC contract can still be needed to validate old tooling; it grants no fresh experiment budget |
 | [Benchmark results](../benchmarks/README.md) and host-local evidence | Preserve raw data, manifests, pins, negative outcomes, costs and failed attempts. Never overwrite them with a new run |
 | [Findings](./README.md#findings-and-recommendations) and old handoffs | Historical observations; old “next”, “active” and “authorized” wording is scoped to the original campaign |
@@ -250,11 +277,13 @@ that passed. Their notices link back here rather than rewriting old decisions.
 
 | Plan or tracker | Disposition |
 |---|---|
-| [Product viability plan](./plans/buildopt-product-viability-v1.md) | CURRENT |
-| [Product viability tracker](./plans/buildopt-product-viability-v1-tracker.md) | CURRENT |
-| [Product viability replay contract](./plans/buildopt-product-viability-v1-replay.md) | CURRENT |
-| [Product viability evidence ledger](./plans/buildopt-product-viability-v1-evidence.md) | CURRENT |
-| [CPU profile screening budget](./plans/buildopt-product-viability-v1-cpu-screen.md) | CURRENT; 36-start ceiling retained, execution blocked by observation quality |
+| [Research execution plan and BO tracker, 2026-09-14](./plans/buildopt-research-execution-plan-2026-09-14.md) | CURRENT; governing priorities and next-work tracker |
+| [Product viability plan](./plans/buildopt-product-viability-v1.md) | RETAINED technical background; conflicting priorities and commercial phases superseded |
+| [Product viability tracker](./plans/buildopt-product-viability-v1-tracker.md) | RETAINED prior execution record; future work follows the BO tracker |
+| [Product viability replay contract](./plans/buildopt-product-viability-v1-replay.md) | CURRENT technical measurement/correctness contract; commercial phases out of scope |
+| [Product viability evidence ledger](./plans/buildopt-product-viability-v1-evidence.md) | RETAINED evidence; not a work queue |
+| [Checkstyle identical-code measurement control](./plans/buildopt-checkstyle-measurement-control-v1.md) | CURRENT bounded protocol for BO-02; pending, no new allocation started |
+| [CPU profile screening budget](./plans/buildopt-product-viability-v1-cpu-screen.md) | HISTORICAL; preserve the original limits and outcomes, no new CPU-profile sweep |
 | [Adaptive fragments](./plans/adaptive-fragment-generalization-tracker.md) | HISTORICAL |
 | [Centralized cache and state](./plans/centralized-cache-and-state-roadmap.md) | DEFERRED; implemented foundation retained |
 | [Change-aware producer closure](./plans/change-aware-producer-closure-poc-tracker.md) | HISTORICAL |
@@ -312,9 +341,9 @@ that passed. Their notices link back here rather than rewriting old decisions.
 
 ## Avoid repeating a closed route
 
-Before scheduling work, read this register and the current tracker's next
-step. Do not follow an unchecked box, a stale handoff, a retained executable
-or an old successor authorization as a new work order.
+Before scheduling work, read this register and the governing plan's BO tracker.
+Do not follow an unchecked box, a stale handoff, a retained executable or an old
+successor authorization as a new work order.
 
 If new evidence warrants reconsideration, record the exact retired route,
 its failed gate, the materially changed causal mechanism or workload, the new
@@ -323,7 +352,7 @@ decision with the user. Reuse existing authorization when it actually covers
 the work; this rule does not add approval gates to routine current-plan steps.
 Keep the old result closed and give a successor its own identity and inputs.
 
-When research status changes, update this register, the current tracker and
+When research status changes, update this register, the governing BO tracker and
 the documentation entry points together. Add every new plan to the inventory.
 Never move thresholds, omit negative rows or rewrite an old result to make
 the successor appear qualified.
