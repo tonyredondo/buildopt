@@ -1,0 +1,37 @@
+{
+  "status": "verified-with-existing-local-documentation-errors",
+  "documentation": {
+    "command": "timeout 300 ./dev/check-documentation",
+    "exitCode": 1,
+    "elapsedSeconds": 145.18519639899023,
+    "log": ".tools/state/buildopt-product-viability-v1/bo-04-build-impact-review-2026-09-14/documentation-check.log",
+    "sha256": "ab75d0368cf8bfc4c33baf01f5ce654dad9d80f1cda630fde2a089a190587833"
+  },
+  "matchesPreviousLogExactly": true,
+  "existingLocalBrokenLinks": 1620,
+  "newDocumentationErrors": 0,
+  "scoped": {
+    "status": "verified",
+    "files": [
+      {
+        "path": "benchmarks/results/buildopt-product-viability-v1/bo-04-build-impact-review/README.md",
+        "sha256": "84e7e9d045747688623784e2c6dfa0e1b51209c55e56d282d31ab7cdb74c70a3",
+        "localLinksChecked": 11
+      },
+      {
+        "path": "docs/research-status.md",
+        "sha256": "3609bf4cb2648eb57afc9486dc4bcfb5810a0d4ef2a3b41f3844920c66a5024f",
+        "localLinksChecked": 112
+      },
+      {
+        "path": "docs/plans/buildopt-research-execution-plan-2026-09-14.md",
+        "sha256": "4217cd24e87c08897bec47f99d137e41774db121ed07f9d6d1250fe723c478b6",
+        "localLinksChecked": 17
+      }
+    ],
+    "localLinkTargetsChecked": 140,
+    "jsonParsed": true,
+    "whitespaceCheck": "passed"
+  },
+  "codeOrRuntimeBehaviorChanged": false
+}

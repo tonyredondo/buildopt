@@ -1,0 +1,202 @@
+{
+  "schemaVersion": "buildopt.research/build-impact-admission/v1",
+  "step": "BO-04",
+  "status": "verified",
+  "decision": "NO_NEW_BUILD_IMPACT_TRIAL_ADMITTED",
+  "decisionScope": "Proposed continuations of the known Ktor and Beam selected-plan cases; not a universal impossibility result for build optimization.",
+  "newNativeStarts": 0,
+  "protectedValidationSourceRead": false,
+  "sourceRevisionReviewed": "a354e3ee7fffc7abe83b8abe0a125956b159e01a",
+  "cases": [
+    {
+      "repository": "ktorio/ktor",
+      "baseRevision": "bc7de799f4eb997a63250f2f70492d85f5c92f50",
+      "targetRevision": "640e0bf3ccae96b35437272d99dd3d9c0b309da3",
+      "gradleVersion": "9.5.1",
+      "originalArgv": [
+        "{repo}/gradlew",
+        "--max-workers=12",
+        "--build-cache",
+        "--console=plain",
+        "--no-scan",
+        "jvmJar"
+      ],
+      "selectedGradleArgv": [
+        "{repo}/gradlew",
+        "--max-workers=12",
+        "--build-cache",
+        "--console=plain",
+        "--no-scan",
+        ":ktor-server-webjars:jvmJar"
+      ],
+      "directNativeComparatorArgv": [
+        "{repo}/gradlew",
+        "--max-workers=12",
+        "--build-cache",
+        "--console=plain",
+        "--no-scan",
+        ":ktor-server-webjars:jvmJar"
+      ],
+      "argvInterpretation": "Same requested task selection and options; not a measured equality of full invocation behavior or duration.",
+      "requiredOutputsCompared": [
+        "ktor-server/ktor-server-plugins/ktor-server-webjars/build/libs/ktor-server-webjars-jvm-3.6.0-SNAPSHOT.jar"
+      ],
+      "allBroadCommandOutputsProved": false,
+      "historicalPairs": 8,
+      "meanSavedSecondsAgainstBroadCommand": 30.979375,
+      "recordedPreparationSeconds": 784.031,
+      "estimatedApplicableBuildsToPayBack": 26,
+      "selectedPlanProjects": 10,
+      "declaredGraphProjects": 133,
+      "projectCountInterpretation": "Reach in the selected plan; not a measured count of projects whose Gradle configuration was removed.",
+      "taskOutcomesIdenticalAcrossEightPairs": {
+        "control": {
+          "executed": 301,
+          "fromCache": 259,
+          "noSource": 231,
+          "skipped": 248,
+          "total": 1141,
+          "upToDate": 102
+        },
+        "candidate": {
+          "executed": 36,
+          "fromCache": 33,
+          "noSource": 21,
+          "skipped": 23,
+          "total": 121,
+          "upToDate": 8
+        }
+      },
+      "resetPolicy": "Both workspaces reset and cleaned at the same target revision; the native cache seed restored before every pair. No persistent chronological evolution in these eight pairs.",
+      "matchingReplaysInOriginalResult": 0,
+      "savingAgainstDirectNativeTask": null,
+      "exactSetupLifetimeSaving": null,
+      "localOriginalCheckoutAndGeneratedProfileRecovered": false,
+      "nativeRebuildPerformed": false,
+      "decision": "NO_NEW_TRIAL_ADMITTED"
+    },
+    {
+      "repository": "apache/beam",
+      "baseRevision": "dd896e2b2395937201b7721251d9f66936f9340c",
+      "targetRevision": "db6daeecbd9b9a50a0dfc0d9118f312716e34f94",
+      "gradleVersion": "8.14.3",
+      "originalArgv": [
+        "{repo}/gradlew",
+        "--max-workers=12",
+        "--build-cache",
+        "--console=plain",
+        "--no-scan",
+        "classes"
+      ],
+      "selectedGradleArgv": [
+        "{repo}/gradlew",
+        "--max-workers=12",
+        "--build-cache",
+        "--console=plain",
+        "--no-scan",
+        ":examples:java:twitter:classes"
+      ],
+      "directNativeComparatorArgv": [
+        "{repo}/gradlew",
+        "--max-workers=12",
+        "--build-cache",
+        "--console=plain",
+        "--no-scan",
+        ":examples:java:twitter:classes"
+      ],
+      "argvInterpretation": "Same requested task selection and options; not a measured equality of full invocation behavior or duration.",
+      "requiredOutputsCompared": [
+        "examples/java/twitter/build/classes/java/main/**"
+      ],
+      "allBroadCommandOutputsProved": false,
+      "historicalPairs": 8,
+      "meanSavedSecondsAgainstBroadCommand": 40.12275,
+      "recordedPreparationSeconds": 1096.653,
+      "estimatedApplicableBuildsToPayBack": 28,
+      "selectedPlanProjects": 6,
+      "declaredGraphProjects": 316,
+      "projectCountInterpretation": "Reach in the selected plan; not a measured count of projects whose Gradle configuration was removed.",
+      "taskOutcomesIdenticalAcrossEightPairs": {
+        "control": {
+          "executed": 340,
+          "fromCache": 362,
+          "noSource": 222,
+          "skipped": 0,
+          "total": 1475,
+          "upToDate": 551
+        },
+        "candidate": {
+          "executed": 29,
+          "fromCache": 21,
+          "noSource": 2,
+          "skipped": 0,
+          "total": 65,
+          "upToDate": 13
+        }
+      },
+      "resetPolicy": "Both workspaces reset and cleaned at the same target revision; the native cache seed restored before every pair. No persistent chronological evolution in these eight pairs.",
+      "matchingReplaysInOriginalResult": 0,
+      "savingAgainstDirectNativeTask": null,
+      "exactSetupLifetimeSaving": null,
+      "localOriginalCheckoutAndGeneratedProfileRecovered": false,
+      "nativeRebuildPerformed": false,
+      "decision": "NO_NEW_TRIAL_ADMITTED"
+    }
+  ],
+  "priorLimitations": {
+    "jettyLifetime": {
+      "observedBuilds": 3,
+      "matchingReplays": 1,
+      "grossMatchingSavedMs": 112198,
+      "fallbackDeltaMs": -220688,
+      "cumulativeGrossSavedMs": -108490,
+      "cumulativeNetSavedMs": -1551814,
+      "firstObservedBreakEvenBuild": null,
+      "conclusion": "NOT_PAID_BACK_IN_OBSERVED_WINDOW"
+    },
+    "functionalCoverageFailedCriteria": [
+      "REPOSITORY_FAMILY_BREADTH",
+      "ELIGIBLE_DESCENDANT_SELECTION",
+      "EARLY_NATIVE_RETENTION_OVERHEAD"
+    ],
+    "structuralRebinding": {
+      "decision": "ALLOW_STRUCTURALLY_COMPATIBLE_PROFILE_REBINDING",
+      "implementationRevision": "7592fa57be4c84b69feca522a999849beb195e4a",
+      "performanceReplayRun": false
+    },
+    "longitudinal": {
+      "comparablePairs": 100,
+      "exactOutputPairs": 100,
+      "selectedProfiles": 0,
+      "fragmentActivations": 0,
+      "cumulativeSignedDeltaNs": -368622514697,
+      "recordedBuildOptCostNs": 179029032102,
+      "residualGradleRunnerNs": -189593482595
+    }
+  },
+  "followUpDispositions": [
+    {
+      "proposal": "Freeze the WebJars or Twitter module manually",
+      "decision": "NOT_ADMITTED",
+      "reason": "The measured selector forwards that module's ordinary Gradle tasks. No additional avoidable work has been identified against the correctly scoped native command."
+    },
+    {
+      "proposal": "Replay automatic changed-project selection for longer",
+      "decision": "RETIRED_MECHANISM",
+      "reason": "Longer history or a different repository alone does not address prior selection, compatibility and preparation-cost failures."
+    },
+    {
+      "proposal": "Preserve every broad-command output while omitting projects",
+      "decision": "NOT_ADMITTED",
+      "reason": "The selected wins prove only their declared output subset. Prior producer/output and fragment work already addressed broader preservation without sufficient recurring value; no new cause or mechanism is established here."
+    },
+    {
+      "proposal": "Remove unnecessary configuration for the same native task request",
+      "decision": "NO_OBSERVED_CAUSE_FOR_ADMISSION",
+      "reason": "Potentially a different mechanism, but the retained project counts and whole-command timings do not identify its avoidable configuration cost or safe correction. It is not an admitted successor."
+    }
+  ],
+  "nextStep": "BO-05 with applicable early BO-06 readiness for the Checkstyle screen",
+  "newTimingProtocol": null,
+  "productViabilityEstablished": false
+}

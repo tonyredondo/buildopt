@@ -1,0 +1,146 @@
+{
+  "files": {
+    "selectedSummary": {
+      "path": "benchmarks/results/poc-magic-end-to-end-value-v2/summary.json",
+      "sha256": "6e712bef94ba29fe417ddb3277c9659d0054cb2cbde7e2994aecb68e45b80937"
+    },
+    "ktorQualification": {
+      "path": "benchmarks/results/poc-magic-end-to-end-value-v2/raw/ktor.qualification.json",
+      "sha256": "efdf4c65942f893a6b4775edc867e6df34fd3d8e960393ee09dbbc112965cddf"
+    },
+    "beamQualification": {
+      "path": "benchmarks/results/poc-magic-end-to-end-value-v2/raw/beam.qualification.json",
+      "sha256": "42cb94e065e55ecd8eee0bfd765eb4f3797a0f86d96a2bee772a773a6346363e"
+    },
+    "ktorResult": {
+      "path": "benchmarks/results/poc-magic-end-to-end-value-v2/raw/ktor.result.json",
+      "sha256": "7b0bdf8ef49faa471931c9c5ab7b53d2a4fd5d97f1bbc03803abddf667fc39aa"
+    },
+    "beamResult": {
+      "path": "benchmarks/results/poc-magic-end-to-end-value-v2/raw/beam.result.json",
+      "sha256": "8831961ad83bb5e39ae7083806e2f9630f57d062c6f72d9446bad1ebf0a08640"
+    },
+    "jettyLifetime": {
+      "path": "benchmarks/results/poc-profile-lifetime-v1/summary.json",
+      "sha256": "2036d81eac1145ee624cc02898280355eaf865d4124a2496ff7350bd04ee6379"
+    },
+    "functionalCoverage": {
+      "path": "benchmarks/results/poc-functional-coverage-decision-v1/summary.json",
+      "sha256": "ba506cfd870e3f5ae4b200a9e312ef9142d7be6c7e1eb9a46ef906ca2d421dcf"
+    },
+    "rebinding": {
+      "path": "benchmarks/results/poc-structural-profile-rebinding-v1/summary.json",
+      "sha256": "833f8ed8ad32f3158d2bd6806e75ff9e4ef9b188b289a2f02da3275851526159"
+    },
+    "threeClass": {
+      "path": "benchmarks/results/three-class-chronological-value-v1/summary.json",
+      "sha256": "a04cf33e94507543ae1d2ed35cde1e0a09b6fe5056bf26499ccb5c00d95ccad2"
+    },
+    "longitudinal": {
+      "path": "benchmarks/results/current-longitudinal-attribution-v1.json",
+      "sha256": "1198f8b566316040e95e9a053fa8b976fda86337c39dd0fa6f6c36f6ddf9b26e"
+    },
+    "fragmentDecision": {
+      "path": "benchmarks/results/adaptive-fragment-terminal-decision-v1.json",
+      "sha256": "436ddc8d0ee2f56e4c0be502b5b0134a803a83c4072f8ae617ff19a6a9a70019"
+    },
+    "candidateRecovery": {
+      "path": "benchmarks/results/buildopt-product-viability-v1/bo-01-candidate-recovery/inventory.json",
+      "sha256": "d122bfa0ad6d4d8fb924cdd945e38a38aa12ed24181a264151b98602a54293ac"
+    },
+    "opportunityAssessment": {
+      "path": "benchmarks/results/buildopt-product-viability-v1/bo-03-opportunity-assessment/assessment.json",
+      "sha256": "e89fe75bcef5e143e06c67987826a294e5862c130165b987ec1cd531cf66c250"
+    }
+  },
+  "source": {
+    "measurement": {
+      "revision": "a354e3ee7fffc7abe83b8abe0a125956b159e01a",
+      "path": "internal/launcher/profile_measurement.go",
+      "gitBlob": "f2b98af316d24d49c4a9749be4559213cfe225f4",
+      "sha256": "b58408c0560e2b5a04709b33db54bd39ef17e8c65177a66b2b1c4cf1f0cc409b",
+      "reviewedLineRanges": [
+        [
+          430,
+          525
+        ],
+        [
+          1008,
+          1103
+        ],
+        [
+          1323,
+          1330
+        ],
+        [
+          1344,
+          1358
+        ]
+      ],
+      "url": "https://github.com/tonyredondo/buildopt/blob/a354e3ee7fffc7abe83b8abe0a125956b159e01a/internal/launcher/profile_measurement.go"
+    },
+    "selection": {
+      "revision": "a354e3ee7fffc7abe83b8abe0a125956b159e01a",
+      "path": "internal/launcher/impact.go",
+      "gitBlob": "319c9ef7660ad75883ccb46f9a391959132a4add",
+      "sha256": "63d0a756b1c35595d862a7a4516945a54f99bdfc373cb3f2a443705f3f95ef22",
+      "reviewedLineRanges": [
+        [
+          90,
+          150
+        ]
+      ],
+      "url": "https://github.com/tonyredondo/buildopt/blob/a354e3ee7fffc7abe83b8abe0a125956b159e01a/internal/launcher/impact.go"
+    },
+    "dispatch": {
+      "revision": "a354e3ee7fffc7abe83b8abe0a125956b159e01a",
+      "path": "internal/launcher/run.go",
+      "gitBlob": "58b2350f0754e6ce8bc33ee32866ff85b431825c",
+      "sha256": "fb567e5031274b2c800bb95949b28e771c70aabed1547037fb8337f16fa1277d",
+      "reviewedLineRanges": [
+        [
+          178,
+          243
+        ]
+      ],
+      "url": "https://github.com/tonyredondo/buildopt/blob/a354e3ee7fffc7abe83b8abe0a125956b159e01a/internal/launcher/run.go"
+    },
+    "gradleInvocation": {
+      "revision": "a354e3ee7fffc7abe83b8abe0a125956b159e01a",
+      "path": "internal/launcher/gradle.go",
+      "gitBlob": "3d92498178ceb6203b72d7db255a130bbe039d6a",
+      "sha256": "f196dc89025395340b97de7c02950895cf918b10e2107389b9cb77769edd6cdb",
+      "reviewedLineRanges": [
+        [
+          56,
+          149
+        ],
+        [
+          185,
+          210
+        ]
+      ],
+      "url": "https://github.com/tonyredondo/buildopt/blob/a354e3ee7fffc7abe83b8abe0a125956b159e01a/internal/launcher/gradle.go"
+    },
+    "plan": {
+      "revision": "a354e3ee7fffc7abe83b8abe0a125956b159e01a",
+      "path": "internal/buildimpact/poc_candidate.go",
+      "gitBlob": "9e76536e5b00545a5aee59b01a7b3f93d0a4401e",
+      "sha256": "60ac6f65a3112286c4a94d245cee1390208589ec69e46e845315453b2cdc2844",
+      "reviewedLineRanges": [
+        [
+          61,
+          169
+        ]
+      ],
+      "url": "https://github.com/tonyredondo/buildopt/blob/a354e3ee7fffc7abe83b8abe0a125956b159e01a/internal/buildimpact/poc_candidate.go"
+    }
+  },
+  "documentation": [
+    {
+      "url": "https://docs.gradle.org/current/userguide/command_line_interface.html#sec:executing_tasks_in_multi_project_builds",
+      "accessed": "2026-09-14",
+      "use": "Native Gradle supports selecting a subproject task directly; no performance numbers inferred."
+    }
+  ]
+}

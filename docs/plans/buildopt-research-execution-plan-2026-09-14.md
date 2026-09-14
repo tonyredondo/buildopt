@@ -1,7 +1,7 @@
 # Build Optimization research execution plan
 
 Date: 2026-09-14. Program: `BUILDOPT-VIABILITY-V1`.
-Status: governing plan in execution; BO-01 through BO-03 verified, BO-04 next.
+Status: governing plan in execution; BO-01 through BO-04 verified; BO-05 preparation next.
 
 This plan records the direction agreed after the research review and its
 discussion. It owns research priorities, sequencing and the
@@ -91,7 +91,7 @@ task savings or unrelated mechanisms cannot be pooled into one claimed result.
 | Area | Treatment under this plan |
 |---|---|
 | Corrections inside build tasks, continuing the useful part of Patch Autopilot | Primary research. Checkstyle is the most developed candidate; the known Micronaut and Spring fixes need whole-workflow opportunity assessment before more timing. |
-| Build Impact on Ktor and Apache Beam | Bounded review of known wins and their unmeasured lifetime. BO-04 must identify a discriminating question before any new implementation or timing. |
+| Build Impact on Ktor and Apache Beam | BO-04 review complete; no new trial admitted for the reviewed continuations. Preserve the selected wins. A new observed cause and distinct intervention would need admission before implementation or timing. |
 | Generic selection/reuse of complete plans, adaptive fragments and recurrence variants | Retired. Manual selection is not automatically a different mechanism and cannot excuse per-commit repairs or weaker output requirements. |
 | Unnecessary invalidation inside native tasks | Conditional on a new observed cause and the existing admission rules. The earlier rejected causes stay rejected; no broad source-only search. |
 | Build History, graph capture, cache integrations, patch delivery and output comparison | Retained support for the admitted experiments. Working infrastructure alone is not a speedup. |
@@ -137,8 +137,8 @@ the outcome may be negative. Advance only on the outcome required below.
 | BO-01 | Recover the small candidate set and valid prerequisites | This plan | verified; [candidate inventory and checks](../../benchmarks/results/buildopt-product-viability-v1/bo-01-candidate-recovery/README.md) |
 | BO-02 | Decide whether the timing comparison can proceed | BO-01 recovery for Checkstyle | verified; [one A/A control without a false material signal](../../benchmarks/results/buildopt-product-viability-v1/bo-02-measurement-control/README.md); no general precision or value qualification |
 | BO-03 | Estimate realistic whole-build opportunity per candidate | BO-01; measurement readiness before fresh timing | verified; [five candidate assessments](../../benchmarks/results/buildopt-product-viability-v1/bo-03-opportunity-assessment/README.md); only Checkstyle warrants the planned short screen after readiness checks; missing workflow evidence remains unqualified |
-| BO-04 | Admit or reject a focused Build Impact hypothesis | BO-01 and existing evidence review | pending |
-| BO-05 | Select a candidate through short comparisons | BO-02 as applicable, BO-03, early BO-06 correctness, and BO-04 for Build Impact | deferred |
+| BO-04 | Admit or reject a focused Build Impact hypothesis | BO-01 and existing evidence review | verified; [no new trial admitted](../../benchmarks/results/buildopt-product-viability-v1/bo-04-build-impact-review/README.md); original savings retained |
+| BO-05 | Select a candidate through short comparisons | BO-02 as applicable, BO-03, early BO-06 correctness, and BO-04 for Build Impact | pending preparation for Checkstyle; timing still requires early BO-06/readiness and frozen inputs |
 | BO-06 | Qualify correctness and freeze the implementation and protocol | Admitted opportunity; screen integration proof before BO-05, final freeze afterward | deferred |
 | BO-07 | Establish sustained saving in the first repository | BO-05 and complete BO-06 | deferred |
 | BO-08 | Test the same mechanism on two other repositories | BO-07 positive | deferred |
@@ -274,6 +274,20 @@ subjects; old favorable comparisons are not new independent confirmation.
 An admitted Build Impact study needs its own protocol because the existing
 native-correction replay contract does not automatically cover that mechanism.
 It must preserve the same measurement and correctness standards.
+
+**Completed, 2026-09-14:**
+[Build Impact admission review](../../benchmarks/results/buildopt-product-viability-v1/bo-04-build-impact-review/README.md).
+The measured v0.6.1 source and all sixteen selected pairs reconstruct task
+selection, output scope and the per-pair workspace/cache reset policy. The
+launcher forwards ordinary Gradle task requests; project counts do not prove
+configuration was removed. A fixed module supplies no identified additional
+work to avoid beyond its direct native command. Changing selections through
+history returns to the retired reuse route; preserving all broad-command
+results needs wider proof and a distinct intervention. Neither proposed
+continuation is admitted. No source checkout was rebuilt, target build run,
+protected history read or new timing allocation opened. The old results remain
+qualified only in their original scope. Proceed to BO-05 preparation and its
+early BO-06 prerequisites for Checkstyle.
 
 ### BO-05: Use short comparisons to choose a candidate
 
@@ -467,11 +481,14 @@ The earlier state key `engineeringPrefix.checkstyleFinalization` locates the
 supported candidate and completed comparison; verify it before reuse. Do not
 move, overwrite or silently reset old experiment roots.
 
-BO-01 through BO-03 are complete. The control's task record is
+BO-01 through BO-04 are complete. The control's task record is
 `.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/task-state.json`;
 its original inputs and raw results remain there. The BO-03 assessment record is
 `.tools/state/buildopt-product-viability-v1/bo-03-opportunity-assessment-2026-09-14/task-state.json`.
-Next is BO-04, the focused Build Impact admission review. It starts no new build
-allocation. Checkstyle remains eligible for the planned short comparison after
-its applicable readiness checks; no candidate has been admitted to a complete
-validation history.
+The BO-04 admission and publication record is
+`.tools/state/buildopt-product-viability-v1/bo-04-build-impact-review-2026-09-14/task-state.json`.
+The user has authorized committing and pushing each completed block. BO-01,
+BO-02 and BO-03 were published in separate commits before BO-04 began.
+Next is BO-05 preparation with early BO-06 correctness and measurement checks
+for Checkstyle. No Build Impact trial or complete validation history has been
+admitted, and no new target-build allocation is active.

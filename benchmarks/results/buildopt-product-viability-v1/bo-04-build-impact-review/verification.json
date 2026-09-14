@@ -1,0 +1,55 @@
+{
+  "status": "verified",
+  "scope": "Recomputed retained observations and reviewed pinned source; not a native rebuild, direct-module timing result or proof of sustained value.",
+  "boundDataFiles": 13,
+  "pinnedSourceFiles": 5,
+  "historicalPairsPreserved": 16,
+  "negativeChecks": [
+    {
+      "case": "missing-selected-pair",
+      "outcome": "rejected"
+    },
+    {
+      "case": "changed-task-count",
+      "outcome": "rejected"
+    },
+    {
+      "case": "changed-required-output",
+      "outcome": "rejected"
+    },
+    {
+      "case": "unreported-second-mechanism",
+      "outcome": "rejected"
+    },
+    {
+      "case": "incorrect-longitudinal-attribution",
+      "outcome": "rejected"
+    },
+    {
+      "case": "changed-selected-command",
+      "outcome": "rejected"
+    }
+  ],
+  "existingEvidenceChecks": [
+    {
+      "command": "./dev/check-magic-end-to-end-value-v2",
+      "exitCode": 0,
+      "elapsedSeconds": 0.13883572799386457
+    },
+    {
+      "command": "./dev/check-profile-lifetime",
+      "exitCode": 0,
+      "elapsedSeconds": 0.013708339014556259
+    },
+    {
+      "command": "./dev/check-functional-coverage-decision",
+      "exitCode": 0,
+      "elapsedSeconds": 1.5770263830199838
+    }
+  ],
+  "analyzerSHA256": "1c3cb6522ff9d4e80f5140b88a29b71ba9e7c7be660016f4576f281c86ec6c6c",
+  "inputsSHA256": "e0305c291d7a0d535059247eb7354a2fe86deb16dcbf4f66d03181984fa29679",
+  "assessmentSHA256": "c7166c89b3f2a00e209bcc9586687594692a1214bbde009cba8a17a10a07c62e",
+  "newTargetBuilds": 0,
+  "protectedValidationSourceRead": false
+}

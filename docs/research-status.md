@@ -39,14 +39,22 @@ through development ordinal 20; buildability and execution frequency remain
 unmeasured. All five dispositions and cost assumptions are recorded in the
 assessment. No long replay is admitted.
 
-Next is BO-04: review the remaining Build Impact question for Ktor and Beam.
-This does not launch the 17–20 Checkstyle screen, other repository builds or
-the protected validation history.
+[BO-04 Build Impact review](../benchmarks/results/buildopt-product-viability-v1/bo-04-build-impact-review/README.md)
+is verified: no new trial admitted for the reviewed Ktor/Beam continuations.
+The measured source forwards selected ordinary Gradle task requests. A fixed
+module has no identified additional omission beyond the same direct native
+command; automatic changing scopes returns to retired plan reuse. The selected
+output comparisons do not establish preservation of every broad-command result.
+All sixteen favorable pairs remain evidence for their original comparisons.
+No target build or protected history read was performed. A different future
+mechanism needs an observed cause and admission; this is not a universal
+impossibility result.
 
-Build Impact has a bounded admission review at BO-04 for the known Ktor and
-Beam cases. A new trial requires a concrete question not already answered by
-the retired studies and a prospective protocol. Generic plan selection/reuse,
-adaptive fragments, runtime sweeps and another general cache remain retired.
+Next is BO-05 preparation and its early BO-06 correctness and measurement
+prerequisites for Checkstyle. Neither the 17–20 screen nor protected validation
+has started. Generic plan selection/reuse, adaptive fragments, runtime sweeps
+and another general cache remain retired. The user has authorized commit and
+push after each completed block; BO-01 through BO-03 are already published.
 
 The earlier BV plan/tracker preserve execution evidence; their conflicting
 next-step and commercial instructions are superseded. Their old references to
@@ -224,7 +232,7 @@ available, with their builds and opportunities still unmeasured.
 | H1: incremental work inside a native Gradle task | CURRENT; scoped Checkstyle G2, BO-02 control and BO-03 assessment verified | Original ForbiddenPatterns case stays negative; Checkstyle warrants the planned short screen after applicable readiness checks, with no sustained saving established |
 | H2: repair observed unnecessary native invalidation | CONDITIONAL | Admit a concrete native cause first; at most two causes, with the same correctness and lifecycle gates |
 | H3: adaptive management of native corrections | REQUIRED LATER; implementation deferred | BO-11 follows fixed-correction value, manual MVP and sufficient lifetime evidence; prove added value over both native and fixed correction |
-| Selected Build Impact results in Ktor and Beam | CONDITIONAL; BO-04 admission review only | Establish an unanswered, discriminating question before any new timing; generic plan reuse and fragment variants remain retired |
+| Selected Build Impact results in Ktor and Beam | BO-04 REVIEW COMPLETE; no new trial admitted | Preserve selected wins; fixed task scope adds no identified omission over the equivalent native request. A distinct observed cause would need new admission; generic reuse remains retired |
 
 The [replay contract](./plans/buildopt-product-viability-v1-replay.md) starts
 with 100 consecutive first-parent transitions, split into 20 engineering and
