@@ -1,0 +1,21 @@
+--- /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/verify-closeout.py
++++ /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay-2026-09-14/verify-closeout.py
+@@ -51,6 +51,7 @@
+         paths = {'repo/' + path.decode() for path in subprocess.check_output([
+             'git', '--git-dir', m['commonGit'], 'ls-tree', '-rz', '--name-only', commit], timeout=30).split(b'\0') if path}
+         candidate_paths = {'repo/' + item['path'] for item in m['candidate']['files']}
++        expected_paths = paths | candidate_paths
+         snapshots = {}
+         for arm in ('N', 'I'):
+             attempt = RUN / 'attempts' / f'r{replication}-{ordinal:03d}-g0-{arm}'
+@@ -61,8 +62,8 @@
+             before, after = bound(start['before']), bound(end['after'])
+             for inventory in (before, after):
+                 assert inventory['revision'] == commit and inventory['commonGit'] == m['commonGit']
+-            before_entries = {e['path']:e for e in before['entries'] if e['path'] in paths | candidate_paths}
+-            after_entries = {e['path']:e for e in after['entries'] if e['path'] in paths | candidate_paths}
++            before_entries = {e['path']:e for e in before['entries'] if e['path'] in expected_paths}
++            after_entries = {e['path']:e for e in after['entries'] if e['path'] in expected_paths}
+             assert set(before_entries) == paths
+             for item in m['baseline']['files']:
+                 for entries in (before_entries, after_entries):

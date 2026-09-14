@@ -1,0 +1,13 @@
+{
+  "status": "verified unchanged source identities",
+  "receipt": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/receipts/observer-repair-tests.json",
+  "sha256": "73637131ba6cd607d99177dbf057cbb266d890f5e04e09b6b16fbe5de1aacf43",
+  "sources": {
+    "run-screen.py": "d84b94a18fbf8634aca1e56e04ff68c99f967e9d20065bf41603f1edab3d1348",
+    "run-screen-v2.py": "a23774df2cdbeab322cd3b5c02f4feca64ec55557ca93c6bd5e21bc2440b4e3e",
+    "analyze-phases-v2.py": "e0b08a7708e20d3075a008b0222cbf591d3d552cef5bb3901394e19de3fa5d04",
+    "test-observer-repair.py": "3d4c57b930498decd6cda3f946e99b2cbb03423b06cb9f290565ce37bfc2c4bd"
+  },
+  "priorAllocationClosed": true,
+  "priorServicesInactive": true
+}

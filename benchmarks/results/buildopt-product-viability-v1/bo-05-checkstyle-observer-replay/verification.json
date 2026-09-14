@@ -1,0 +1,146 @@
+{
+  "status": "verified",
+  "decision": "EXPLORATORY_MATERIAL_SIGNAL",
+  "sourceIdentity": [
+    {
+      "replication": 1,
+      "originalOrdinal": 17,
+      "commit": "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe",
+      "nativeSourceFiles": 47641,
+      "candidateChangedFiles": 5,
+      "nativeArmUnmodified": true,
+      "onlyDeclaredCandidateDifference": true,
+      "nativeEntriesSHA256": "571ab6c0c2949cb753af126490c56dac94b417777564df50a677f9cc22359514",
+      "candidateEntriesSHA256": "63efa570e762d29e2ea7460688e2f09e8db56f52bc58b8f738f386e51f605373"
+    },
+    {
+      "replication": 1,
+      "originalOrdinal": 18,
+      "commit": "d47f43f5ff06883d3f0a04f3d40af627ecf5142e",
+      "nativeSourceFiles": 47641,
+      "candidateChangedFiles": 5,
+      "nativeArmUnmodified": true,
+      "onlyDeclaredCandidateDifference": true,
+      "nativeEntriesSHA256": "0425236e3a2a3d57bc1f2766fa5526cbc4971025b44f76cd9d1a3203276e71f0",
+      "candidateEntriesSHA256": "7f3b6fc663c9d65c103a1962739235fe7720b624451f1f43f5ca6d95c7267559"
+    },
+    {
+      "replication": 1,
+      "originalOrdinal": 19,
+      "commit": "72aa4d4120d09157106325096f0e7b2cc1852f59",
+      "nativeSourceFiles": 47641,
+      "candidateChangedFiles": 5,
+      "nativeArmUnmodified": true,
+      "onlyDeclaredCandidateDifference": true,
+      "nativeEntriesSHA256": "ae9fb98a9b8978cf6b98441daa5a1d54ab4ddf8612e60b06edaf0d3604af024c",
+      "candidateEntriesSHA256": "47ec9502061998dac14bf088845c4259a55b1a0687d4ffd2637653b62f78d9f5"
+    },
+    {
+      "replication": 1,
+      "originalOrdinal": 20,
+      "commit": "22d6425e9a44ec9e1aedc2785f4478b8019c851a",
+      "nativeSourceFiles": 47643,
+      "candidateChangedFiles": 5,
+      "nativeArmUnmodified": true,
+      "onlyDeclaredCandidateDifference": true,
+      "nativeEntriesSHA256": "a0f3cbfd546100f9d2fabe3f9ff1218a12ea54c7d800534cb05416a00bbb73a6",
+      "candidateEntriesSHA256": "723ca4ae45d41ab860bbd84b24dab2dfb3b9bf36ac1ad1d6a233d2b44dbce753"
+    },
+    {
+      "replication": 2,
+      "originalOrdinal": 17,
+      "commit": "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe",
+      "nativeSourceFiles": 47641,
+      "candidateChangedFiles": 5,
+      "nativeArmUnmodified": true,
+      "onlyDeclaredCandidateDifference": true,
+      "nativeEntriesSHA256": "571ab6c0c2949cb753af126490c56dac94b417777564df50a677f9cc22359514",
+      "candidateEntriesSHA256": "63efa570e762d29e2ea7460688e2f09e8db56f52bc58b8f738f386e51f605373"
+    },
+    {
+      "replication": 2,
+      "originalOrdinal": 18,
+      "commit": "d47f43f5ff06883d3f0a04f3d40af627ecf5142e",
+      "nativeSourceFiles": 47641,
+      "candidateChangedFiles": 5,
+      "nativeArmUnmodified": true,
+      "onlyDeclaredCandidateDifference": true,
+      "nativeEntriesSHA256": "0425236e3a2a3d57bc1f2766fa5526cbc4971025b44f76cd9d1a3203276e71f0",
+      "candidateEntriesSHA256": "7f3b6fc663c9d65c103a1962739235fe7720b624451f1f43f5ca6d95c7267559"
+    },
+    {
+      "replication": 2,
+      "originalOrdinal": 19,
+      "commit": "72aa4d4120d09157106325096f0e7b2cc1852f59",
+      "nativeSourceFiles": 47641,
+      "candidateChangedFiles": 5,
+      "nativeArmUnmodified": true,
+      "onlyDeclaredCandidateDifference": true,
+      "nativeEntriesSHA256": "ae9fb98a9b8978cf6b98441daa5a1d54ab4ddf8612e60b06edaf0d3604af024c",
+      "candidateEntriesSHA256": "47ec9502061998dac14bf088845c4259a55b1a0687d4ffd2637653b62f78d9f5"
+    },
+    {
+      "replication": 2,
+      "originalOrdinal": 20,
+      "commit": "22d6425e9a44ec9e1aedc2785f4478b8019c851a",
+      "nativeSourceFiles": 47643,
+      "candidateChangedFiles": 5,
+      "nativeArmUnmodified": true,
+      "onlyDeclaredCandidateDifference": true,
+      "nativeEntriesSHA256": "a0f3cbfd546100f9d2fabe3f9ff1218a12ea54c7d800534cb05416a00bbb73a6",
+      "candidateEntriesSHA256": "723ca4ae45d41ab860bbd84b24dab2dfb3b9bf36ac1ad1d6a233d2b44dbce753"
+    }
+  ],
+  "worktrees": [
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay-2026-09-14/profiles/supported/run/r1/N/repo",
+      "head": "22d6425e9a44ec9e1aedc2785f4478b8019c851a",
+      "branch": "bv-replay-b528fc6a2262-r1-N-003",
+      "commonGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/eic-native-v1/repos/elasticsearch.git",
+      "replication": 1,
+      "arm": "N"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay-2026-09-14/profiles/supported/run/r1/I/repo",
+      "head": "22d6425e9a44ec9e1aedc2785f4478b8019c851a",
+      "branch": "bv-replay-b528fc6a2262-r1-I-003",
+      "commonGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/eic-native-v1/repos/elasticsearch.git",
+      "replication": 1,
+      "arm": "I"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay-2026-09-14/profiles/supported/run/r2/N/repo",
+      "head": "22d6425e9a44ec9e1aedc2785f4478b8019c851a",
+      "branch": "bv-replay-b528fc6a2262-r2-N-003",
+      "commonGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/eic-native-v1/repos/elasticsearch.git",
+      "replication": 2,
+      "arm": "N"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay-2026-09-14/profiles/supported/run/r2/I/repo",
+      "head": "22d6425e9a44ec9e1aedc2785f4478b8019c851a",
+      "branch": "bv-replay-b528fc6a2262-r2-I-003",
+      "commonGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/eic-native-v1/repos/elasticsearch.git",
+      "replication": 2,
+      "arm": "I"
+    }
+  ],
+  "frozenBindingsMatched": 58,
+  "actualOwnerStarts": 16,
+  "liveComparatorJVMs": 8,
+  "independentComparatorJVMs": 8,
+  "extraComparatorPasses": 0,
+  "retryStarts": 0,
+  "ownedSessionsClosed": 4,
+  "historicalStatePreserved": true,
+  "sourceCorrectnessQualifiedForScreen": true,
+  "measurementPrecisionQualified": false,
+  "productValueQualified": false,
+  "allocatedBytes": 27563462656,
+  "withinDeadline": true,
+  "verificationUTC": "2026-09-14T19:27:55.130756+00:00",
+  "verifier": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay-2026-09-14/verify-closeout.py",
+    "sha256": "0bea4f74560de60a48be5b94541543743ba797e96df1fcb0458934ff817aefb3"
+  }
+}

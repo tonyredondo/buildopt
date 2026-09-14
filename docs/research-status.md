@@ -50,27 +50,33 @@ No target build or protected history read was performed. A different future
 mechanism needs an observed cause and admission; this is not a universal
 impossibility result.
 
-BO-05 is **partial**: the [native Checkstyle comparison](../benchmarks/results/buildopt-product-viability-v1/bo-05-checkstyle-screen/README.md)
-stopped on an observation-script permissions error before the second sequence's
-first build. Eight builds and four live output comparisons passed. The first
-sequence shows 26.00% less request time over changes 18–20, but the second
-sequence and independent output reconstruction are missing: `INCOMPLETE_SCREEN`.
-This does not admit long validation or reject Checkstyle for lack of savings.
+BO-05 is **verified**: the [complete Checkstyle comparison](../benchmarks/results/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay/README.md)
+passed its registered rule in both fresh sequences. Whole-request savings over
+changes 18–20 were 34.14% and 28.17%, or 22.254 and 28.455 seconds per measured
+change: `EXPLORATORY_MATERIAL_SIGNAL`. All 16 builds, eight live comparisons and
+eight independent output reconstructions passed. The 58 frozen input bindings
+matched, all four owned sessions closed, and the attempt used 25.67 GiB within
+its three-hour and 64 GiB limits. The repaired observer completed without errors.
 
-The narrow observer repair passed focused tests without additional Gradle/JVM
-starts; its behavior in this build experiment remains untested. Sixteen build
-reservations remain charged, eight builds and four comparator JVMs actually ran,
-and the allocation is closed. All three created services are inactive. A new
-measured attempt requires a separate allocation and frozen observation sources;
-no automatic replacement trial has started.
+Change 20 was much slower on both sides in the second sequence. Eight of the
+16 builds retain host-pressure flags; none was excluded. Sampled CPU assignments
+matched, but continuous isolation and formal G0/G3 are unqualified. These are
+two repetitions of one selected development window, with no long-history or
+preparation-recovery claim. Proceed to the remaining BO-06 readiness and freeze.
+
+The [interrupted attempt](../benchmarks/results/buildopt-product-viability-v1/bo-05-checkstyle-screen/README.md)
+remains `INCOMPLETE_SCREEN`. Its first sequence, missing outcomes and observer
+error are preserved separately. Across both attempts, 32 reservations were
+charged, 24 owner builds actually ran and 20 comparator JVMs started. No earlier
+timing contributes to the new decision.
 
 The task record is
-`.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/task-state.json`.
+`.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay-2026-09-14/task-state.json`.
 Early BO-06 scoped proof is retained; complete confirmation readiness, formal
 G0/G3 and the protected validation history remain incomplete or unrun. Generic
 plan selection/reuse, adaptive fragments, runtime sweeps and another general
 cache remain retired. The user has authorized commit and push after each work
-block; publication of this partial result does not mark BO-05 complete.
+block. BO-05 completion does not admit BO-07 or establish product viability.
 
 The earlier BV plan/tracker preserve execution evidence; their conflicting
 next-step and commercial instructions are superseded. Their old references to

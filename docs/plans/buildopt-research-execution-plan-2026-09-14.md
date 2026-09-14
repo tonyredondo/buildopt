@@ -1,7 +1,7 @@
 # Build Optimization research execution plan
 
 Date: 2026-09-14. Program: `BUILDOPT-VIABILITY-V1`.
-Status: governing plan in execution; BO-01 through BO-04 verified; BO-05 partial after an observer failure.
+Status: governing plan in execution; BO-01 through BO-05 verified; remaining BO-06 readiness and freeze are next.
 
 This plan records the direction agreed after the research review and its
 discussion. It owns research priorities, sequencing and the
@@ -138,8 +138,8 @@ the outcome may be negative. Advance only on the outcome required below.
 | BO-02 | Decide whether the timing comparison can proceed | BO-01 recovery for Checkstyle | verified; [one A/A control without a false material signal](../../benchmarks/results/buildopt-product-viability-v1/bo-02-measurement-control/README.md); no general precision or value qualification |
 | BO-03 | Estimate realistic whole-build opportunity per candidate | BO-01; measurement readiness before fresh timing | verified; [five candidate assessments](../../benchmarks/results/buildopt-product-viability-v1/bo-03-opportunity-assessment/README.md); only Checkstyle warrants the planned short screen after readiness checks; missing workflow evidence remains unqualified |
 | BO-04 | Admit or reject a focused Build Impact hypothesis | BO-01 and existing evidence review | verified; [no new trial admitted](../../benchmarks/results/buildopt-product-viability-v1/bo-04-build-impact-review/README.md); original savings retained |
-| BO-05 | Select a candidate through short comparisons | BO-02 as applicable, BO-03, early BO-06 correctness, and BO-04 for Build Impact | partial; [first sequence retained after an observer failure](../../benchmarks/results/buildopt-product-viability-v1/bo-05-checkstyle-screen/README.md); second sequence and independent output reconstruction did not run |
-| BO-06 | Qualify correctness and freeze the implementation and protocol | Admitted opportunity; screen integration proof before BO-05, final freeze afterward | partial; early scoped correctness and screen inputs verified; complete screen, confirmation readiness and final freeze remain incomplete |
+| BO-05 | Select a candidate through short comparisons | BO-02 as applicable, BO-03, early BO-06 correctness, and BO-04 for Build Impact | verified; [both fresh sequences passed](../../benchmarks/results/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay/README.md), saving 34.14% and 28.17%; the interrupted attempt remains separate |
+| BO-06 | Qualify correctness and freeze the implementation and protocol | Admitted opportunity; screen integration proof before BO-05, final freeze afterward | partial; scoped correctness, screen inputs and complete short comparison verified; confirmation readiness and final freeze remain incomplete |
 | BO-07 | Establish sustained saving in the first repository | BO-05 and complete BO-06 | deferred |
 | BO-08 | Test the same mechanism on two other repositories | BO-07 positive | deferred |
 | BO-09 | Deliver and measure an MVP with manual controls | BO-08 positive | deferred |
@@ -320,12 +320,42 @@ time with the correction, including the inactive change. The second sequence
 and independent output reconstruction are missing, so the recorded decision is
 `INCOMPLETE_SCREEN`; it is neither an admission nor a measured rejection.
 
-The narrow observer repair passed focused local tests without Gradle or JVM
-starts. It has not run this build comparison. Preserve all sixteen scheduled
-outcomes and the interrupted allocation. The next measured attempt needs a
+At that closeout, the narrow observer repair had passed focused local tests
+without Gradle or JVM starts, but had not run the build comparison. Preserve
+all sixteen scheduled outcomes and the interrupted allocation. The next measured attempt needs a
 separate allocation and frozen observation sources; the current protocol
 permits no automatic replacement trial. Do not advance to BO-07 or close the
 candidate through BO-12 on the basis of this interruption.
+
+**Separate attempt, authorized and completed on 2026-09-14:** the complete
+comparison was repeated from fresh state with the repaired observer. Its
+allocation allowed 16 owner builds, at most 16 comparator JVMs, three hours
+and 64 GiB of new state, with
+at least 40 GiB free. The candidate, four changes, command, CPU profile and
+decision rule are unchanged. All 58 frozen input bindings matched before
+launch, the manifest passed validation, and 36 focused checks passed without
+Gradle or comparator starts. None of the interrupted attempt's timings
+contributes to the new decision. The current state is
+`.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay-2026-09-14/task-state.json`.
+No protected validation history is admitted.
+
+**Completed result:** [both fresh sequences passed](../../benchmarks/results/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay/README.md)
+the unchanged short-screen rule: `EXPLORATORY_MATERIAL_SIGNAL`. Whole-request
+savings over changes 18–20 were 34.14% and 28.17%, with mean savings of 22.254 and
+28.455 seconds per measured change. The first sequence had two positive pairs;
+the second had three. The inactive change and every regression remain included.
+
+All 16 builds, eight live output comparisons and eight independent reconstructions
+passed. Source inventories verified the declared five-file correction on all
+four revisions in both sequences. The 58 frozen bindings matched at closeout;
+four owned sessions closed; the attempt finished in about 93 minutes using
+25.67 GiB. No observation failure or permission denial was recorded in this run.
+
+Both versions of change 20 were slower in the second sequence. Eight host-pressure
+flags remain in the data without exclusions or an asserted cause. Sampled CPU
+assignments matched; G0/G3, continuous isolation and long-history value remain
+unqualified. The next step is the remaining BO-06 readiness and freeze. BO-07
+and protected changes 21–100 remain deferred.
 
 ### BO-06: Qualify correctness and freeze the experiment
 

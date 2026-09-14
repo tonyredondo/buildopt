@@ -1,0 +1,30 @@
+--- /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/analyze-screen.py
++++ /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay-2026-09-14/analyze-screen.py
+@@ -82,7 +82,8 @@
+     assert masks['observerThreads'] and masks['nativeThreads']
+     masks['nativeThreadAffinityVerified'] = True
+     masks['workerExclusiveAffinityVerified'] = not masks['workerAffinityObservations']
+-    masks['strictAllTimeAffinityQualified'] = masks['workerExclusiveAffinityVerified']
++    masks['strictAllTimeAffinityQualified'] = False
++    masks['qualificationLimit'] = 'Sampled affinity only; no continuous isolation or G0/G3 qualification'
+     masks['nativeAndRunningWorkerAffinityVerified'] = masks['workerExclusiveAffinityVerified']
+     return masks
+ 
+@@ -134,7 +135,7 @@
+     daemon_pids = {(rep,arm):set() for rep in range(1,m['replications']+1) for arm in ('N','I')}
+     for (replication, ordinal), pair_record in sorted(records.items()):
+         slot = pair_record['slot']
+-        assert pair_record['slot'] == slot
++        assert slot == result['slots'][replication-1][ordinal], (replication, ordinal, 'live and independent slots differ')
+         pair = dict(replication=replication, localOrdinal=ordinal, originalOrdinal=ordinal + offset, commit=m['history'][ordinal]['commit'], warmup=ordinal == 0, ownerOutputEquivalent=True)
+         for binding in pair_record['attempts']:
+             end = bound(binding)
+@@ -217,7 +218,7 @@
+         decision=decision['decision'], materialSignal=decision['materialSignal'],
+         baselineCheckstyleActions=active, measuredReusableFiles=reusable,
+         allThreeCandidateTaskStatesVerified=True, masks=masks,
+-        cpuIsolationQualified=masks['nativeAndRunningWorkerAffinityVerified'],
++        cpuIsolationQualified=False,
+         readinessQualified=False, valueQualified=False, productViability='NOT_ESTABLISHED',
+         metadataAccounting='Eight live and eight independently reconstructed output comparisons; no third pass',
+         analyzer=dict(path=str(Path(__file__).resolve()),sha256=sha(__file__)),

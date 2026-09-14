@@ -1,0 +1,34 @@
+{
+  "question": "Does supported Checkstyle V2 merit further validation against native Checkstyle on the same full command?",
+  "primaryMetric": "Complete request duration plus required machine costs outside that envelope",
+  "comparison": "Same :server:precommit --continue; retained ForbiddenPatterns baseline in both arms; Checkstyle correction in I only",
+  "history": [
+    17,
+    18,
+    19,
+    20
+  ],
+  "coldOrdinals": [
+    17
+  ],
+  "decisionOrdinals": [
+    18,
+    19,
+    20
+  ],
+  "replications": 2,
+  "rule": "Each replication needs at least 1s mean and 5% aggregate saving over all three post-cold pairs, at least two positive pairs, native checking and candidate reuse. Both must pass.",
+  "outcomes": [
+    "EXPLORATORY_MATERIAL_SIGNAL",
+    "NO_MATERIAL_SIGNAL_IN_THIS_SCREEN",
+    "INCOMPLETE_SCREEN"
+  ],
+  "coldAccounting": "Keep all cold timings and paired excess. Report all request and outside-envelope costs; no payback or sustained net-value claim.",
+  "pressurePolicy": "Retain every request and original host flags; no causal attribution or timing-driven retry.",
+  "noG0OrG3Promotion": true,
+  "noProtectedHistory": true,
+  "protocolDocument": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay-2026-09-14/inputs/protocol.md",
+    "sha256": "24d341aefe56e94e434469bc60dfe69d7551e7e08419d2fac97e7ec09c5eae5d"
+  }
+}

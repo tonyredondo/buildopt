@@ -1,0 +1,69 @@
+--- /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/export-evidence.py
++++ /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay-2026-09-14/export-evidence.py
+@@ -6,7 +6,7 @@
+ 
+ P = Path(__file__).resolve().parent
+ R = P.parents[3]
+-E = R / 'benchmarks/results/buildopt-product-viability-v1/bo-05-checkstyle-screen'
++E = R / 'benchmarks/results/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay'
+ 
+ def load(path):
+     return json.loads(path.read_text())
+@@ -31,21 +31,23 @@
+     'inputs/protocol.md':'protocol.md',
+     'inputs/launch-freeze.json':'launch-freeze.json',
+     'inputs/launch-admission.json':'launch-admission.json',
+-    'inputs/decision-tests.json':'receipts/decision-tests.json',
++    'receipts/observer-repair-tests.json':'receipts/observer-repair-tests.json',
+     'inputs/analysis-bindings.json':'receipts/analysis-bindings.json',
+     'receipts/readiness.json':'receipts/readiness.json',
+-    'receipts/controller-tests.json':'receipts/controller-tests.json',
++    'receipts/prior-observer-proof.json':'receipts/prior-observer-proof.json',
+     'receipts/reproducible-tool-tests/result.json':'receipts/reproducible-tool-tests.json',
+     'receipts/manifest-validation.json':'receipts/manifest-validation.json',
+     'receipts/profile-supported-start.json':'receipts/run-start.json',
+     'receipts/profile-supported-end.json':'receipts/run-end.json',
+ }
+-for name in ['prepare.py','run-screen.py','decision.py','analyze-screen.py','analyze-host.py',
+-             'analyze-phases.py','analyze-order.py','verify-closeout.py','test-screen-tools.py','export-evidence.py']:
++for name in ['prepare.py','run-screen-v2.py','run-screen.py','decision.py','analyze-screen.py','analyze-host.py',
++             'analyze-phases-v2.py','analyze-order.py','verify-closeout.py','test-screen-tools-v2.py','test-observer-repair.py','export-evidence.py']:
+     mapping[name] = 'tools/' + name
+     diff = 'inputs/' + name + '.diff'
+     if (P/diff).exists():
+         mapping[diff] = 'tools/' + name + '.diff'
++for pair in sorted((P/'profiles/supported/run/pairs').glob('*.json')):
++    mapping[str(pair.relative_to(P))] = 'pairs/' + pair.name
+ assert sum((P/name).stat().st_size for name in mapping) < 20*2**20
+ E.mkdir()
+ index = []
+@@ -87,6 +89,20 @@
+ 
+ {lead}
+ 
++## Why this is a separate attempt
++
++The [previous attempt](../bo-05-checkstyle-screen/README.md) stopped after the
++observation script could not read optional process data. Its completed sequence
++and missing outcomes remain recorded there. This comparison starts both
++sequences from fresh state and uses the repaired observer; no earlier timing
++contributes to its decision. The source correction and decision thresholds
++are unchanged.
++
++The observer repair passed 14 focused checks, including a real permission
++denial. Another 22 checks covered the decision rule and actual observation
++callback. None started Gradle or a comparator JVM. Missing optional data stays
++explicit; identity and CPU assignment checks remain required.
++
+ ## What we compared
+ 
+ Checkstyle checks source formatting and coding rules. The correction remembers
+@@ -133,7 +149,7 @@
+ 
+ ## Work avoided and correctness
+ 
+-| Replication | Change | Arm | Files checked by the engine | Reused checks |
++| Replication | Change | Arm | Files passed to the checker | Reused checks |
+ |---|---|---|---:|---:|
+ {chr(10).join(work)}
+ 

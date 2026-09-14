@@ -1,0 +1,26 @@
+{
+  "status": "prepared before measured timing",
+  "files": [
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay-2026-09-14/verify-closeout.py",
+      "sha256": "0bea4f74560de60a48be5b94541543743ba797e96df1fcb0458934ff817aefb3"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay-2026-09-14/analyze-screen.py",
+      "sha256": "ae930fac63de30c3aaac190ad5198fa5d9488b521eee2ff211ed83954ef6f2b9"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay-2026-09-14/analyze-phases-v2.py",
+      "sha256": "e0b08a7708e20d3075a008b0222cbf591d3d552cef5bb3901394e19de3fa5d04"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay-2026-09-14/analyze-order.py",
+      "sha256": "85c62e754dbbdd44b9814194aad14a7b18d1edd1cbd812b2841426713528d220"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay-2026-09-14/export-evidence.py",
+      "sha256": "4ef36c8b09fbb7d8cdb887549703380a4d0f05caf422280a56f82da4ab43ebca"
+    }
+  ],
+  "scope": "Post-run reconciliation and reporting; unchanged decision thresholds, complete new sequences only."
+}

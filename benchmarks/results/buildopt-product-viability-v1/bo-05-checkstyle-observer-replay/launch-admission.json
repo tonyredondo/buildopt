@@ -1,0 +1,13 @@
+{
+  "atUTC": "2026-09-14T17:53:57.747300+00:00",
+  "authorization": "Latest user: Si claro que lo autorizo. Authorizes a separate complete 16-build BO-05 comparison with the verified observer repair. Commit and push each block remain authorized.",
+  "manifestValidationSHA256": "aad938471a02a2387a0631525ef58b7dc219276622ac7ceb20f0a7d4e238d9bc",
+  "launchFreezeSHA256": "053e1e8ba6fd19caee594bdc970151fe0a0d90b82a1a416c6707e44e8be2ea4e",
+  "allocationDeadline": "2026-09-14T20:52:47.223920+00:00",
+  "ownerStarts": 16,
+  "metadataJVMs": 16,
+  "unchangedCandidate": true,
+  "unchangedDecisionRule": true,
+  "unchangedCorrectedObserver": true,
+  "predecessorRowsExcluded": true
+}

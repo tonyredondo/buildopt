@@ -1,0 +1,66 @@
+--- /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/prepare.py
++++ /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay-2026-09-14/prepare.py
+@@ -96,52 +96,6 @@
+             checked.append(item['path'])
+     checks.append(dict(originalOrdinal=index + 17, commit=commit, checkedPaths=checked, allMatch=True))
+ 
+-adapt('run-control.py', 'run-screen.py', [
+-    ('Run the frozen identical-code 6-to-7 control', 'Run the frozen native-versus-V2 17-to-20 screen'),
+-    ('offset = 6', 'offset = 17'),
+-    ("assert starts == 4 and allocation['ownerReserved'] == allocation['actualOwnerStarts'] == 0\nassert m['controlBaseline']['files'] == m['baseline']['files'] + m['candidate']['files']\nassert m['controlBaseline']['prerequisites'] == m['candidate']['prerequisites']\nassert m['replications'] == 1 and m['limits']['retryPairs'] == 0",
+-     "assert starts == 16 and allocation['ownerReserved'] == allocation['actualOwnerStarts'] == 0\nassert 'controlBaseline' not in m\nassert m['replications'] == 2 and m['executionEnd'] == 3 and m['limits']['retryPairs'] == 0\nassert load(P / 'receipts/readiness.json')['status'] == 'verified for exploratory screen'"),
+-    ("if native['exitCode'] == 0 and start['ordinal'] in (0, 1):", "if native['exitCode'] == 0 and start['ordinal'] == 0:"),
+-    ("            if arm in ('N', 'I'):", "            if arm == 'I':"),
+-    ("        if native['exitCode'] == 0:\n            expected_tasks", "        if arm == 'N':\n            assert not entries, ('UNEXPECTED_NATIVE_CANDIDATE_STATE', attempt.name)\n        if native['exitCode'] == 0 and arm == 'I':\n            expected_tasks"),
+-])
+-
+-original = (A / 'analyze-control.py').read_text()
+-analysis = replace(original, '    offset = 6', '    offset = 17')
+-analysis = replace(analysis, '    assert len(workers) == 2', '    assert len(workers) == 4')
+-analysis = replace(analysis, "            if arm in ('N','I'):", "            if arm == 'N':\n                assert not row['candidateSuccessState']\n            if arm == 'I':")
+-begin = analysis.index('    report = dict(allThreeCandidateTaskStatesVerified=')
+-end = analysis.index("    save(P / f'analysis/profile-{label}.json', report)", begin)
+-analysis = analysis[:begin] + '''    from decision import classify
+-    decision = classify(pairs)
+-    report = dict(schema='buildopt.checkstyle-native-screen/v1', status='verified',
+-        profile=label, workers=cpus, armLabels={'N':'native Checkstyle', 'I':'supported V2 correction'},
+-        gradleActual=starts, metadataJVMActual=helper, warmupBuilds=4, measuredPairs=len(measured),
+-        pairs=pairs, summary=metrics, replicationDecisions=decision['replications'],
+-        decision=decision['decision'], materialSignal=decision['materialSignal'],
+-        baselineCheckstyleActions=active, measuredReusableFiles=reusable,
+-        allThreeCandidateTaskStatesVerified=True, masks=masks,
+-        cpuIsolationQualified=masks['nativeAndRunningWorkerAffinityVerified'],
+-        readinessQualified=False, valueQualified=False, productViability='NOT_ESTABLISHED',
+-        metadataAccounting='Eight live and eight independently reconstructed output comparisons; no third pass',
+-        analyzer=dict(path=str(Path(__file__).resolve()),sha256=sha(__file__)),
+-        rawResult=dict(path=str(run/'result.json'),sha256=sha(run/'result.json')),
+-        limits=['Six post-cold pairs across two replications; no precision or sustained-value claim',
+-                'Fresh state starts at original17; the earlier development state is not reconstructed',
+-                'Cold and setup costs remain separate and are not assumed recovered',
+-                'Shared host and the symmetric phase agent can affect timing; retain every row and flag',
+-                'Pinned Gradle9.7.1 with Configuration Cache disabled; formal G0 and G3 remain unqualified'])
+-''' + analysis[end:]
+-ast.parse(analysis)
+-(P / 'analyze-screen.py').write_text(analysis)
+-(P / 'inputs/analyze-screen.py.diff').write_text(''.join(difflib.unified_diff(
+-    original.splitlines(True), analysis.splitlines(True), fromfile=str(A/'analyze-control.py'), tofile=str(P/'analyze-screen.py'))))
+-adapt('analyze-host.py', 'analyze-host.py', [
+-    ("originalOrdinal=start['ordinal'] + 6", "originalOrdinal=start['ordinal'] + 17"),
+-    ('assert len(requests) == 4', 'assert len(requests) == 16'),
+-])
+-adapt('status.py', 'status.py', [('Read only the four owned attempt receipts', 'Read only the sixteen owned attempt receipts')])
+-
+ m.pop('controlBaseline')
+ m.update(subject='elasticsearch-checkstyle-native-screen-17-20', history=history,
+     runRoot=str(P / 'profiles/supported/run'), replications=2, executionEnd=3)
+@@ -181,7 +135,9 @@
+     pressurePolicy='Retain every request and original host flags; no causal attribution or timing-driven retry.',
+     noG0OrG3Promotion=True, noProtectedHistory=True, protocolDocument=bindings.bind(P/'inputs/protocol.md')))
+ freeze = prior + fixture_bindings + [bindings.bind(P/path) for path in [
+-    'prepare.py','run-screen.py','analyze-screen.py','analyze-host.py','decision.py','inputs/decision-tests.json',
++    'prepare.py','run-screen-v2.py','run-screen.py','analyze-screen.py','analyze-host.py','decision.py',
++    'analyze-phases-v2.py','analyze-order.py','verify-closeout.py','status-v2.py','test-screen-tools-v2.py','test-observer-repair.py','export-evidence.py',
++    'receipts/observer-repair-tests.json','receipts/reproducible-tool-tests/result.json','receipts/prior-observer-proof.json',
+     'profiles/supported/manifest.json','inputs/allocation-frozen.json','inputs/protocol.json',
+     'inputs/protocol.md','receipts/readiness.json']]
+ save(P / 'inputs/launch-freeze.json', freeze)

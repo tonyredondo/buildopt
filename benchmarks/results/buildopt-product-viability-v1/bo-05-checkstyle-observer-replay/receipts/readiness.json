@@ -1,0 +1,172 @@
+{
+  "status": "verified for exploratory screen",
+  "checkedUTC": "2026-09-14T17:52:47.223920+00:00",
+  "priorFrozenBindings": 19,
+  "priorAAControl": "NO_SPURIOUS_MATERIAL_SIGNAL_IN_THIS_CONTROL",
+  "sourcePreflight": [
+    {
+      "originalOrdinal": 17,
+      "commit": "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe",
+      "checkedPaths": [
+        "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/ForbiddenPatternsTask.java",
+        "gradle/wrapper/gradle-wrapper.properties",
+        "build-tools-internal/src/main/resources/checkstyle.xml",
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/SnippetLengthCheck.java",
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/StringFormattingCheck.java",
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/SwitchBetweenCheck.java",
+        "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstylePrecommitPlugin.java",
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/CheckstyleSuccessState.java",
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareChecker.java",
+        "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstyleSuccessHistory.java",
+        "build-tools-internal/src/test/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareCheckerTests.java"
+      ],
+      "allMatch": true
+    },
+    {
+      "originalOrdinal": 18,
+      "commit": "d47f43f5ff06883d3f0a04f3d40af627ecf5142e",
+      "checkedPaths": [
+        "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/ForbiddenPatternsTask.java",
+        "gradle/wrapper/gradle-wrapper.properties",
+        "build-tools-internal/src/main/resources/checkstyle.xml",
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/SnippetLengthCheck.java",
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/StringFormattingCheck.java",
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/SwitchBetweenCheck.java",
+        "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstylePrecommitPlugin.java",
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/CheckstyleSuccessState.java",
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareChecker.java",
+        "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstyleSuccessHistory.java",
+        "build-tools-internal/src/test/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareCheckerTests.java"
+      ],
+      "allMatch": true
+    },
+    {
+      "originalOrdinal": 19,
+      "commit": "72aa4d4120d09157106325096f0e7b2cc1852f59",
+      "checkedPaths": [
+        "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/ForbiddenPatternsTask.java",
+        "gradle/wrapper/gradle-wrapper.properties",
+        "build-tools-internal/src/main/resources/checkstyle.xml",
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/SnippetLengthCheck.java",
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/StringFormattingCheck.java",
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/SwitchBetweenCheck.java",
+        "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstylePrecommitPlugin.java",
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/CheckstyleSuccessState.java",
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareChecker.java",
+        "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstyleSuccessHistory.java",
+        "build-tools-internal/src/test/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareCheckerTests.java"
+      ],
+      "allMatch": true
+    },
+    {
+      "originalOrdinal": 20,
+      "commit": "22d6425e9a44ec9e1aedc2785f4478b8019c851a",
+      "checkedPaths": [
+        "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/ForbiddenPatternsTask.java",
+        "gradle/wrapper/gradle-wrapper.properties",
+        "build-tools-internal/src/main/resources/checkstyle.xml",
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/SnippetLengthCheck.java",
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/StringFormattingCheck.java",
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/SwitchBetweenCheck.java",
+        "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstylePrecommitPlugin.java",
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/CheckstyleSuccessState.java",
+        "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareChecker.java",
+        "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstyleSuccessHistory.java",
+        "build-tools-internal/src/test/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareCheckerTests.java"
+      ],
+      "allMatch": true
+    }
+  ],
+  "supportedLifecycleCases": 6,
+  "coreTestsReused": 4,
+  "unchangedRunner": true,
+  "unchangedCandidate": true,
+  "unchangedOutputPolicy": true,
+  "nativeStarts": 0,
+  "helperJVMStarts": 0,
+  "formalG0Qualified": false,
+  "formalG3Qualified": false,
+  "scope": "Existing scoped correctness and A/A disposition permit exploratory comparison; full timing and protected validation remain unqualified.",
+  "lifecycleProof": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/analysis/correctness-v2.json",
+    "sha256": "fe3e21b1ae327fb40ea97ac2ea305120d54a554e68a46014d854731100894747"
+  },
+  "liveAndIndependentOutputProof": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/analysis/verification.json",
+    "sha256": "92684a88d4d56825a7cb66e4782e67206c7720bb23cbfdff6fa00b252eb67137"
+  },
+  "fixtureBindings": [
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/fixture-runs/supported-final-cold/build.log",
+      "sha256": "2d10b72a3e904593e44a3ab8e8779cb7073aded60025573d1367e18112182220"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/fixture-runs/supported-final-cold/state.json",
+      "sha256": "dc76a4d7fc729fd58d5f578e9d42772e57de0c420c9653bcd6dbbebd5ed14599"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/fixture-runs/supported-final-cold/end.json",
+      "sha256": "cabf96b457492bacda15142054e9f3d1720387e29f356ad00772e3b0ff1c788a"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/fixture-runs/supported-final-warm/build.log",
+      "sha256": "6a440257ea197e05d2737b998a43483da104f4ca36ffeefc706d21f9e879ee20"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/fixture-runs/supported-final-warm/state.json",
+      "sha256": "9cfc634629e8eef11a9828ca319c3512220b0dd4a07a9c9717b7036eabfdc522"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/fixture-runs/supported-final-warm/end.json",
+      "sha256": "1d727ae2541f70a494ed6ca69e516137e6ebfe4069b8c356a7a88f6898637a5e"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/fixture-runs/supported-final-faults/build.log",
+      "sha256": "af27f668237c07cf0d0c5d984a10aad2d70a89d9e1392eebd694cfea01fab75a"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/fixture-runs/supported-final-faults/state.json",
+      "sha256": "0f6b9d1ac0f672f50fcaf92d41873e17a289af056925a66db4b673dda9d52330"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/fixture-runs/supported-final-faults/end.json",
+      "sha256": "0c9e871bc288b1edd0aef8a8f7f2333fa7601fb912dccf31fcb45df172c055d8"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/fixture-runs/supported-final-cancel/build.log",
+      "sha256": "2dd4ff94ed16131e2e696250540a6831d1b29c77ae576ee3c4c3cf81c4140588"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/fixture-runs/supported-final-cancel/state.json",
+      "sha256": "b90460ae6bd4d2945a34b3057f16956064ebadf585eae332e2fd7338cdb2d9c6"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/fixture-runs/supported-final-cancel/end.json",
+      "sha256": "f922f9d31ed2a78f9d6e0feed94b0cfa7d9b0285034afe1e208a0e8d980d3627"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/fixture-runs/supported-final-recovery/build.log",
+      "sha256": "b90633fa4cc805fb16f76c7f9a36ef10bae2c45f945c382969a3d37f98104a2e"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/fixture-runs/supported-final-recovery/state.json",
+      "sha256": "d161f0bf334af992a99f6434cc767fe3423f4859bfe4f9f188d0fb59346e7b30"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/fixture-runs/supported-final-recovery/end.json",
+      "sha256": "061a46d367708483cbced1058b8f2c7b8b6b293cf0cd617a791dea70d98b71ff"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/fixture-runs/supported-final-uptodate/build.log",
+      "sha256": "abbeda9f210aefd3b08c8f2d24445695dc1cab027a28312f9071705a050ddf1c"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/fixture-runs/supported-final-uptodate/state.json",
+      "sha256": "d161f0bf334af992a99f6434cc767fe3423f4859bfe4f9f188d0fb59346e7b30"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/fixture-runs/supported-final-uptodate/end.json",
+      "sha256": "7bca3a2f71e584bec59bb33699bf96db2a5f5db9218f7f3e8c17f6dc87d948c8"
+    }
+  ]
+}

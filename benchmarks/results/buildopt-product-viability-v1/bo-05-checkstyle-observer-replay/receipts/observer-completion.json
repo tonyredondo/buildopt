@@ -1,0 +1,12 @@
+{
+  "status": "verified completed trial with revised observer",
+  "samples": 5155,
+  "optionalAccessDenials": {},
+  "missingIOSamples": 0,
+  "observations": [],
+  "observationFailure": null,
+  "predecessorStatePreserved": true,
+  "processSamplesSHA256": "20ec33543a801c48d1ae342cfe4841426fa475ab2d3b8547e169af1582a3bc21",
+  "scope": "Optional gaps are explicit. Actual native and observer CPU masks matched in the samples; continuous isolation and formal G0/G3 remain unqualified.",
+  "checkedUTC": "2026-09-14T19:28:39.477330+00:00"
+}

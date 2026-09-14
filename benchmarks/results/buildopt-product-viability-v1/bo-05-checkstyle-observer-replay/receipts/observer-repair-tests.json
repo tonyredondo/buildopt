@@ -1,0 +1,83 @@
+{
+  "status": "verified focused observer repair",
+  "cases": [
+    {
+      "name": "original collector aborts on real Linux proc permission denial",
+      "status": "passed",
+      "observed": "PermissionError",
+      "filename": "/proc/3830363/io"
+    },
+    {
+      "name": "revised collector retains identity and affinity with explicit inaccessible IO",
+      "status": "passed"
+    },
+    {
+      "name": "readable process retains normal IO counters",
+      "status": "passed"
+    },
+    {
+      "name": "inaccessible wait channel is an explicit optional gap",
+      "status": "passed"
+    },
+    {
+      "name": "process identity access remains required",
+      "status": "passed",
+      "observed": "PermissionError",
+      "filename": "/proc/3830363/stat"
+    },
+    {
+      "name": "process command access remains required",
+      "status": "passed",
+      "observed": "PermissionError",
+      "filename": "/proc/3830363/cmdline"
+    },
+    {
+      "name": "other IO failures still abort collection",
+      "status": "passed",
+      "observed": "OSError",
+      "filename": "/proc/3830363/io"
+    },
+    {
+      "name": "process disappearance retains prior race handling",
+      "status": "passed"
+    },
+    {
+      "name": "resource accounting with missing IO at ()",
+      "status": "passed"
+    },
+    {
+      "name": "resource accounting with missing IO at (0,)",
+      "status": "passed"
+    },
+    {
+      "name": "resource accounting with missing IO at (1,)",
+      "status": "passed"
+    },
+    {
+      "name": "resource accounting with missing IO at (2,)",
+      "status": "passed"
+    },
+    {
+      "name": "resource accounting with missing IO at (0, 1, 2)",
+      "status": "passed"
+    },
+    {
+      "name": "fatal errors retain filename and traceback",
+      "status": "passed"
+    }
+  ],
+  "passed": 14,
+  "ownerBuilds": 0,
+  "comparatorJVMs": 0,
+  "measuredTrialWithRevisedCollector": false,
+  "limits": [
+    "Real OS permission denial reproduces the failure class; the original failing path and PID were not retained.",
+    "Only optional IO and wait-channel access changes; critical identity, command and other failures still propagate."
+  ],
+  "sources": {
+    "run-screen.py": "d84b94a18fbf8634aca1e56e04ff68c99f967e9d20065bf41603f1edab3d1348",
+    "run-screen-v2.py": "a23774df2cdbeab322cd3b5c02f4feca64ec55557ca93c6bd5e21bc2440b4e3e",
+    "analyze-phases-v2.py": "e0b08a7708e20d3075a008b0222cbf591d3d552cef5bb3901394e19de3fa5d04",
+    "test-observer-repair.py": "3d4c57b930498decd6cda3f946e99b2cbb03423b06cb9f290565ce37bfc2c4bd"
+  }
+}
