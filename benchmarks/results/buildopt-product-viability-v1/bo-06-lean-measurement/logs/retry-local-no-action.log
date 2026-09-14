@@ -1,0 +1,6 @@
+=== RUN   TestTypedFailuresAndNativeFallback
+=== RUN   TestTypedFailuresAndNativeFallback/no-action
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/fixtures/TestTypedFailuresAndNativeFallback-no-action-3293491653
+--- PASS: TestTypedFailuresAndNativeFallback (23.03s)
+    --- PASS: TestTypedFailuresAndNativeFallback/no-action (23.03s)
+PASS

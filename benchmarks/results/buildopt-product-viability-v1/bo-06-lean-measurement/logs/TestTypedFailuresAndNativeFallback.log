@@ -1,0 +1,19 @@
+=== RUN   TestTypedFailuresAndNativeFallback
+=== RUN   TestTypedFailuresAndNativeFallback/mismatch
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/fixtures/TestTypedFailuresAndNativeFallback-mismatch-2492419762
+=== RUN   TestTypedFailuresAndNativeFallback/native-failure
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/fixtures/TestTypedFailuresAndNativeFallback-native-failure-1839477250
+=== RUN   TestTypedFailuresAndNativeFallback/unavailable
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/fixtures/TestTypedFailuresAndNativeFallback-unavailable-3478791668
+=== RUN   TestTypedFailuresAndNativeFallback/no-action
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/fixtures/TestTypedFailuresAndNativeFallback-no-action-3072864484
+    adversarial_integration_test.go:30: NOT_RUN_LIMIT: elapsed allocation
+=== RUN   TestTypedFailuresAndNativeFallback/fallback
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/fixtures/TestTypedFailuresAndNativeFallback-fallback-833096334
+--- FAIL: TestTypedFailuresAndNativeFallback (146.76s)
+    --- PASS: TestTypedFailuresAndNativeFallback/mismatch (8.43s)
+    --- PASS: TestTypedFailuresAndNativeFallback/native-failure (22.76s)
+    --- PASS: TestTypedFailuresAndNativeFallback/unavailable (23.75s)
+    --- FAIL: TestTypedFailuresAndNativeFallback/no-action (61.15s)
+    --- PASS: TestTypedFailuresAndNativeFallback/fallback (30.67s)
+FAIL

@@ -1,0 +1,4 @@
+=== RUN   TestResearchReadinessAdmission
+    research_measurement_test.go:13: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/fixtures/TestResearchReadinessAdmission-4278030696
+--- PASS: TestResearchReadinessAdmission (0.18s)
+PASS

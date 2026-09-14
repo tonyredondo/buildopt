@@ -1,0 +1,5 @@
+=== RUN   TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/fixtures/TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost-376239277
+    driver_death_integration_test.go:112: killed driver PID 343952; detached PID 344227 terminated; partial candidate charged 790.133859ms
+--- PASS: TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost (10.19s)
+PASS

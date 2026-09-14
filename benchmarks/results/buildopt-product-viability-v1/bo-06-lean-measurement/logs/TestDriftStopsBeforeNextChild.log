@@ -1,0 +1,27 @@
+=== RUN   TestDriftStopsBeforeNextChild
+=== RUN   TestDriftStopsBeforeNextChild/source
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/fixtures/TestDriftStopsBeforeNextChild-source-112593787
+    adversarial_integration_test.go:97: expected pre-child refusal: state changed outside its recorded request lineage
+=== RUN   TestDriftStopsBeforeNextChild/patch
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/fixtures/TestDriftStopsBeforeNextChild-patch-3158882368
+    adversarial_integration_test.go:97: expected pre-child refusal: binding drift: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/fixtures/TestDriftStopsBeforeNextChild-patch-3158882368/patch-after.txt
+=== RUN   TestDriftStopsBeforeNextChild/runtime
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/fixtures/TestDriftStopsBeforeNextChild-runtime-3891728411
+    adversarial_integration_test.go:97: expected pre-child refusal: binding drift: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/fixtures/TestDriftStopsBeforeNextChild-runtime-3891728411/runtime-input
+=== RUN   TestDriftStopsBeforeNextChild/package
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/fixtures/TestDriftStopsBeforeNextChild-package-2706567659
+    adversarial_integration_test.go:97: expected pre-child refusal: binding drift: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/fixtures/TestDriftStopsBeforeNextChild-package-2706567659/package-input
+=== RUN   TestDriftStopsBeforeNextChild/future-state
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/fixtures/TestDriftStopsBeforeNextChild-future-state-4122066236
+    adversarial_integration_test.go:97: expected pre-child refusal: state changed outside its recorded request lineage
+=== RUN   TestDriftStopsBeforeNextChild/shared-state
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/fixtures/TestDriftStopsBeforeNextChild-shared-state-4142658436
+    adversarial_integration_test.go:97: expected pre-child refusal: state symlink escapes private arm: borrowed
+--- PASS: TestDriftStopsBeforeNextChild (95.69s)
+    --- PASS: TestDriftStopsBeforeNextChild/source (7.95s)
+    --- PASS: TestDriftStopsBeforeNextChild/patch (46.98s)
+    --- PASS: TestDriftStopsBeforeNextChild/runtime (11.44s)
+    --- PASS: TestDriftStopsBeforeNextChild/package (13.49s)
+    --- PASS: TestDriftStopsBeforeNextChild/future-state (8.07s)
+    --- PASS: TestDriftStopsBeforeNextChild/shared-state (7.75s)
+PASS

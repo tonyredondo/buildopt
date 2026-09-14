@@ -1,0 +1,4 @@
+=== RUN   TestControlBaselineChronologicalReplay
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/fixtures/TestControlBaselineChronologicalReplay-94907449
+--- PASS: TestControlBaselineChronologicalReplay (30.87s)
+PASS

@@ -1,0 +1,13 @@
+=== RUN   TestAllocationStopsAndDetachedChild
+=== RUN   TestAllocationStopsAndDetachedChild/workflow-limit
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/fixtures/TestAllocationStopsAndDetachedChild-workflow-limit-3495481717
+=== RUN   TestAllocationStopsAndDetachedChild/disk-before-start
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/fixtures/TestAllocationStopsAndDetachedChild-disk-before-start-3280136035
+=== RUN   TestAllocationStopsAndDetachedChild/detached-and-timeout
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/fixtures/TestAllocationStopsAndDetachedChild-detached-and-timeout-1329248810
+    adversarial_integration_test.go:158: detached PID 343885 and service buildopt-replay-7fdf166ec37bc55b-r1-N-1.service terminated
+--- PASS: TestAllocationStopsAndDetachedChild (16.40s)
+    --- PASS: TestAllocationStopsAndDetachedChild/workflow-limit (10.78s)
+    --- PASS: TestAllocationStopsAndDetachedChild/disk-before-start (0.52s)
+    --- PASS: TestAllocationStopsAndDetachedChild/detached-and-timeout (5.10s)
+PASS

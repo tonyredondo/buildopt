@@ -1,0 +1,22 @@
+=== RUN   TestAffinityScope
+=== RUN   TestAffinityScope/success
+    affinity_test.go:86: affinity mode=success tid=358310 pid=358306
+=== RUN   TestAffinityScope/launch-failure
+    affinity_test.go:86: affinity mode=launch-failure tid=358314 pid=358306
+=== RUN   TestAffinityScope/set-failure
+    affinity_test.go:86: affinity mode=set-failure tid=358314 pid=358306
+=== RUN   TestAffinityScope/restore-failure
+    affinity_test.go:86: affinity mode=restore-failure tid=358314 pid=358306
+=== RUN   TestAffinityScope/cancel
+    affinity_test.go:86: affinity mode=cancel tid=358310 pid=358306
+--- PASS: TestAffinityScope (0.14s)
+    --- PASS: TestAffinityScope/success (0.03s)
+    --- PASS: TestAffinityScope/launch-failure (0.00s)
+    --- PASS: TestAffinityScope/set-failure (0.00s)
+    --- PASS: TestAffinityScope/restore-failure (0.00s)
+    --- PASS: TestAffinityScope/cancel (0.10s)
+=== RUN   TestResearchCLIAndMissingResults
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/fixtures/TestResearchCLIAndMissingResults-3435873669
+--- PASS: TestResearchCLIAndMissingResults (19.28s)
+PASS
+ok  	github.com/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/source	19.415s

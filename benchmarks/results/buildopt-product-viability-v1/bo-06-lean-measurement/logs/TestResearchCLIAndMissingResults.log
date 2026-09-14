@@ -1,0 +1,5 @@
+=== RUN   TestResearchCLIAndMissingResults
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/fixtures/TestResearchCLIAndMissingResults-1057649835
+    research_cli_test.go:19: actual CLI: signal: terminated 
+--- FAIL: TestResearchCLIAndMissingResults (134.80s)
+FAIL

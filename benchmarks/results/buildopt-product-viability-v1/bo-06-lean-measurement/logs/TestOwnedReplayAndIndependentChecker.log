@@ -1,0 +1,10 @@
+=== RUN   TestOwnedReplayAndIndependentChecker
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/fixtures/TestOwnedReplayAndIndependentChecker-2405918531
+=== RUN   TestOwnedReplayAndIndependentChecker/payback
+=== RUN   TestOwnedReplayAndIndependentChecker/duration
+=== RUN   TestOwnedReplayAndIndependentChecker/positive-summary
+--- PASS: TestOwnedReplayAndIndependentChecker (32.66s)
+    --- PASS: TestOwnedReplayAndIndependentChecker/payback (0.07s)
+    --- PASS: TestOwnedReplayAndIndependentChecker/duration (0.07s)
+    --- PASS: TestOwnedReplayAndIndependentChecker/positive-summary (0.07s)
+PASS

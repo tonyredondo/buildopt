@@ -1,0 +1,8 @@
+=== RUN   TestResearchTrialAdmission
+=== RUN   TestResearchTrialAdmission/control
+=== RUN   TestResearchTrialAdmission/prefix
+--- PASS: TestResearchTrialAdmission (0.75s)
+    --- PASS: TestResearchTrialAdmission/control (0.00s)
+    --- PASS: TestResearchTrialAdmission/prefix (0.01s)
+PASS
+ok  	github.com/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/source	0.751s
