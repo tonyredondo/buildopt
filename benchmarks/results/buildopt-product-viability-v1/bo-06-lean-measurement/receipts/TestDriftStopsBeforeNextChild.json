@@ -1,0 +1,13 @@
+{
+  "command": [
+    "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/fixture-tests",
+    "-test.v",
+    "-test.run=^TestDriftStopsBeforeNextChild$",
+    "-test.timeout=160s"
+  ],
+  "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/source",
+  "exitCode": 0,
+  "elapsedSeconds": 95.70628588699037,
+  "log": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/logs/TestDriftStopsBeforeNextChild.log",
+  "sha256": "a7205efbb0becdfe5d00b0245250bdc3bafa3f85231df8c891ec957b6655b421"
+}

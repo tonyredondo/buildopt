@@ -1,0 +1,17 @@
+{
+  "id": "r1-N-acquisition",
+  "class": "research",
+  "purpose": "native-state-preparation",
+  "replication": 1,
+  "ordinal": 0,
+  "arm": "N",
+  "attempt": "",
+  "startNS": 298946720827249,
+  "endNS": 299623113544658,
+  "durationNS": 676392717409,
+  "insideEnvelope": false,
+  "workflowStarts": 0,
+  "gradleStarts": 0,
+  "nestedStarts": 0,
+  "bytes": 0
+}

@@ -1,7 +1,7 @@
 # Build Optimization research execution plan
 
 Date: 2026-09-14. Program: `BUILDOPT-VIABILITY-V1`.
-Status: governing plan in execution; BO-01 through BO-05 verified; BO-06 correctness extended, measurement decision pending.
+Status: governing plan in execution; BO-01 through BO-05 verified; BO-06 partial after a passing control and blocked development admission.
 
 This plan records the direction agreed after the research review and its
 discussion. It owns research priorities, sequencing and the
@@ -139,7 +139,7 @@ the outcome may be negative. Advance only on the outcome required below.
 | BO-03 | Estimate realistic whole-build opportunity per candidate | BO-01; measurement readiness before fresh timing | verified; [five candidate assessments](../../benchmarks/results/buildopt-product-viability-v1/bo-03-opportunity-assessment/README.md); only Checkstyle warrants the planned short screen after readiness checks; missing workflow evidence remains unqualified |
 | BO-04 | Admit or reject a focused Build Impact hypothesis | BO-01 and existing evidence review | verified; [no new trial admitted](../../benchmarks/results/buildopt-product-viability-v1/bo-04-build-impact-review/README.md); original savings retained |
 | BO-05 | Select a candidate through short comparisons | BO-02 as applicable, BO-03, early BO-06 correctness, and BO-04 for Build Impact | verified; [both fresh sequences passed](../../benchmarks/results/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay/README.md), saving 34.14% and 28.17%; the interrupted attempt remains separate |
-| BO-06 | Qualify correctness and freeze the implementation and protocol | Admitted opportunity; screen integration proof before BO-05, final freeze afterward | partial; [eight additional boundary checks and seven histories verified](../../benchmarks/results/buildopt-product-viability-v1/bo-06-readiness/README.md); measurement qualification and final confirmation freeze remain blocked; proposed instrument change awaits approval |
+| BO-06 | Qualify correctness and freeze the implementation and protocol | Admitted opportunity; screen integration proof before BO-05, final freeze afterward | partial; [lean control passed](../../benchmarks/results/buildopt-product-viability-v1/bo-06-lean-measurement/README.md), but the actual development manifest lacks comparator qualification; allocation closed before the prefix; complete that prerequisite before another freeze |
 | BO-07 | Establish sustained saving in the first repository | BO-05 and complete BO-06 | deferred |
 | BO-08 | Test the same mechanism on two other repositories | BO-07 positive | deferred |
 | BO-09 | Deliver and measure an MVP with manual controls | BO-08 positive | deferred |
@@ -397,12 +397,34 @@ cannot become primary confirmation data by relabeling it. The executable
 rejects the incomplete confirmation manifest. G3 remains the future BO-07
 outcome, not a BO-06 prerequisite.
 
-The [measurement proposal](../../benchmarks/results/buildopt-product-viability-v1/bo-06-readiness/measurement-decision.md)
-needs approval before implementation because it changes instrument admission
-and the scope of the initial timing claim. It preserves the value criteria and
-proposes at most eight control builds plus 42 development-prefix builds, with
-no automatic retries or protected history. It creates no active allocation.
-Until that decision, retain the partial freeze and leave BO-07 deferred.
+The user approved the measurement proposal. The separate
+[lean recording mode](../../benchmarks/results/buildopt-product-viability-v1/bo-06-lean-measurement/approved-method.md)
+removes the Java phase agent and keeps the output recorder on both arms.
+Process samples are diagnostic. The old precision and sampling failures retain
+their original outcomes. Any saving in this mode describes the recorded
+workflow; BO-09 must still measure the installed experience against ordinary
+Gradle before a product-performance claim.
+
+The eight-build identical-code control passed: 127.738 versus 129.505 seconds
+over the three measured changes, a 1.767-second difference or 1.38%. All four
+live and four independently reconstructed output comparisons passed. This
+does not measure an optimization saving. The local checks used 94 fixture
+requests and covered the command paths, but missed a prerequisite in the real
+Elasticsearch development manifest.
+
+That manifest was refused before any prefix build: its output policy has no
+qualification for the current comparator. The older qualification binds a
+different comparator. Adding the missing proof changes the frozen policy
+identity, so this control cannot silently admit that changed input. The
+[attempt and diagnosis](../../benchmarks/results/buildopt-product-viability-v1/bo-06-lean-measurement/README.md)
+are retained. The allocation is closed as incomplete, with eight owner builds,
+eight comparison JVMs, no owner retries and no protected builds.
+
+Follow the [continuation requirements](../../benchmarks/results/buildopt-product-viability-v1/bo-06-lean-measurement/continuation.md):
+recover and complete comparator qualification, validate the real admission
+paths, then freeze consistent inputs before proposing further measurement.
+The candidate and savings criteria are unchanged. BO-07 and protected changes
+21–100 remain deferred.
 
 ### BO-07: Measure sustained saving on the first repository
 

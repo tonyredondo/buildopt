@@ -1,0 +1,11 @@
+{
+  "atUTC": "2026-09-14T22:47:21.488796+00:00",
+  "reason": "Completed measurement and output proof were written successfully. Final accounting glob also matched local-process-closure.json, which has no livePairs field. Restrict accounting to the two declared owner trial receipts.",
+  "originalSHA256": "440841531633f7b9d715018fba8c3b3282e87a57962f8a0d0ccfe3ff6896f65b",
+  "correctedSHA256": "8649d10e17c8c8f256802b1e159c1b86507d7fc145fbbb9c727471be6efc7d09",
+  "measurementChanged": false,
+  "criteriaChanged": false,
+  "extraOwnerStarts": 0,
+  "extraComparatorJVMs": 0,
+  "existingReportsMustMatch": true
+}

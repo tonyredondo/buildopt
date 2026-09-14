@@ -1,0 +1,19 @@
+{
+  "command": [
+    "./dev/run",
+    "--toolchain",
+    "go",
+    "--",
+    "go",
+    "build",
+    "-mod=readonly",
+    "-o",
+    "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/history-replay-lean",
+    "./.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/source"
+  ],
+  "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+  "exitCode": 0,
+  "elapsedSeconds": 0.5150327080045827,
+  "log": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/logs/build-runner.log",
+  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

@@ -1,0 +1,118 @@
+{
+  "schema": "buildopt.history-replay/result/v2",
+  "manifestSHA256": "01b25c40e1221386af2d63babef6bcd3617b90efb69db4fca6d5bce39cb8a5b0",
+  "replications": [
+    {
+      "replication": 1,
+      "scheduled": 3,
+      "comparable": 3,
+      "adoptionNS": 0,
+      "maintenanceNS": 8773038,
+      "unpairedCandidateNS": 0,
+      "nativeNS": 127737753498,
+      "netSavedNS": -1776037784,
+      "netFraction": -0.013903781265636612,
+      "netPerScheduledNS": -592012594.6666666,
+      "nativeP50NS": 34201245687,
+      "nativeP95NS": 65079604301,
+      "candidateP50NS": 34701409997,
+      "candidateP95NS": 66368759581,
+      "worstRegressionNS": 1289155280,
+      "noActionSlots": 0,
+      "noActionDeltaNS": 0,
+      "noActionAttributedSavingNS": 0,
+      "paybackOrdinal": -1,
+      "temporaryCrossings": [
+        1
+      ],
+      "curveNS": [
+        19157618,
+        -484076498,
+        -1776037784
+      ],
+      "intervals": [],
+      "customerHumanNS": 0,
+      "researchNS": 2523340408630,
+      "researchRecordingAndOtherNS": 140564790861,
+      "studyMachineNS": 3206041827419,
+      "wholeStudySensitivityNetNS": -3207817865203,
+      "fullyLoadedNetNS": -2525116446414,
+      "complete": true,
+      "gate": "NOT_QUALIFIED",
+      "reasons": [
+        "qualification/engineering is not confirmation"
+      ]
+    }
+  ],
+  "slots": [
+    [
+      {
+        "ownerMetadataJVMStarts": 1,
+        "ordinal": 0,
+        "class": "COMPARABLE",
+        "reason": "",
+        "nativeNS": 220966961432,
+        "candidateNS": 204482912577,
+        "extraCandidateNS": 0,
+        "nativeActions": 1249,
+        "candidateActions": 1249,
+        "attempts": [
+          "r1-000-g0-N",
+          "r1-000-g0-I"
+        ]
+      },
+      {
+        "ownerMetadataJVMStarts": 1,
+        "ordinal": 1,
+        "class": "COMPARABLE",
+        "reason": "",
+        "nativeNS": 28456903510,
+        "candidateNS": 28434848666,
+        "extraCandidateNS": 0,
+        "nativeActions": 51,
+        "candidateActions": 51,
+        "attempts": [
+          "r1-001-g0-N",
+          "r1-001-g0-I"
+        ]
+      },
+      {
+        "ownerMetadataJVMStarts": 1,
+        "ordinal": 2,
+        "class": "COMPARABLE",
+        "reason": "",
+        "nativeNS": 34201245687,
+        "candidateNS": 34701409997,
+        "extraCandidateNS": 0,
+        "nativeActions": 22,
+        "candidateActions": 22,
+        "attempts": [
+          "r1-002-g0-N",
+          "r1-002-g0-I"
+        ]
+      },
+      {
+        "ownerMetadataJVMStarts": 1,
+        "ordinal": 3,
+        "class": "COMPARABLE",
+        "reason": "",
+        "nativeNS": 65079604301,
+        "candidateNS": 66368759581,
+        "extraCandidateNS": 0,
+        "nativeActions": 384,
+        "candidateActions": 384,
+        "attempts": [
+          "r1-003-g0-N",
+          "r1-003-g0-I"
+        ]
+      }
+    ]
+  ],
+  "workflowStarts": 8,
+  "gradleReservations": 8,
+  "actualGradleStarts": 8,
+  "nestedStarts": 0,
+  "unknownGradleReservations": 0,
+  "decision": "FIXTURE_VERIFIED",
+  "reasons": []
+}

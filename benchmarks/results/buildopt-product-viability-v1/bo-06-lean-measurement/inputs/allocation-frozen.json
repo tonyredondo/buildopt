@@ -1,0 +1,17 @@
+{
+  "status": "allocated",
+  "startedUTC": "2026-09-14T21:46:02.697501+00:00",
+  "startedBootNS": 298833710370808,
+  "deadlineUTC": "2026-09-15T07:46:02.697501+00:00",
+  "maxElapsedSeconds": 36000,
+  "maxNewBytes": 85899345920,
+  "minimumFreeBytes": 42949672960,
+  "maxDiagnosticBytes": 268435456,
+  "maxOwnerStarts": 50,
+  "maxHelpers": 50,
+  "ownerReserved": 0,
+  "helpersReserved": 0,
+  "actualOwnerStarts": 0,
+  "actualHelpers": 0,
+  "retriesAllowed": 0
+}

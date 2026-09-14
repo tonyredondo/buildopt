@@ -1,0 +1,38 @@
+{
+  "status": "verified",
+  "decision": "PREFIX_NOT_ADMITTED_MISSING_COMPARATOR_QUALIFICATION",
+  "observedUTC": "2026-09-14T23:00:11.988604+00:00",
+  "ownerPolicy": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/inputs/owner-policy-corrected.json",
+    "sha256": "028d31d8be73de2debda8a337c39782952b9a15f42b44d1e57413062b03c0114"
+  },
+  "missingField": "qualification",
+  "source": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/source/owner_policy.go",
+    "sha256": "0305bfe1c795901a65589743704cf1e9d69e23a2c53a73e2d49a331f2beda736"
+  },
+  "identitySource": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/source/research_measurement.go",
+    "sha256": "ba31e13464aea51eb9812cdeef209fec77ba07b46c775f9045d0ea71724df1f6"
+  },
+  "admissionFailure": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/receipts/prefix-validation.json",
+    "sha256": "b4897be74dc65ef15713e49c620a33557554d11ef304c9b225fd6bf1c9a47df8"
+  },
+  "oldQualification": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/benchmarks/results/buildopt-product-viability-v1/bv006/owner-readiness-v5/owner-qualification.json",
+    "sha256": "cdd3ae6e9d7ded71e7f15b63321bcc4bd99c4513143423784ab29de05e045a22"
+  },
+  "oldComparatorSHA256": "673d46a076ecb8bc2afa0fbd2e64c526b631cea66b31ae543a6a51f35d55171e",
+  "currentComparator": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/inputs/owner-replay-source/owner_compare.py",
+    "sha256": "fa7b1133cb29458fe7cb0d2e4b0d744d04396969f86423b0e8dcd1d74fccd5d9"
+  },
+  "explanation": "The owner policy permits missing qualification only in QUALIFICATION. ENGINEERING reaches checkBinding on the empty qualification path. The older proof binds another comparator. Adding proof changes the owner-policy binding included in the frozen measurement identity.",
+  "responsibility": "Preparation omission: local CLI checks did not validate the real owner ENGINEERING manifest before the control.",
+  "candidateFailure": false,
+  "prefixWorkflowStarts": 0,
+  "protectedWorkflowStarts": 0,
+  "frozenControlChanged": false,
+  "qualificationBypassed": false
+}

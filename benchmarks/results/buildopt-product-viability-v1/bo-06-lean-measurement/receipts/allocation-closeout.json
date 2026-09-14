@@ -1,0 +1,58 @@
+{
+  "status": "verified",
+  "allocationResult": "INCOMPLETE_PREFIX_NOT_ADMITTED",
+  "observedUTC": "2026-09-14T23:00:11.988604+00:00",
+  "ownerStarts": 8,
+  "comparisonJVMs": 8,
+  "ownerReservations": 8,
+  "helperReservations": 8,
+  "fixtureStarts": 94,
+  "retries": 0,
+  "prefixStarts": 0,
+  "protectedStarts": 0,
+  "allocatedBytes": 14171594752,
+  "freeBytes": 768540246016,
+  "allocation": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/allocation.json",
+    "sha256": "30c5736c1bfec768579e7ce5e7f2dfd2507b8197c7850d16ec89789ae249a581"
+  },
+  "control": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/analysis/control-summary-v4.json",
+    "sha256": "5d0a806cc0fc3cb944bdeea4e215baf74c92d7ba2a7f0ab62a8132c4f53ea931"
+  },
+  "diagnosis": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/analysis/prefix-admission-diagnosis.json",
+    "sha256": "79f06c23a3c6c4671d5509b0f32f655f04c74a30587ddc4ba84dd3d635b5eb8b"
+  },
+  "units": [
+    {
+      "unit": "buildopt-replay-ef08bbdc2805657e-r1-I-2.service",
+      "exitCode": 4,
+      "stdout": "inactive\n",
+      "stderr": "",
+      "closure": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/profiles/control/run/sessions/r1-000-g0-I/closed.json",
+        "sha256": "324fa553f27e26d6d165702b3eed80f0d84afbdc1cf21f2c4f6b863a36978b2d"
+      }
+    },
+    {
+      "unit": "buildopt-replay-ef08bbdc2805657e-r1-N-1.service",
+      "exitCode": 4,
+      "stdout": "inactive\n",
+      "stderr": "",
+      "closure": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/profiles/control/run/sessions/r1-000-g0-N/closed.json",
+        "sha256": "1fb695e356ad53601336e3df5ed13b8716b39ac7febf194e171bc784e0cf1ec8"
+      }
+    }
+  ],
+  "absentControllerPIDs": [
+    576931,
+    576934,
+    537750,
+    364448
+  ],
+  "limitsMet": true,
+  "sourcesUnchanged": true,
+  "futureOwnerExecutionAuthorizedByThisCloseout": false
+}

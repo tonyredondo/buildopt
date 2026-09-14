@@ -1,0 +1,32 @@
+{
+  "exitCode": 0,
+  "scope": "Four unchanged passing subcases from original run plus one fresh no-action subcase. Original elapsed-limit failure retained.",
+  "evidence": [
+    {
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/fixture-tests",
+        "-test.v",
+        "-test.run=^TestTypedFailuresAndNativeFallback$",
+        "-test.timeout=160s"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/source",
+      "exitCode": 1,
+      "elapsedSeconds": 146.81310243002372,
+      "log": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/logs/TestTypedFailuresAndNativeFallback.log",
+      "sha256": "212410889e588a8ad439a52da7cfefca371e47328d94b3f759fa7d84dda88d12"
+    },
+    {
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/fixture-tests",
+        "-test.v",
+        "-test.run=^TestTypedFailuresAndNativeFallback$/^no-action$",
+        "-test.timeout=160s"
+      ],
+      "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/source",
+      "exitCode": 0,
+      "elapsedSeconds": 23.059858567023184,
+      "log": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/logs/retry-local-no-action.log",
+      "sha256": "8a6182e620d4eb4e05c857fee28fb1b5d890cf14c3483260b6d71af863a27110"
+    }
+  ]
+}

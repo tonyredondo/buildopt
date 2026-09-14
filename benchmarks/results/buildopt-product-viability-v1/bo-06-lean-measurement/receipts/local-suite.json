@@ -1,0 +1,11 @@
+{
+  "status": "verified",
+  "actualFixtureStarts": 94,
+  "ownerStarts": 0,
+  "comparisonJVMs": 0,
+  "retainedFailures": [
+    "TestTypedFailuresAndNativeFallback/no-action elapsed allocation",
+    "TestResearchCLIAndMissingResults test launcher dispatched the whole test suite; stopped at90 total starts"
+  ],
+  "repair": "TestMain explicitly dispatches CLI verbs; corrected CLI and affinity checks passed"
+}

@@ -1,0 +1,27 @@
+{
+  "pid": 537750,
+  "startedUTC": "2026-09-14T22:16:20.390822+00:00",
+  "source": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/continue_owner.py",
+    "sha256": "cdce8f2687cbcbb5ea71048c43fcc88dd95c17945bad4e7ebc566472dffeb823"
+  },
+  "scope": "Wait for current control; check it once; conditionally run exactly one 42-build prefix; never confirmation",
+  "stageSources": [
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/analyze_trial_v2.py",
+      "sha256": "440841531633f7b9d715018fba8c3b3282e87a57962f8a0d0ccfe3ff6896f65b"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/analyze_host.py",
+      "sha256": "435ce356e0233d4d2b2afd0219e037c1d2e9596bc3b5fbfbca8c8996f552c0f7"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/prepare_prefix.py",
+      "sha256": "de485c1e75883446563fbea9e7d7cd03c8814210e0ff0914018cf07fbd02852e"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/run_trial.py",
+      "sha256": "c6843ac404ca56d6dff7f9bc8a45d017279d192aae4849b35f256dd68d44d464"
+    }
+  ]
+}

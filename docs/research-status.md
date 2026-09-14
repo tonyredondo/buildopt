@@ -1,6 +1,6 @@
 # BuildOpt research status
 
-Updated: 2026-09-14. This is the current research disposition register.
+Updated: 2026-09-15. This is the current research disposition register.
 The [governing execution plan](./plans/buildopt-research-execution-plan-2026-09-14.md)
 owns priorities and sequencing within `BUILDOPT-VIABILITY-V1`. Executable
 contracts, frozen inputs and historical results retain their original scope.
@@ -78,19 +78,21 @@ The seed and all six replication histories retain their frozen endpoints and
 101 revisions each. No protected source was inspected for candidate selection
 and no Elasticsearch build ran in this block.
 
-BO-06 remains **partial**. The current exploratory measurement does not have
-the actual-owner overhead qualification required for confirmation. The older
-100-ms precision attempt remains failed/infeasible; process-sampling coverage
-is also unqualified. The executable rejects the incomplete confirmation manifest.
-Scientific choices and source bindings are preserved, but the final measurement
-mode, complete V2 development-prefix check and confirmation allocation remain
-unresolved. G3 is untested, not a prerequisite that must pass before BO-07.
-
-The next decision is the [proposed measurement change](../benchmarks/results/buildopt-product-viability-v1/bo-06-readiness/measurement-decision.md).
-It needs approval because it changes instrument admission and limits the initial
-claim to the declared instrumented workflow. It preserves every value criterion;
-it is not an active protocol or native allocation. Current task record:
-`.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/task-state.json`.
+BO-06 remains **partial**. The user approved the
+[separate lean recording mode](../benchmarks/results/buildopt-product-viability-v1/bo-06-lean-measurement/approved-method.md).
+Its [eight-build identical-code control passed](../benchmarks/results/buildopt-product-viability-v1/bo-06-lean-measurement/README.md):
+the measured difference was 1.767 seconds, or 1.38%, below the stopping rule.
+All eight builds and four live plus four independent comparisons passed.
+The planned development sequence did not start: its real owner policy lacks
+comparator qualification, a prerequisite missed in local preparation. The old
+qualification binds different code. BO-06 remains partial and the allocation
+is closed as incomplete, with eight owner and eight comparison JVM starts.
+Complete that qualification and validate the actual admission paths before
+another freeze; see the [continuation requirements](../benchmarks/results/buildopt-product-viability-v1/bo-06-lean-measurement/continuation.md).
+The earlier precision and process-observation failures remain unchanged.
+Any future result in this mode describes the recorded workflow; BO-09 still
+needs the ordinary-workflow comparison. Current task record:
+`.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/task-state.json`.
 BO-07 and protected changes 21–100 remain deferred. Generic plan selection/reuse,
 adaptive fragments, runtime sweeps and another general cache remain retired.
 The user has authorized commit and push after each work block. Product viability

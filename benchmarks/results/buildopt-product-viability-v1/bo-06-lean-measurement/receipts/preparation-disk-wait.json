@@ -1,0 +1,15 @@
+{
+  "atUTC": "2026-09-14T21:57:28.302062+00:00",
+  "ownerStarts": 0,
+  "phase": "r1-N-acquisition",
+  "ioPressure": "some avg10=46.91 avg60=44.75 avg300=49.79 total=9673756728\nfull avg10=46.76 avg60=44.40 avg300=48.77 total=9431650593\n",
+  "kernelLogQuery": "journalctl -k since21:47UTC matching BTRFS,nvme,blocked for,I/O error,writeback,hung: no entries",
+  "scope": "Observed filesystem wait during research preparation; cause not established; no owner request timed yet",
+  "threadWait": {
+    "364448": "futex_do_wait",
+    "364449": "futex_do_wait",
+    "364450": "folio_wait_bit_common",
+    "364451": "futex_do_wait",
+    "364452": "futex_do_wait"
+  }
+}

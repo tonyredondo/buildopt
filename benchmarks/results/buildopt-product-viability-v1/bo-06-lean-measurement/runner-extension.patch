@@ -1,0 +1,609 @@
+--- a/contract.go
++++ b/contract.go
+@@ -109,38 +109,39 @@
+ }
+ 
+ type Manifest struct {
+-	ControlBaseline *Patch            `json:"controlBaseline,omitempty"`
+-	Schema          string            `json:"schema"`
+-	Phase           string            `json:"phase"`
+-	Experiment      string            `json:"experiment"`
+-	Mode            string            `json:"mode"`
+-	FrozenUTC       string            `json:"frozenUTC"`
+-	Protocol        Binding           `json:"protocol"`
+-	Executable      Binding           `json:"executable"`
+-	Package         []Binding         `json:"package"`
+-	Subject         string            `json:"subject"`
+-	CommonGit       string            `json:"commonGit"`
+-	History         []Revision        `json:"history"`
+-	RunRoot         string            `json:"runRoot"`
+-	Replications    int               `json:"replications"`
+-	PrefixEnd       int               `json:"prefixEnd"`
+-	ExecutionEnd    int               `json:"executionEnd"`
+-	DaemonPolicy    string            `json:"daemonPolicy"`
+-	Driver          string            `json:"driver"`
+-	Command         []string          `json:"command"`
+-	Environment     map[string]string `json:"environment"`
+-	Runtime         []Binding         `json:"runtime"`
+-	GeneratedPaths  []string          `json:"generatedPaths"`
+-	Acquisition     []Layer           `json:"acquisition"`
+-	Baseline        Patch             `json:"baseline"`
+-	Candidate       Patch             `json:"candidate"`
+-	Outputs         OutputPolicy      `json:"outputs"`
+-	Affinity        string            `json:"affinity"`
+-	Limits          Limits            `json:"limits"`
+-	Correctness     Binding           `json:"correctness"`
+-	Overhead        Binding           `json:"overhead"`
+-	Subjects        Binding           `json:"subjects"`
+-	ExternalCosts   []Binding         `json:"externalCosts"`
++	MeasurementReadiness *Binding          `json:"measurementReadiness,omitempty"`
++	ControlBaseline      *Patch            `json:"controlBaseline,omitempty"`
++	Schema               string            `json:"schema"`
++	Phase                string            `json:"phase"`
++	Experiment           string            `json:"experiment"`
++	Mode                 string            `json:"mode"`
++	FrozenUTC            string            `json:"frozenUTC"`
++	Protocol             Binding           `json:"protocol"`
++	Executable           Binding           `json:"executable"`
++	Package              []Binding         `json:"package"`
++	Subject              string            `json:"subject"`
++	CommonGit            string            `json:"commonGit"`
++	History              []Revision        `json:"history"`
++	RunRoot              string            `json:"runRoot"`
++	Replications         int               `json:"replications"`
++	PrefixEnd            int               `json:"prefixEnd"`
++	ExecutionEnd         int               `json:"executionEnd"`
++	DaemonPolicy         string            `json:"daemonPolicy"`
++	Driver               string            `json:"driver"`
++	Command              []string          `json:"command"`
++	Environment          map[string]string `json:"environment"`
++	Runtime              []Binding         `json:"runtime"`
++	GeneratedPaths       []string          `json:"generatedPaths"`
++	Acquisition          []Layer           `json:"acquisition"`
++	Baseline             Patch             `json:"baseline"`
++	Candidate            Patch             `json:"candidate"`
++	Outputs              OutputPolicy      `json:"outputs"`
++	Affinity             string            `json:"affinity"`
++	Limits               Limits            `json:"limits"`
++	Correctness          Binding           `json:"correctness"`
++	Overhead             Binding           `json:"overhead"`
++	Subjects             Binding           `json:"subjects"`
++	ExternalCosts        []Binding         `json:"externalCosts"`
+ }
+ 
+ // parseJSON rejects duplicate keys before decoding: encoding/json alone keeps
+@@ -222,7 +223,7 @@
+ 			allowed[n] = true
+ 			x, ok := m[n]
+ 			if !ok {
+-				if t == reflect.TypeOf(Manifest{}) && n == "controlBaseline" {
++				if (t == reflect.TypeOf(Manifest{}) && (n == "controlBaseline" || n == "measurementReadiness")) || (t == reflect.TypeOf(ResearchReadiness{}) && (n == "controlProof" || n == "prefixProof")) {
+ 					continue
+ 				}
+ 				return fmt.Errorf("missing %s.%s", path, n)
+@@ -302,10 +303,13 @@
+ }
+ 
+ func validateManifest(m Manifest) error {
++	if err := validateResearchMeasurement(m); err != nil {
++		return err
++	}
+ 	if m.Protocol.SHA256 != protocolDigest {
+ 		return errors.New("protocol bytes are not the implemented v2 contract")
+ 	}
+-	if m.Schema != manifestSchema || m.Experiment != "FIXED_NI" || m.Mode != "P" {
++	if m.Schema != manifestSchema || m.Experiment != "FIXED_NI" || (m.Mode != "P" && m.Mode != leanResearchMode) {
+ 		return errors.New("unsupported version, experiment or mode")
+ 	}
+ 	if m.Phase != "QUALIFICATION" && m.Phase != "ENGINEERING" && m.Phase != "CONFIRMATION" {
+@@ -401,10 +405,10 @@
+ 	}
+ 	bindings := append([]Binding{m.Protocol, m.Executable}, m.Package...)
+ 	bindings = append(bindings, m.Runtime...)
+-	for _, b := range []Binding{m.Correctness, m.Overhead, m.Subjects} {
++	for index, b := range []Binding{m.Correctness, m.Overhead, m.Subjects} {
+ 		if !absentBinding(b) {
+ 			bindings = append(bindings, b)
+-		} else if m.Phase == "CONFIRMATION" {
++		} else if m.Phase == "CONFIRMATION" && !(m.Mode == leanResearchMode && index == 1) {
+ 			return errors.New("confirmation missing qualification/subjects binding")
+ 		}
+ 	}
+--- a/contract_test.go
++++ b/contract_test.go
+@@ -77,7 +77,7 @@
+ 	if err != nil {
+ 		t.Fatal(err)
+ 	}
+-	protocol, err := filepath.Abs("../../specs/poc-product-viability-v1.json")
++	protocol, err := filepath.Abs("../specs/poc-product-viability-v1.json")
+ 	if err != nil {
+ 		t.Fatal(err)
+ 	}
+--- a/main.go
++++ b/main.go
+@@ -20,6 +20,16 @@
+ 			return errors.New("invalid private worker invocation")
+ 		}
+ 		return serveWorker(args[1], args[2])
++	case "research-identity":
++		if len(args) != 2 {
++			return errors.New("research-identity requires one manifest")
++		}
++		var m Manifest
++		if err := readJSON(args[1], &m); err != nil {
++			return err
++		}
++		fmt.Println(researchIdentity(m))
++		return nil
+ 	case "validate":
+ 		if len(args) != 2 {
+ 			return errors.New("validate requires one manifest")
+--- a/research_cli_test.go
++++ b/research_cli_test.go
+@@ -0,0 +1,47 @@
++//go:build linux && amd64 && replay_integration
++
++package main
++
++import (
++	"os"
++	"os/exec"
++	"path/filepath"
++	"strings"
++	"testing"
++)
++
++func TestResearchCLIAndMissingResults(t *testing.T) {
++	m := runnableFixture(t, 2, "success")
++	path := filepath.Join(filepath.Dir(m.RunRoot), "manifest.json")
++	mustWrite(t, path, jsonBytes(m))
++	c := exec.Command(m.Executable.Path, "run", path)
++	if b, err := c.CombinedOutput(); err != nil {
++		t.Fatalf("actual CLI: %v %s", err, b)
++	}
++	var result RunResult
++	if err := readJSON(filepath.Join(m.RunRoot, "result.json"), &result); err != nil {
++		t.Fatal(err)
++	}
++	if result.WorkflowStarts != 4 || result.Decision != "FIXTURE_VERIFIED" {
++		t.Fatal("incomplete CLI result")
++	}
++	output := filepath.Join(m.RunRoot, "attempts/r1-000-g0-N/outputs/000000")
++	if err := os.Remove(output); err != nil {
++		t.Fatal(err)
++	}
++	c = exec.Command(m.Executable.Path, "check", m.RunRoot)
++	if b, err := c.CombinedOutput(); err == nil {
++		t.Fatalf("missing output accepted: %s", b)
++	}
++	// Admission must reject an owner before creating even a run directory.
++	m.Driver = "GRADLE"
++	m.RunRoot = filepath.Join(filepath.Dir(m.RunRoot), "rejected-owner")
++	mustWrite(t, path, jsonBytes(m))
++	c = exec.Command(m.Executable.Path, "run", path)
++	if b, err := c.CombinedOutput(); err == nil || !strings.Contains(string(b), "own readiness") {
++		t.Fatalf("missing receipt was not refused first: %v %s", err, b)
++	}
++	if _, err := os.Stat(m.RunRoot); !os.IsNotExist(err) {
++		t.Fatal("owner run created before readiness")
++	}
++}
+--- a/research_measurement.go
++++ b/research_measurement.go
+@@ -0,0 +1,234 @@
++//go:build linux && amd64
++
++package main
++
++import (
++	"errors"
++	"fmt"
++	"reflect"
++	"strings"
++)
++
++// Lean research retains the output recorder in both arms. Its timings support
++// that recorded workflow only. Samples are diagnostic, not an isolation proof.
++const leanResearchMode = "P_LEAN_RESEARCH_V1"
++
++type ResearchReadiness struct {
++	Schema       string              `json:"schema"`
++	Mode         string              `json:"mode"`
++	Identity     string              `json:"identity"`
++	LocalProof   Binding             `json:"localProof"`
++	ControlProof *ResearchTrialProof `json:"controlProof,omitempty"`
++	PrefixProof  *ResearchTrialProof `json:"prefixProof,omitempty"`
++}
++type ResearchLocalProof struct {
++	Schema      string             `json:"schema"`
++	ExitCode    int                `json:"exitCode"`
++	Executable  Binding            `json:"executable"`
++	Package     []Binding          `json:"package"`
++	Checks      map[string]Binding `json:"checks"`
++	OwnerStarts int                `json:"ownerStarts"`
++}
++type ResearchTrialProof struct {
++	Manifest         Binding `json:"manifest"`
++	Result           Binding `json:"result"`
++	Closure          Binding `json:"closure"`
++	Costs            Binding `json:"costs"`
++	OutsideRequestNS int64   `json:"outsideRequestNS"`
++}
++type ResearchClosure struct {
++	Schema           string    `json:"schema"`
++	ManifestSHA256   string    `json:"manifestSHA256"`
++	ExitCode         int       `json:"exitCode"`
++	LivePairs        int       `json:"livePairs"`
++	IndependentPairs int       `json:"independentPairs"`
++	Closed           bool      `json:"closed"`
++	Evidence         []Binding `json:"evidence"`
++}
++
++func researchIdentity(m Manifest) string {
++	return objectDigest(map[string]any{"mode": m.Mode, "protocol": m.Protocol, "executable": m.Executable, "package": m.Package,
++		"commonGit": m.CommonGit, "command": m.Command, "environment": m.Environment, "runtime": m.Runtime,
++		"baseline": m.Baseline, "candidate": m.Candidate, "outputs": m.Outputs, "acquisition": m.Acquisition,
++		"generatedPaths": m.GeneratedPaths, "affinity": m.Affinity, "daemonPolicy": m.DaemonPolicy})
++}
++
++func validateResearchMeasurement(m Manifest) error {
++	if m.Mode != leanResearchMode {
++		if m.MeasurementReadiness != nil {
++			return errors.New("research readiness supplied to another mode")
++		}
++		return nil
++	}
++	for _, value := range append(append([]string{}, m.Command...), mapValues(m.Environment)...) {
++		for _, flag := range []string{"-javaagent", "-agentlib", "-agentpath"} {
++			if strings.Contains(value, flag) {
++				return errors.New("lean research forbids diagnostic Java agents")
++			}
++		}
++	}
++	if m.Driver == "FIXTURE" && m.Phase == "QUALIFICATION" && m.MeasurementReadiness == nil {
++		return nil
++	}
++	if m.MeasurementReadiness == nil {
++		return errors.New("lean research missing its own readiness receipt")
++	}
++	if err := validateBinding(*m.MeasurementReadiness); err != nil {
++		return err
++	}
++	var r ResearchReadiness
++	if err := readJSON(m.MeasurementReadiness.Path, &r); err != nil {
++		return err
++	}
++	if r.Schema != "buildopt.lean-research/readiness/v1" || r.Mode != leanResearchMode || r.Identity != researchIdentity(m) {
++		return errors.New("lean research readiness does not bind this implementation and workflow")
++	}
++	if err := validateBinding(r.LocalProof); err != nil {
++		return err
++	}
++	var local ResearchLocalProof
++	if err := readJSON(r.LocalProof.Path, &local); err != nil {
++		return err
++	}
++	if local.Schema != "buildopt.lean-research/local-proof/v1" || local.ExitCode != 0 || local.OwnerStarts != 0 || local.Executable != m.Executable || !reflect.DeepEqual(local.Package, m.Package) {
++		return errors.New("lean research local qualification differs or failed")
++	}
++	for _, name := range []string{"invocation-output", "failure-fallback", "cancellation-closure", "source-drift", "missing-result", "readiness-admission", "affinity"} {
++		b, ok := local.Checks[name]
++		if !ok {
++			return fmt.Errorf("missing local qualification: %s", name)
++		}
++		if err := validateBinding(b); err != nil {
++			return err
++		}
++	}
++	if m.Phase == "ENGINEERING" || m.Phase == "CONFIRMATION" {
++		if err := validateResearchTrial(m, r.ControlProof, true); err != nil {
++			return err
++		}
++	}
++	if m.Phase == "CONFIRMATION" {
++		if err := validateResearchTrial(m, r.PrefixProof, false); err != nil {
++			return err
++		}
++	}
++	return nil
++}
++func mapValues(m map[string]string) []string {
++	v := []string{}
++	for _, s := range m {
++		v = append(v, s)
++	}
++	return v
++}
++
++// Admission reads already reconstructed results; it never starts another
++// comparison JVM. The closure receipt binds the live and independent checks.
++func validateResearchTrial(m Manifest, p *ResearchTrialProof, control bool) error {
++	if p == nil {
++		return errors.New("lean research missing required control or prefix proof")
++	}
++	for _, b := range []Binding{p.Manifest, p.Result, p.Closure, p.Costs} {
++		if err := validateBinding(b); err != nil {
++			return err
++		}
++	}
++	var prior Manifest
++	var result RunResult
++	var closure ResearchClosure
++	if err := readJSON(p.Manifest.Path, &prior); err != nil {
++		return err
++	}
++	if err := readJSON(p.Result.Path, &result); err != nil {
++		return err
++	}
++	if err := readJSON(p.Closure.Path, &closure); err != nil {
++		return err
++	}
++	costs, err := loadCosts(prior.RunRoot)
++	if err != nil {
++		return err
++	}
++	if p.Costs.Path != prior.RunRoot+"/costs" {
++		return errors.New("trial cost ledger differs")
++	}
++	var outside int64
++	for _, c := range costs {
++		if c.Class == "customer-machine" && !c.InsideEnvelope {
++			outside += c.DurationNS
++		}
++	}
++	if outside != p.OutsideRequestNS {
++		return errors.New("trial outside-request cost differs")
++	}
++	slots := 21
++	if control {
++		slots = 4
++	}
++	if researchIdentity(prior) != researchIdentity(m) || prior.Replications != 1 || prior.ExecutionEnd != slots-1 || result.Schema != resultSchema || result.ManifestSHA256 != p.Manifest.SHA256 || result.WorkflowStarts != 2*slots || result.ActualGradleStarts != 2*slots || result.UnknownGradleReservations != 0 || result.NestedStarts != 0 || len(result.Slots) != 1 || len(result.Slots[0]) != slots {
++		return errors.New("lean research trial scope, sources or completeness differs")
++	}
++	if len(m.History) != 101 {
++		return errors.New("research admission needs complete frozen history")
++	}
++	for ordinal, row := range prior.History[:slots] {
++		expected := ordinal
++		if control {
++			expected += 17
++		}
++		want := m.History[expected]
++		want.Ordinal = row.Ordinal
++		if !reflect.DeepEqual(want, row) {
++			return errors.New("trial used another history window")
++		}
++	}
++	if control {
++		combined := prior.Baseline
++		combined.Files = append(append([]FilePatch{}, prior.Baseline.Files...), prior.Candidate.Files...)
++		if prior.ControlBaseline == nil || !reflect.DeepEqual(prior.ControlBaseline.Files, combined.Files) || prior.Phase != "QUALIFICATION" {
++			return errors.New("research control is not identical code")
++		}
++	} else if prior.ControlBaseline != nil || prior.Phase != "ENGINEERING" || prior.PrefixEnd != 20 || len(prior.History) != 101 {
++		return errors.New("research prefix scope differs")
++	}
++	if closure.Schema != "buildopt.lean-research/closure/v1" || closure.ManifestSHA256 != p.Manifest.SHA256 || closure.ExitCode != 0 || !closure.Closed || closure.LivePairs != slots || closure.IndependentPairs != slots || len(closure.Evidence) == 0 {
++		return errors.New("research comparison or process closure incomplete")
++	}
++	for _, b := range closure.Evidence {
++		if err := validateBinding(b); err != nil {
++			return err
++		}
++	}
++	var n, i int64
++	for ordinal, s := range result.Slots[0] {
++		if s.Ordinal != ordinal || !isComparable(s) || s.NativeNS <= 0 || s.CandidateNS <= 0 || s.ExtraCandidateNS != 0 {
++			return errors.New("research trial contains invalid or unavailable result")
++		}
++		if ordinal > 0 {
++			n += s.NativeNS
++			i += s.CandidateNS
++		}
++	}
++	if p.OutsideRequestNS < 0 {
++		return errors.New("negative research preparation cost")
++	}
++	if control {
++		difference := n - i
++		if difference < 0 {
++			difference = -difference
++		}
++		faster := n
++		if i < faster {
++			faster = i
++		}
++		if difference >= 3e9 && float64(difference) >= 0.05*float64(faster) {
++			return errors.New("identical-code control produced a material difference")
++		}
++	} else {
++		saving := n - i - p.OutsideRequestNS
++		if saving < 20e9 || float64(saving) < 0.05*float64(n) {
++			return errors.New("development prefix did not save enough time")
++		}
++	}
++	return nil
++}
+--- a/research_measurement_test.go
++++ b/research_measurement_test.go
+@@ -0,0 +1,147 @@
++//go:build linux && amd64
++
++package main
++
++import (
++	"os"
++	"path/filepath"
++	"strings"
++	"testing"
++)
++
++func TestResearchReadinessAdmission(t *testing.T) {
++	m := fixtureManifest(t, 4)
++	m.Mode = leanResearchMode
++	// A real owner must never use the fixture bootstrap exemption.
++	m.Driver = "GRADLE"
++	if err := validateResearchMeasurement(m); err == nil || !strings.Contains(err.Error(), "own readiness") {
++		t.Fatalf("missing receipt accepted: %v", err)
++	}
++	proof := filepath.Join(filepath.Dir(m.RunRoot), "proof.log")
++	mustWrite(t, proof, []byte("local test evidence\n"))
++	checks := map[string]Binding{}
++	for _, name := range []string{"invocation-output", "failure-fallback", "cancellation-closure", "source-drift", "missing-result", "readiness-admission", "affinity"} {
++		checks[name] = bound(t, proof)
++	}
++	local := ResearchLocalProof{Schema: "buildopt.lean-research/local-proof/v1", ExitCode: 0, Executable: m.Executable, Package: m.Package, Checks: checks, OwnerStarts: 0}
++	localpath := filepath.Join(filepath.Dir(m.RunRoot), "local.json")
++	mustWrite(t, localpath, jsonBytes(local))
++	receipt := ResearchReadiness{Schema: "buildopt.lean-research/readiness/v1", Mode: leanResearchMode, Identity: researchIdentity(m), LocalProof: bound(t, localpath)}
++	path := filepath.Join(filepath.Dir(m.RunRoot), "readiness.json")
++	set := func() { mustWrite(t, path, jsonBytes(receipt)); b := bound(t, path); m.MeasurementReadiness = &b }
++	set()
++	if err := validateResearchMeasurement(m); err != nil {
++		t.Fatal(err)
++	}
++	for _, phase := range []string{"ENGINEERING", "CONFIRMATION"} {
++		m.Phase = phase
++		if validateResearchMeasurement(m) == nil {
++			t.Fatalf("%s admitted without its own trials", phase)
++		}
++	}
++	m.Phase = "QUALIFICATION"
++	m.Environment["JAVA_TOOL_OPTIONS"] = "-javaagent:diagnostic.jar"
++	if validateResearchMeasurement(m) == nil {
++		t.Fatal("diagnostic agent admitted")
++	}
++	delete(m.Environment, "JAVA_TOOL_OPTIONS")
++	receipt.Identity = strings.Repeat("0", 64)
++	set()
++	if validateResearchMeasurement(m) == nil {
++		t.Fatal("different sources admitted")
++	}
++	receipt.Identity = researchIdentity(m)
++	receipt.Schema = "historical-overhead-pass"
++	set()
++	if validateResearchMeasurement(m) == nil {
++		t.Fatal("old receipt admitted")
++	}
++	receipt.Schema = "buildopt.lean-research/readiness/v1"
++	set()
++	if err := os.Remove(proof); err != nil {
++		t.Fatal(err)
++	}
++	if validateResearchMeasurement(m) == nil {
++		t.Fatal("missing required evidence admitted")
++	}
++}
++
++func TestResearchTrialAdmission(t *testing.T) {
++	m := fixtureManifest(t, 101)
++	m.Mode = leanResearchMode
++	for _, control := range []bool{true, false} {
++		name := "prefix"
++		count := 21
++		if control {
++			name = "control"
++			count = 4
++		}
++		t.Run(name, func(t *testing.T) {
++			prior := m
++			prior.RunRoot = filepath.Join(filepath.Dir(m.RunRoot), name)
++			prior.ExecutionEnd = count - 1
++			prior.Replications = 1
++			if err := os.MkdirAll(filepath.Join(prior.RunRoot, "costs"), 0700); err != nil {
++				t.Fatal(err)
++			}
++			if control {
++				prior.History = append([]Revision{}, m.History[17:21]...)
++				for i := range prior.History {
++					prior.History[i].Ordinal = i
++				}
++				combined := m.Baseline
++				combined.Files = append(append([]FilePatch{}, m.Baseline.Files...), m.Candidate.Files...)
++				prior.ControlBaseline = &combined
++			} else {
++				prior.Phase = "ENGINEERING"
++				prior.PrefixEnd = 20
++			}
++			manifest := filepath.Join(prior.RunRoot, "manifest.json")
++			mustWrite(t, manifest, jsonBytes(prior))
++			result := RunResult{Schema: resultSchema, ManifestSHA256: bound(t, manifest).SHA256, WorkflowStarts: 2 * count, ActualGradleStarts: 2 * count, Slots: [][]Slot{{}}, Replications: []Economics{}, Reasons: []string{}}
++			for i := 0; i < count; i++ {
++				duration := int64(80e9)
++				if control {
++					duration = 100e9
++				}
++				result.Slots[0] = append(result.Slots[0], Slot{Ordinal: i, Class: comparable, NativeNS: 100e9, CandidateNS: duration, Attempts: []string{}})
++			}
++			rp := filepath.Join(prior.RunRoot, "result.json")
++			mustWrite(t, rp, jsonBytes(result))
++			closure := ResearchClosure{Schema: "buildopt.lean-research/closure/v1", ManifestSHA256: result.ManifestSHA256, ExitCode: 0, LivePairs: count, IndependentPairs: count, Closed: true, Evidence: []Binding{bound(t, manifest)}}
++			cp := filepath.Join(prior.RunRoot, "closure.json")
++			mustWrite(t, cp, jsonBytes(closure))
++			proof := ResearchTrialProof{Manifest: bound(t, manifest), Result: bound(t, rp), Closure: bound(t, cp), Costs: bound(t, filepath.Join(prior.RunRoot, "costs"))}
++			if err := validateResearchTrial(m, &proof, control); err != nil {
++				t.Fatal(err)
++			}
++			closure.Closed = false
++			mustWrite(t, cp, jsonBytes(closure))
++			proof.Closure = bound(t, cp)
++			if validateResearchTrial(m, &proof, control) == nil {
++				t.Fatal("open native processes admitted")
++			}
++			closure.Closed = true
++			mustWrite(t, cp, jsonBytes(closure))
++			proof.Closure = bound(t, cp)
++			if control {
++				result.Slots[0][1].CandidateNS = 120e9
++			} else {
++				for i := range result.Slots[0] {
++					result.Slots[0][i].CandidateNS = 100e9
++				}
++			}
++			mustWrite(t, rp, jsonBytes(result))
++			proof.Result = bound(t, rp)
++			if validateResearchTrial(m, &proof, control) == nil {
++				t.Fatal("negative control/prefix admitted")
++			}
++			result.Slots[0] = result.Slots[0][:count-1]
++			mustWrite(t, rp, jsonBytes(result))
++			proof.Result = bound(t, rp)
++			if validateResearchTrial(m, &proof, control) == nil {
++				t.Fatal("missing scheduled result admitted")
++			}
++		})
++	}
++}
+--- a/runner.go
++++ b/runner.go
+@@ -58,6 +58,9 @@
+ }
+ 
+ func checkInputs(m Manifest) error {
++	if err := validateResearchMeasurement(m); err != nil {
++		return err
++	}
+ 	if _, err := externalCosts(m); err != nil {
+ 		return err
+ 	}
+--- a/runner_test.go
++++ b/runner_test.go
+@@ -32,7 +32,7 @@
+ 		fmt.Println(digest([]byte(value)))
+ 		os.Exit(0)
+ 	}
+-	if len(os.Args) > 1 && os.Args[1] == "worker" {
++	if len(os.Args) > 1 && (os.Args[1] == "worker" || os.Args[1] == "validate" || os.Args[1] == "run" || os.Args[1] == "check" || os.Args[1] == "resume" || os.Args[1] == "research-identity") {
+ 		if err := command(os.Args[1:]); err != nil {
+ 			fmt.Fprintln(os.Stderr, err)
+ 			os.Exit(1)
+@@ -222,6 +222,7 @@
+ 
+ func runnableFixture(t *testing.T, count int, mode string) Manifest {
+ 	m := fixtureManifest(t, count)
++	m.Mode = leanResearchMode
+ 	m.Environment["BUILDOPT_FIXTURE_CHILD"] = "1"
+ 	m.Command[len(m.Command)-1] = mode
+ 	m.Outputs.Diagnostics = []OutputRule{{"out/diagnostics.txt", ":fixture", "exact"}}

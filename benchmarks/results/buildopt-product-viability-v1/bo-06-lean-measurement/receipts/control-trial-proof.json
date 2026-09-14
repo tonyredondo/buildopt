@@ -1,0 +1,19 @@
+{
+  "manifest": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/profiles/control/run/manifest.json",
+    "sha256": "01b25c40e1221386af2d63babef6bcd3617b90efb69db4fca6d5bce39cb8a5b0"
+  },
+  "result": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/profiles/control/run/result.json",
+    "sha256": "01f4883f2d131e10238fe287d6449648721aa05b2e91c58cf825ba6c08f47803"
+  },
+  "closure": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/receipts/control-closure.json",
+    "sha256": "02f8ed97b972b1974e60966d5fcaa79444df729182a0376ea11b0609aecb3bf9"
+  },
+  "costs": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/profiles/control/run/costs",
+    "sha256": "0aff66fc2c59eecc6d9f64551b3a7774d10f336682a3c4570178c75f9f4878f0"
+  },
+  "outsideRequestNS": 8773038
+}

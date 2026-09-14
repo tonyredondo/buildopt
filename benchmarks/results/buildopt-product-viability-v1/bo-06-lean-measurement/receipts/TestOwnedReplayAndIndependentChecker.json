@@ -1,0 +1,13 @@
+{
+  "command": [
+    "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/fixture-tests",
+    "-test.v",
+    "-test.run=^TestOwnedReplayAndIndependentChecker$",
+    "-test.timeout=160s"
+  ],
+  "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/source",
+  "exitCode": 0,
+  "elapsedSeconds": 32.686056241975166,
+  "log": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/logs/TestOwnedReplayAndIndependentChecker.log",
+  "sha256": "4c41989922375a338a0c8a051179d8508c4f9baa0015c22d1b231b606cc441b9"
+}

@@ -1,0 +1,11 @@
+{
+  "atUTC": "2026-09-14T22:49:17.586056+00:00",
+  "reason": "netSecondsPerScheduled in the derived summary was still expressed in nanoseconds. Native results and the decision use correct nanosecond arithmetic. Correct the displayed unit and preserve the original report.",
+  "originalReport": "analysis/control.json",
+  "correctedReport": "analysis/control-summary-v4.json",
+  "oldSourceSHA256": "8649d10e17c8c8f256802b1e159c1b86507d7fc145fbbb9c727471be6efc7d09",
+  "newSourceSHA256": "0a7e66ed73fde99489fca6bc5dad9777e1eb3612795c60c942549fdc3e220022",
+  "extraOwnerStarts": 0,
+  "extraComparatorJVMs": 0,
+  "criteriaChanged": false
+}

@@ -1,0 +1,13 @@
+{
+  "command": [
+    "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/fixture-tests",
+    "-test.v",
+    "-test.run=^TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost$",
+    "-test.timeout=160s"
+  ],
+  "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/source",
+  "exitCode": 0,
+  "elapsedSeconds": 10.233390921959653,
+  "log": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/logs/TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost.log",
+  "sha256": "48ad3c8a54c3109d3ba238bcbca3ce3e96581901ba31c7457a3ee123930c9a41"
+}

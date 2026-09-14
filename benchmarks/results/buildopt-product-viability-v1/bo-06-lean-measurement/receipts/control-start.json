@@ -1,0 +1,15 @@
+{
+  "profile": "control",
+  "command": [
+    "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/history-replay-lean",
+    "run",
+    "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/profiles/control/manifest.json"
+  ],
+  "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+  "startUTC": "2026-09-14T21:47:51.306955+00:00",
+  "startBootNS": 298942319822482,
+  "gradleReserved": 8,
+  "helperJVMReserved": 8,
+  "pid": 364448,
+  "procStartTicks": 29894232
+}

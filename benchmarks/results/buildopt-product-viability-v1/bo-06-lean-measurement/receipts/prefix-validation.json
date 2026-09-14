@@ -1,0 +1,5 @@
+{
+  "exitCode": 1,
+  "stdout": "",
+  "stderr": "lstat : no such file or directory\n"
+}

@@ -1,0 +1,20 @@
+{
+  "pid": 566516,
+  "startTicks": 30191903,
+  "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-ef08bbdc2805657e-r1-I-2.service",
+  "command": [
+    "/bin/sh",
+    "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/profiles/control/run/r1/I/repo/gradlew",
+    "--offline",
+    "--no-scan",
+    "--max-workers=8",
+    ":server:precommit",
+    "--continue",
+    "--no-configuration-cache",
+    "--build-cache",
+    "--console=plain",
+    "--init-script",
+    "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/versions/owner-readiness-v5/source/capture.init.gradle",
+    "--daemon"
+  ]
+}

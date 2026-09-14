@@ -1,0 +1,17 @@
+{
+  "id": "r1-002-comparison",
+  "class": "research",
+  "purpose": "owner-output-comparison",
+  "replication": 1,
+  "ordinal": 2,
+  "arm": "",
+  "attempt": "",
+  "startNS": 301844328840020,
+  "endNS": 301868550563127,
+  "durationNS": 24221723107,
+  "insideEnvelope": false,
+  "workflowStarts": 0,
+  "gradleStarts": 0,
+  "nestedStarts": 0,
+  "bytes": 0
+}

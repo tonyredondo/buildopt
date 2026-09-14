@@ -1,0 +1,10 @@
+{
+  "atUTC": "2026-09-14T22:03:00.199264+00:00",
+  "reason": "Static review found that the affinity summary excluded only the active arm supervisor. Samples also contain the idle arm supervisor. Both known supervisor identities must be excluded from native CPU checks.",
+  "originalSHA256": "a4eaf315d442a00b485d97443bd494e8753232191090b11b2c1b449062758f6d",
+  "correctedSHA256": "440841531633f7b9d715018fba8c3b3282e87a57962f8a0d0ccfe3ff6896f65b",
+  "ownerStartsAtReview": 0,
+  "measurementSourcesChanged": false,
+  "criteriaChanged": false,
+  "originalPreserved": true
+}

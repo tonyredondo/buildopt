@@ -1,0 +1,23 @@
+{
+  "command": [
+    "./dev/run",
+    "--toolchain",
+    "go",
+    "--",
+    "go",
+    "test",
+    "-mod=readonly",
+    "-tags=replay_integration",
+    "./.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/source",
+    "-run",
+    "^(TestResearchCLIAndMissingResults|TestAffinityScope)$",
+    "-v",
+    "-count=1",
+    "-timeout=160s"
+  ],
+  "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+  "exitCode": 0,
+  "elapsedSeconds": 19.9073078299989,
+  "log": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/logs/cli-route-and-affinity.log",
+  "sha256": "6ce46562c5025527e77d47c61d29cfb47ee7d32d54817fa2cb43c0de633b9324"
+}

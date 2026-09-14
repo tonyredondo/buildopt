@@ -1,0 +1,94 @@
+[
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/inputs/approved-method.md",
+    "sha256": "d055c47465c1078180375c04ecd582a80fb1985039ff38b8bf3c028cf097e99b"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/logs/trial-admission.log",
+    "sha256": "c27f29e6b950ab6d0b0772c1cc0f16c100357d69c252d06d4a9b5e1c4c371d04"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/source",
+    "sha256": "76b3e240855c7bf6c643d755269fffbb815e5648773df756abfc746a742ae26b"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/history-replay-lean",
+    "sha256": "95506d9e7269e1c935a0b461d3cd4dae2cb27a129997fc85d96887c6b36a8d32"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/profiles/control/manifest.json",
+    "sha256": "ba1594e34b26eb8677b8243205804099d8a0413b160eb3e1ca23b964f76da6c3"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/receipts/local-proof.json",
+    "sha256": "2ca40dc22dd00d8cfbb68fefc794ff3db782dfbe47e96ed80e3e435147b76583"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/analyze_host.py",
+    "sha256": "435ce356e0233d4d2b2afd0219e037c1d2e9596bc3b5fbfbca8c8996f552c0f7"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/analyze_trial.py",
+    "sha256": "a4eaf315d442a00b485d97443bd494e8753232191090b11b2c1b449062758f6d"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/common.py",
+    "sha256": "a4019a1a2cfb170f7e2161f538586293c1be912722e49dab67b8b4be5142cab3"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/continue_qualification.py",
+    "sha256": "a2362f827dc2b54ab069772d507a3aa23a8555e7475bdc8a3e0d425a8895fdeb"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/finish_qualification.py",
+    "sha256": "5c11fd3bc086f8c88174936948a4d3d156b434ff9e0c089f85ec63816db8c373"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/prepare_control.py",
+    "sha256": "968253827e480125ecfaec911de80005388de28170691a59acbab8ce4ca500b7"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/prepare_prefix.py",
+    "sha256": "de485c1e75883446563fbea9e7d7cd03c8814210e0ff0914018cf07fbd02852e"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/qualify.py",
+    "sha256": "8208ac1e4f06fcfc8ca93c8ea57c82d04349aadc9fa3708b32b43909904afb44"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/run_trial.py",
+    "sha256": "c6843ac404ca56d6dff7f9bc8a45d017279d192aae4849b35f256dd68d44d464"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/receipts/TestAllocationStopsAndDetachedChild.json",
+    "sha256": "0cd98ba5e4ca09da180b3d1da70188c79e412e6e82778f3c83df93704cf7f075"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/receipts/TestControlBaselineChronologicalReplay.json",
+    "sha256": "d93badaad48f3841ff70266c11e0dadd31b6dd4a2cfdb3b2b647c6a12904d997"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/receipts/TestDriftStopsBeforeNextChild.json",
+    "sha256": "491bf4ce02579303c2a9ca9e53e59a09bd9dcbdc2f78513109205ffaadfccf46"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/receipts/TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost.json",
+    "sha256": "188fc5a51e8ad25ace65c27504e131b78dad787b087a2c2ff501f3977183924d"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/receipts/TestOwnedReplayAndIndependentChecker.json",
+    "sha256": "03c39e348dd630efd8e556400131e9d2e44d4812fef6468a5a79a60e23692548"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/receipts/TestResearchCLIAndMissingResults.json",
+    "sha256": "55eea03998f2abdee52c2ea4310da8fbaca3cff8b11db1f41f6fe1d58151d9a9"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/receipts/TestResearchReadinessAdmission.json",
+    "sha256": "f104754025ad211bef995e693c09ad1f0f841eef66a26d72240a93ab622f1646"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/receipts/TestTypedFailuresAndNativeFallback.json",
+    "sha256": "46b31cfef157c0ffcb534ad2176cd1e0c158ea2b0a1efd143c9e42baa6d0d894"
+  }
+]

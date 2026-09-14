@@ -1,0 +1,16 @@
+{
+  "original": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/receipts/allocation-closeout.json",
+    "sha256": "645e16481988623e3e7b10e7b6e754f2809e6d1950537acc0ea95b2e84dc03b2"
+  },
+  "corrected": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/receipts/allocation-closeout-v2.json",
+    "sha256": "d001ca647ecb31789df06c8d2966a9e6e8f228f2430cc13a9fb0b9ff436c7288"
+  },
+  "snapshot": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/inputs/closed-allocation.json",
+    "sha256": "689609fc372431353d0b3a78fafd910a0ea9f90c51745c7b7327c379a0e0c7b1"
+  },
+  "ownerStartsAdded": 0,
+  "JVMsAdded": 0
+}
