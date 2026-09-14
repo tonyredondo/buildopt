@@ -1,0 +1,77 @@
+--- /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/analyze-control.py
++++ /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/analyze-screen.py
+@@ -89,7 +89,7 @@
+ def analyze(label):
+     assert label == 'supported'
+     cpus = 8
+-    offset = 6
++    offset = 17
+     profile = P / 'profiles' / label
+     run = profile / 'run'
+     m = load(profile / 'manifest.json')
+@@ -127,7 +127,7 @@
+             assert ready['cpuAffinity'] == '8' and ready['at']['ns'] < native['start']['ns']
+             if identity not in readiness or ready['at']['ns'] < readiness[identity]['atNS']:
+                 readiness[identity] = dict(atNS=ready['at']['ns'],nativeStartNS=native['start']['ns'],cpuAffinity=ready['cpuAffinity'])
+-    assert len(workers) == 2
++    assert len(workers) == 4
+     masks = validate_masks(samples, workers, cpus, readiness)
+     pairs = []
+     previous_states = {}
+@@ -188,7 +188,9 @@
+                     inferred = sum(previous.get('file:' + name) == digest for name,digest in files.items())
+                 row['candidateSuccessState'].append(dict(task=task, taskExecuted=executed, files=len(files), contextIdentity=state['identity'], inferredReusableFiles=inferred, reuseInference='same context and earlier complete success/report retained by runner; execution counts come from task records'))
+                 previous_states[(replication, arm, task)] = state
+-            if arm in ('N','I'):
++            if arm == 'N':
++                assert not row['candidateSuccessState']
++            if arm == 'I':
+                 assert {x['task'] for x in row['candidateSuccessState']} == CHECKSTYLE_TASKS and all(x['files'] > 0 for x in row['candidateSuccessState'])
+             pair[arm] = row
+         assert all(arm in pair for arm in ('N','I'))
+@@ -206,26 +208,25 @@
+     assert helper <= starts
+     active = sum(task['action'] for pair in measured for task in pair['N']['checkstyle'])
+     reusable = sum(state['inferredReusableFiles'] for pair in measured for state in pair['I']['candidateSuccessState'])
+-    report = dict(allThreeCandidateTaskStatesVerified=True, measuredReusableFiles=reusable, analyzer=dict(path=str(Path(__file__).resolve()),sha256=sha(__file__)), schema='buildopt.cpu-screen/profile/v1', status='verified', profile=label, workers=cpus, gradleActual=starts, metadataJVMActual=helper, metadataAccounting='Live and independent reconstruction both completed with equal per-pair metadata count; two comparator passes, no third pass', warmupBuilds=2, measuredPairs=len(measured), pairs=pairs, summary=metrics, masks=masks, baselineCheckstyleActions=active, materialSignal=bool(active and reusable > 0 and metrics['customerMS']['savingPercent'] >= 5 and metrics['customerMS']['pairedMeanSavingMS'] >= 1000 and sum(pair['customerSavingMS'] > 0 for pair in measured) >= 2), diagnosticQualityQualified=False, decision='EXPLORATORY_MATERIAL_SIGNAL' if active and reusable > 0 and metrics['customerMS']['savingPercent'] >= 5 and metrics['customerMS']['pairedMeanSavingMS'] >= 1000 and sum(pair['customerSavingMS'] > 0 for pair in measured) >= 2 else 'POSITIVE_BUT_BELOW_MATERIALITY' if active and metrics['customerMS']['pairedMeanSavingMS'] > 0 else 'NO_OBSERVED_BENEFIT' if active else 'INSUFFICIENT_OPPORTUNITY', readinessQualified=False, valueQualified=False, limits=['Exploratory pairs; no interval or precision claim', 'Diagnostic starts fresh at original6; original cache and daemon age are not reconstructed', 'Symmetric worker instrumentation can alter timing; no performance confirmation', 'Isolated observer CPU is additional research resource; total service CPU includes it', 'Selection targets the observed regression; no new value or product gate'], rawResult=dict(path=str(run/'result.json'),sha256=sha(run/'result.json')))
+-    report['schema'] = 'buildopt.identical-code-control/profile/v1'
+-    report['armLabels'] = {'N':'supported V2', 'I':'identical supported V2'}
+-    assert len(measured) == 1
+-    pair = measured[0]
+-    delta = pair['customerSavingMS']
+-    faster = min(pair['N']['customerMS'], pair['I']['customerMS'])
+-    report['absoluteDifferenceMS'] = abs(delta)
+-    report['signedDifferenceMS'] = delta
+-    report['differencePercentOfFaster'] = 100 * abs(delta) / faster
+-    report['materialSignal'] = abs(delta) >= 1000 and 100 * abs(delta) / faster >= 5
+-    report['decision'] = 'SPURIOUS_MATERIAL_SIGNAL_IN_AA' if report['materialSignal'] else 'NO_SPURIOUS_MATERIAL_SIGNAL_IN_THIS_CONTROL'
+-    report['valueQualified'] = False
+-    report['productViability'] = 'NOT_ESTABLISHED'
+-    report['cpuIsolationQualified'] = masks['nativeAndRunningWorkerAffinityVerified']
+-    report['limits'] = ['One selected measured pair; no precision or general product claim',
+-                        'Both arms use identical supported V2; this measures a false signal, not optimization value',
+-                        'Shared host and symmetric phase agent can influence timing; prospective host flags reported separately',
+-                        'Task graph duration can end before revised service closure: whole customer envelope remains the primary metric',
+-                        'Qualification is limited to the pinned Gradle 9.7.1 owner without Configuration Cache']
++    from decision import classify
++    decision = classify(pairs)
++    report = dict(schema='buildopt.checkstyle-native-screen/v1', status='verified',
++        profile=label, workers=cpus, armLabels={'N':'native Checkstyle', 'I':'supported V2 correction'},
++        gradleActual=starts, metadataJVMActual=helper, warmupBuilds=4, measuredPairs=len(measured),
++        pairs=pairs, summary=metrics, replicationDecisions=decision['replications'],
++        decision=decision['decision'], materialSignal=decision['materialSignal'],
++        baselineCheckstyleActions=active, measuredReusableFiles=reusable,
++        allThreeCandidateTaskStatesVerified=True, masks=masks,
++        cpuIsolationQualified=masks['nativeAndRunningWorkerAffinityVerified'],
++        readinessQualified=False, valueQualified=False, productViability='NOT_ESTABLISHED',
++        metadataAccounting='Eight live and eight independently reconstructed output comparisons; no third pass',
++        analyzer=dict(path=str(Path(__file__).resolve()),sha256=sha(__file__)),
++        rawResult=dict(path=str(run/'result.json'),sha256=sha(run/'result.json')),
++        limits=['Six post-cold pairs across two replications; no precision or sustained-value claim',
++                'Fresh state starts at original17; the earlier development state is not reconstructed',
++                'Cold and setup costs remain separate and are not assumed recovered',
++                'Shared host and the symmetric phase agent can affect timing; retain every row and flag',
++                'Pinned Gradle9.7.1 with Configuration Cache disabled; formal G0 and G3 remain unqualified'])
+     save(P / f'analysis/profile-{label}.json', report)
+     print(json.dumps({k:v for k,v in report.items() if k != 'pairs'}))
+ 

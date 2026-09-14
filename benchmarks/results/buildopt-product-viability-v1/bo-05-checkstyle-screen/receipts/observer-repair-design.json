@@ -1,0 +1,26 @@
+{
+  "createdUTC": "2026-09-14T15:49:23.218764+00:00",
+  "files": [
+    {
+      "original": "run-screen.py",
+      "originalSHA256": "d84b94a18fbf8634aca1e56e04ff68c99f967e9d20065bf41603f1edab3d1348",
+      "revised": "run-screen-v2.py",
+      "revisedSHA256": "a23774df2cdbeab322cd3b5c02f4feca64ec55557ca93c6bd5e21bc2440b4e3e"
+    },
+    {
+      "original": "analyze-phases.py",
+      "originalSHA256": "357675c0162c5cdb30d7097c666a31409085939b79a7ae3bba66e465a3070d7e",
+      "revised": "analyze-phases-v2.py",
+      "revisedSHA256": "e0b08a7708e20d3075a008b0222cbf591d3d552cef5bb3901394e19de3fa5d04"
+    },
+    {
+      "original": "status.py",
+      "originalSHA256": "00b86afefa2f3ae8bce4d55a80f9133ac7a2d600de050e18abb06c222c4c3cce",
+      "revised": "status-v2.py",
+      "revisedSHA256": "8ac3eb3e45a50d31153b571dcf4601ad3ce7acd6013c32e5ec01c379438fac4f"
+    }
+  ],
+  "status": "implemented; validation pending",
+  "scope": "Only inaccessible optional per-process io/wchan observations become explicit gaps. Identity, CPU affinity, cgroup data, correctness and other failures retain their existing failure behavior. No measured run uses these revised sources.",
+  "trialRelaunchAuthorized": false
+}

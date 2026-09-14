@@ -1,0 +1,8 @@
+--- /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/status.py
++++ /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/status.py
+@@ -1,4 +1,4 @@
+-"""Read only the four owned attempt receipts and recent output."""
++"""Read only the sixteen owned attempt receipts and recent output."""
+ from pathlib import Path
+ import datetime
+ import json

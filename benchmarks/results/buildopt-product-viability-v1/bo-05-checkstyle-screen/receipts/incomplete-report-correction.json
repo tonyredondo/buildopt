@@ -1,0 +1,6 @@
+{
+  "kind": "report scope correction",
+  "reason": "Retain observed thread masks, but do not carry inherited all-time/CPU-isolation qualification into an interrupted run with sampling gaps.",
+  "timingsChanged": false,
+  "admissionCriteriaChanged": false
+}

@@ -1,0 +1,26 @@
+{
+  "profile": 8,
+  "command": [
+    "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/history-replay-owner",
+    "run",
+    "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/manifest.json"
+  ],
+  "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+  "startUTC": "2026-09-14T14:30:14.637585+00:00",
+  "startBootNS": 272685650454259,
+  "gradleReserved": 16,
+  "helperJVMReserved": 16,
+  "driverAndSamplerAffinity": [
+    9
+  ],
+  "pid": 3396027,
+  "procStartTicks": 27268565,
+  "exitCode": -15,
+  "endUTC": "2026-09-14T15:41:06.766869+00:00",
+  "endBootNS": 276937779736689,
+  "observationFailure": "PermissionError(13, 'Permission denied')",
+  "processSamples": 4073,
+  "finishedNativeRequests": 8,
+  "logSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "processSamplesSHA256": "848eb4eb4a10fee247e1981747691eec04a9a9e0f98f07b1e9ac2356f7c8eb0d"
+}

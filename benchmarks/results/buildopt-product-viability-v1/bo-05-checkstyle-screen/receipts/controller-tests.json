@@ -1,0 +1,49 @@
+{
+  "status": "verified",
+  "sourceSHA256": "d84b94a18fbf8634aca1e56e04ff68c99f967e9d20065bf41603f1edab3d1348",
+  "cases": [
+    {
+      "case": "native-cold",
+      "passed": true,
+      "rejected": false
+    },
+    {
+      "case": "candidate-cold",
+      "passed": true,
+      "rejected": false
+    },
+    {
+      "case": "native-inactive",
+      "passed": true,
+      "rejected": false
+    },
+    {
+      "case": "candidate-inactive",
+      "passed": true,
+      "rejected": false
+    },
+    {
+      "case": "native-must-not-get-state",
+      "passed": true,
+      "rejected": true
+    },
+    {
+      "case": "candidate-missing-state",
+      "passed": true,
+      "rejected": true
+    },
+    {
+      "case": "native-cold-missing-phase",
+      "passed": true,
+      "rejected": true
+    },
+    {
+      "case": "candidate-cold-missing-phase",
+      "passed": true,
+      "rejected": true
+    }
+  ],
+  "nativeStarts": 0,
+  "helperJVMs": 0,
+  "scope": "Actual observation callback; cold native/candidate distinction, inactive tasks, and preservation/rejection of candidate state"
+}

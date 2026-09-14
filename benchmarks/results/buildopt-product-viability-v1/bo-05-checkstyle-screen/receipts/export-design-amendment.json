@@ -1,0 +1,7 @@
+{
+  "atUTC": "2026-09-14T14:49:07.228459+00:00",
+  "reason": "Include reproducible tool tests and their fresh receipt in the export; no timing, decision or runtime change.",
+  "beforeSHA256": "e7e3ea12785e5242f146015d3fd487f465ca4b8f84087ed53553f824b443755d",
+  "preservedBefore": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/inputs/export-evidence-initial.py",
+  "afterSHA256": "8e1764627fd02422bbdbf52e94d39f8915f1ad5291f972f804b4a52e4807c531"
+}

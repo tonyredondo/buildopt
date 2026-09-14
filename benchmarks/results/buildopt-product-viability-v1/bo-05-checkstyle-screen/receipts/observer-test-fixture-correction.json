@@ -1,0 +1,7 @@
+{
+  "kind": "test setup correction",
+  "failedAssertion": "other IO failures still abort collection",
+  "cause": "Python constructs PermissionError from OSError with errno 13. Use errno 5 for a genuinely different IO error.",
+  "collectorChanged": false,
+  "extraOwnerBuilds": 0
+}

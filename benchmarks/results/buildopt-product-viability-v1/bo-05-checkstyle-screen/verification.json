@@ -1,0 +1,709 @@
+{
+  "status": "verified recovery of incomplete evidence",
+  "decision": "INCOMPLETE_SCREEN",
+  "sourceIdentity": [
+    {
+      "replication": 1,
+      "originalOrdinal": 17,
+      "commit": "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe",
+      "nativeSourceFiles": 47641,
+      "candidateChangedFiles": 5,
+      "nativeArmUnmodified": true,
+      "onlyDeclaredCandidateDifference": true,
+      "nativeEntriesSHA256": "571ab6c0c2949cb753af126490c56dac94b417777564df50a677f9cc22359514",
+      "candidateEntriesSHA256": "63efa570e762d29e2ea7460688e2f09e8db56f52bc58b8f738f386e51f605373"
+    },
+    {
+      "replication": 1,
+      "originalOrdinal": 18,
+      "commit": "d47f43f5ff06883d3f0a04f3d40af627ecf5142e",
+      "nativeSourceFiles": 47641,
+      "candidateChangedFiles": 5,
+      "nativeArmUnmodified": true,
+      "onlyDeclaredCandidateDifference": true,
+      "nativeEntriesSHA256": "0425236e3a2a3d57bc1f2766fa5526cbc4971025b44f76cd9d1a3203276e71f0",
+      "candidateEntriesSHA256": "7f3b6fc663c9d65c103a1962739235fe7720b624451f1f43f5ca6d95c7267559"
+    },
+    {
+      "replication": 1,
+      "originalOrdinal": 19,
+      "commit": "72aa4d4120d09157106325096f0e7b2cc1852f59",
+      "nativeSourceFiles": 47641,
+      "candidateChangedFiles": 5,
+      "nativeArmUnmodified": true,
+      "onlyDeclaredCandidateDifference": true,
+      "nativeEntriesSHA256": "ae9fb98a9b8978cf6b98441daa5a1d54ab4ddf8612e60b06edaf0d3604af024c",
+      "candidateEntriesSHA256": "47ec9502061998dac14bf088845c4259a55b1a0687d4ffd2637653b62f78d9f5"
+    },
+    {
+      "replication": 1,
+      "originalOrdinal": 20,
+      "commit": "22d6425e9a44ec9e1aedc2785f4478b8019c851a",
+      "nativeSourceFiles": 47643,
+      "candidateChangedFiles": 5,
+      "nativeArmUnmodified": true,
+      "onlyDeclaredCandidateDifference": true,
+      "nativeEntriesSHA256": "a0f3cbfd546100f9d2fabe3f9ff1218a12ea54c7d800534cb05416a00bbb73a6",
+      "candidateEntriesSHA256": "723ca4ae45d41ab860bbd84b24dab2dfb3b9bf36ac1ad1d6a233d2b44dbce753"
+    }
+  ],
+  "worktrees": [
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/r1/N/repo",
+      "head": "22d6425e9a44ec9e1aedc2785f4478b8019c851a",
+      "branch": "bv-replay-2e688dbbd264-r1-N-003",
+      "commonGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/eic-native-v1/repos/elasticsearch.git",
+      "replication": 1,
+      "arm": "N"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/r1/I/repo",
+      "head": "22d6425e9a44ec9e1aedc2785f4478b8019c851a",
+      "branch": "bv-replay-2e688dbbd264-r1-I-003",
+      "commonGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/eic-native-v1/repos/elasticsearch.git",
+      "replication": 1,
+      "arm": "I"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/r2/N/repo",
+      "head": "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe",
+      "branch": "bv-replay-2e688dbbd264-r2-N-000",
+      "commonGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/eic-native-v1/repos/elasticsearch.git",
+      "replication": 2,
+      "arm": "N"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/r2/I/repo",
+      "head": "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe",
+      "branch": "bv-replay-2e688dbbd264-r2-I-000",
+      "commonGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/eic-native-v1/repos/elasticsearch.git",
+      "replication": 2,
+      "arm": "I"
+    }
+  ],
+  "frozenBindingsMatched": 48,
+  "actualOwnerStarts": 8,
+  "liveComparatorJVMs": 4,
+  "independentComparatorJVMs": 0,
+  "extraComparatorPasses": 0,
+  "retryStarts": 0,
+  "scheduled": [
+    {
+      "replication": 1,
+      "originalOrdinal": 17,
+      "arm": "N",
+      "status": "COMPLETED_LIVE_PAIR",
+      "preparationStarted": true,
+      "nativeStarted": true,
+      "endBinding": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-000-g0-N/end.json",
+        "sha256": "d82a3834ffb0a85bd372686d62c7b172e606a9ff0fe661eb530c9f52b042497f"
+      },
+      "retainedFiles": [
+        {
+          "name": "after.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-000-g0-N/after.json",
+          "sha256": "088e43d2df2ca9f5309c1d842cf5e8cd9741d7866927b04901b4e3f3fc4b1c4c"
+        },
+        {
+          "name": "capture.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-000-g0-N/capture.json",
+          "sha256": "9b6a65758f15da4076c7d8e07bcacdf2613c42eaa0b931f734653c75b9e38855"
+        },
+        {
+          "name": "end.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-000-g0-N/end.json",
+          "sha256": "d82a3834ffb0a85bd372686d62c7b172e606a9ff0fe661eb530c9f52b042497f"
+        },
+        {
+          "name": "native-finish.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-000-g0-N/native-finish.json",
+          "sha256": "f5c6cb6a966e434dee151f6a89555418a9d050dd4a2c16bc50727a9797c41527"
+        },
+        {
+          "name": "native-pid.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-000-g0-N/native-pid.json",
+          "sha256": "290ddb3331e2bdc0ad087f9f362dcdd0726d529b4d12a0973369bf6fb6098931"
+        },
+        {
+          "name": "native-start.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-000-g0-N/native-start.json",
+          "sha256": "2613edda589d8fcc73c21e566ad98255940e57eb20bc54f1aa0b7f24c874651e"
+        },
+        {
+          "name": "start.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-000-g0-N/start.json",
+          "sha256": "4dad736a67773ee7a1ceb8565b49e051e5b3856a441a43d16927c41d252fdd4e"
+        },
+        {
+          "name": "supervisor-cpu.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-000-g0-N/supervisor-cpu.json",
+          "sha256": "c375bc2627764a428a17d0f1a6bca2714114c39608dcea7bbd808762d63d7e18"
+        }
+      ]
+    },
+    {
+      "replication": 1,
+      "originalOrdinal": 17,
+      "arm": "I",
+      "status": "COMPLETED_LIVE_PAIR",
+      "preparationStarted": true,
+      "nativeStarted": true,
+      "endBinding": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-000-g0-I/end.json",
+        "sha256": "2a9655288fdd3d15152efd9ebdec17ce4600d907ab48a46ad65e55df29f42b90"
+      },
+      "retainedFiles": [
+        {
+          "name": "after.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-000-g0-I/after.json",
+          "sha256": "ec04e3715040c1f0abae7d1866c1b2a4b6d49a508f58fba44e317a328bee3860"
+        },
+        {
+          "name": "capture.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-000-g0-I/capture.json",
+          "sha256": "68ef1f8611fbf5bbf46ce3709725c02e168027a7cc15fef0b768d1e91457ce02"
+        },
+        {
+          "name": "end.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-000-g0-I/end.json",
+          "sha256": "2a9655288fdd3d15152efd9ebdec17ce4600d907ab48a46ad65e55df29f42b90"
+        },
+        {
+          "name": "native-finish.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-000-g0-I/native-finish.json",
+          "sha256": "542800bd044d7a5a45b5c624468c2a9ddbaaf552929385b75b5ff243820f64af"
+        },
+        {
+          "name": "native-pid.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-000-g0-I/native-pid.json",
+          "sha256": "e83899c51b7926d222750e8aff46770b173afe1c732bcbedafb435d7ab8d74db"
+        },
+        {
+          "name": "native-start.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-000-g0-I/native-start.json",
+          "sha256": "88838c6b0e0f784e76efebe3760f4566f2a3821738bb7d238354db1db93e1f24"
+        },
+        {
+          "name": "start.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-000-g0-I/start.json",
+          "sha256": "d60532769b00d0cecb126d49e00ff772b119b493ff1196c507364bbe39feeac3"
+        },
+        {
+          "name": "supervisor-cpu.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-000-g0-I/supervisor-cpu.json",
+          "sha256": "91de7e25cf0f4d944c063f37b60edd71ff175d88120cf5c8d91723b84e9888b4"
+        }
+      ]
+    },
+    {
+      "replication": 1,
+      "originalOrdinal": 18,
+      "arm": "N",
+      "status": "COMPLETED_LIVE_PAIR",
+      "preparationStarted": true,
+      "nativeStarted": true,
+      "endBinding": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-001-g0-N/end.json",
+        "sha256": "9710ca93e9231d4b5c19499d28fc598eca4c6e26a874863d08602fa9fe44d52f"
+      },
+      "retainedFiles": [
+        {
+          "name": "after.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-001-g0-N/after.json",
+          "sha256": "57351e35491588708d6c5c1d1ac830c39450bc2aee2fb18906b917619e7ad889"
+        },
+        {
+          "name": "capture.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-001-g0-N/capture.json",
+          "sha256": "872dce7b391942b92f3e8cd3c80196e7a6c61fd3072e786357e6f78f87735784"
+        },
+        {
+          "name": "end.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-001-g0-N/end.json",
+          "sha256": "9710ca93e9231d4b5c19499d28fc598eca4c6e26a874863d08602fa9fe44d52f"
+        },
+        {
+          "name": "native-finish.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-001-g0-N/native-finish.json",
+          "sha256": "8149618862dc13009c1f798d125f105c4d9d7ae7f91d6996579e07ad844af03f"
+        },
+        {
+          "name": "native-pid.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-001-g0-N/native-pid.json",
+          "sha256": "426b6723d5e6b500f0f6387fb239324b4efb01ae1e46a139383f2764db969987"
+        },
+        {
+          "name": "native-start.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-001-g0-N/native-start.json",
+          "sha256": "a6e17fdedf158776c2c83a47bbf31620abce40ad5e1a5d278ea10df5749568d5"
+        },
+        {
+          "name": "start.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-001-g0-N/start.json",
+          "sha256": "863f6bcc053d65d57017ceb369e874d7101743305b5a9832479c2b638aa39ab8"
+        },
+        {
+          "name": "supervisor-cpu.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-001-g0-N/supervisor-cpu.json",
+          "sha256": "4564b6f14e97bf2436ff7ba8960afc538034abab4ea7025f72ccb7cf5ffcaaf4"
+        }
+      ]
+    },
+    {
+      "replication": 1,
+      "originalOrdinal": 18,
+      "arm": "I",
+      "status": "COMPLETED_LIVE_PAIR",
+      "preparationStarted": true,
+      "nativeStarted": true,
+      "endBinding": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-001-g0-I/end.json",
+        "sha256": "fc31704a5e3c93e39b7e626147750008949df52aedfce673fda84c4d46e983e9"
+      },
+      "retainedFiles": [
+        {
+          "name": "after.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-001-g0-I/after.json",
+          "sha256": "971a8946e6ae42957aa25dd0fb98f30d289416eccdff4c77c2eb932947708d21"
+        },
+        {
+          "name": "capture.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-001-g0-I/capture.json",
+          "sha256": "14c596f4cf341bb7dcaae17328169ea45287ab572a9d168ea9c6f4d49af0b82e"
+        },
+        {
+          "name": "end.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-001-g0-I/end.json",
+          "sha256": "fc31704a5e3c93e39b7e626147750008949df52aedfce673fda84c4d46e983e9"
+        },
+        {
+          "name": "native-finish.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-001-g0-I/native-finish.json",
+          "sha256": "0b3858b4c2c5b7d154d51381bca63052025e93884aff351031e8ff2c57b22f98"
+        },
+        {
+          "name": "native-pid.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-001-g0-I/native-pid.json",
+          "sha256": "e3dd11b9f558223a8d7e47981276be791a441473393833b8b24553e46fba5e59"
+        },
+        {
+          "name": "native-start.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-001-g0-I/native-start.json",
+          "sha256": "1db28a7cd9b334cd71d4e19a4e8bb77c78c765a653c8c652dc30388eca5032e0"
+        },
+        {
+          "name": "start.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-001-g0-I/start.json",
+          "sha256": "f95c459b053ce2aab8e170e82632da4f0fd70459ad77e871c4f88b1ca6aa37b0"
+        },
+        {
+          "name": "supervisor-cpu.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-001-g0-I/supervisor-cpu.json",
+          "sha256": "38b29c5704c8f742a9d13dc1e95044d0e32fb581eff0bf34ee50e7e44b82e88e"
+        }
+      ]
+    },
+    {
+      "replication": 1,
+      "originalOrdinal": 19,
+      "arm": "N",
+      "status": "COMPLETED_LIVE_PAIR",
+      "preparationStarted": true,
+      "nativeStarted": true,
+      "endBinding": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-002-g0-N/end.json",
+        "sha256": "d5e006737dc608c5d6020d6e9ce415210c5aa07e58259c92355d58401d980751"
+      },
+      "retainedFiles": [
+        {
+          "name": "after.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-002-g0-N/after.json",
+          "sha256": "d0f70e81fda043799e691fe9ffb268452b5975c8e221c003383796a522a42418"
+        },
+        {
+          "name": "capture.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-002-g0-N/capture.json",
+          "sha256": "f844879a78264b6d50b7ba2befe27d7ebcefa0f2afdaca2966a039aa3319e89e"
+        },
+        {
+          "name": "end.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-002-g0-N/end.json",
+          "sha256": "d5e006737dc608c5d6020d6e9ce415210c5aa07e58259c92355d58401d980751"
+        },
+        {
+          "name": "native-finish.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-002-g0-N/native-finish.json",
+          "sha256": "bec479aebc18c3b83ec3c60b05ecc0e38661c1f39845c37e0633c931f71575af"
+        },
+        {
+          "name": "native-pid.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-002-g0-N/native-pid.json",
+          "sha256": "1799113183a276d3230aa565056d2b25e7879db83f0cb349162576c20155384e"
+        },
+        {
+          "name": "native-start.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-002-g0-N/native-start.json",
+          "sha256": "1d608c31ce64bfc238cc912dbda3f34bd7869e64d02d9f0c1b494ebc141de980"
+        },
+        {
+          "name": "start.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-002-g0-N/start.json",
+          "sha256": "0b1937b224308739d87c02b021c8528ce8ec05488adcc66d788b14ca59e86523"
+        },
+        {
+          "name": "supervisor-cpu.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-002-g0-N/supervisor-cpu.json",
+          "sha256": "292f33d88c16d1317152cb17004b1f447416bf49336281ffa5a9a8872682d889"
+        }
+      ]
+    },
+    {
+      "replication": 1,
+      "originalOrdinal": 19,
+      "arm": "I",
+      "status": "COMPLETED_LIVE_PAIR",
+      "preparationStarted": true,
+      "nativeStarted": true,
+      "endBinding": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-002-g0-I/end.json",
+        "sha256": "ac36eac5f291ac913a43f13d69790b0f533324c1698a3b24d63f7909f610b14d"
+      },
+      "retainedFiles": [
+        {
+          "name": "after.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-002-g0-I/after.json",
+          "sha256": "d794638287e6e5d5d43ca374d19a751f3b0cdd565af3776ae925d8ceace4122b"
+        },
+        {
+          "name": "capture.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-002-g0-I/capture.json",
+          "sha256": "e7de4f249f3365d6dca42e9d86838eacb09985eb303501e233746f13a5245508"
+        },
+        {
+          "name": "end.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-002-g0-I/end.json",
+          "sha256": "ac36eac5f291ac913a43f13d69790b0f533324c1698a3b24d63f7909f610b14d"
+        },
+        {
+          "name": "native-finish.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-002-g0-I/native-finish.json",
+          "sha256": "4084eee6878e42a3f7ebf29a632a5690342f7cb33ca0f7642301a699e016f005"
+        },
+        {
+          "name": "native-pid.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-002-g0-I/native-pid.json",
+          "sha256": "da8d42fafd915ba02271bda221b5fc61550a70fefef26f0c0c682a9dddb999cf"
+        },
+        {
+          "name": "native-start.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-002-g0-I/native-start.json",
+          "sha256": "ead9b95ecc2469ee92933d0675b1ad488e58aa43bc041533646da729ed12919f"
+        },
+        {
+          "name": "start.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-002-g0-I/start.json",
+          "sha256": "b9e9ed7555b176776a65b9ed68e989e2999e9648069915d296d368da8d11e519"
+        },
+        {
+          "name": "supervisor-cpu.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-002-g0-I/supervisor-cpu.json",
+          "sha256": "fafb33a04f83b03c3c3a34632fdad815ffed8188b17d64e28c935771f880b651"
+        }
+      ]
+    },
+    {
+      "replication": 1,
+      "originalOrdinal": 20,
+      "arm": "N",
+      "status": "COMPLETED_LIVE_PAIR",
+      "preparationStarted": true,
+      "nativeStarted": true,
+      "endBinding": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-003-g0-N/end.json",
+        "sha256": "344d45d370c1bf606434e90df7bcd974a928498eb4143370e6d2dfe3ee466bbb"
+      },
+      "retainedFiles": [
+        {
+          "name": "after.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-003-g0-N/after.json",
+          "sha256": "4d4389d1f2e7beda15bdbb4802587a9535d1eddf329cad1ea92e6525b89947dd"
+        },
+        {
+          "name": "capture.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-003-g0-N/capture.json",
+          "sha256": "14eb8bcdfb2f4922b0426d52fbc216ed5228f246a9e459a7fd270affa93f4caf"
+        },
+        {
+          "name": "end.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-003-g0-N/end.json",
+          "sha256": "344d45d370c1bf606434e90df7bcd974a928498eb4143370e6d2dfe3ee466bbb"
+        },
+        {
+          "name": "native-finish.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-003-g0-N/native-finish.json",
+          "sha256": "f1d66803d176d5bcd7b95c5e0000cd0fa1c0ccacad45cbadf8e092d60d9aeeb5"
+        },
+        {
+          "name": "native-pid.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-003-g0-N/native-pid.json",
+          "sha256": "b717f08e1cffb6435ee08a3877507f464446d178718ef11134272c3458c40599"
+        },
+        {
+          "name": "native-start.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-003-g0-N/native-start.json",
+          "sha256": "180d0f674b9aa29bf9a0015152e5eda6a885bb9a7127364d7fd83f253251046d"
+        },
+        {
+          "name": "start.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-003-g0-N/start.json",
+          "sha256": "5c4d7cd92f08b8396abd95e6a7e647e0d2626ad3546c6aae4b63af8e2c837084"
+        },
+        {
+          "name": "supervisor-cpu.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-003-g0-N/supervisor-cpu.json",
+          "sha256": "4385a369dd847286095be2c511120cc3c830534838b4ae8e36ae77754ea492ec"
+        }
+      ]
+    },
+    {
+      "replication": 1,
+      "originalOrdinal": 20,
+      "arm": "I",
+      "status": "COMPLETED_LIVE_PAIR",
+      "preparationStarted": true,
+      "nativeStarted": true,
+      "endBinding": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-003-g0-I/end.json",
+        "sha256": "10c1e45aeef09375d76f3a33c314f7822db70ee012f3f7f13a648746a2b8ae95"
+      },
+      "retainedFiles": [
+        {
+          "name": "after.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-003-g0-I/after.json",
+          "sha256": "821be4c448c275052ee16e69e6ce38e887f3c053a3d38cb8c7eddff9833b1755"
+        },
+        {
+          "name": "capture.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-003-g0-I/capture.json",
+          "sha256": "1daa8b5b56690547bbb67622ebb3685366508339448dee11b9c90e1e03417cad"
+        },
+        {
+          "name": "end.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-003-g0-I/end.json",
+          "sha256": "10c1e45aeef09375d76f3a33c314f7822db70ee012f3f7f13a648746a2b8ae95"
+        },
+        {
+          "name": "native-finish.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-003-g0-I/native-finish.json",
+          "sha256": "df19ca26f675ddb3473b14d93006324a7131e337b1e687ee28d94a04880fd795"
+        },
+        {
+          "name": "native-pid.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-003-g0-I/native-pid.json",
+          "sha256": "d616298f6795ae62483d73eafacd93c2dbd1f241199adb5c585f4c8a33da8bee"
+        },
+        {
+          "name": "native-start.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-003-g0-I/native-start.json",
+          "sha256": "a1485c741394d80f03b26406da1a92982a8b9cef10eb66facda548e7169bad9c"
+        },
+        {
+          "name": "start.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-003-g0-I/start.json",
+          "sha256": "1f668ea8940c56e023f2f488672ab40ca0e517b0624b3abb8537f9e19a5f4d91"
+        },
+        {
+          "name": "supervisor-cpu.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r1-003-g0-I/supervisor-cpu.json",
+          "sha256": "f99112a5fee046fdb6948a838634e7309c4c39d2b0f05aeff26e41a08699b4af"
+        }
+      ]
+    },
+    {
+      "replication": 2,
+      "originalOrdinal": 17,
+      "arm": "N",
+      "status": "NOT_RUN_AFTER_OBSERVER_FAILURE",
+      "preparationStarted": false,
+      "nativeStarted": false,
+      "endBinding": null,
+      "retainedFiles": []
+    },
+    {
+      "replication": 2,
+      "originalOrdinal": 17,
+      "arm": "I",
+      "status": "NOT_RUN_AFTER_OBSERVER_FAILURE",
+      "preparationStarted": true,
+      "nativeStarted": false,
+      "endBinding": null,
+      "retainedFiles": [
+        {
+          "name": "start.json",
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/attempts/r2-000-g0-I/start.json",
+          "sha256": "a45c0dabb5e9ff7c7b8577bf52c4707a83a243e087c52bbbf79754a51d1893aa"
+        }
+      ]
+    },
+    {
+      "replication": 2,
+      "originalOrdinal": 18,
+      "arm": "N",
+      "status": "NOT_RUN_AFTER_OBSERVER_FAILURE",
+      "preparationStarted": false,
+      "nativeStarted": false,
+      "endBinding": null,
+      "retainedFiles": []
+    },
+    {
+      "replication": 2,
+      "originalOrdinal": 18,
+      "arm": "I",
+      "status": "NOT_RUN_AFTER_OBSERVER_FAILURE",
+      "preparationStarted": false,
+      "nativeStarted": false,
+      "endBinding": null,
+      "retainedFiles": []
+    },
+    {
+      "replication": 2,
+      "originalOrdinal": 19,
+      "arm": "N",
+      "status": "NOT_RUN_AFTER_OBSERVER_FAILURE",
+      "preparationStarted": false,
+      "nativeStarted": false,
+      "endBinding": null,
+      "retainedFiles": []
+    },
+    {
+      "replication": 2,
+      "originalOrdinal": 19,
+      "arm": "I",
+      "status": "NOT_RUN_AFTER_OBSERVER_FAILURE",
+      "preparationStarted": false,
+      "nativeStarted": false,
+      "endBinding": null,
+      "retainedFiles": []
+    },
+    {
+      "replication": 2,
+      "originalOrdinal": 20,
+      "arm": "N",
+      "status": "NOT_RUN_AFTER_OBSERVER_FAILURE",
+      "preparationStarted": false,
+      "nativeStarted": false,
+      "endBinding": null,
+      "retainedFiles": []
+    },
+    {
+      "replication": 2,
+      "originalOrdinal": 20,
+      "arm": "I",
+      "status": "NOT_RUN_AFTER_OBSERVER_FAILURE",
+      "preparationStarted": false,
+      "nativeStarted": false,
+      "endBinding": null,
+      "retainedFiles": []
+    }
+  ],
+  "unclosedCostMarkers": [
+    {
+      "name": "r2-000-g0-I-containment.start.json",
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/costs/r2-000-g0-I-containment.start.json",
+      "sha256": "65b36dd0559179671c235ac875c7d8c737baf8ef72cec41849b6012f2715a31c",
+      "record": {
+        "schema": "buildopt.history-replay/record/v2",
+        "cost": {
+          "id": "r2-000-g0-I-containment",
+          "class": "research",
+          "purpose": "owned-process-supervision",
+          "replication": 2,
+          "ordinal": 0,
+          "arm": "I",
+          "attempt": "r2-000-g0-I",
+          "startNS": 276937512024889,
+          "endNS": 0,
+          "durationNS": 0,
+          "insideEnvelope": false,
+          "workflowStarts": 0,
+          "gradleStarts": 0,
+          "nestedStarts": 0,
+          "bytes": 0
+        },
+        "at": {
+          "ns": 276937512024889,
+          "utc": "2026-09-14T15:41:06.49919216Z",
+          "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5"
+        }
+      }
+    }
+  ],
+  "closedServiceObservations": [
+    {
+      "unit": "buildopt-replay-2e688dbbd264e17d-r1-I-2.service",
+      "currentState": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "MainPID": "0",
+        "ControlGroup": ""
+      },
+      "ownerClosure": {
+        "schema": "buildopt.history-replay/record/v2",
+        "unit": "buildopt-replay-2e688dbbd264e17d-r1-I-2.service",
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-2e688dbbd264e17d-r1-I-2.service",
+        "at": {
+          "ns": 275632708795264,
+          "utc": "2026-09-14T15:19:21.695999315Z",
+          "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5"
+        },
+        "remaining": []
+      },
+      "proof": "Current external systemd observation; a missing owner closure is not fabricated"
+    },
+    {
+      "unit": "buildopt-replay-2e688dbbd264e17d-r1-N-1.service",
+      "currentState": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "MainPID": "0",
+        "ControlGroup": ""
+      },
+      "ownerClosure": {
+        "schema": "buildopt.history-replay/record/v2",
+        "unit": "buildopt-replay-2e688dbbd264e17d-r1-N-1.service",
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-2e688dbbd264e17d-r1-N-1.service",
+        "at": {
+          "ns": 275633900502180,
+          "utc": "2026-09-14T15:19:22.887668091Z",
+          "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5"
+        },
+        "remaining": []
+      },
+      "proof": "Current external systemd observation; a missing owner closure is not fabricated"
+    },
+    {
+      "unit": "buildopt-replay-2e688dbbd264e17d-r2-I-9.service",
+      "currentState": {
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "MainPID": "0",
+        "ControlGroup": ""
+      },
+      "ownerClosure": null,
+      "proof": "Current external systemd observation; a missing owner closure is not fabricated"
+    }
+  ],
+  "historicalStatePreserved": true,
+  "sourceInventoryChecksPassed": true,
+  "fullIndependentOutputProof": false,
+  "measurementPrecisionQualified": false,
+  "productValueQualified": false,
+  "allocatedBytes": 21282279424,
+  "withinDeadline": true,
+  "verificationUTC": "2026-09-14T16:05:28.399764+00:00",
+  "verifier": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/verify-incomplete.py",
+    "sha256": "fe7119caae5e464239578c5cd1378ec0cd85e5a44dc82814aa75d9179e7a8498"
+  }
+}

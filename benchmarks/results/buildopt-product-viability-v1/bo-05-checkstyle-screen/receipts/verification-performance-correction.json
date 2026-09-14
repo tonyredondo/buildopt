@@ -1,0 +1,8 @@
+{
+  "atUTC": "2026-09-14T16:05:08.481556+00:00",
+  "pid": 3753427,
+  "procStartTicks": 27785297,
+  "cpuTicks": 51468,
+  "reason": "Repeated set union inside each source-inventory entry filter made verification quadratic. Stop only this postprocessor, hoist unchanged union once per revision and rerun identical checks.",
+  "nativeOrComparatorStarts": 0
+}

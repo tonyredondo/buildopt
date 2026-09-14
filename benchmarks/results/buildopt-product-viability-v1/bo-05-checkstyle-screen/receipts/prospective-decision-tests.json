@@ -1,0 +1,77 @@
+{
+  "status": "verified",
+  "cases": [
+    {
+      "case": "two-sequences-active-and-inactive",
+      "passed": true,
+      "expectedMaterialSignal": true
+    },
+    {
+      "case": "same-code-zero-savings",
+      "passed": true,
+      "expectedMaterialSignal": false
+    },
+    {
+      "case": "failed-replication-not-pooled",
+      "passed": true,
+      "expectedMaterialSignal": false
+    },
+    {
+      "case": "inactive-regression-stays-in-denominator",
+      "passed": true,
+      "expectedMaterialSignal": false
+    },
+    {
+      "case": "exact-inclusive-threshold",
+      "passed": true,
+      "expectedMaterialSignal": true
+    },
+    {
+      "case": "below-threshold",
+      "passed": true,
+      "expectedMaterialSignal": false
+    },
+    {
+      "case": "percent-without-one-second-floor",
+      "passed": true,
+      "expectedMaterialSignal": false
+    },
+    {
+      "case": "seconds-without-percent-floor",
+      "passed": true,
+      "expectedMaterialSignal": false
+    },
+    {
+      "case": "cold-cost-not-hidden-or-used-as-measured-credit",
+      "passed": true,
+      "expectedMaterialSignal": true
+    },
+    {
+      "case": "one-large-win-is-not-two-positive-pairs",
+      "passed": true,
+      "expectedMaterialSignal": false
+    },
+    {
+      "case": "no-native-work",
+      "passed": true,
+      "expectedMaterialSignal": false
+    },
+    {
+      "case": "no-reuse",
+      "passed": true,
+      "expectedMaterialSignal": false
+    },
+    {
+      "case": "missing-pair",
+      "passed": true,
+      "expected": "reject incomplete input"
+    },
+    {
+      "case": "duplicate-pair",
+      "passed": true,
+      "expected": "reject incomplete input"
+    }
+  ],
+  "nativeStarts": 0,
+  "helperJVMs": 0
+}

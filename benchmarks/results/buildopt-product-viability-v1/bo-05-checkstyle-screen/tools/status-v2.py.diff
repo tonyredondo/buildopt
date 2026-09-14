@@ -1,0 +1,17 @@
+--- status.py
++++ status-v2.py
+@@ -9,7 +9,13 @@
+ starts = list((run/'costs').glob('*.start.json'))
+ pending = [p.name for p in starts if not p.with_name(p.name.replace('.start.json','.json')).exists()
+            and not p.name.endswith('.work-start.json')]
+-print('Active phases:', pending)
++end_path = P / 'receipts/profile-supported-end.json'
++if end_path.exists():
++    receipt = json.loads(end_path.read_text())
++    print('Controller stopped:', receipt['exitCode'], receipt['observationFailure'])
++    print('Unclosed phase markers:', pending)
++else:
++    print('Last phase markers (controller liveness not established):', pending)
+ for attempt in sorted((run/'attempts').glob('*')):
+     files = [name for name in ('native-start.json','native-finish.json','end.json') if (attempt/name).exists()]
+     print(attempt.name, files)

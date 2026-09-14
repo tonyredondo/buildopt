@@ -1,0 +1,433 @@
+{
+  "files": [
+    {
+      "path": "result.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/analysis/incomplete-profile-supported.json",
+      "bytes": 19265,
+      "sha256": "b621972f29126ea0d1d25e3dc58eacd39427557c7b143f54d920370ac6067d58"
+    },
+    {
+      "path": "verification.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/analysis/verification.json",
+      "bytes": 37027,
+      "sha256": "8897090f84d6273bbbda3727dacf2e1d7f3a67dedd07c330132d64367438cd1d"
+    },
+    {
+      "path": "host-pressure.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/analysis/host-pressure.json",
+      "bytes": 2158951,
+      "sha256": "da996b7c49239a326bfaa4d78b13fd3973aa760547b549cb172041d77c9fa5ef"
+    },
+    {
+      "path": "task-execution.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/analysis/diagnostic-phases.json",
+      "bytes": 3859107,
+      "sha256": "39c8d54bc4fbb50af6bf0d08d244408377850cdb2bd7733b54e585173cc4d93c"
+    },
+    {
+      "path": "order-and-costs.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/analysis/order-and-costs.json",
+      "bytes": 22668,
+      "sha256": "d6c141095125928cf4c19f027fcb32aad826a35dcd8167e35c6d77f7a9dd5d35"
+    },
+    {
+      "path": "manifest.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/manifest.json",
+      "bytes": 11983,
+      "sha256": "0673ab11b34cbc40f6fac6e793a9ff264676ebb2407e101d777118f0d5d4ef78"
+    },
+    {
+      "path": "allocation.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/allocation.json",
+      "bytes": 962,
+      "sha256": "2f2103dc839d6e07a19bbb48aadd90af6278253fa8e6cd56e9f6f8fd96308eed"
+    },
+    {
+      "path": "allocation-frozen.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/inputs/allocation-frozen.json",
+      "bytes": 732,
+      "sha256": "2bc28b050cd53227795b0c31ea189b70a48b83a52c93468a801437ec6fadb0b4"
+    },
+    {
+      "path": "protocol.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/inputs/protocol.json",
+      "bytes": 1428,
+      "sha256": "2e323a7fec1144a1b1c305bba0936102e862e11df8d4e1df658fe743a93afb07"
+    },
+    {
+      "path": "protocol.md",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/inputs/protocol.md",
+      "bytes": 3649,
+      "sha256": "e348fea539c479c2cbbaf7e1a3c15c83234f4f15f8403261909e64315983acb5"
+    },
+    {
+      "path": "launch-freeze.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/inputs/launch-freeze.json",
+      "bytes": 12715,
+      "sha256": "a61604abb0eacd917375b9ed09ec5990f537cbdaf575fb11be3ba0ba444be7fb"
+    },
+    {
+      "path": "launch-admission.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/inputs/launch-admission.json",
+      "bytes": 346,
+      "sha256": "027dd586419d7ba16967510128c2a15894982682a8cd0f6c6e353a59d0db5909"
+    },
+    {
+      "path": "tools/prepare.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/prepare.py",
+      "bytes": 12833,
+      "sha256": "590be08d8f59f9f7e80d88dc74dcf60b5558e3a0178204894b76a7b8bb2fc86c"
+    },
+    {
+      "path": "tools/run-screen.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/run-screen.py",
+      "bytes": 13083,
+      "sha256": "d84b94a18fbf8634aca1e56e04ff68c99f967e9d20065bf41603f1edab3d1348"
+    },
+    {
+      "path": "tools/run-screen.py.diff",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/inputs/run-screen.py.diff",
+      "bytes": 3886,
+      "sha256": "fa3d5a8a5baa44a473f0fa5c80aa5d71932e0aaa08e2a7ecab3aaac4db62a828"
+    },
+    {
+      "path": "tools/run-screen-v2.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/run-screen-v2.py",
+      "bytes": 13870,
+      "sha256": "a23774df2cdbeab322cd3b5c02f4feca64ec55557ca93c6bd5e21bc2440b4e3e"
+    },
+    {
+      "path": "tools/run-screen-v2.py.diff",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/inputs/run-screen-v2.py.diff",
+      "bytes": 3017,
+      "sha256": "fddba5076327e2f444eedd85bfefef0f4cf41326f7db5130ddf5791306bad10f"
+    },
+    {
+      "path": "tools/decision.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/decision.py",
+      "bytes": 1918,
+      "sha256": "d316f659a7c75981902e7b68cdbafc3d344c547de0293d36ec7046a692f6654e"
+    },
+    {
+      "path": "tools/analyze-screen.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/analyze-screen.py",
+      "bytes": 16116,
+      "sha256": "23f1874e4a263995d6d4e80b62236c69dca19f24801c93b70f6918ebae9116df"
+    },
+    {
+      "path": "tools/analyze-screen.py.diff",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/inputs/analyze-screen.py.diff",
+      "bytes": 7164,
+      "sha256": "9af9ab98cbb6ef9eab43826230eaba12f462f9c63fa526bbc2677321ce42a8c3"
+    },
+    {
+      "path": "tools/analyze-incomplete.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/analyze-incomplete.py",
+      "bytes": 15973,
+      "sha256": "2835bb48e7513252bf0168d108fe308bff16b2d14b834858cd742063b1eca889"
+    },
+    {
+      "path": "tools/analyze-incomplete.py.diff",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/inputs/analyze-incomplete.py.diff",
+      "bytes": 7455,
+      "sha256": "8788cd2a135e47f1c5674cd73c0c2727fdab909a8e888be57b49922bd080612b"
+    },
+    {
+      "path": "tools/analyze-host.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/analyze-host.py",
+      "bytes": 6381,
+      "sha256": "0f5d65e419cb0b0f62cebaeb88bb58683d6d542df5f4a597616a51c328d86113"
+    },
+    {
+      "path": "tools/analyze-host.py.diff",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/inputs/analyze-host.py.diff",
+      "bytes": 1614,
+      "sha256": "d460113fbf965d62cd3fb62f8d3e7952eba0b80ec6d22e0e50991d7e06255444"
+    },
+    {
+      "path": "tools/analyze-host-incomplete.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/analyze-host-incomplete.py",
+      "bytes": 6533,
+      "sha256": "96136c11437719f8d1142f3067fd33f30b066d46444938db6551681b306eb41a"
+    },
+    {
+      "path": "tools/analyze-host-incomplete.py.diff",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/inputs/analyze-host-incomplete.py.diff",
+      "bytes": 1287,
+      "sha256": "75751099a3e222596babc5e914428093b504ed7de1f4eee1573c0b875fa21235"
+    },
+    {
+      "path": "tools/analyze-phases.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/analyze-phases.py",
+      "bytes": 9566,
+      "sha256": "357675c0162c5cdb30d7097c666a31409085939b79a7ae3bba66e465a3070d7e"
+    },
+    {
+      "path": "tools/analyze-phases.py.diff",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/inputs/analyze-phases.py.diff",
+      "bytes": 5112,
+      "sha256": "154ad2fadd5dadd9d0cfd63f174b07e628542951b56ebaebc64d9f7cc383da35"
+    },
+    {
+      "path": "tools/analyze-phases-incomplete.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/analyze-phases-incomplete.py",
+      "bytes": 9694,
+      "sha256": "bb7a6193c3c7d11f8fa315113efce16a76e031d9ad2552c2cc92787b01558708"
+    },
+    {
+      "path": "tools/analyze-phases-incomplete.py.diff",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/inputs/analyze-phases-incomplete.py.diff",
+      "bytes": 1159,
+      "sha256": "74177f86112c6ff0041e1a9eb26913d3c44a9333036f20b4b2c654ee4aa07753"
+    },
+    {
+      "path": "tools/analyze-phases-v2.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/analyze-phases-v2.py",
+      "bytes": 9802,
+      "sha256": "e0b08a7708e20d3075a008b0222cbf591d3d552cef5bb3901394e19de3fa5d04"
+    },
+    {
+      "path": "tools/analyze-phases-v2.py.diff",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/inputs/analyze-phases-v2.py.diff",
+      "bytes": 1872,
+      "sha256": "d21e375a25c6aeb672be15e3d8113e5eddd83fc4a0905652f0f7e2e130cd577b"
+    },
+    {
+      "path": "tools/analyze-order.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/analyze-order.py",
+      "bytes": 2904,
+      "sha256": "85c62e754dbbdd44b9814194aad14a7b18d1edd1cbd812b2841426713528d220"
+    },
+    {
+      "path": "tools/analyze-order-incomplete.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/analyze-order-incomplete.py",
+      "bytes": 3029,
+      "sha256": "89e8e2b07b1492fbc97576a0788119ecf7a1e152b7ac998385dfdb3eaa494801"
+    },
+    {
+      "path": "tools/analyze-order-incomplete.py.diff",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/inputs/analyze-order-incomplete.py.diff",
+      "bytes": 1535,
+      "sha256": "5787d1694ef9c801eb2783d90cfdaad0f61843acd84d4a19b65d117fea250cd9"
+    },
+    {
+      "path": "tools/verify-closeout.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/verify-closeout.py",
+      "bytes": 7985,
+      "sha256": "6a354fcf648f799f03b03f088774c7c6ed987ac68957686b48b85e1b2b38221f"
+    },
+    {
+      "path": "tools/verify-incomplete.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/verify-incomplete.py",
+      "bytes": 10223,
+      "sha256": "fe7119caae5e464239578c5cd1378ec0cd85e5a44dc82814aa75d9179e7a8498"
+    },
+    {
+      "path": "tools/verify-incomplete.py.diff",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/inputs/verify-incomplete.py.diff",
+      "bytes": 9960,
+      "sha256": "dc671752dc2bbffa24654f2b6721620bd36178ea271da9ba22e70b4a028f8f42"
+    },
+    {
+      "path": "tools/test-screen-tools.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/test-screen-tools.py",
+      "bytes": 6326,
+      "sha256": "71e339c13f3971c5ae08132735873c4754283a790ebb0d209a78a03f4b7daf41"
+    },
+    {
+      "path": "tools/test-screen-tools-v2.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/test-screen-tools-v2.py",
+      "bytes": 6338,
+      "sha256": "e72efec6885476be9f647cbc228f41a2952f58882288824fbe8b28e0c769445a"
+    },
+    {
+      "path": "tools/test-observer-repair.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/test-observer-repair.py",
+      "bytes": 7384,
+      "sha256": "3d4c57b930498decd6cda3f946e99b2cbb03423b06cb9f290565ce37bfc2c4bd"
+    },
+    {
+      "path": "tools/status.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/status.py",
+      "bytes": 1260,
+      "sha256": "00b86afefa2f3ae8bce4d55a80f9133ac7a2d600de050e18abb06c222c4c3cce"
+    },
+    {
+      "path": "tools/status.py.diff",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/inputs/status.py.diff",
+      "bytes": 501,
+      "sha256": "074f57524c931a063cb3717f17864b959aa067debb8fb006f18e95892ecfabe7"
+    },
+    {
+      "path": "tools/status-v2.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/status-v2.py",
+      "bytes": 1566,
+      "sha256": "8ac3eb3e45a50d31153b571dcf4601ad3ce7acd6013c32e5ec01c379438fac4f"
+    },
+    {
+      "path": "tools/status-v2.py.diff",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/inputs/status-v2.py.diff",
+      "bytes": 835,
+      "sha256": "ba21e05a17240c57a6ed0edfb7f661cfb5ec82d8240286c224a9a39893b72c44"
+    },
+    {
+      "path": "tools/export-incomplete.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/export-incomplete.py",
+      "bytes": 11825,
+      "sha256": "c0d4d71bcd45f95d91af1f30e232f74f6c87f10c4930b5c460c514a4892d9c67"
+    },
+    {
+      "path": "receipts/readiness.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/receipts/readiness.json",
+      "bytes": 11627,
+      "sha256": "105bbb4c31afe70e2baf47fc141e65d5d3a0239549b41e9fa92764c7e85476b2"
+    },
+    {
+      "path": "receipts/controller-tests.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/receipts/controller-tests.json",
+      "bytes": 1081,
+      "sha256": "5d999ca339e3731778f4261bdb4bc4dbef609b24a84dcce6e9bec93f9f259994"
+    },
+    {
+      "path": "receipts/manifest-validation.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/receipts/manifest-validation.json",
+      "bytes": 504,
+      "sha256": "de41ff8a2e97923881f1beb39f8ba0034f4a79085eeb2300b58f7dde4e43d6d5"
+    },
+    {
+      "path": "receipts/profile-supported-start.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/receipts/profile-supported-start.json",
+      "bytes": 662,
+      "sha256": "7cd7217c6526af00bbce6730eab242852526e4f471825b86ec1e2b9ced54c7ac"
+    },
+    {
+      "path": "receipts/profile-supported-end.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/receipts/profile-supported-end.json",
+      "bytes": 1063,
+      "sha256": "6c5a13d9ba197a49a2cf2659bf19210c81935773065355de60d2605d239ccd74"
+    },
+    {
+      "path": "receipts/observer-repair-design.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/receipts/observer-repair-design.json",
+      "bytes": 1205,
+      "sha256": "fc61115f86bf0026066c0259920262af7a70ad11a33a9a62fb42ddb2e3f13d69"
+    },
+    {
+      "path": "receipts/observer-repair-tests.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/receipts/observer-repair-tests.json",
+      "bytes": 2568,
+      "sha256": "73637131ba6cd607d99177dbf057cbb266d890f5e04e09b6b16fbe5de1aacf43"
+    },
+    {
+      "path": "receipts/observer-test-fixture-correction.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/receipts/observer-test-fixture-correction.json",
+      "bytes": 281,
+      "sha256": "8337c681d2295b9422fb398ff31c27bac9684ecd916c62b7abb263aeb99d97c5"
+    },
+    {
+      "path": "receipts/incomplete-report-correction.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/receipts/incomplete-report-correction.json",
+      "bytes": 257,
+      "sha256": "4223e42fccd590a8ed7c0480ac1334d33d38fbe68ef7310395297a3728e55b1a"
+    },
+    {
+      "path": "receipts/postprocessing-design.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/receipts/postprocessing-design.json",
+      "bytes": 484,
+      "sha256": "081675ca150830b0701b11b1c6a618e3f87603e9637e562eab066989764a6c25"
+    },
+    {
+      "path": "receipts/export-design-amendment.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/receipts/export-design-amendment.json",
+      "bytes": 534,
+      "sha256": "e9a1ac66428880de03aa60b4ba79eda75da250957efe1cda836cd7d137679489"
+    },
+    {
+      "path": "receipts/verification-performance-correction.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/receipts/verification-performance-correction.json",
+      "bytes": 355,
+      "sha256": "9363eb77c7a751774adcdb91e3c73b0c53c3d9065288d52221275957510c33c1"
+    },
+    {
+      "path": "receipts/status-helper-proof.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/receipts/status-helper-proof.json",
+      "bytes": 245,
+      "sha256": "a8c1e7ef3a34c41308a810986927eb37c7c57d975758e18140dbd5ab371e5275"
+    },
+    {
+      "path": "receipts/original-tool-tests.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/receipts/reproducible-tool-tests/result.json",
+      "bytes": 2822,
+      "sha256": "87c45d2f4f92873e9757207255163aa90d75f6e07363b088a57bac0dd731aef3"
+    },
+    {
+      "path": "receipts/revised-controller-tool-tests.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/receipts/revised-controller-tool-tests/result.json",
+      "bytes": 2828,
+      "sha256": "d65a885858da372adf257e6af463bb291f6bb5570d4edca5dbb5ff6e2a890e7e"
+    },
+    {
+      "path": "receipts/prospective-decision-tests.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/inputs/decision-tests.json",
+      "bytes": 1726,
+      "sha256": "110e8d0c3495f7488cb1a4cea323802335c7de887edf32097f28b492e7b18a82"
+    },
+    {
+      "path": "receipts/analysis-bindings.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/inputs/analysis-bindings.json",
+      "bytes": 684,
+      "sha256": "e75377d9b1d288a81634e987c080fa634d58453d17e19dfbaf1bd715de44f809"
+    },
+    {
+      "path": "tools/test-observer-repair-first.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/inputs/test-observer-repair-first.py",
+      "bytes": 7326,
+      "sha256": "6d83d5cbc3fdf5a8313260b2e3540ae9bb19ce5d456235d369c2039ac6c34bb9"
+    },
+    {
+      "path": "tools/verify-incomplete-initial.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/inputs/verify-incomplete-initial.py",
+      "bytes": 10192,
+      "sha256": "8270b2d07c368e8ac0a0afa7427bdfc963f7683e29c78c2b810f3c4715d51c7f"
+    },
+    {
+      "path": "tools/export-evidence-initial.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/inputs/export-evidence-initial.py",
+      "bytes": 10680,
+      "sha256": "e7e3ea12785e5242f146015d3fd487f465ca4b8f84087ed53553f824b443755d"
+    },
+    {
+      "path": "tools/export-evidence-unused.py",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/export-evidence.py",
+      "bytes": 10795,
+      "sha256": "8e1764627fd02422bbdbf52e94d39f8915f1ad5291f972f804b4a52e4807c531"
+    },
+    {
+      "path": "raw-pairs/r1-000.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/pairs/r1-000.json",
+      "bytes": 1200,
+      "sha256": "48ddeb2b51a811d3481b0ddc729a28940cf39893dbf1b95b960d3e99416266b2"
+    },
+    {
+      "path": "raw-pairs/r1-001.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/pairs/r1-001.json",
+      "bytes": 1258,
+      "sha256": "ed9fcededcaba5b53a97642d11b0ed47d5a55da4f4bab8d4aa2f6fd5eeee37be"
+    },
+    {
+      "path": "raw-pairs/r1-002.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/pairs/r1-002.json",
+      "bytes": 1258,
+      "sha256": "cbeff6b4b740c0a95a8e199589f7b825d65a148550008a25ac955f015ed8a965"
+    },
+    {
+      "path": "raw-pairs/r1-003.json",
+      "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/run/pairs/r1-003.json",
+      "bytes": 1260,
+      "sha256": "91001620625aa11fb6d7844bbde02e5c307e6bd49e26fc4c5830d4959c34dbaf"
+    }
+  ],
+  "rawStateRoot": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14",
+  "rawEvidenceRetainedLocally": true,
+  "portability": "All observed timing rows, all sixteen scheduled statuses, completed cost rows, unclosed cost markers, protocols, proof and analysis sources are included. Full inventories, generated outputs and process samples remain local. Independent output reconstruction did not run."
+}

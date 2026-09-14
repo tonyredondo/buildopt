@@ -1,0 +1,14 @@
+{
+  "status": "prepared before measured timing",
+  "files": [
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/verify-closeout.py",
+      "sha256": "6a354fcf648f799f03b03f088774c7c6ed987ac68957686b48b85e1b2b38221f"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/analyze-phases.py",
+      "sha256": "357675c0162c5cdb30d7097c666a31409085939b79a7ae3bba66e465a3070d7e"
+    }
+  ],
+  "scope": "Post-run source and phase reconciliation only; frozen timing decision unchanged"
+}

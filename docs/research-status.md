@@ -50,11 +50,27 @@ No target build or protected history read was performed. A different future
 mechanism needs an observed cause and admission; this is not a universal
 impossibility result.
 
-Next is BO-05 preparation and its early BO-06 correctness and measurement
-prerequisites for Checkstyle. Neither the 17–20 screen nor protected validation
-has started. Generic plan selection/reuse, adaptive fragments, runtime sweeps
-and another general cache remain retired. The user has authorized commit and
-push after each completed block; BO-01 through BO-03 are already published.
+BO-05 is **partial**: the [native Checkstyle comparison](../benchmarks/results/buildopt-product-viability-v1/bo-05-checkstyle-screen/README.md)
+stopped on an observation-script permissions error before the second sequence's
+first build. Eight builds and four live output comparisons passed. The first
+sequence shows 26.00% less request time over changes 18–20, but the second
+sequence and independent output reconstruction are missing: `INCOMPLETE_SCREEN`.
+This does not admit long validation or reject Checkstyle for lack of savings.
+
+The narrow observer repair passed focused tests without additional Gradle/JVM
+starts; its behavior in this build experiment remains untested. Sixteen build
+reservations remain charged, eight builds and four comparator JVMs actually ran,
+and the allocation is closed. All three created services are inactive. A new
+measured attempt requires a separate allocation and frozen observation sources;
+no automatic replacement trial has started.
+
+The task record is
+`.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/task-state.json`.
+Early BO-06 scoped proof is retained; complete confirmation readiness, formal
+G0/G3 and the protected validation history remain incomplete or unrun. Generic
+plan selection/reuse, adaptive fragments, runtime sweeps and another general
+cache remain retired. The user has authorized commit and push after each work
+block; publication of this partial result does not mark BO-05 complete.
 
 The earlier BV plan/tracker preserve execution evidence; their conflicting
 next-step and commercial instructions are superseded. Their old references to

@@ -1,0 +1,18 @@
+{
+  "profile": 8,
+  "command": [
+    "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/history-replay-owner",
+    "run",
+    "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/profiles/supported/manifest.json"
+  ],
+  "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+  "startUTC": "2026-09-14T14:30:14.637585+00:00",
+  "startBootNS": 272685650454259,
+  "gradleReserved": 16,
+  "helperJVMReserved": 16,
+  "driverAndSamplerAffinity": [
+    9
+  ],
+  "pid": 3396027,
+  "procStartTicks": 27268565
+}

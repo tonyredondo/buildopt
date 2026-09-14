@@ -1,0 +1,20 @@
+--- /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/analyze-host.py
++++ /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/analyze-host.py
+@@ -72,7 +72,7 @@
+     def average(key):
+         return sum(interval[key] * seconds for interval, seconds in selected) / duration
+     requests.append(dict(attempt=attempt.name, replication=start['replication'],
+-                         originalOrdinal=start['ordinal'] + 6, arm=start['arm'],
++                         originalOrdinal=start['ordinal'] + 17, arm=start['arm'],
+                          nativeSeconds=duration, coverageSeconds=coverage,
+                          maximumSampleGapSeconds=max(interval['seconds'] for interval, _ in selected),
+                          samplingQualified=sampling_qualified,
+@@ -87,7 +87,7 @@
+                          averageOwnedCoreEquivalentsLowerBound=average('ownedCoreEquivalents'),
+                          averagePressure={resource:sum(interval['pressure'][resource]*seconds for interval,seconds in selected)/duration
+                                           for resource in ('cpu','io','memory')}))
+-assert len(requests) == 4
++assert len(requests) == 16
+ result = dict(status='verified observation and registered flag reconstruction', requests=requests,
+               samples=len(samples), intervals=intervals, analyzerSHA256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+               limits=['Shared CPU affinity is not host isolation',

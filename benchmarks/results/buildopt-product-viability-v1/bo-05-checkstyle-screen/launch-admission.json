@@ -1,0 +1,8 @@
+{
+  "atUTC": "2026-09-14T14:30:14.595436+00:00",
+  "controllerTestsSHA256": "5d999ca339e3731778f4261bdb4bc4dbef609b24a84dcce6e9bec93f9f259994",
+  "manifestValidationSHA256": "de41ff8a2e97923881f1beb39f8ba0034f4a79085eeb2300b58f7dde4e43d6d5",
+  "allocationDeadline": "2026-09-14T17:27:53.951397+00:00",
+  "ownerStarts": 16,
+  "metadataJVMs": 16
+}

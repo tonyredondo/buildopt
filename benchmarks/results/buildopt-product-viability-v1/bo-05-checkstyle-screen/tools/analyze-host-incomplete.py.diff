@@ -1,0 +1,24 @@
+--- analyze-host.py
++++ analyze-host-incomplete.py
+@@ -1,3 +1,4 @@
++"""Completed requests only; the separate incomplete record retains all unrun requests."""
+ """Apply the prospectively registered, symmetric shared-host flags to all requests."""
+ from pathlib import Path
+ import hashlib
+@@ -56,6 +57,7 @@
+ 
+ requests = []
+ for attempt in sorted((P / 'run/attempts').iterdir()):
++    if not (attempt / 'native-finish.json').exists(): continue
+     start = load(attempt / 'start.json')
+     native = load(attempt / 'native-finish.json')
+     begin, end = native['start']['ns'], native['end']['ns']
+@@ -87,7 +89,7 @@
+                          averageOwnedCoreEquivalentsLowerBound=average('ownedCoreEquivalents'),
+                          averagePressure={resource:sum(interval['pressure'][resource]*seconds for interval,seconds in selected)/duration
+                                           for resource in ('cpu','io','memory')}))
+-assert len(requests) == 16
++assert len(requests) == 8
+ result = dict(status='verified observation and registered flag reconstruction', requests=requests,
+               samples=len(samples), intervals=intervals, analyzerSHA256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+               limits=['Shared CPU affinity is not host isolation',

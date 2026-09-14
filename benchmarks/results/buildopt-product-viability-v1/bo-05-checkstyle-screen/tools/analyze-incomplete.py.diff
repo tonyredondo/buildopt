@@ -1,0 +1,99 @@
+--- analyze-screen.py
++++ analyze-incomplete.py
+@@ -1,4 +1,4 @@
+-"""Reconstruct exploratory profile metrics from qualified runner evidence."""
++"""Recover all completed observations from an interrupted screen; no admission decision."""
+ from pathlib import Path
+ import datetime, hashlib, importlib.util, json, os, statistics, subprocess, sys
+ 
+@@ -96,20 +96,15 @@
+     pair_count = len(m['history']) * m['replications']
+     starts = 2 * pair_count
+     receipt = load(P / f'receipts/profile-{label}-end.json')
+-    assert receipt['exitCode'] == 0 and receipt['observationFailure'] is None
++    assert receipt['exitCode'] == -15 and receipt['observationFailure'].startswith('PermissionError')
+     assert sha(P / f'logs/profile-{label}.log') == receipt['logSHA256']
+     assert sha(profile / 'process-samples.jsonl') == receipt['processSamplesSHA256']
+-    result = load(run / 'result.json')
+-    assert result['decision'] == 'FIXTURE_VERIFIED' and result['workflowStarts'] == result['actualGradleStarts'] == result['gradleReservations'] == starts
+-    assert result['nestedStarts'] == result['unknownGradleReservations'] == 0
+-    slots = [slot for replication in result['slots'] for slot in replication]
+-    assert len(slots) == pair_count and all(slot['class'] == 'COMPARABLE' for slot in slots)
+-    # run already reconstructs every pair independently after the live comparison.
+-    # Binding its final JSON proves which independent result was actually emitted.
+-    emitted = json.loads((P / f'logs/profile-{label}.log').read_text())
+-    assert emitted == result
++    assert not (run / 'result.json').exists()
+     records = {(record['replication'], record['ordinal']): record for f in (run / 'pairs').glob('*.json') if (record := load(f))}
+-    assert sorted(records) == [(rep, ordinal) for rep in range(1, m['replications']+1) for ordinal in range(len(m['history']))]
++    assert sorted(records) == [(1, ordinal) for ordinal in range(4)]
++    slots = [record['slot'] for record in records.values()]
++    assert all(slot['class'] == 'COMPARABLE' for slot in slots)
++    starts = 8
+     costs = [value for f in (run / 'costs').glob('*.json') if 'durationNS' in (value := load(f)) and 'purpose' in value]
+     samples = [json.loads(line) for line in (profile / 'process-samples.jsonl').read_text().splitlines()]
+     assert samples
+@@ -127,11 +122,13 @@
+             assert ready['cpuAffinity'] == '8' and ready['at']['ns'] < native['start']['ns']
+             if identity not in readiness or ready['at']['ns'] < readiness[identity]['atNS']:
+                 readiness[identity] = dict(atNS=ready['at']['ns'],nativeStartNS=native['start']['ns'],cpuAffinity=ready['cpuAffinity'])
+-    assert len(workers) == 4
++    assert len(workers) == 2
+     masks = validate_masks(samples, workers, cpus, readiness)
++    masks['strictAllTimeAffinityQualified'] = False
++    masks['scope'] = 'Observed completed requests only; sampling gaps and the interrupted sequence prevent full qualification'
+     pairs = []
+     previous_states = {}
+-    daemon_pids = {(rep,arm):set() for rep in range(1,m['replications']+1) for arm in ('N','I')}
++    daemon_pids = {(rep,arm):set() for rep in (1,) for arm in ('N','I')}
+     for (replication, ordinal), pair_record in sorted(records.items()):
+         slot = pair_record['slot']
+         assert pair_record['slot'] == slot
+@@ -198,36 +195,35 @@
+         pair['customerSavingPercent'] = 100 * pair['customerSavingMS'] / pair['N']['customerMS']
+         pairs.append(pair)
+     assert all(len(pids) == 1 for pids in daemon_pids.values()), daemon_pids
+-    for configpath in (run / 'sessions').glob('*/worker-config.json'):
++    for configpath in (run / 'sessions').glob('r1-*/worker-config.json'):
+         cfg = load(configpath); closure = load(configpath.parent / 'closed.json')
+         assert not closure['remaining'] and not (Path('/sys/fs/cgroup') / closure['cgroup'].lstrip('/')).exists()
+         assert cfg['nativeAffinity'] == m['affinity'] and cfg['observerAffinity'] == '8'
+     measured = [pair for pair in pairs if not pair['warmup']]
+     metrics = {metric: summary(measured, metric, metric) for metric in ('customerMS','nativeMS','ownedServiceCPUMS','supervisorCPUMS')}
+-    helper = 2 * sum(slot['ownerMetadataJVMStarts'] for slot in slots)
++    helper = sum(slot['ownerMetadataJVMStarts'] for slot in slots)
+     assert helper <= starts
+     active = sum(task['action'] for pair in measured for task in pair['N']['checkstyle'])
+     reusable = sum(state['inferredReusableFiles'] for pair in measured for state in pair['I']['candidateSuccessState'])
+-    from decision import classify
+-    decision = classify(pairs)
+-    report = dict(schema='buildopt.checkstyle-native-screen/v1', status='verified',
+-        profile=label, workers=cpus, armLabels={'N':'native Checkstyle', 'I':'supported V2 correction'},
+-        gradleActual=starts, metadataJVMActual=helper, warmupBuilds=4, measuredPairs=len(measured),
++    decision = dict(replications=[], decision='INCOMPLETE_SCREEN', materialSignal=None)
++    report = dict(schema='buildopt.checkstyle-native-screen/v1', status='verified recovery of incomplete observations',
++        profile=label, workers=cpus, completedReplications=1, requiredReplications=2, independentComparisons=0, armLabels={'N':'native Checkstyle', 'I':'supported V2 correction'},
++        gradleActual=starts, metadataJVMActual=helper, warmupBuilds=2, measuredPairs=len(measured),
+         pairs=pairs, summary=metrics, replicationDecisions=decision['replications'],
+         decision=decision['decision'], materialSignal=decision['materialSignal'],
+         baselineCheckstyleActions=active, measuredReusableFiles=reusable,
+         allThreeCandidateTaskStatesVerified=True, masks=masks,
+-        cpuIsolationQualified=masks['nativeAndRunningWorkerAffinityVerified'],
++        cpuIsolationQualified=False,
+         readinessQualified=False, valueQualified=False, productViability='NOT_ESTABLISHED',
+-        metadataAccounting='Eight live and eight independently reconstructed output comparisons; no third pass',
++        metadataAccounting='Four live output comparisons; zero independent reconstruction JVMs. Required independent proof remains missing.',
+         analyzer=dict(path=str(Path(__file__).resolve()),sha256=sha(__file__)),
+-        rawResult=dict(path=str(run/'result.json'),sha256=sha(run/'result.json')),
+-        limits=['Six post-cold pairs across two replications; no precision or sustained-value claim',
++        rawResult=None, interruptedRunReceipt=dict(path=str(P/f'receipts/profile-{label}-end.json'),sha256=sha(P/f'receipts/profile-{label}-end.json')),
++        limits=['Only three post-cold pairs in the first sequence completed; the second sequence and independent output reconstruction are missing',
+                 'Fresh state starts at original17; the earlier development state is not reconstructed',
+                 'Cold and setup costs remain separate and are not assumed recovered',
+                 'Shared host and the symmetric phase agent can affect timing; retain every row and flag',
+                 'Pinned Gradle9.7.1 with Configuration Cache disabled; formal G0 and G3 remain unqualified'])
+-    save(P / f'analysis/profile-{label}.json', report)
++    save(P / f'analysis/incomplete-profile-{label}.json', report)
+     print(json.dumps({k:v for k,v in report.items() if k != 'pairs'}))
+ 
+ if __name__ == '__main__': analyze(sys.argv[1])

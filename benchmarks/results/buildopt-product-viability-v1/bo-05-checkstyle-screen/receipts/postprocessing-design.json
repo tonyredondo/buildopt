@@ -1,0 +1,11 @@
+{
+  "atUTC": "2026-09-14T14:38:47.482946+00:00",
+  "status": "prepared before measured timing",
+  "files": {
+    "analyze-order.py": "85c62e754dbbdd44b9814194aad14a7b18d1edd1cbd812b2841426713528d220",
+    "export-evidence.py": "e7e3ea12785e5242f146015d3fd487f465ca4b8f84087ed53553f824b443755d"
+  },
+  "screenDecisionUnchanged": true,
+  "nativeStartsWhenPrepared": 0,
+  "followup": "Run bound postprocessing only after the controller exits; do not launch a third output comparison."
+}

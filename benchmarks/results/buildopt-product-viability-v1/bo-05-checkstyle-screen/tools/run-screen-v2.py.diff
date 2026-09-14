@@ -1,0 +1,57 @@
+--- run-screen.py
++++ run-screen-v2.py
+@@ -1,6 +1,6 @@
+ """Run the frozen native-versus-V2 17-to-20 screen; retain every sample."""
+ from pathlib import Path
+-import datetime, hashlib, importlib.util, json, os, shutil, signal, subprocess, sys, time
++import datetime, hashlib, importlib.util, json, os, shutil, signal, subprocess, sys, time, traceback
+ sys.dont_write_bytecode = True
+ 
+ P = Path(__file__).resolve().parent
+@@ -94,6 +94,13 @@
+                 pressure={name:Path('/proc/pressure',name).read_text() for name in ('cpu','io','memory')},
+                 ticksPerSecond=os.sysconf('SC_CLK_TCK'))
+ 
++def optional_process_text(path, unavailable):
++    try:
++        return path.read_text()
++    except PermissionError as error:
++        unavailable.append(dict(path=str(path), errno=error.errno, reason='permission_denied'))
++        return None
++
+ def observe(output):
+     global samples
+     begin = time.clock_gettime_ns(time.CLOCK_BOOTTIME)
+@@ -127,11 +134,17 @@
+                         masks.setdefault(mask, []).append(int(thread.name))
+                     except ProcessLookupError: pass
+                 assert stat(pid)['startTicks'] == identity['startTicks']
+-                io = {}
+-                for line in Path(f'/proc/{pid}/io').read_text().splitlines():
+-                    key, value = line.split(':', 1); io[key] = int(value)
+-                wait = Path(f'/proc/{pid}/wchan').read_text().strip()
+-                processes.append(dict(identity=identity, command=commandline, threadMasks=masks, io=io, mainThreadWaitChannel=wait))
++                unavailable = []
++                io_text = optional_process_text(Path(f'/proc/{pid}/io'), unavailable)
++                io = None
++                if io_text is not None:
++                    io = {}
++                    for line in io_text.splitlines():
++                        key, value = line.split(':', 1); io[key] = int(value)
++                wait_text = optional_process_text(Path(f'/proc/{pid}/wchan'), unavailable)
++                wait = None if wait_text is None else wait_text.strip()
++                processes.append(dict(identity=identity, command=commandline, threadMasks=masks,
++                    io=io, mainThreadWaitChannel=wait, unavailableObservations=unavailable))
+             except (FileNotFoundError, ProcessLookupError): pass
+         try:
+             cpu_usage = int(dict(line.split() for line in (cgroup / 'cpu.stat').read_text().splitlines())['usage_usec'])
+@@ -202,6 +215,9 @@
+         inspect_worktrees()
+     except Exception as error:
+         failure = repr(error)
++        receipt['observationFailureDetail'] = dict(type=type(error).__name__,
++            errno=getattr(error, 'errno', None), filename=getattr(error, 'filename', None),
++            traceback=traceback.format_exc())
+         if child.poll() is None: os.killpg(child.pid, signal.SIGTERM)
+         for unit, group in groups.items():
+             assert group['path'].endswith('/' + unit) and unit.startswith('buildopt-replay-')

@@ -1,0 +1,124 @@
+{
+  "status": "verified",
+  "decisionCases": [
+    {
+      "case": "two-sequences-active-and-inactive",
+      "passed": true,
+      "expectedMaterialSignal": true
+    },
+    {
+      "case": "same-code-zero-savings",
+      "passed": true,
+      "expectedMaterialSignal": false
+    },
+    {
+      "case": "failed-replication-not-pooled",
+      "passed": true,
+      "expectedMaterialSignal": false
+    },
+    {
+      "case": "inactive-regression-stays-in-denominator",
+      "passed": true,
+      "expectedMaterialSignal": false
+    },
+    {
+      "case": "exact-inclusive-threshold",
+      "passed": true,
+      "expectedMaterialSignal": true
+    },
+    {
+      "case": "below-threshold",
+      "passed": true,
+      "expectedMaterialSignal": false
+    },
+    {
+      "case": "cold-cost-not-hidden-or-used-as-measured-credit",
+      "passed": true,
+      "expectedMaterialSignal": true
+    },
+    {
+      "case": "one-large-win-is-not-two-positive-pairs",
+      "passed": true,
+      "expectedMaterialSignal": false
+    },
+    {
+      "case": "percent-without-one-second-floor",
+      "passed": true,
+      "expectedMaterialSignal": false
+    },
+    {
+      "case": "seconds-without-percent-floor",
+      "passed": true,
+      "expectedMaterialSignal": false
+    },
+    {
+      "case": "no-native-work",
+      "passed": true,
+      "expectedMaterialSignal": false
+    },
+    {
+      "case": "no-reuse",
+      "passed": true,
+      "expectedMaterialSignal": false
+    },
+    {
+      "case": "missing-pair",
+      "passed": true,
+      "expected": "reject incomplete input"
+    },
+    {
+      "case": "duplicate-pair",
+      "passed": true,
+      "expected": "reject incomplete input"
+    }
+  ],
+  "controllerCases": [
+    {
+      "case": "native-cold",
+      "passed": true,
+      "rejected": false
+    },
+    {
+      "case": "candidate-cold",
+      "passed": true,
+      "rejected": false
+    },
+    {
+      "case": "native-inactive",
+      "passed": true,
+      "rejected": false
+    },
+    {
+      "case": "candidate-inactive",
+      "passed": true,
+      "rejected": false
+    },
+    {
+      "case": "native-must-not-get-state",
+      "passed": true,
+      "rejected": true
+    },
+    {
+      "case": "candidate-missing-state",
+      "passed": true,
+      "rejected": true
+    },
+    {
+      "case": "native-cold-missing-phase",
+      "passed": true,
+      "rejected": true
+    },
+    {
+      "case": "candidate-cold-missing-phase",
+      "passed": true,
+      "rejected": true
+    }
+  ],
+  "nativeStarts": 0,
+  "helperJVMs": 0,
+  "inputs": {
+    "decision.py": "d316f659a7c75981902e7b68cdbafc3d344c547de0293d36ec7046a692f6654e",
+    "run-screen.py": "d84b94a18fbf8634aca1e56e04ff68c99f967e9d20065bf41603f1edab3d1348",
+    "test-screen-tools.py": "71e339c13f3971c5ae08132735873c4754283a790ebb0d209a78a03f4b7daf41"
+  }
+}

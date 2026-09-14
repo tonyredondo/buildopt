@@ -1,0 +1,53 @@
+--- /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/run-control.py
++++ /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/run-screen.py
+@@ -1,4 +1,4 @@
+-"""Run the frozen identical-code 6-to-7 control; retain every sample."""
++"""Run the frozen native-versus-V2 17-to-20 screen; retain every sample."""
+ from pathlib import Path
+ import datetime, hashlib, importlib.util, json, os, shutil, signal, subprocess, sys, time
+ sys.dont_write_bytecode = True
+@@ -39,11 +39,11 @@
+ m = load(profile / 'manifest.json')
+ allocation = load(P / 'allocation.json')
+ starts = 2 * len(m['history']) * m['replications']
+-offset = 6
+-assert starts == 4 and allocation['ownerReserved'] == allocation['actualOwnerStarts'] == 0
+-assert m['controlBaseline']['files'] == m['baseline']['files'] + m['candidate']['files']
+-assert m['controlBaseline']['prerequisites'] == m['candidate']['prerequisites']
+-assert m['replications'] == 1 and m['limits']['retryPairs'] == 0
++offset = 17
++assert starts == 16 and allocation['ownerReserved'] == allocation['actualOwnerStarts'] == 0
++assert 'controlBaseline' not in m
++assert m['replications'] == 2 and m['executionEnd'] == 3 and m['limits']['retryPairs'] == 0
++assert load(P / 'receipts/readiness.json')['status'] == 'verified for exploratory screen'
+ assert allocation['actualHelpers'] + starts <= allocation['maxStandaloneHelpers']
+ allocation['ownerReserved'] += starts
+ assert allocation['ownerReserved'] <= allocation['maxOwnerControllerReservations']
+@@ -148,14 +148,14 @@
+         native = load(nativepath)
+         start = load(attempt / 'start.json')
+         arm = start['arm']
+-        if native['exitCode'] == 0 and start['ordinal'] in (0, 1):
++        if native['exitCode'] == 0 and start['ordinal'] == 0:
+             logs = '\n'.join(f.read_text(errors='replace') for f in attempt.glob('native.*.log'))
+             # Exact files are resolved below; do not accept absence of worker diagnostics.
+             if not logs:
+                 logs = '\n'.join(f.read_text(errors='replace') for f in attempt.glob('*') if f.is_file() and ('stdout' in f.name or 'stderr' in f.name))
+             assert '[BUILDOPT-REG-ERROR]' not in logs, ('AGENT_ERROR', attempt.name)
+             assert 'phase=com/puppycrawl/tools/checkstyle/Checker.process' in logs, ('WORKER_CAPTURE_MISSING', attempt.name)
+-            if arm in ('N', 'I'):
++            if arm == 'I':
+                 assert 'ContentAwareChecker.process' in logs and 'CheckstyleSuccessHistory$Commit.execute' in logs and 'CheckstyleSuccessHistory.context' in logs, ('CANDIDATE_PHASE_CAPTURE_MISSING', attempt.name)
+         state = run / f'r{start["replication"]}' / arm / 'repo/.gradle/buildopt-checkstyle'
+         dest = profile / 'candidate-state' / attempt.name
+@@ -168,7 +168,9 @@
+             copied.parent.mkdir(parents=True, exist_ok=True)
+             copied.write_bytes(data)
+             entries.append(dict(path='repo/.gradle/buildopt-checkstyle/' + relative.as_posix(), sha256=hashlib.sha256(data).hexdigest(), bytes=len(data), copy=str(copied)))
+-        if native['exitCode'] == 0:
++        if arm == 'N':
++            assert not entries, ('UNEXPECTED_NATIVE_CANDIDATE_STATE', attempt.name)
++        if native['exitCode'] == 0 and arm == 'I':
+             expected_tasks = {'checkstyleMain','checkstyleTest','checkstyleInternalClusterTest'}
+             assert {Path(entry['path']).parent.name for entry in entries} == expected_tasks, ('CANDIDATE_ACTIVATION_MISSING', attempt.name, entries)
+         save(dest / 'receipt.json', dict(attempt=attempt.name, native=bindings.bind(nativepath), originalOrdinal=start['ordinal'] + offset, arm=arm, atUTC=now(), atBootNS=time.clock_gettime_ns(time.CLOCK_BOOTTIME), entries=entries))

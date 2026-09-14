@@ -1,0 +1,23 @@
+--- analyze-phases.py
++++ analyze-phases-v2.py
+@@ -101,15 +101,17 @@
+                     else 'wrapper' if 'GradleWrapperMain' in command else 'other')
+                 value = resources.setdefault(key, dict(pid=ident['pid'], startTicks=ident['startTicks'], role=role,
+                     first=ident, last=ident, firstIO=p['io'], lastIO=p['io'], firstBootNS=sample['endBootNS'],
+-                    lastBootNS=sample['endBootNS'], samples=0, states=collections.Counter()))
++                    lastBootNS=sample['endBootNS'], samples=0, missingIOSamples=0, states=collections.Counter()))
+                 delta = max(0, ident['cpuTicks'] - value['last']['cpuTicks']) / hz
+                 bins[int((sample['endBootNS'] - native['start']['ns']) // (5 * 10**9))][role] += delta
+                 value.update(last=ident, lastIO=p['io'], lastBootNS=sample['endBootNS'], samples=value['samples'] + 1)
++                value['missingIOSamples'] += int(p['io'] is None)
+                 value['states'][ident['state']] += 1
+     for value in resources.values():
+         value['observedCPUSeconds'] = (value['last']['cpuTicks'] - value['first']['cpuTicks']) / hz
+-        value['observedReadBytes'] = value['lastIO']['read_bytes'] - value['firstIO']['read_bytes']
+-        value['observedWriteBytes'] = value['lastIO']['write_bytes'] - value['firstIO']['write_bytes']
++        value['ioObservationComplete'] = value['missingIOSamples'] == 0
++        value['observedReadBytes'] = None if value['missingIOSamples'] else value['lastIO']['read_bytes'] - value['firstIO']['read_bytes']
++        value['observedWriteBytes'] = None if value['missingIOSamples'] else value['lastIO']['write_bytes'] - value['firstIO']['write_bytes']
+         value['observedMajorFaults'] = value['last']['majorFaults'] - value['first']['majorFaults']
+     adapter_tasks = []
+     for phase in phases:

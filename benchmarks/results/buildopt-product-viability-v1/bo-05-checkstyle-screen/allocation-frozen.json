@@ -1,0 +1,21 @@
+{
+  "status": "allocated",
+  "startedUTC": "2026-09-14T14:27:53.951397+00:00",
+  "deadlineUTC": "2026-09-14T17:27:53.951397+00:00",
+  "maxElapsedSeconds": 10800,
+  "maxNewBytes": 68719476736,
+  "minimumFreeBytes": 42949672960,
+  "maxDiagnosticBytes": 134217728,
+  "reservedNonRunBytes": 268435456,
+  "maxOwnerControllerReservations": 16,
+  "maxActualOwnerStarts": 16,
+  "maxStandaloneHelpers": 16,
+  "ownerReserved": 0,
+  "actualOwnerStarts": 0,
+  "actualHelpers": 0,
+  "completedOwnerRequests": 0,
+  "actualCompilerCommands": 0,
+  "actualFixtureStarts": 0,
+  "retriesAllowed": 0,
+  "accounting": "Four cold plus twelve measured owner starts; eight live and eight independent comparator JVMs. No extra builds or comparator pass."
+}

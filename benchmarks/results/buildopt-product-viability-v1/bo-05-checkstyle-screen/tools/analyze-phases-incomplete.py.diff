@@ -1,0 +1,25 @@
+--- analyze-phases.py
++++ analyze-phases-incomplete.py
+@@ -1,3 +1,4 @@
++"""Completed requests only; the separate incomplete record retains all unrun requests."""
+ """Join closed native requests, exact phase records, clocks and sampled resources."""
+ from pathlib import Path
+ import collections
+@@ -40,7 +41,7 @@
+ rows = []
+ windows = []
+ for attempt in sorted((RUN / 'attempts').iterdir()):
+-    if not attempt.is_dir():
++    if not attempt.is_dir() or not (attempt / 'end.json').exists():
+         continue
+     start = read(attempt / 'start.json')
+     end = read(attempt / 'end.json')
+@@ -136,7 +137,7 @@
+                customerEnvelopeSeconds=end['durationNS'] / 1e9, startUTC=iso(begin_epoch), endUTC=iso(end_epoch),
+                tasks=tasks, phases=phases, adapterTasks=adapter_tasks, resources=resources, fiveSecondCPUBins=dict(bins))
+     rows.append(row)
+-assert len(rows) == 16
++assert len(rows) == 8
+ checker_tasks = {':server:checkstyleMain', ':server:checkstyleTest', ':server:checkstyleInternalClusterTest'}
+ for row in rows:
+     checking = sorted(task for task, value in row['tasks'].items() if value['action'] and task in checker_tasks)

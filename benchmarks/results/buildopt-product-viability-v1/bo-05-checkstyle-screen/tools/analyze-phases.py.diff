@@ -1,0 +1,58 @@
+--- .tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/analyze-phases.py
++++ .tools/state/buildopt-product-viability-v1/bo-05-checkstyle-screen-2026-09-14/analyze-phases.py
+@@ -131,35 +131,30 @@
+                 commitStartAfterTaskCompletionSeconds=(epoch_ns(commit[0]['startUTC']) - epoch_ns(tasks[task]['endUTC'])) / 1e9,
+                 taskSeconds=tasks[task]['seconds'], workerPID=phase['pid'],
+                 adapterEndUTC=phase['endUTC'], commitStartUTC=commit[0]['startUTC']))
+-    row = dict(attempt=name, replication=start['replication'], originalOrdinal=start['ordinal'] + 6, arm=start['arm'],
++    row = dict(attempt=name, replication=start['replication'], originalOrdinal=start['ordinal'] + 17, arm=start['arm'],
+                nativeSeconds=(native['end']['ns'] - native['start']['ns']) / 1e9,
+                customerEnvelopeSeconds=end['durationNS'] / 1e9, startUTC=iso(begin_epoch), endUTC=iso(end_epoch),
+                tasks=tasks, phases=phases, adapterTasks=adapter_tasks, resources=resources, fiveSecondCPUBins=dict(bins))
+     rows.append(row)
+-assert len(rows) == 4
+-for replication in (1,):
+-    for ordinal in (6,7):
+-        pair = {row['arm']: row for row in rows if row['replication'] == replication and row['originalOrdinal'] == ordinal}
+-        actions = {arm:sorted(k for k,t in row['tasks'].items() if t['action']) for arm,row in pair.items()}
+-        assert actions['N'] == actions['I'], ('ASYMMETRIC_ACTIONS', replication,ordinal)
+-        counts = {arm: sorted((task['task'], task['inputFiles'], task['processedFiles'], task['reusedFiles']) for task in row['adapterTasks']) for arm,row in pair.items()}
+-        assert counts['N'] == counts['I'], ('ASYMMETRIC_CHECKING_COUNTS', replication, ordinal, counts)
+-        for arm,row in pair.items():
+-            checker_tasks = {':server:checkstyleMain', ':server:checkstyleTest', ':server:checkstyleInternalClusterTest'}
+-            prefixed = {k for k in actions[arm] if k.startswith(':server:checkstyle')}
+-            assert prefixed <= checker_tasks | {':server:checkstyle'}, ('UNEXPECTED_CHECKSTYLE_TASK', row['attempt'], prefixed)
+-            # The pinned plugin registers :server:checkstyle as a Task aggregate,
+-            # depending on the real Checkstyle tasks; it does not run a checker.
+-            checking = sorted(prefixed & checker_tasks)
+-            assert sorted(t['task'] for t in row['adapterTasks']) == checking
+-            for task in row['adapterTasks']:
+-                contexts = [phase for phase in row['phases'] if phase['phase'].endswith('CheckstyleSuccessHistory.context') and phase.get('task') == task['task']]
+-                assert len(contexts) == 2, ('CONTEXT_PHASE_COVERAGE', row['attempt'],task['task'],len(contexts))
+-                task['contextSeconds'] = sum(phase['elapsedNs'] for phase in contexts)/1e9
+-result = dict(status='verified', actualProcessedAndReusedCountsEquivalent=True, attempts=rows, clockOffsetSpreadNS=max(offsets)-min(offsets),
+-              limits=['Sampled process CPU and I/O are not exact per-task accounting',
+-                      'Task-completion deltas combine millisecond graph timestamps and sampled clock alignment',
+-                      'The post-adapter gap includes worker completion, reporting and scheduling; service closure may wait for other service users; this gap is not a lock-specific event'])
++assert len(rows) == 16
++checker_tasks = {':server:checkstyleMain', ':server:checkstyleTest', ':server:checkstyleInternalClusterTest'}
++for row in rows:
++    checking = sorted(task for task, value in row['tasks'].items() if value['action'] and task in checker_tasks)
++    engines = [phase for phase in row['phases'] if phase['phase'] == 'com/puppycrawl/tools/checkstyle/Checker.process']
++    assert len(engines) == len(checking), ('ENGINE_PHASE_COVERAGE', row['attempt'], len(engines), checking)
++    row['engineCheckedFiles'] = sum(phase['inputCount'] for phase in engines)
++    if row['arm'] == 'N':
++        assert not row['adapterTasks'], ('NATIVE_ARM_ADAPTER', row['attempt'])
++    else:
++        assert sorted(task['task'] for task in row['adapterTasks']) == checking
++        for task in row['adapterTasks']:
++            contexts = [phase for phase in row['phases'] if phase['phase'].endswith('CheckstyleSuccessHistory.context') and phase.get('task') == task['task']]
++            assert len(contexts) == 2, ('CONTEXT_PHASE_COVERAGE', row['attempt'], task['task'])
++            task['contextSeconds'] = sum(phase['elapsedNs'] for phase in contexts)/1e9
++result = dict(status='verified', actualWorkCountsVerified=True, attempts=rows,
++    clockOffsetSpreadNS=max(offsets)-min(offsets),
++    limits=['Per-phase and sampled CPU durations do not add up to whole-build elapsed time',
++            'Retain all phases, idle gaps and host observations; no causal conclusion from timing alone'])
+ (D / 'analysis/diagnostic-phases.json').write_text(json.dumps(result, indent=2) + '\n')
+ (D / 'analysis/windows.tsv').write_text(''.join('\t'.join(window) + '\n' for window in windows))
+ for row in rows:
