@@ -1,0 +1,347 @@
+{
+  "schemaVersion": "buildopt.research/opportunity-assessment/v1",
+  "step": "BO-03",
+  "status": "verified",
+  "meaningOfVerified": "Assessment and disposition complete; unknown workflow evidence is explicit, not qualified or treated as zero.",
+  "newNativeBuilds": 0,
+  "validationSourceRead": false,
+  "productViabilityEstablished": false,
+  "longReplaysAdmitted": [],
+  "nextStep": "BO-04",
+  "costRule": "80 validation slots; no development savings credited. Historical campaign charges are a sensitivity, not measured future adoption cost. Unknown required work remains unknown and cannot be waived.",
+  "candidates": [
+    {
+      "id": "elasticsearch-checkstyle-supported-v2",
+      "disposition": "ELIGIBLE_FOR_REGISTERED_SHORT_SCREEN_AFTER_READINESS",
+      "reason": "Native whole-command opportunity narrowly clears the floors in the existing fixed-duration model; V2 correctness and A/A do not establish native-versus-V2 value.",
+      "wholeWorkflowAdmission": false,
+      "developmentTransitions": 20,
+      "nativeActionOrdinals": [
+        7,
+        19,
+        20
+      ],
+      "nativeActionFrequency": 0.15,
+      "commandSeconds": 516.9789008260705,
+      "gradleRunBuildSpanSeconds": 502.069,
+      "fixedDependencyModelSavingSeconds": 29.849,
+      "modelSecondsPerTransition": 1.49245,
+      "modelWholeCommandPercent": 5.773736597819537,
+      "modelRequiredNetSeconds": 25.848945041303523,
+      "modelMarginForResidualWorkAndCostsSeconds": 4.000054958696477,
+      "modelMarginSecondsPerTransition": 0.20000274793482387,
+      "modelLimitation": "Zero all Checkstyle actions, retain other task durations and overhead. Not an absolute ceiling: contention and scheduling can change other durations. Not a measured candidate result.",
+      "actionUnionSeconds": 184.29,
+      "overlappingActionSumSeconds": 315.887,
+      "nonzeroModelRows": [
+        {
+          "ordinal": 19,
+          "savingSeconds": 24.22
+        },
+        {
+          "ordinal": 20,
+          "savingSeconds": 5.629
+        }
+      ],
+      "adoptionSeconds": null,
+      "maintenanceSeconds": null,
+      "earlierImplementationDisjointHistory": {
+        "measuredOriginalOrdinals": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        "meanNetSavingSeconds": -4.259781708461537,
+        "aggregateNetSavingPercent": -19.15794687723179
+      },
+      "identicalV2Control": {
+        "decision": "NO_SPURIOUS_MATERIAL_SIGNAL_IN_THIS_CONTROL",
+        "absoluteDifferenceMS": 2741.672986000005,
+        "differencePercentOfFaster": 3.372557589908047
+      }
+    },
+    {
+      "id": "micronaut-python-vfs-bytecode-compile-relative-v1",
+      "disposition": "DEFER_TIMING_UNTIL_RECURRING_CACHE_RESTORE_WORKFLOW_IS_ESTABLISHED",
+      "reason": "Selected savings could matter, but a useful cache restore is not implied by a code change. The whole command, frequency and costs remain unmeasured.",
+      "historicalPairs": {
+        "pairs": 8,
+        "controlMeanSeconds": 10.90925,
+        "candidateMeanSeconds": 3.988125,
+        "savingMeanSeconds": 6.921125,
+        "positivePairs": 8,
+        "savingPercent": 63.44272062699085,
+        "individualSavingsSeconds": [
+          5.947,
+          4.695,
+          3.8600000000000003,
+          3.741,
+          3.5860000000000003,
+          16.039,
+          9.73,
+          7.770999999999999
+        ]
+      },
+      "historicalPreparationChargeSeconds": 600.0,
+      "historicalPreparationPolicy": {
+        "kind": "CONSERVATIVE_CEILING_OF_OBSERVED_CAMPAIGN_WALL_TIME",
+        "description": "Each machine cost rounds all observed proposal generation, diagnostic, correctness, validation and delivery elapsed time upward to a whole minute. Timing pairs are excluded. Human review is reported separately and is not invented.",
+        "humanReviewMs": "NOT_MEASURED",
+        "humanReviewIncludedInPayback": false
+      },
+      "historicalEstimatedPaybackApplicableBuilds": 87,
+      "wholeWorkflowCeilingSeconds": null,
+      "taskExecutionFrequency": null,
+      "usefulCacheRestoreFrequency": null,
+      "adoptionSeconds": null,
+      "maintenanceSeconds": null,
+      "matchingDevelopmentTaskPreimages": 21,
+      "sourceTouchesNotTaskExecutions": [
+        11
+      ],
+      "zeroCostSensitivity": {
+        "scheduledValidationSlots": 80,
+        "assumption": "Every native slot has the historical selected-command mean; each useful slot saves its historical mean; all other deltas and maintenance are zero. No development-prefix saving earns credit.",
+        "modeledPreparationSeconds": 0,
+        "requiredNetSeconds": 80,
+        "applicableSlotsRequired": 12,
+        "fitsEightySlots": true,
+        "netSecondsIfAllEightyApplicable": 553.69,
+        "netSecondsPerSlotIfAllApplicable": 6.921125,
+        "maximumPreparationToMeetBothFloorsIfAllApplicable": 473.69000000000005,
+        "observedPayback": false,
+        "wholeWorkflowAdmission": false
+      },
+      "historicalChargeSensitivity": {
+        "scheduledValidationSlots": 80,
+        "assumption": "Every native slot has the historical selected-command mean; each useful slot saves its historical mean; all other deltas and maintenance are zero. No development-prefix saving earns credit.",
+        "modeledPreparationSeconds": 600.0,
+        "requiredNetSeconds": 80,
+        "applicableSlotsRequired": 99,
+        "fitsEightySlots": false,
+        "netSecondsIfAllEightyApplicable": -46.309999999999945,
+        "netSecondsPerSlotIfAllApplicable": -0.578875,
+        "maximumPreparationToMeetBothFloorsIfAllApplicable": 473.69000000000005,
+        "observedPayback": false,
+        "wholeWorkflowAdmission": false
+      },
+      "wholeWorkflowAdmission": false
+    },
+    {
+      "id": "spring-architecture-check-v1",
+      "disposition": "DO_NOT_TIME_SELECTED_CASE_ON_CURRENT_EVIDENCE",
+      "reason": "Recorded mean saving misses the current one-second floor even at every build before costs; no defensible full-workflow ceiling has been measured.",
+      "historicalPairs": {
+        "pairs": 8,
+        "controlMeanSeconds": 2.7885,
+        "candidateMeanSeconds": 1.803,
+        "savingMeanSeconds": 0.9855,
+        "positivePairs": 8,
+        "savingPercent": 35.341581495427654,
+        "individualSavingsSeconds": [
+          1.3090000000000002,
+          1.1670000000000003,
+          0.7879999999999998,
+          1.2610000000000001,
+          1.0599999999999998,
+          0.7510000000000001,
+          1.0239999999999998,
+          0.5240000000000002
+        ]
+      },
+      "historicalPreparationChargeSeconds": 360.0,
+      "historicalPreparationPolicy": {
+        "kind": "CONSERVATIVE_CEILING_OF_OBSERVED_CAMPAIGN_WALL_TIME",
+        "description": "Each machine cost rounds all observed proposal generation, diagnostic, correctness, validation and delivery elapsed time upward to a whole minute. Timing pairs are excluded. Human review is reported separately and is not invented.",
+        "humanReviewMs": "NOT_MEASURED",
+        "humanReviewIncludedInPayback": false
+      },
+      "historicalEstimatedPaybackApplicableBuilds": 366,
+      "wholeWorkflowCeilingSeconds": null,
+      "taskExecutionFrequency": null,
+      "usefulCacheRestoreFrequency": null,
+      "adoptionSeconds": null,
+      "maintenanceSeconds": null,
+      "matchingDevelopmentTaskPreimages": 21,
+      "sourceTouchesNotTaskExecutions": [
+        5,
+        6,
+        9,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "zeroCostSensitivity": {
+        "scheduledValidationSlots": 80,
+        "assumption": "Every native slot has the historical selected-command mean; each useful slot saves its historical mean; all other deltas and maintenance are zero. No development-prefix saving earns credit.",
+        "modeledPreparationSeconds": 0,
+        "requiredNetSeconds": 80,
+        "applicableSlotsRequired": 82,
+        "fitsEightySlots": false,
+        "netSecondsIfAllEightyApplicable": 78.84,
+        "netSecondsPerSlotIfAllApplicable": 0.9855,
+        "maximumPreparationToMeetBothFloorsIfAllApplicable": -1.1599999999999966,
+        "observedPayback": false,
+        "wholeWorkflowAdmission": false
+      },
+      "historicalChargeSensitivity": {
+        "scheduledValidationSlots": 80,
+        "assumption": "Every native slot has the historical selected-command mean; each useful slot saves its historical mean; all other deltas and maintenance are zero. No development-prefix saving earns credit.",
+        "modeledPreparationSeconds": 360.0,
+        "requiredNetSeconds": 80,
+        "applicableSlotsRequired": 447,
+        "fitsEightySlots": false,
+        "netSecondsIfAllEightyApplicable": -281.15999999999997,
+        "netSecondsPerSlotIfAllApplicable": -3.5145,
+        "maximumPreparationToMeetBothFloorsIfAllApplicable": -1.1599999999999966,
+        "observedPayback": false,
+        "wholeWorkflowAdmission": false
+      },
+      "wholeWorkflowAdmission": false
+    },
+    {
+      "id": "ktor-selected-build-impact",
+      "disposition": "BO04_ADMISSION_REVIEW_ONLY",
+      "reason": "Large selected savings, but required-output scope, advantage over a direct module command and lifetime must be resolved before another trial.",
+      "historicalPairs": {
+        "pairs": 8,
+        "controlMeanSeconds": 38.80975,
+        "candidateMeanSeconds": 7.830375,
+        "savingMeanSeconds": 30.979375,
+        "positivePairs": 8,
+        "savingPercent": 79.82369121161564,
+        "individualSavingsSeconds": [
+          54.155,
+          20.046999999999997,
+          34.549,
+          29.344,
+          19.701,
+          30.632,
+          24.153,
+          35.254000000000005
+        ]
+      },
+      "originalEntrypoints": [
+        "jvmJar"
+      ],
+      "candidateEntrypoints": [
+        ":ktor-server-webjars:jvmJar"
+      ],
+      "comparedRequiredOutputs": [
+        "ktor-server/ktor-server-plugins/ktor-server-webjars/build/libs/ktor-server-webjars-jvm-3.6.0-SNAPSHOT.jar"
+      ],
+      "fullOriginalCommandOutputEquivalenceEstablished": false,
+      "historicalPreparationChargeSeconds": 784.031,
+      "historicalEstimatedPaybackApplicableBuilds": 26,
+      "wholeWorkflowCeilingSeconds": null,
+      "usefulPlanFrequency": null,
+      "adoptionSeconds": null,
+      "maintenanceSeconds": null,
+      "zeroCostSensitivity": {
+        "scheduledValidationSlots": 80,
+        "assumption": "Every native slot has the historical selected-command mean; each useful slot saves its historical mean; all other deltas and maintenance are zero. No development-prefix saving earns credit.",
+        "modeledPreparationSeconds": 0,
+        "requiredNetSeconds": 155.239,
+        "applicableSlotsRequired": 6,
+        "fitsEightySlots": true,
+        "netSecondsIfAllEightyApplicable": 2478.35,
+        "netSecondsPerSlotIfAllApplicable": 30.979375,
+        "maximumPreparationToMeetBothFloorsIfAllApplicable": 2323.111,
+        "observedPayback": false,
+        "wholeWorkflowAdmission": false
+      },
+      "historicalChargeSensitivity": {
+        "scheduledValidationSlots": 80,
+        "assumption": "Every native slot has the historical selected-command mean; each useful slot saves its historical mean; all other deltas and maintenance are zero. No development-prefix saving earns credit.",
+        "modeledPreparationSeconds": 784.031,
+        "requiredNetSeconds": 155.239,
+        "applicableSlotsRequired": 31,
+        "fitsEightySlots": true,
+        "netSecondsIfAllEightyApplicable": 1694.319,
+        "netSecondsPerSlotIfAllApplicable": 21.1789875,
+        "maximumPreparationToMeetBothFloorsIfAllApplicable": 2323.111,
+        "observedPayback": false,
+        "wholeWorkflowAdmission": false
+      },
+      "wholeWorkflowAdmission": false
+    },
+    {
+      "id": "beam-selected-build-impact",
+      "disposition": "BO04_ADMISSION_REVIEW_ONLY",
+      "reason": "Large selected savings, but required-output scope, advantage over a direct module command and lifetime must be resolved before another trial.",
+      "historicalPairs": {
+        "pairs": 8,
+        "controlMeanSeconds": 65.080875,
+        "candidateMeanSeconds": 24.958125,
+        "savingMeanSeconds": 40.12275,
+        "positivePairs": 8,
+        "savingPercent": 61.65060011869847,
+        "individualSavingsSeconds": [
+          78.767,
+          33.778,
+          36.44800000000001,
+          34.122,
+          36.097,
+          33.120000000000005,
+          36.019000000000005,
+          32.631
+        ]
+      },
+      "originalEntrypoints": [
+        "classes"
+      ],
+      "candidateEntrypoints": [
+        ":examples:java:twitter:classes"
+      ],
+      "comparedRequiredOutputs": [
+        "examples/java/twitter/build/classes/java/main/**"
+      ],
+      "fullOriginalCommandOutputEquivalenceEstablished": false,
+      "historicalPreparationChargeSeconds": 1096.653,
+      "historicalEstimatedPaybackApplicableBuilds": 28,
+      "wholeWorkflowCeilingSeconds": null,
+      "usefulPlanFrequency": null,
+      "adoptionSeconds": null,
+      "maintenanceSeconds": null,
+      "zeroCostSensitivity": {
+        "scheduledValidationSlots": 80,
+        "assumption": "Every native slot has the historical selected-command mean; each useful slot saves its historical mean; all other deltas and maintenance are zero. No development-prefix saving earns credit.",
+        "modeledPreparationSeconds": 0,
+        "requiredNetSeconds": 260.3235,
+        "applicableSlotsRequired": 7,
+        "fitsEightySlots": true,
+        "netSecondsIfAllEightyApplicable": 3209.82,
+        "netSecondsPerSlotIfAllApplicable": 40.12275,
+        "maximumPreparationToMeetBothFloorsIfAllApplicable": 2949.4965,
+        "observedPayback": false,
+        "wholeWorkflowAdmission": false
+      },
+      "historicalChargeSensitivity": {
+        "scheduledValidationSlots": 80,
+        "assumption": "Every native slot has the historical selected-command mean; each useful slot saves its historical mean; all other deltas and maintenance are zero. No development-prefix saving earns credit.",
+        "modeledPreparationSeconds": 1096.653,
+        "requiredNetSeconds": 260.3235,
+        "applicableSlotsRequired": 34,
+        "fitsEightySlots": true,
+        "netSecondsIfAllEightyApplicable": 2113.1670000000004,
+        "netSecondsPerSlotIfAllApplicable": 26.414587500000003,
+        "maximumPreparationToMeetBothFloorsIfAllApplicable": 2949.4965,
+        "observedPayback": false,
+        "wholeWorkflowAdmission": false
+      },
+      "wholeWorkflowAdmission": false
+    }
+  ]
+}

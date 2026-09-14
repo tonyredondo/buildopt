@@ -1,0 +1,74 @@
+{
+  "inventory": {
+    "path": "benchmarks/results/buildopt-product-viability-v1/bo-01-candidate-recovery/inventory.json",
+    "sha256": "d122bfa0ad6d4d8fb924cdd945e38a38aa12ed24181a264151b98602a54293ac"
+  },
+  "bo01Verification": {
+    "path": "benchmarks/results/buildopt-product-viability-v1/bo-01-candidate-recovery/verification.json",
+    "sha256": "c47c79e335aa086bd3bf601e29293231c037a7182149a9cd81d21013265438ce"
+  },
+  "checkstyleOpportunity": {
+    "path": "benchmarks/results/buildopt-product-viability-v1/checkstyle-admission/residual-opportunity.json",
+    "sha256": "549926a2b14f9add79e766d82d21210d1364bdb4cf51e7b6cf75812e9b522902"
+  },
+  "nativeOpportunity": {
+    "path": "benchmarks/results/buildopt-product-viability-v1/bv002/opportunity-analysis.json",
+    "sha256": "27bf12643fdcf11b390e68a0c9145ac741df2b6417ced343b7606f37c064c7d9"
+  },
+  "oldScreen": {
+    "path": "benchmarks/results/buildopt-product-viability-v1/bv006-screen-completion/summary.json",
+    "sha256": "91a34472c0debcaf45cc568ffdb3da9f2e76ccbdcdb825d7be5f9818cc2ff3c2"
+  },
+  "aa": {
+    "path": "benchmarks/results/buildopt-product-viability-v1/bo-02-measurement-control/result.json",
+    "sha256": "eb4e4b3e5fca11924646282df8a943ea6c9eb2e6664c2bf6600d59432a39c8c3"
+  },
+  "aaVerification": {
+    "path": "benchmarks/results/buildopt-product-viability-v1/bo-02-measurement-control/verification.json",
+    "sha256": "92684a88d4d56825a7cb66e4782e67206c7720bb23cbfdff6fa00b252eb67137"
+  },
+  "sourceReview": {
+    "path": "benchmarks/results/buildopt-product-viability-v1/bo-03-opportunity-assessment/development-source-review.json",
+    "sha256": "c8abae106ba1e6ef3a3500226ea4dbc60f34e836edd7f5496f54aa11e2c98f7e"
+  },
+  "portfolio": {
+    "path": "benchmarks/results/reviewed-native-patch-portfolio-v1/result.json",
+    "sha256": "b31cf065b8675d0445340432a262e7ffa6b6b631455461ec0bfc60397c04670c"
+  },
+  "impact": {
+    "path": "benchmarks/results/poc-magic-end-to-end-value-v2/summary.json",
+    "sha256": "6e712bef94ba29fe417ddb3277c9659d0054cb2cbde7e2994aecb68e45b80937"
+  },
+  "ktorLifetime": {
+    "path": "benchmarks/results/poc-profile-lifetime-v1/summary.json",
+    "sha256": "2036d81eac1145ee624cc02898280355eaf865d4124a2496ff7350bd04ee6379"
+  },
+  "replayContract": {
+    "path": "docs/plans/buildopt-product-viability-v1-replay.md",
+    "sha256": "e1c05531f016e58162182c1b0b1b0633d23f8a4796dc2edf96da3fc5c7a8ec5a"
+  },
+  "existingDependencyModel": {
+    "path": "benchmarks/results/buildopt-product-viability-v1/checkstyle-admission/tools/analyze_residual_opportunity.py",
+    "sha256": "7541a500cd779f6204b3a69f32054c27bd9c3b690fef34321cec7258e132965f"
+  },
+  "finalizationResult": {
+    "path": "benchmarks/results/buildopt-product-viability-v1/bv006-checkstyle-finalization/README.md",
+    "sha256": "f4c87ebaea25b2c2bd67db456692af5d496508210bd891c0dd41350b30d9b694"
+  },
+  "ktorRawResult": {
+    "path": "benchmarks/results/poc-magic-end-to-end-value-v2/raw/ktor.result.json",
+    "sha256": "7b0bdf8ef49faa471931c9c5ab7b53d2a4fd5d97f1bbc03803abddf667fc39aa"
+  },
+  "ktorQualification": {
+    "path": "benchmarks/results/poc-magic-end-to-end-value-v2/raw/ktor.qualification.json",
+    "sha256": "efdf4c65942f893a6b4775edc867e6df34fd3d8e960393ee09dbbc112965cddf"
+  },
+  "beamRawResult": {
+    "path": "benchmarks/results/poc-magic-end-to-end-value-v2/raw/beam.result.json",
+    "sha256": "8831961ad83bb5e39ae7083806e2f9630f57d062c6f72d9446bad1ebf0a08640"
+  },
+  "beamQualification": {
+    "path": "benchmarks/results/poc-magic-end-to-end-value-v2/raw/beam.qualification.json",
+    "sha256": "42cb94e065e55ecd8eee0bfd765eb4f3797a0f86d96a2bee772a773a6346363e"
+  }
+}

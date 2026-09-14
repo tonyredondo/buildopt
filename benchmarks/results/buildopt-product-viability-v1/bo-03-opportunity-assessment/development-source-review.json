@@ -1,0 +1,423 @@
+{
+  "step": "BO-03",
+  "scope": "Source-only development prefix 0 through 20; touched paths are not observed task/cache outcomes.",
+  "nativeStarts": 0,
+  "validationSourceRead": false,
+  "repositories": [
+    {
+      "id": "micronaut-python-vfs-bytecode-compile-relative-v1",
+      "repository": "https://github.com/micronaut-projects/micronaut-core.git",
+      "historicalRevision": "428ddeb3ad2acdabef2027cc06af3bf46865956a",
+      "taskSource": "buildSrc/src/main/groovy/io/micronaut/build/internal/python/PythonVfsBytecodeCompile.java",
+      "expectedSourceSHA256": "2751e8434d1cdd6be5052abe4d3205662e4669d78fcbc9168e3c73a261c0adca",
+      "registrationSource": "context-python/build.gradle.kts",
+      "registrationSHA256": "9a28b5efac8c1f7260f493482c7a5f422586aa07bb829f4e7c0d2148f183caf2",
+      "watchedPaths": [
+        "buildSrc",
+        "context-python/src/main/resources",
+        "context-python/build.gradle.kts",
+        "inject-python",
+        "gradle/libs.versions.toml"
+      ],
+      "coverageLimit": "Declared source subsets only; classpath resolution, generated classes, task/cache identities and command scheduling are unmeasured.",
+      "rows": [
+        {
+          "ordinal": 0,
+          "revision": "c419ce675423bf1847a95e5900799347317ba5a0",
+          "tree": "d199cd8dae931aa18053e8024c03a28f0b1f466d",
+          "taskSourceSHA256": "2751e8434d1cdd6be5052abe4d3205662e4669d78fcbc9168e3c73a261c0adca",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": []
+        },
+        {
+          "ordinal": 1,
+          "revision": "3bd4817014c50343ebd5c381eecd9ee88980f70f",
+          "tree": "0e6ad2ecaec413ae1173cd072f291bc482ec84b3",
+          "taskSourceSHA256": "2751e8434d1cdd6be5052abe4d3205662e4669d78fcbc9168e3c73a261c0adca",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": []
+        },
+        {
+          "ordinal": 2,
+          "revision": "4698955823e031f86d56863620841e1984b2f901",
+          "tree": "b35a3ce0d9428bd7a4127edeb35fdfdb1f815a47",
+          "taskSourceSHA256": "2751e8434d1cdd6be5052abe4d3205662e4669d78fcbc9168e3c73a261c0adca",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": []
+        },
+        {
+          "ordinal": 3,
+          "revision": "34c67e4f8d63e7cb1b3bcfebeb7203585e62bbdb",
+          "tree": "b0805ae015c59016a3e3a63f39b842db3196123e",
+          "taskSourceSHA256": "2751e8434d1cdd6be5052abe4d3205662e4669d78fcbc9168e3c73a261c0adca",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": []
+        },
+        {
+          "ordinal": 4,
+          "revision": "02ee2173f0462220242444e8de0096b3888cf63f",
+          "tree": "c9b26682a0fa2cee54a420bc2a92860c1974395d",
+          "taskSourceSHA256": "2751e8434d1cdd6be5052abe4d3205662e4669d78fcbc9168e3c73a261c0adca",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": []
+        },
+        {
+          "ordinal": 5,
+          "revision": "5c517e1a3723126b0ad0afa19305b539b61ab264",
+          "tree": "90f4ca1be4599758e6aedb931f36a43b62709464",
+          "taskSourceSHA256": "2751e8434d1cdd6be5052abe4d3205662e4669d78fcbc9168e3c73a261c0adca",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": []
+        },
+        {
+          "ordinal": 6,
+          "revision": "7c2ec530be56a050d0751a5d38afb8cd475f9d16",
+          "tree": "77f82fd3238b1a2be1ea0728adca6143cc1343e8",
+          "taskSourceSHA256": "2751e8434d1cdd6be5052abe4d3205662e4669d78fcbc9168e3c73a261c0adca",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": []
+        },
+        {
+          "ordinal": 7,
+          "revision": "2316a2ecf2453983e6ff574f0315bf56bc24c100",
+          "tree": "30ca03f2b86a0e320c227d4edad04fdb27950973",
+          "taskSourceSHA256": "2751e8434d1cdd6be5052abe4d3205662e4669d78fcbc9168e3c73a261c0adca",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": []
+        },
+        {
+          "ordinal": 8,
+          "revision": "9358f9baebba8e4407ed9417e23fa1976995e83f",
+          "tree": "302ba1d2cbd1c2ac0dd80dd6f27b1ff40470bade",
+          "taskSourceSHA256": "2751e8434d1cdd6be5052abe4d3205662e4669d78fcbc9168e3c73a261c0adca",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": []
+        },
+        {
+          "ordinal": 9,
+          "revision": "47b4a210efcb2e17ca67a8c81c2c7ebb667a063d",
+          "tree": "08205ee969d1c652f93c073a723370f5872ef1a8",
+          "taskSourceSHA256": "2751e8434d1cdd6be5052abe4d3205662e4669d78fcbc9168e3c73a261c0adca",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": []
+        },
+        {
+          "ordinal": 10,
+          "revision": "61cf33e9a96667175c8533bca63a34b807b44d4e",
+          "tree": "5a85c6ae40bc8d1021a7c88e29ae38c5b8ef0d96",
+          "taskSourceSHA256": "2751e8434d1cdd6be5052abe4d3205662e4669d78fcbc9168e3c73a261c0adca",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": []
+        },
+        {
+          "ordinal": 11,
+          "revision": "d31ace376c2c75e5a04aaf982cf261b975d24823",
+          "tree": "b49f79e14d62c5f2d02b5f1446f66582c8ace5f7",
+          "taskSourceSHA256": "2751e8434d1cdd6be5052abe4d3205662e4669d78fcbc9168e3c73a261c0adca",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": [
+            "inject-python/src/main/java/io/micronaut/python/processing/PythonPooledStubGenerator.java",
+            "inject-python/src/main/java/io/micronaut/python/processing/PythonStubGenerator.java",
+            "inject-python/src/test/java/io/micronaut/python/compiler/PyronautCompilerTest.java",
+            "inject-python/src/test/java/io/micronaut/python/processing/PythonAstParserTest.java"
+          ]
+        },
+        {
+          "ordinal": 12,
+          "revision": "89493faa1e8e2009d6b32aca7cf27f437e27e3ca",
+          "tree": "d8e773c5b3f7eb0502ab054b5edc9d7232d22f66",
+          "taskSourceSHA256": "2751e8434d1cdd6be5052abe4d3205662e4669d78fcbc9168e3c73a261c0adca",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": []
+        },
+        {
+          "ordinal": 13,
+          "revision": "9cfc84c77f3882674cf59e6b5c78b9bd9e6bb8a1",
+          "tree": "416720ff91c80396bfab63497cd2d98292d4fe3d",
+          "taskSourceSHA256": "2751e8434d1cdd6be5052abe4d3205662e4669d78fcbc9168e3c73a261c0adca",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": []
+        },
+        {
+          "ordinal": 14,
+          "revision": "14f9c62a3a5e8a30f2049dbd0fedc1131b2a0022",
+          "tree": "84177972cc0b726daaf79ec3956035c04b6282b1",
+          "taskSourceSHA256": "2751e8434d1cdd6be5052abe4d3205662e4669d78fcbc9168e3c73a261c0adca",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": []
+        },
+        {
+          "ordinal": 15,
+          "revision": "5e62bcc4be685fcccfed43fe3857859bdfc54dee",
+          "tree": "ac6d93657109ce1e0d5b24ad87294e60ad91f09c",
+          "taskSourceSHA256": "2751e8434d1cdd6be5052abe4d3205662e4669d78fcbc9168e3c73a261c0adca",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": []
+        },
+        {
+          "ordinal": 16,
+          "revision": "2c3fbfe0f5999827e4797287f9d81f0e023a6f7c",
+          "tree": "c97d399db7265b8fe1f6805adb41673886a35a02",
+          "taskSourceSHA256": "2751e8434d1cdd6be5052abe4d3205662e4669d78fcbc9168e3c73a261c0adca",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": []
+        },
+        {
+          "ordinal": 17,
+          "revision": "9a41f844e11be883fe71755b599c506f0720fb00",
+          "tree": "67adf2d5efeab50bb4977b275c6c25edda89cc30",
+          "taskSourceSHA256": "2751e8434d1cdd6be5052abe4d3205662e4669d78fcbc9168e3c73a261c0adca",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": []
+        },
+        {
+          "ordinal": 18,
+          "revision": "6f2388da695e0deb297b47d3fc4f478c45c2d7da",
+          "tree": "81d69a94432cabcdb08713600f47843c282e8dc9",
+          "taskSourceSHA256": "2751e8434d1cdd6be5052abe4d3205662e4669d78fcbc9168e3c73a261c0adca",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": []
+        },
+        {
+          "ordinal": 19,
+          "revision": "d7bfaa8a78ae9398ea6e21280a796e64eecb616c",
+          "tree": "958ce8989e2ebb08bfd3c7bbc5216affce112532",
+          "taskSourceSHA256": "2751e8434d1cdd6be5052abe4d3205662e4669d78fcbc9168e3c73a261c0adca",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": []
+        },
+        {
+          "ordinal": 20,
+          "revision": "7b56e4b6177476cf252a05e965d32700fe4677e8",
+          "tree": "c456ca714aca8686dbf9474848964685cf6ffc82",
+          "taskSourceSHA256": "2751e8434d1cdd6be5052abe4d3205662e4669d78fcbc9168e3c73a261c0adca",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": []
+        }
+      ],
+      "matchingPreimages": 21,
+      "touchedOrdinals": [
+        11
+      ],
+      "taskExecutionFrequency": null,
+      "usefulCacheRestoreFrequency": null
+    },
+    {
+      "id": "spring-architecture-check-v1",
+      "repository": "https://github.com/spring-projects/spring-framework.git",
+      "historicalRevision": "91eb42645e26a7ef9382b4a655bcefe5c8682fee",
+      "taskSource": "buildSrc/src/main/java/org/springframework/build/architecture/ArchitectureCheck.java",
+      "expectedSourceSHA256": "22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04",
+      "registrationSource": "buildSrc/src/main/java/org/springframework/build/architecture/ArchitecturePlugin.java",
+      "registrationSHA256": "f051a0af4c6501ab67e093b07ed1bcaa2483e787dbd44ce32d2399f53b55e3df",
+      "watchedPaths": [
+        "buildSrc",
+        "spring-core/src/main",
+        "spring-core/build.gradle",
+        "gradle/libs.versions.toml"
+      ],
+      "coverageLimit": "Declared source subsets only; classpath resolution, generated classes, task/cache identities and command scheduling are unmeasured.",
+      "rows": [
+        {
+          "ordinal": 0,
+          "revision": "04e5c9216285549ff2d402ce269a3778226cd3ce",
+          "tree": "984a05e8de60c5e65b488d472742cd87dadfdc9f",
+          "taskSourceSHA256": "22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": []
+        },
+        {
+          "ordinal": 1,
+          "revision": "a16509447075017b7691bf401e5214dc25f2d3cb",
+          "tree": "329eea61f97dd17ef0305e7596ef2bcfd9c4deb1",
+          "taskSourceSHA256": "22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": []
+        },
+        {
+          "ordinal": 2,
+          "revision": "ee3b666a5cf2feefc67bd5a158039159d8708933",
+          "tree": "9f9fc6ff0720c7fc38be19044313be2da0654e20",
+          "taskSourceSHA256": "22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": []
+        },
+        {
+          "ordinal": 3,
+          "revision": "ba13cae6ccad7cac1f881859efd334b64835abc8",
+          "tree": "8d5edb3165adde6cff0a8641823827c67caf288c",
+          "taskSourceSHA256": "22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": []
+        },
+        {
+          "ordinal": 4,
+          "revision": "fd95ab16baa2353416e96bddbd979169a9618260",
+          "tree": "85ca69bfa4e2b93deaf2e4ab5027297dbce2dfcb",
+          "taskSourceSHA256": "22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": []
+        },
+        {
+          "ordinal": 5,
+          "revision": "f067d40f0a646a98d0e2735a34b6e31f0e3f2c97",
+          "tree": "527211e78415a7d4382db393fb9975592f108fac",
+          "taskSourceSHA256": "22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": [
+            "spring-core/src/main/java/org/springframework/core/convert/Property.java"
+          ]
+        },
+        {
+          "ordinal": 6,
+          "revision": "e8e293a706002a42859a86044fc103a3f5e255be",
+          "tree": "2c61fa21c408aa432653fa9dacd481cebb14122e",
+          "taskSourceSHA256": "22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": [
+            "spring-core/src/main/java/org/springframework/core/convert/Property.java"
+          ]
+        },
+        {
+          "ordinal": 7,
+          "revision": "526c706d1c33863b16591ef0507170e02365229b",
+          "tree": "da9527b305dee7bd88ddc145a0b16fde58b238bc",
+          "taskSourceSHA256": "22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": []
+        },
+        {
+          "ordinal": 8,
+          "revision": "e9e00e325780351c2175b164e625967723d63dab",
+          "tree": "56533015bbeffa15c609d675758d82f3024312be",
+          "taskSourceSHA256": "22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": []
+        },
+        {
+          "ordinal": 9,
+          "revision": "555ac3768dba24d5034c331bc96fe7f8dfd5c15c",
+          "tree": "4eb0cbe50d8651d92273338b94163aaf41c0e4e4",
+          "taskSourceSHA256": "22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": [
+            "buildSrc/src/main/java/org/springframework/build/CheckstyleConventions.java"
+          ]
+        },
+        {
+          "ordinal": 10,
+          "revision": "4a64537ac6c786dfda289c3dd21549546758c179",
+          "tree": "d2d405c7d52e0de3a6b4e71fed85c29cc3a4dde5",
+          "taskSourceSHA256": "22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": []
+        },
+        {
+          "ordinal": 11,
+          "revision": "2730d77f828644b570eb558e917217ecf0d9e12c",
+          "tree": "5bb3708ddd7fe09e49f0882a0b36421d12bfd4fa",
+          "taskSourceSHA256": "22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": []
+        },
+        {
+          "ordinal": 12,
+          "revision": "74b6a5ba3ee5645cd2f5f99fa9c1cefeea95c9f1",
+          "tree": "2f92623b30e08e1d70fa44e12661e487761d366e",
+          "taskSourceSHA256": "22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": []
+        },
+        {
+          "ordinal": 13,
+          "revision": "bcfa6c3c4fc9133229bcf252827989555ec009a7",
+          "tree": "78c170c5f96e921af931bcdff801f133f0cad18d",
+          "taskSourceSHA256": "22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": [
+            "buildSrc/src/main/java/org/springframework/build/CheckstyleConventions.java"
+          ]
+        },
+        {
+          "ordinal": 14,
+          "revision": "af466ccf63bc55f82961b6627fe0c97c43a54632",
+          "tree": "2361b052f9a844aee15641baaccbc1ee56711035",
+          "taskSourceSHA256": "22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": [
+            "spring-core/src/main/java/org/springframework/core/convert/support/OptionalToObjectConverter.java"
+          ]
+        },
+        {
+          "ordinal": 15,
+          "revision": "59a784cb7ebfbb7f701067d5a4c2c5403be31a49",
+          "tree": "14b41fc0574986d0815dc8e95359f2a470796171",
+          "taskSourceSHA256": "22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": [
+            "spring-core/src/main/java/org/springframework/core/annotation/AnnotationTypeMappings.java"
+          ]
+        },
+        {
+          "ordinal": 16,
+          "revision": "6ee3ef6af5e215b854b0901e6a43737e86318c31",
+          "tree": "53efe3209fa32012a2e569d7679ae9090931228b",
+          "taskSourceSHA256": "22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": [
+            "spring-core/src/main/java/org/springframework/core/annotation/AnnotationTypeMapping.java",
+            "spring-core/src/main/java/org/springframework/core/annotation/MergedAnnotation.java",
+            "spring-core/src/main/java/org/springframework/core/annotation/TypeMappedAnnotation.java"
+          ]
+        },
+        {
+          "ordinal": 17,
+          "revision": "df72838ce1e4885a4799a915bf9dccf6b09dea2e",
+          "tree": "72ef34edc5dc9eba865c64b4b2f5d014cb838b10",
+          "taskSourceSHA256": "22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": [
+            "spring-core/src/main/java/org/springframework/core/SpringProperties.java"
+          ]
+        },
+        {
+          "ordinal": 18,
+          "revision": "89047909ea4bcda166c1f6d69fabb8d2cfde5073",
+          "tree": "72ef34edc5dc9eba865c64b4b2f5d014cb838b10",
+          "taskSourceSHA256": "22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": []
+        },
+        {
+          "ordinal": 19,
+          "revision": "8473ec3e25e508107693701bb26ebe43fdabe23a",
+          "tree": "f3731e80122a2510ba4d3317c008bd931d371d3b",
+          "taskSourceSHA256": "22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": []
+        },
+        {
+          "ordinal": 20,
+          "revision": "68d438c9ffea359847829b624918d779b1bcf60d",
+          "tree": "7a2a0ecbaf9b986501c971413abb98f484e1ad0f",
+          "taskSourceSHA256": "22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04",
+          "matchesHistoricalTaskPreimage": true,
+          "touchedWatchedPaths": []
+        }
+      ],
+      "matchingPreimages": 21,
+      "touchedOrdinals": [
+        5,
+        6,
+        9,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "taskExecutionFrequency": null,
+      "usefulCacheRestoreFrequency": null
+    }
+  ]
+}

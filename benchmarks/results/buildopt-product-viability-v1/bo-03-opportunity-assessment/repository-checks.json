@@ -1,0 +1,41 @@
+{
+  "status": "verified-with-existing-global-documentation-failures",
+  "fullDocumentation": {
+    "command": "timeout 300 ./dev/check-documentation",
+    "exitCode": 1,
+    "elapsedSeconds": 133.90647883503698,
+    "log": ".tools/state/buildopt-product-viability-v1/bo-03-opportunity-assessment-2026-09-14/documentation-check.log",
+    "logSHA256": "ab75d0368cf8bfc4c33baf01f5ce654dad9d80f1cda630fde2a089a190587833"
+  },
+  "baselineLog": ".tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/logs/documentation-corrected.log",
+  "identicalToBaseline": true,
+  "existingBrokenLinks": 1620,
+  "newGlobalDocumentationErrors": 0,
+  "trackedFileDocumentationErrors": [],
+  "finalScopedDocumentation": {
+    "status": "verified",
+    "files": [
+      {
+        "path": "docs/plans/buildopt-research-execution-plan-2026-09-14.md",
+        "sha256": "38624481ec781dab00228c32d718b290f6fe166e4a97220420fb24561ba526c1",
+        "localLinkPathsChecked": 15
+      },
+      {
+        "path": "docs/research-status.md",
+        "sha256": "e02557f3cac197f8bf538ad0c503664d513906468cd41f1fc58f64a5dc74049a",
+        "localLinkPathsChecked": 111
+      },
+      {
+        "path": "benchmarks/results/buildopt-product-viability-v1/bo-03-opportunity-assessment/README.md",
+        "sha256": "782b596df9ed9007e654b3c04b54cd422703e458ff3e32a128a637ef55fd2de5",
+        "localLinkPathsChecked": 16
+      }
+    ],
+    "jsonFilesParsed": 4,
+    "whitespaceCheck": "passed",
+    "targetHeadUnchanged": true,
+    "indexEmpty": true
+  },
+  "nativeStarts": 0,
+  "validationSourceRead": false
+}

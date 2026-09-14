@@ -1,0 +1,900 @@
+{
+  "step": "C3",
+  "status": "verified",
+  "nativeCacheDecision": "INCOMPATIBLE; native baseline remains full Checkstyle with ordinary Gradle avoidance/build cache",
+  "rows": [
+    {
+      "ordinal": 0,
+      "role": "anchor",
+      "workflowMilliseconds": 20029,
+      "commandSeconds": 21.769124923972413,
+      "selected": {
+        ":server:checkstyleMain": {
+          "taskMilliseconds": 12,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 6,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleTest": {
+          "taskMilliseconds": 93,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 89,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleInternalClusterTest": {
+          "taskMilliseconds": 25,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 24,
+          "actions": [],
+          "workers": []
+        }
+      },
+      "actionUnionMilliseconds": 0,
+      "nativeDependencyPathMilliseconds": 3091,
+      "zeroActionDependencyPathMilliseconds": 3091,
+      "dependencyModelSavingMilliseconds": 0,
+      "rawTraceSHA256": "aeac4d35f6d6d403c49f740a3c0a9c6735f7deea423b10b1a02d2cb602b5edb1"
+    },
+    {
+      "ordinal": 1,
+      "role": "engineering",
+      "workflowMilliseconds": 7304,
+      "commandSeconds": 8.00749964104034,
+      "selected": {
+        ":server:checkstyleMain": {
+          "taskMilliseconds": 8,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 5,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleTest": {
+          "taskMilliseconds": 6,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 4,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleInternalClusterTest": {
+          "taskMilliseconds": 5,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 2,
+          "actions": [],
+          "workers": []
+        }
+      },
+      "actionUnionMilliseconds": 0,
+      "nativeDependencyPathMilliseconds": 2262,
+      "zeroActionDependencyPathMilliseconds": 2262,
+      "dependencyModelSavingMilliseconds": 0,
+      "rawTraceSHA256": "5525ad24f225f90656ce08e980de542a84fa073f94d1b3162a701a5dd4a53c04"
+    },
+    {
+      "ordinal": 2,
+      "role": "engineering",
+      "workflowMilliseconds": 5889,
+      "commandSeconds": 6.506170261010993,
+      "selected": {
+        ":server:checkstyleMain": {
+          "taskMilliseconds": 20,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 14,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleTest": {
+          "taskMilliseconds": 15,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 6,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleInternalClusterTest": {
+          "taskMilliseconds": 9,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 9,
+          "actions": [],
+          "workers": []
+        }
+      },
+      "actionUnionMilliseconds": 0,
+      "nativeDependencyPathMilliseconds": 284,
+      "zeroActionDependencyPathMilliseconds": 284,
+      "dependencyModelSavingMilliseconds": 0,
+      "rawTraceSHA256": "78896fb8021058a066a342c3cb76f53f4433106be25fb0b1996b2018ee8fee49"
+    },
+    {
+      "ordinal": 3,
+      "role": "engineering",
+      "workflowMilliseconds": 19723,
+      "commandSeconds": 21.26940140296938,
+      "selected": {
+        ":server:checkstyleMain": {
+          "taskMilliseconds": 65,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 6,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleTest": {
+          "taskMilliseconds": 5,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 4,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleInternalClusterTest": {
+          "taskMilliseconds": 5,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 2,
+          "actions": [],
+          "workers": []
+        }
+      },
+      "actionUnionMilliseconds": 0,
+      "nativeDependencyPathMilliseconds": 15259,
+      "zeroActionDependencyPathMilliseconds": 15259,
+      "dependencyModelSavingMilliseconds": 0,
+      "rawTraceSHA256": "7dbd1dea41531cac0ced7ecd4d41db0307a3ad4043291a3f3f56015558371eda"
+    },
+    {
+      "ordinal": 4,
+      "role": "engineering",
+      "workflowMilliseconds": 16383,
+      "commandSeconds": 17.015278571052477,
+      "selected": {
+        ":server:checkstyleMain": {
+          "taskMilliseconds": 12,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 6,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleTest": {
+          "taskMilliseconds": 10,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 7,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleInternalClusterTest": {
+          "taskMilliseconds": 3,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 3,
+          "actions": [],
+          "workers": []
+        }
+      },
+      "actionUnionMilliseconds": 0,
+      "nativeDependencyPathMilliseconds": 12262,
+      "zeroActionDependencyPathMilliseconds": 12262,
+      "dependencyModelSavingMilliseconds": 0,
+      "rawTraceSHA256": "9b5b3eff183425c8289ccbb0ddd871018718277ee4539706a295cd23c9abb7f6"
+    },
+    {
+      "ordinal": 5,
+      "role": "engineering",
+      "workflowMilliseconds": 4598,
+      "commandSeconds": 5.254746228049044,
+      "selected": {
+        ":server:checkstyleMain": {
+          "taskMilliseconds": 13,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 10,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleTest": {
+          "taskMilliseconds": 6,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 4,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleInternalClusterTest": {
+          "taskMilliseconds": 5,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 3,
+          "actions": [],
+          "workers": []
+        }
+      },
+      "actionUnionMilliseconds": 0,
+      "nativeDependencyPathMilliseconds": 349,
+      "zeroActionDependencyPathMilliseconds": 349,
+      "dependencyModelSavingMilliseconds": 0,
+      "rawTraceSHA256": "a9ea45ed1aaa4e8d17438636ae972e91b82b5d690ccfd387d939367dec7e6825"
+    },
+    {
+      "ordinal": 6,
+      "role": "engineering",
+      "workflowMilliseconds": 4653,
+      "commandSeconds": 5.255061639996711,
+      "selected": {
+        ":server:checkstyleMain": {
+          "taskMilliseconds": 10,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 8,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleTest": {
+          "taskMilliseconds": 5,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 4,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleInternalClusterTest": {
+          "taskMilliseconds": 5,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 4,
+          "actions": [],
+          "workers": []
+        }
+      },
+      "actionUnionMilliseconds": 0,
+      "nativeDependencyPathMilliseconds": 673,
+      "zeroActionDependencyPathMilliseconds": 673,
+      "dependencyModelSavingMilliseconds": 0,
+      "rawTraceSHA256": "eaf81e142f3f600a89415eb19af6be1104f57942488b66b1f814ccbcd1d2ee39"
+    },
+    {
+      "ordinal": 7,
+      "role": "engineering",
+      "workflowMilliseconds": 130750,
+      "commandSeconds": 131.8693498930079,
+      "selected": {
+        ":server:checkstyleMain": {
+          "taskMilliseconds": 70085,
+          "actionMilliseconds": 70054,
+          "workerMilliseconds": 69360,
+          "snapshotMilliseconds": 17,
+          "actions": [
+            {
+              "name": "Execute run for :server:checkstyleMain",
+              "parent": 1135837,
+              "start": 1788860044910,
+              "end": 1788860114964,
+              "milliseconds": 70054
+            }
+          ],
+          "workers": [
+            {
+              "name": "org.gradle.api.plugins.quality.internal.CheckstyleInvoker",
+              "parent": 1135838,
+              "start": 1788860045604,
+              "end": 1788860114964,
+              "milliseconds": 69360
+            }
+          ]
+        },
+        ":server:checkstyleTest": {
+          "taskMilliseconds": 56279,
+          "actionMilliseconds": 56241,
+          "workerMilliseconds": 55845,
+          "snapshotMilliseconds": 29,
+          "actions": [
+            {
+              "name": "Execute run for :server:checkstyleTest",
+              "parent": 1136025,
+              "start": 1788860045175,
+              "end": 1788860101416,
+              "milliseconds": 56241
+            }
+          ],
+          "workers": [
+            {
+              "name": "org.gradle.api.plugins.quality.internal.CheckstyleInvoker",
+              "parent": 1136026,
+              "start": 1788860045571,
+              "end": 1788860101416,
+              "milliseconds": 55845
+            }
+          ]
+        },
+        ":server:checkstyleInternalClusterTest": {
+          "taskMilliseconds": 2,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 2,
+          "actions": [],
+          "workers": []
+        }
+      },
+      "actionUnionMilliseconds": 70054,
+      "nativeDependencyPathMilliseconds": 117336,
+      "zeroActionDependencyPathMilliseconds": 117336,
+      "dependencyModelSavingMilliseconds": 0,
+      "rawTraceSHA256": "32550f77077a8fcfa31555f3994a922fd74cdece260cce87c735b7987f13ebd3"
+    },
+    {
+      "ordinal": 8,
+      "role": "engineering",
+      "workflowMilliseconds": 7345,
+      "commandSeconds": 8.008292879967485,
+      "selected": {
+        ":server:checkstyleMain": {
+          "taskMilliseconds": 18,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 12,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleTest": {
+          "taskMilliseconds": 30,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 7,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleInternalClusterTest": {
+          "taskMilliseconds": 3,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 1,
+          "actions": [],
+          "workers": []
+        }
+      },
+      "actionUnionMilliseconds": 0,
+      "nativeDependencyPathMilliseconds": 321,
+      "zeroActionDependencyPathMilliseconds": 321,
+      "dependencyModelSavingMilliseconds": 0,
+      "rawTraceSHA256": "bf58de2aff32540cde94d6a6dc55ed716421631b34c79398161a0c6f5787873d"
+    },
+    {
+      "ordinal": 9,
+      "role": "engineering",
+      "workflowMilliseconds": 5394,
+      "commandSeconds": 6.006522757990751,
+      "selected": {
+        ":server:checkstyleMain": {
+          "taskMilliseconds": 22,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 14,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleTest": {
+          "taskMilliseconds": 6,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 4,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleInternalClusterTest": {
+          "taskMilliseconds": 5,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 4,
+          "actions": [],
+          "workers": []
+        }
+      },
+      "actionUnionMilliseconds": 0,
+      "nativeDependencyPathMilliseconds": 637,
+      "zeroActionDependencyPathMilliseconds": 637,
+      "dependencyModelSavingMilliseconds": 0,
+      "rawTraceSHA256": "947c4ea591f6cb71144bafdcb7ab23c5cb6d1222087ffeeade898525608643f9"
+    },
+    {
+      "ordinal": 10,
+      "role": "engineering",
+      "workflowMilliseconds": 16325,
+      "commandSeconds": 17.015702227014117,
+      "selected": {
+        ":server:checkstyleMain": {
+          "taskMilliseconds": 10,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 6,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleTest": {
+          "taskMilliseconds": 5,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 3,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleInternalClusterTest": {
+          "taskMilliseconds": 2,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 1,
+          "actions": [],
+          "workers": []
+        }
+      },
+      "actionUnionMilliseconds": 0,
+      "nativeDependencyPathMilliseconds": 12210,
+      "zeroActionDependencyPathMilliseconds": 12210,
+      "dependencyModelSavingMilliseconds": 0,
+      "rawTraceSHA256": "42737359b473b931c8fa79734b51ed5041c3a675e339bfd2056b28f853d0cd43"
+    },
+    {
+      "ordinal": 11,
+      "role": "engineering",
+      "workflowMilliseconds": 5621,
+      "commandSeconds": 6.255871761008166,
+      "selected": {
+        ":server:checkstyleMain": {
+          "taskMilliseconds": 12,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 8,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleTest": {
+          "taskMilliseconds": 6,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 4,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleInternalClusterTest": {
+          "taskMilliseconds": 6,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 6,
+          "actions": [],
+          "workers": []
+        }
+      },
+      "actionUnionMilliseconds": 0,
+      "nativeDependencyPathMilliseconds": 545,
+      "zeroActionDependencyPathMilliseconds": 545,
+      "dependencyModelSavingMilliseconds": 0,
+      "rawTraceSHA256": "c4f127488e3b50578a83272a03f6382394f0c7a29e898343ad968ea4de669b7c"
+    },
+    {
+      "ordinal": 12,
+      "role": "engineering",
+      "workflowMilliseconds": 27997,
+      "commandSeconds": 28.52449029899435,
+      "selected": {
+        ":server:checkstyleMain": {
+          "taskMilliseconds": 9,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 6,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleTest": {
+          "taskMilliseconds": 9,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 5,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleInternalClusterTest": {
+          "taskMilliseconds": 3,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 1,
+          "actions": [],
+          "workers": []
+        }
+      },
+      "actionUnionMilliseconds": 0,
+      "nativeDependencyPathMilliseconds": 24104,
+      "zeroActionDependencyPathMilliseconds": 24104,
+      "dependencyModelSavingMilliseconds": 0,
+      "rawTraceSHA256": "d2a25cdd1a475e77248afa2e52d1695dec4452ca7fe552ecc44494455922b2ef"
+    },
+    {
+      "ordinal": 13,
+      "role": "engineering",
+      "workflowMilliseconds": 18320,
+      "commandSeconds": 19.016767902998254,
+      "selected": {
+        ":server:checkstyleMain": {
+          "taskMilliseconds": 16,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 12,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleTest": {
+          "taskMilliseconds": 5,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 3,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleInternalClusterTest": {
+          "taskMilliseconds": 7,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 4,
+          "actions": [],
+          "workers": []
+        }
+      },
+      "actionUnionMilliseconds": 0,
+      "nativeDependencyPathMilliseconds": 12575,
+      "zeroActionDependencyPathMilliseconds": 12575,
+      "dependencyModelSavingMilliseconds": 0,
+      "rawTraceSHA256": "1def31b72e771d4702992b3597bc3bb0b8e45759ad235fe8633762edea0439b7"
+    },
+    {
+      "ordinal": 14,
+      "role": "engineering",
+      "workflowMilliseconds": 15941,
+      "commandSeconds": 16.514566451020073,
+      "selected": {
+        ":server:checkstyleMain": {
+          "taskMilliseconds": 8,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 6,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleTest": {
+          "taskMilliseconds": 6,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 3,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleInternalClusterTest": {
+          "taskMilliseconds": 3,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 2,
+          "actions": [],
+          "workers": []
+        }
+      },
+      "actionUnionMilliseconds": 0,
+      "nativeDependencyPathMilliseconds": 12019,
+      "zeroActionDependencyPathMilliseconds": 12019,
+      "dependencyModelSavingMilliseconds": 0,
+      "rawTraceSHA256": "403f1eb4e5da3d21d76a1639ff609854953ed34575b8403dd078b2232285e144"
+    },
+    {
+      "ordinal": 15,
+      "role": "engineering",
+      "workflowMilliseconds": 4271,
+      "commandSeconds": 5.005277355026919,
+      "selected": {
+        ":server:checkstyleMain": {
+          "taskMilliseconds": 10,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 6,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleTest": {
+          "taskMilliseconds": 4,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 3,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleInternalClusterTest": {
+          "taskMilliseconds": 2,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 1,
+          "actions": [],
+          "workers": []
+        }
+      },
+      "actionUnionMilliseconds": 0,
+      "nativeDependencyPathMilliseconds": 307,
+      "zeroActionDependencyPathMilliseconds": 307,
+      "dependencyModelSavingMilliseconds": 0,
+      "rawTraceSHA256": "3b776d4d6b3f1c4efbe54082df0647051e10f920de118c4eb7cbf5ef6c91cd6c"
+    },
+    {
+      "ordinal": 16,
+      "role": "engineering",
+      "workflowMilliseconds": 16519,
+      "commandSeconds": 17.266347014985513,
+      "selected": {
+        ":server:checkstyleMain": {
+          "taskMilliseconds": 13,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 6,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleTest": {
+          "taskMilliseconds": 7,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 5,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleInternalClusterTest": {
+          "taskMilliseconds": 2,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 2,
+          "actions": [],
+          "workers": []
+        }
+      },
+      "actionUnionMilliseconds": 0,
+      "nativeDependencyPathMilliseconds": 12425,
+      "zeroActionDependencyPathMilliseconds": 12425,
+      "dependencyModelSavingMilliseconds": 0,
+      "rawTraceSHA256": "1efb54c4883423228985ba2ecce2f2471ea0594d9f5f3515631bf17e61aca40e"
+    },
+    {
+      "ordinal": 17,
+      "role": "engineering",
+      "workflowMilliseconds": 5427,
+      "commandSeconds": 6.006826079974417,
+      "selected": {
+        ":server:checkstyleMain": {
+          "taskMilliseconds": 11,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 8,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleTest": {
+          "taskMilliseconds": 12,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 7,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleInternalClusterTest": {
+          "taskMilliseconds": 3,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 2,
+          "actions": [],
+          "workers": []
+        }
+      },
+      "actionUnionMilliseconds": 0,
+      "nativeDependencyPathMilliseconds": 352,
+      "zeroActionDependencyPathMilliseconds": 352,
+      "dependencyModelSavingMilliseconds": 0,
+      "rawTraceSHA256": "5e465ac3ff580eab4fea0a6cdb81a7d720745823308c1bc5599fa4576aa5b242"
+    },
+    {
+      "ordinal": 18,
+      "role": "engineering",
+      "workflowMilliseconds": 26344,
+      "commandSeconds": 27.024127231969032,
+      "selected": {
+        ":server:checkstyleMain": {
+          "taskMilliseconds": 11,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 6,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleTest": {
+          "taskMilliseconds": 5,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 3,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleInternalClusterTest": {
+          "taskMilliseconds": 1,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 1,
+          "actions": [],
+          "workers": []
+        }
+      },
+      "actionUnionMilliseconds": 0,
+      "nativeDependencyPathMilliseconds": 22478,
+      "zeroActionDependencyPathMilliseconds": 22478,
+      "dependencyModelSavingMilliseconds": 0,
+      "rawTraceSHA256": "7b9b64d3d2064fc11966b391558233bf16aef50768c8d32e0d00e9524018ec44"
+    },
+    {
+      "ordinal": 19,
+      "role": "engineering",
+      "workflowMilliseconds": 74464,
+      "commandSeconds": 75.32205008104211,
+      "selected": {
+        ":server:checkstyleMain": {
+          "taskMilliseconds": 49909,
+          "actionMilliseconds": 49889,
+          "workerMilliseconds": 49239,
+          "snapshotMilliseconds": 10,
+          "actions": [
+            {
+              "name": "Execute run for :server:checkstyleMain",
+              "parent": 2870245,
+              "start": 1788860449735,
+              "end": 1788860499624,
+              "milliseconds": 49889
+            }
+          ],
+          "workers": [
+            {
+              "name": "org.gradle.api.plugins.quality.internal.CheckstyleInvoker",
+              "parent": 2870246,
+              "start": 1788860450385,
+              "end": 1788860499624,
+              "milliseconds": 49239
+            }
+          ]
+        },
+        ":server:checkstyleTest": {
+          "taskMilliseconds": 5,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 3,
+          "actions": [],
+          "workers": []
+        },
+        ":server:checkstyleInternalClusterTest": {
+          "taskMilliseconds": 2,
+          "actionMilliseconds": 0,
+          "workerMilliseconds": 0,
+          "snapshotMilliseconds": 2,
+          "actions": [],
+          "workers": []
+        }
+      },
+      "actionUnionMilliseconds": 49889,
+      "nativeDependencyPathMilliseconds": 49915,
+      "zeroActionDependencyPathMilliseconds": 25695,
+      "dependencyModelSavingMilliseconds": 24220,
+      "rawTraceSHA256": "048ba45fa0a9320eb8af89d7cd40c1d518d1acc5df8eee14a859ad7ff3f3aae4"
+    },
+    {
+      "ordinal": 20,
+      "role": "engineering",
+      "workflowMilliseconds": 88801,
+      "commandSeconds": 89.83455114695244,
+      "selected": {
+        ":server:checkstyleMain": {
+          "taskMilliseconds": 64184,
+          "actionMilliseconds": 64157,
+          "workerMilliseconds": 63796,
+          "snapshotMilliseconds": 15,
+          "actions": [
+            {
+              "name": "Execute run for :server:checkstyleMain",
+              "parent": 3012552,
+              "start": 1788860533472,
+              "end": 1788860597629,
+              "milliseconds": 64157
+            }
+          ],
+          "workers": [
+            {
+              "name": "org.gradle.api.plugins.quality.internal.CheckstyleInvoker",
+              "parent": 3012553,
+              "start": 1788860533833,
+              "end": 1788860597629,
+              "milliseconds": 63796
+            }
+          ]
+        },
+        ":server:checkstyleTest": {
+          "taskMilliseconds": 55351,
+          "actionMilliseconds": 55312,
+          "workerMilliseconds": 54872,
+          "snapshotMilliseconds": 32,
+          "actions": [
+            {
+              "name": "Execute run for :server:checkstyleTest",
+              "parent": 3012643,
+              "start": 1788860533536,
+              "end": 1788860588848,
+              "milliseconds": 55312
+            }
+          ],
+          "workers": [
+            {
+              "name": "org.gradle.api.plugins.quality.internal.CheckstyleInvoker",
+              "parent": 3012645,
+              "start": 1788860533976,
+              "end": 1788860588848,
+              "milliseconds": 54872
+            }
+          ]
+        },
+        ":server:checkstyleInternalClusterTest": {
+          "taskMilliseconds": 20264,
+          "actionMilliseconds": 20234,
+          "workerMilliseconds": 19848,
+          "snapshotMilliseconds": 24,
+          "actions": [
+            {
+              "name": "Execute run for :server:checkstyleInternalClusterTest",
+              "parent": 3012362,
+              "start": 1788860533282,
+              "end": 1788860553516,
+              "milliseconds": 20234
+            }
+          ],
+          "workers": [
+            {
+              "name": "org.gradle.api.plugins.quality.internal.CheckstyleInvoker",
+              "parent": 3012363,
+              "start": 1788860533667,
+              "end": 1788860553515,
+              "milliseconds": 19848
+            }
+          ]
+        }
+      },
+      "actionUnionMilliseconds": 64347,
+      "nativeDependencyPathMilliseconds": 64190,
+      "zeroActionDependencyPathMilliseconds": 58561,
+      "dependencyModelSavingMilliseconds": 5629,
+      "rawTraceSHA256": "fab01674e52468a60c20161348b233ffa90da14128cb928965a898b94499ae5f"
+    }
+  ],
+  "totals": {
+    "scheduledTransitions": 20,
+    "workflowMilliseconds": 502069,
+    "actionUnionMilliseconds": 184290,
+    "sumOverlappingActionMilliseconds": 315887,
+    "sumOverlappingWorkerMilliseconds": 312960,
+    "dependencyModelSavingMilliseconds": 29849,
+    "dependencyModelSecondsPerTransition": 1.49245,
+    "dependencyModelPercent": 5.945198767500084,
+    "ceilingReachesFloors": true,
+    "headroomToFivePercentMilliseconds": 4745.549999999999
+  },
+  "interpretation": "Optimistic fixed-duration explicit-dependency model, not measured savings. Retains task overhead; removes all selected actions including mandatory reports and changed-file work. Shared-resource effects and actual report cost are not derived from this trace.",
+  "validationOrdinalsConsumed": [],
+  "candidateImplemented": false,
+  "decision": "ADMIT_BOUNDED_CONTENT_AWARE_CHECKSTYLE_PROTOTYPE",
+  "gate": "G1 optimistic opportunity admission only",
+  "componentEvidence": "component-qualification.json",
+  "componentLimits": "One unpaired direct-engine attribution per source set. XML callbacks include instrumentation overhead. Source order came from existing engineering reports for this component diagnostic, not a validation-time candidate oracle. Adapter state, merging and Gradle scheduling are not measured.",
+  "candidateIntervention": "Content-bound per-file native checking, full source/implementation/config fingerprints and complete ordered native XML, with native full-check fallback on invalid history or unsupported semantics; no engine fork or source filtering of Gradle inputs"
+}

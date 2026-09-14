@@ -10,10 +10,38 @@ contracts, frozen inputs and historical results retain their original scope.
 Follow the governing plan's
 [execution tracker](./plans/buildopt-research-execution-plan-2026-09-14.md#execution-tracker):
 prove sustained fixed-correction savings, measure a usable manual MVP, then
-prove added adaptive value. The plan is registered; no new experiment has run.
-BO-01 recovers inputs and existing proof. BO-02 is the pending four-build
-identical-code Checkstyle control. Read-only candidate reviews may proceed
-without starting competing builds or opening the protected validation history.
+prove added adaptive value. [BO-01 candidate recovery](../benchmarks/results/buildopt-product-viability-v1/bo-01-candidate-recovery/README.md)
+is verified: five candidate records recovered, Checkstyle inputs and manifest
+checked, and the old patch-portfolio verifier corrected without altering its
+data or criteria. Micronaut/Spring workflow gaps and Build Impact output-scope
+limits remain explicit. No new native build ran during BO-01.
+
+[BO-02 identical-code control](../benchmarks/results/buildopt-product-viability-v1/bo-02-measurement-control/README.md)
+is verified: 84.035s versus 81.294s per whole request, a 2.742s difference or
+3.37% of the faster request. This is below the registered 5% threshold:
+`NO_SPURIOUS_MATERIAL_SIGNAL_IN_THIS_CONTROL`. All four builds and both live
+and independently reconstructed output pairs passed. All four requests retain
+their host-pressure flags; one pair does not establish precision or qualify
+G0/G3. Four owner starts and four comparator JVMs were used, with no retries.
+The allocation and owned service scopes are closed. The task record and raw
+evidence remain under `bo-02-measurement-control-2026-09-14` in program state.
+
+[BO-03 opportunity assessment](../benchmarks/results/buildopt-product-viability-v1/bo-03-opportunity-assessment/README.md)
+is verified, with no new builds or protected validation reads. The Checkstyle
+dependency model allows 5.774% across the complete native development commands,
+leaving about 0.200 seconds per build for residual work and costs. That is a
+model with fixed task durations, not a measured V2 saving or an absolute bound.
+The planned short screen remains eligible after its readiness checks.
+Micronaut needs evidence of recurring useful cache restores before timing.
+The selected Spring result does not justify another timing allocation under
+the current one-second floor. Their task sources match the original preimages
+through development ordinal 20; buildability and execution frequency remain
+unmeasured. All five dispositions and cost assumptions are recorded in the
+assessment. No long replay is admitted.
+
+Next is BO-04: review the remaining Build Impact question for Ktor and Beam.
+This does not launch the 17–20 Checkstyle screen, other repository builds or
+the protected validation history.
 
 Build Impact has a bounded admission review at BO-04 for the known Ktor and
 Beam cases. A new trial requires a concrete question not already answered by
@@ -45,11 +73,12 @@ daemon idle ages. CPU pressure and sampled paging/I/O accompany the slow runs;
 the exact cause and process remain unverified. No sample was excluded. All owned
 scopes and this allocation are closed; no experiment watcher remains active.
 
-**Next step:** [four-build identical-code A/A control](./plans/buildopt-checkstyle-measurement-control-v1.md),
-pending. Verify whether the same schedule produces a material difference with
-identical supported code. Native 17–20 is deferred behind this control; its static
-source preflight already passes. G0/G3, held-out 21–100, other repositories and
-adaptive product implementation remain unqualified or deferred.
+**Successor, now completed:** the [four-build identical-code A/A control](../benchmarks/results/buildopt-product-viability-v1/bo-02-measurement-control/README.md)
+did not reproduce a material difference under its registered rule. It does not
+explain or overturn this earlier mixed result. Native 17–20 remains a possible
+later screen after BO-03 and its applicable readiness checks; source preflight
+already passes. G0/G3, held-out 21–100, other repository builds and adaptive
+product implementation remain unqualified or deferred.
 
 The frozen [V1 plan](./plans/buildopt-checkstyle-finalization-v1.md) and its
 deprecated callback are **rejected/superseded**. Preserve the plan bytes because
@@ -192,7 +221,7 @@ available, with their builds and opportunities still unmeasured.
 
 | Route | Disposition | Required outcome |
 |---|---|---|
-| H1: incremental work inside a native Gradle task | CURRENT; Checkstyle G2 verified for the frozen owner | Original ForbiddenPatterns case stays negative; complete BO-01/BO-02 recovery and measurement disposition before a fresh value screen |
+| H1: incremental work inside a native Gradle task | CURRENT; scoped Checkstyle G2, BO-02 control and BO-03 assessment verified | Original ForbiddenPatterns case stays negative; Checkstyle warrants the planned short screen after applicable readiness checks, with no sustained saving established |
 | H2: repair observed unnecessary native invalidation | CONDITIONAL | Admit a concrete native cause first; at most two causes, with the same correctness and lifecycle gates |
 | H3: adaptive management of native corrections | REQUIRED LATER; implementation deferred | BO-11 follows fixed-correction value, manual MVP and sufficient lifetime evidence; prove added value over both native and fixed correction |
 | Selected Build Impact results in Ktor and Beam | CONDITIONAL; BO-04 admission review only | Establish an unanswered, discriminating question before any new timing; generic plan reuse and fragment variants remain retired |
@@ -282,7 +311,7 @@ that passed. Their notices link back here rather than rewriting old decisions.
 | [Product viability tracker](./plans/buildopt-product-viability-v1-tracker.md) | RETAINED prior execution record; future work follows the BO tracker |
 | [Product viability replay contract](./plans/buildopt-product-viability-v1-replay.md) | CURRENT technical measurement/correctness contract; commercial phases out of scope |
 | [Product viability evidence ledger](./plans/buildopt-product-viability-v1-evidence.md) | RETAINED evidence; not a work queue |
-| [Checkstyle identical-code measurement control](./plans/buildopt-checkstyle-measurement-control-v1.md) | CURRENT bounded protocol for BO-02; pending, no new allocation started |
+| [Checkstyle identical-code measurement control](./plans/buildopt-checkstyle-measurement-control-v1.md) | COMPLETED at BO-02 on 2026-09-14; retained protocol, no false material signal in this one control; no new allocation |
 | [CPU profile screening budget](./plans/buildopt-product-viability-v1-cpu-screen.md) | HISTORICAL; preserve the original limits and outcomes, no new CPU-profile sweep |
 | [Adaptive fragments](./plans/adaptive-fragment-generalization-tracker.md) | HISTORICAL |
 | [Centralized cache and state](./plans/centralized-cache-and-state-roadmap.md) | DEFERRED; implemented foundation retained |

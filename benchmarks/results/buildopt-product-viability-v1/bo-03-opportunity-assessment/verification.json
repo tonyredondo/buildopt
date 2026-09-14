@@ -1,0 +1,44 @@
+{
+  "status": "verified",
+  "analyzerSHA256": "cf095ae2e909b94a3a998d74ccf2813911f019462dec8b51ef6c101fe7adac05",
+  "inputsSHA256": "488e56fc3aa9f63b65070c6d7acd320a8dd479a87ea15693d4fc888349294d77",
+  "assessmentSHA256": "e89fe75bcef5e143e06c67987826a294e5862c130165b987ec1cd531cf66c250",
+  "boundInputs": 18,
+  "candidateAssessments": 5,
+  "nativeDevelopmentRows": 20,
+  "retainedHistoricalPairs": 32,
+  "developmentTaskPreimagesMatched": 42,
+  "checks": [
+    {
+      "case": "missing-native-transition",
+      "result": "rejected"
+    },
+    {
+      "case": "missing-historical-pair",
+      "result": "rejected"
+    },
+    {
+      "case": "mismatched-required-output",
+      "result": "rejected"
+    },
+    {
+      "case": "changed-source-preimage",
+      "result": "rejected"
+    },
+    {
+      "case": "wrong-native-command-denominator",
+      "result": "rejected"
+    },
+    {
+      "case": "eighty-slot-net-cost-and-both-floor-boundaries",
+      "result": "passed"
+    },
+    {
+      "case": "changed-bound-input",
+      "result": "rejected"
+    }
+  ],
+  "nativeStarts": 0,
+  "protectedValidationSourceRead": false,
+  "limitations": "Static evidence and arithmetic checks; no new buildability, complete-workflow frequency or sustained value proof."
+}

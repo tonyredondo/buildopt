@@ -1,7 +1,7 @@
 # Build Optimization research execution plan
 
 Date: 2026-09-14. Program: `BUILDOPT-VIABILITY-V1`.
-Status: accepted as the governing plan; further experiments have not started.
+Status: governing plan in execution; BO-01 through BO-03 verified, BO-04 next.
 
 This plan records the direction agreed after the research review and its
 discussion. It owns research priorities, sequencing and the
@@ -103,7 +103,9 @@ task savings or unrelated mechanisms cannot be pooled into one claimed result.
 The [supported Checkstyle finalization experiment](../../benchmarks/results/buildopt-product-viability-v1/bv006-checkstyle-finalization/README.md)
 preserves its scoped correctness result. Its timing comparison is mixed and
 compares two already optimized implementations. It does not establish a saving
-against ordinary Gradle. The four-build identical-code control remains pending.
+against ordinary Gradle. BO-02 has since completed the four-build identical-code
+control without a false material signal under its registered rule; that does
+not establish savings or general measurement precision.
 
 The earlier Checkstyle result was favorable on selected changes but slower over
 the separate development history tested. The shared-host explanation is an
@@ -132,9 +134,9 @@ the outcome may be negative. Advance only on the outcome required below.
 
 | Step | Question or deliverable | Dependency | Current status |
 |---|---|---|---|
-| BO-01 | Recover the small candidate set and valid prerequisites | This plan | pending |
-| BO-02 | Decide whether the timing comparison can proceed | BO-01 recovery for Checkstyle | pending |
-| BO-03 | Estimate realistic whole-build opportunity per candidate | BO-01; measurement readiness before fresh timing | pending |
+| BO-01 | Recover the small candidate set and valid prerequisites | This plan | verified; [candidate inventory and checks](../../benchmarks/results/buildopt-product-viability-v1/bo-01-candidate-recovery/README.md) |
+| BO-02 | Decide whether the timing comparison can proceed | BO-01 recovery for Checkstyle | verified; [one A/A control without a false material signal](../../benchmarks/results/buildopt-product-viability-v1/bo-02-measurement-control/README.md); no general precision or value qualification |
+| BO-03 | Estimate realistic whole-build opportunity per candidate | BO-01; measurement readiness before fresh timing | verified; [five candidate assessments](../../benchmarks/results/buildopt-product-viability-v1/bo-03-opportunity-assessment/README.md); only Checkstyle warrants the planned short screen after readiness checks; missing workflow evidence remains unqualified |
 | BO-04 | Admit or reject a focused Build Impact hypothesis | BO-01 and existing evidence review | pending |
 | BO-05 | Select a candidate through short comparisons | BO-02 as applicable, BO-03, early BO-06 correctness, and BO-04 for Build Impact | deferred |
 | BO-06 | Qualify correctness and freeze the implementation and protocol | Admitted opportunity; screen integration proof before BO-05, final freeze afterward | deferred |
@@ -150,6 +152,18 @@ live comparison before its required correctness and integration checks pass.
 The final freeze happens after development timing, before protected validation.
 BO-03 and BO-04 may advance through read-only evidence review while timing is
 unavailable; this does not authorize parallel agent work or competing builds.
+
+BO-01 recovered all five candidate records on 2026-09-14. Checkstyle's frozen
+inputs and manifest pass current checks; the other cases retain their stated
+workflow and environment gaps. A pre-existing patch-evidence checker defect
+was corrected without changing data or criteria. No native build ran during BO-01.
+
+BO-02 then completed its four-build control. Whole-request times were 84.035s
+and 81.294s with identical effective code: a 2.742s difference, 3.37% of the
+faster request. This is below the registered 5% threshold. All four builds and
+both live and independently reconstructed output pairs passed. Host-pressure
+flags remain in the evidence. BO-03 then assessed opportunity using retained
+observations; G0/G3 and a fresh timing allocation remain separate prerequisites.
 
 ### BO-01: Recover candidates and reusable proof
 
@@ -193,6 +207,15 @@ remaining decision and a feasible allocation.
 measurement prerequisites. **Decision:** proceed, make a specific supported
 correction, or retain an inconclusive result.
 
+**Completed, 2026-09-14:**
+[`NO_SPURIOUS_MATERIAL_SIGNAL_IN_THIS_CONTROL`](../../benchmarks/results/buildopt-product-viability-v1/bo-02-measurement-control/README.md).
+Four owner starts, four comparator JVMs, no retries, and 12.09 GiB of state;
+the allocation and both owned service scopes are closed. This single control
+does not establish precision or explain the earlier mixed result. Proceed to
+BO-03 using existing evidence. Before fresh timing, resolve the applicable
+readiness checks and freeze that comparison's inputs; native 17–20 and the
+protected 21–100 history have not started.
+
 ### BO-03: Estimate the opportunity before a long replay
 
 For each eligible case, determine what work it avoids, how often that work
@@ -211,6 +234,21 @@ opportunity after overhead; do not assume it reaches the acceptance floor.
 **Deliverable:** a per-candidate opportunity and cost assessment.
 **Decision:** reject cases whose generous ceiling cannot meet the unchanged
 requirements; admit only cases with a defensible reason for a short comparison.
+
+**Completed, 2026-09-14:** the
+[whole-build opportunity assessment](../../benchmarks/results/buildopt-product-viability-v1/bo-03-opportunity-assessment/README.md)
+reproduces all 20 native development rows and 32 retained timing pairs. No new
+build ran and no protected validation source or timing was read. Checkstyle's
+fixed-duration model allows 5.774% over the complete command, leaving about
+0.200 seconds per build for residual work and costs in that development model.
+It supports the planned short screen after readiness checks, not a long replay.
+Micronaut timing waits for an evidenced recurring cache-restore workflow.
+The selected Spring result does not justify more timing under today's floor;
+no absolute full-workflow ceiling is claimed from its task average. Ktor and
+Beam remain BO-04 review cases, with output scope and lifetime unresolved.
+Source-only checks match the original Micronaut/Spring task preimages at all
+21 permitted snapshots each; native buildability and task/cache frequency
+remain unmeasured. Proceed to BO-04. No new experiment allocation is opened.
 
 ### BO-04: Decide what remains unanswered in Build Impact
 
@@ -429,7 +467,11 @@ The earlier state key `engineeringPrefix.checkstyleFinalization` locates the
 supported candidate and completed comparison; verify it before reuse. Do not
 move, overwrite or silently reset old experiment roots.
 
-The next bounded timing experiment is BO-02, after BO-01 recovers its actual
-inputs. Candidate evidence review can proceed without new native builds. The
-first research decision is which candidate, if any, warrants a complete
+BO-01 through BO-03 are complete. The control's task record is
+`.tools/state/buildopt-product-viability-v1/bo-02-measurement-control-2026-09-14/task-state.json`;
+its original inputs and raw results remain there. The BO-03 assessment record is
+`.tools/state/buildopt-product-viability-v1/bo-03-opportunity-assessment-2026-09-14/task-state.json`.
+Next is BO-04, the focused Build Impact admission review. It starts no new build
+allocation. Checkstyle remains eligible for the planned short comparison after
+its applicable readiness checks; no candidate has been admitted to a complete
 validation history.
