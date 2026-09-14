@@ -1,7 +1,7 @@
 # Build Optimization research execution plan
 
 Date: 2026-09-14. Program: `BUILDOPT-VIABILITY-V1`.
-Status: governing plan in execution; BO-01 through BO-05 verified; remaining BO-06 readiness and freeze are next.
+Status: governing plan in execution; BO-01 through BO-05 verified; BO-06 correctness extended, measurement decision pending.
 
 This plan records the direction agreed after the research review and its
 discussion. It owns research priorities, sequencing and the
@@ -139,7 +139,7 @@ the outcome may be negative. Advance only on the outcome required below.
 | BO-03 | Estimate realistic whole-build opportunity per candidate | BO-01; measurement readiness before fresh timing | verified; [five candidate assessments](../../benchmarks/results/buildopt-product-viability-v1/bo-03-opportunity-assessment/README.md); only Checkstyle warrants the planned short screen after readiness checks; missing workflow evidence remains unqualified |
 | BO-04 | Admit or reject a focused Build Impact hypothesis | BO-01 and existing evidence review | verified; [no new trial admitted](../../benchmarks/results/buildopt-product-viability-v1/bo-04-build-impact-review/README.md); original savings retained |
 | BO-05 | Select a candidate through short comparisons | BO-02 as applicable, BO-03, early BO-06 correctness, and BO-04 for Build Impact | verified; [both fresh sequences passed](../../benchmarks/results/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay/README.md), saving 34.14% and 28.17%; the interrupted attempt remains separate |
-| BO-06 | Qualify correctness and freeze the implementation and protocol | Admitted opportunity; screen integration proof before BO-05, final freeze afterward | partial; scoped correctness, screen inputs and complete short comparison verified; confirmation readiness and final freeze remain incomplete |
+| BO-06 | Qualify correctness and freeze the implementation and protocol | Admitted opportunity; screen integration proof before BO-05, final freeze afterward | partial; [eight additional boundary checks and seven histories verified](../../benchmarks/results/buildopt-product-viability-v1/bo-06-readiness/README.md); measurement qualification and final confirmation freeze remain blocked; proposed instrument change awaits approval |
 | BO-07 | Establish sustained saving in the first repository | BO-05 and complete BO-06 | deferred |
 | BO-08 | Test the same mechanism on two other repositories | BO-07 positive | deferred |
 | BO-09 | Deliver and measure an MVP with manual controls | BO-08 positive | deferred |
@@ -379,6 +379,30 @@ the reference on both sides.
 **Decision:** no protected replay while prerequisites are incomplete. An
 implementation repair invalidates affected proof and is recorded as a separate
 version; it is not inserted silently into validation.
+
+**BO-06 readiness review, 2026-09-14:** eight fresh fixture builds preserve the
+complete native XML reports through cache restoration, subsequent edits, changed
+configuration, disabling and reactivation. A fresh compiler run reproduces all
+eight runtime classes exactly. The earlier scoped correctness and supported
+failure/cancellation proofs remain separate and bound. All seven histories
+retain 101 revisions and their original endpoints; replication order is unchanged.
+Only Git metadata was used for history recovery. No protected validation build
+or candidate-selection source inspection occurred.
+
+The [readiness review](../../benchmarks/results/buildopt-product-viability-v1/bo-06-readiness/README.md)
+does not close BO-06. Actual-owner measurement qualification is missing; the
+closed 100-ms precision attempt and process-observation failures stay negative.
+The current short-screen manifest includes diagnostic Java instrumentation and
+cannot become primary confirmation data by relabeling it. The executable
+rejects the incomplete confirmation manifest. G3 remains the future BO-07
+outcome, not a BO-06 prerequisite.
+
+The [measurement proposal](../../benchmarks/results/buildopt-product-viability-v1/bo-06-readiness/measurement-decision.md)
+needs approval before implementation because it changes instrument admission
+and the scope of the initial timing claim. It preserves the value criteria and
+proposes at most eight control builds plus 42 development-prefix builds, with
+no automatic retries or protected history. It creates no active allocation.
+Until that decision, retain the partial freeze and leave BO-07 deferred.
 
 ### BO-07: Measure sustained saving on the first repository
 

@@ -1,0 +1,100 @@
+{
+  "original": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/benchmarks/results/buildopt-product-viability-v1/bv006/subjects.json",
+    "sha256": "86f9a71777fc0d762df09fe2ac6b8a472ca347432b293c9fa4fd2eee416eb558"
+  },
+  "selectionRule": "First two positive-opportunity owners in the unchanged six-repository order; no seventh repository; preserve all outcomes",
+  "selected": [],
+  "repositories": [
+    {
+      "order": 1,
+      "repository": "https://github.com/apache/groovy.git",
+      "endpoint": "fe0f8c2232e9e0b0d1453559840bb51070a430ab",
+      "anchor": "5973097fafabd2627690988ae8c371a353cf68aa",
+      "commonGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-admission/repos/groovy.git",
+      "status": "UNMEASURED",
+      "adaptiveRegistrationStatus": "INCOMPLETE_COHORT",
+      "history": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/inputs/replication-histories/groovy.json",
+        "sha256": "132b0ce3071e7658c5f6688d1629cb12b82f16eb8f015f1a08a4083287c1fa76"
+      },
+      "actualNativeStarts": 0,
+      "candidateTimingsRead": false
+    },
+    {
+      "order": 2,
+      "repository": "https://github.com/apache/kafka.git",
+      "endpoint": "5ce7e34250273652e5496846a5278e87e78b13fd",
+      "anchor": "ed86298dc7fd68ac98be6d3fbc21b77a323301a7",
+      "commonGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-admission/repos/kafka.git",
+      "status": "UNMEASURED",
+      "adaptiveRegistrationStatus": "INCOMPLETE_COHORT",
+      "history": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/inputs/replication-histories/kafka.json",
+        "sha256": "5261fa1663b1d83f61b25d6eb922f406e844e78c01daab0aa82c586218db13a6"
+      },
+      "actualNativeStarts": 0,
+      "candidateTimingsRead": false
+    },
+    {
+      "order": 3,
+      "repository": "https://github.com/spring-projects/spring-framework.git",
+      "endpoint": "4c8c6409a27a62ab163d3b6196ad862b7c835440",
+      "anchor": "04e5c9216285549ff2d402ce269a3778226cd3ce",
+      "commonGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-admission/repos/spring-framework.git",
+      "status": "UNMEASURED",
+      "adaptiveRegistrationStatus": "REGISTERED_UNCONSUMED",
+      "history": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/inputs/replication-histories/spring-framework.json",
+        "sha256": "124b883fe944fba94a8373070db24e98766e4fb26c41390e7fd6c71ea8a81856"
+      },
+      "actualNativeStarts": 0,
+      "candidateTimingsRead": false
+    },
+    {
+      "order": 4,
+      "repository": "https://github.com/open-telemetry/opentelemetry-java.git",
+      "endpoint": "c87b50ec476f6589a362403a6753ba98514045cf",
+      "anchor": "21171384e9e95136ee746a7291013dfa1525c20c",
+      "commonGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-admission/repos/opentelemetry-java.git",
+      "status": "UNMEASURED",
+      "adaptiveRegistrationStatus": "REGISTERED_UNCONSUMED",
+      "history": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/inputs/replication-histories/opentelemetry-java.json",
+        "sha256": "afe5219711f6d4c43dfdf25402f2377e303e3c35f880ee0de2e05a5f64511f4b"
+      },
+      "actualNativeStarts": 0,
+      "candidateTimingsRead": false
+    },
+    {
+      "order": 5,
+      "repository": "https://github.com/micronaut-projects/micronaut-core.git",
+      "endpoint": "605d679849f07f7ac221cfb4fb236dfe34689fb1",
+      "anchor": "c419ce675423bf1847a95e5900799347317ba5a0",
+      "commonGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-admission/repos/micronaut-core.git",
+      "status": "UNMEASURED",
+      "adaptiveRegistrationStatus": "INCOMPLETE_COHORT",
+      "history": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/inputs/replication-histories/micronaut-core.json",
+        "sha256": "3760663c8c8891565cd4dc9c57c061dec585a703d6df02ae31525be778019501"
+      },
+      "actualNativeStarts": 0,
+      "candidateTimingsRead": false
+    },
+    {
+      "order": 6,
+      "repository": "https://github.com/hibernate/hibernate-orm.git",
+      "endpoint": "f2c20adb6125a30b8c5f8cdf0d119248218f89e4",
+      "anchor": "59f9253f3f23613f0267393e9548679aa6f75752",
+      "commonGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-admission/repos/hibernate-orm.git",
+      "status": "UNMEASURED",
+      "adaptiveRegistrationStatus": "REGISTERED_UNCONSUMED",
+      "history": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/inputs/replication-histories/hibernate-orm.json",
+        "sha256": "1ba9e758c7ee4ceafe85de92c0288201ab0aafc849a790b69565c396201ff8ba"
+      },
+      "actualNativeStarts": 0,
+      "candidateTimingsRead": false
+    }
+  ]
+}

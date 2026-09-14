@@ -1,0 +1,18 @@
+{
+  "case": "reuse",
+  "exitCode": 0,
+  "xmlEqual": true,
+  "processedFiles": 2,
+  "successExists": true,
+  "fromCache": false,
+  "outputSHA256": "946b0e7b4a886a56786f4d8102480639279439290e213e986618d3dc57825312",
+  "request": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/boundary-runs/reuse/end.json",
+    "sha256": "2943de23c6e608d51ae6ab1336c49b4941635617be091ee6d201dadb3a5d1a55"
+  },
+  "log": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/boundary-runs/reuse/build.log",
+    "sha256": "c92d1248fabaf400c91a649b571c07fb0a5396b9648cff0686d6b1e6efa0d274"
+  },
+  "successSHA256": "1413c86a456678f68f60d702e2cef7915b4e9f46cf9e32fb52d1c4aff92fc1e4"
+}

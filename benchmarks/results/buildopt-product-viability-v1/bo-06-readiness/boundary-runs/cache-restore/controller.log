@@ -1,0 +1,6 @@
+Running as unit: buildopt-bo06-cache-restore.service
+          Finished with result: success
+Main processes terminated with: code=exited, status=0/SUCCESS
+               Service runtime: 9.750s
+             CPU time consumed: 10.725s
+                   Memory peak: 554.7M (swap: 0B)

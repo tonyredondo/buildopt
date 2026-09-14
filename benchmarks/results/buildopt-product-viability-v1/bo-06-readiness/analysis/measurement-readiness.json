@@ -1,0 +1,33 @@
+{
+  "status": "blocked",
+  "decision": "CONFIRMATION_NOT_ADMITTED",
+  "originalOwnerResult": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/benchmarks/results/buildopt-product-viability-v1/bv006/readiness-decision.json",
+    "sha256": "2b8df89a003815ad67e52c7dbca36aa157dc5402ec5169d3a91f9b210b3ae7ad"
+  },
+  "originalImbalanceNS": 588682498,
+  "maximumImbalanceNS": 100000000,
+  "precisionResult": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/benchmarks/results/buildopt-product-viability-v1/bv006-attribution/analysis/precision-pilot-result.json",
+    "sha256": "880133094cc0c2b4866ce7c921a68d9402c40be51b7ae51dc5aa43cbe2003492"
+  },
+  "requiredPairsPerArm": 25656,
+  "oldMaximumPairsPerArm": 512,
+  "shortScreenOverheadBinding": {
+    "path": "",
+    "sha256": ""
+  },
+  "diagnosticAgentPresent": true,
+  "formalG0Qualified": false,
+  "formalG3Status": "untested; BO-07 outcome, not a BO-06 prerequisite",
+  "blockers": [
+    "The screened executable has no current actual-owner overhead qualification.",
+    "The closed 100-ms precision design exceeded its fixed feasible size; no smaller retry is admitted.",
+    "The short screen includes diagnostic Java instrumentation; its findings cannot simply become primary confirmation measurements.",
+    "The 500-ms observed-runner contract remains unqualified; external samples in the chosen v2 screen do not satisfy it.",
+    "No complete supported-V2 development-prefix replay or feasible full-confirmation resource allocation has been frozen."
+  ],
+  "protectedValidationStarts": 0,
+  "ownerStarts": 0,
+  "next": "Choose and preregister a feasible primary measurement design within BO-06; preserve the current failed qualifications and all savings/output criteria. Do not rerun the old precision pilot."
+}

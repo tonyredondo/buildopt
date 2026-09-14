@@ -1,0 +1,104 @@
+{
+  "status": "verified scoped correctness; confirmation measurement remains blocked",
+  "receipts": [
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/analysis/correctness-v2.json",
+      "sha256": "fe3e21b1ae327fb40ea97ac2ea305120d54a554e68a46014d854731100894747"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/receipts/portable-patch-v2-proof.json",
+      "sha256": "0780a5a938e5db5e5405aa3f73c988961b6a63663a998c0e5197c4071d185c69"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/receipts/core-tests.json",
+      "sha256": "982b9e9bfb10ffe83cad665807abcfd3fa97b37822db5ab7831157a499548a9e"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/receipts/compiled-source-proof.json",
+      "sha256": "f81523bc75abc4d676f11e300947231bd14f74d4c032ded508d51793e9b608f0"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/analysis/boundary-checks.json",
+      "sha256": "815e316a1276933703af84adde7831867976d5435912fecd32b10e38a1151f16"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay-2026-09-14/analysis/verification.json",
+      "sha256": "419af12847875eb4a740cd17c38f6328c35a3fa1b29aec65fe77c58ba4136458"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/benchmarks/results/buildopt-product-viability-v1/checkstyle-prototype/correctness-matrix.json",
+      "sha256": "1d2def44e1540d57e390bf196dfebe53603498bac4eefd2ee1c393c108d8a894"
+    }
+  ],
+  "matrix": [
+    {
+      "requirement": "Add, edit, delete, rename; report order, malformed files and diagnostics",
+      "status": "verified within original scoped proof plus unchanged processing paths",
+      "evidence": [
+        "original C03-C13",
+        "supported V2 report finalization faults"
+      ],
+      "transfer": "ContentAwareChecker differs from the original only by binding the completed report before proposing history; file selection, hashing and native event forwarding are unchanged. Affected report publication is exercised by the supported lifecycle proof."
+    },
+    {
+      "requirement": "Missing, corrupt or moved history; changed dependencies, rules and configuration",
+      "status": "verified within declared support scope",
+      "evidence": [
+        "original C09-C18",
+        "supported-final-faults",
+        "changed-rules/restored-rules"
+      ],
+      "transfer": "Native applicability guards remain restrictive. New boundary checks change configuration bytes without changing rule semantics; earlier diagnostics/rule/engine counterexamples retain their original scope."
+    },
+    {
+      "requirement": "Failure, cancellation, partial reports and recovery",
+      "status": "verified for supported V2 lifecycle",
+      "evidence": [
+        "six supported-final cases"
+      ],
+      "transfer": "Read current V2 receipts and revalidated 18 log/state/end bindings. No unsupported Gradle or Configuration Cache claim."
+    },
+    {
+      "requirement": "Native cache restoration, subsequent edit and reuse",
+      "status": "verified on current compiled V2",
+      "evidence": [
+        "cache-prime",
+        "cache-restore",
+        "edit-after-restore",
+        "reuse"
+      ],
+      "transfer": "A FROM-CACHE restoration clears correction history. The next edit processes both files; the following unchanged request reuses both, while preserving complete XML."
+    },
+    {
+      "requirement": "Activation, deactivation and reactivation",
+      "status": "verified on current compiled V2 fixture",
+      "evidence": [
+        "disabled",
+        "reenabled"
+      ],
+      "transfer": "Disabling installation checks both files. Reenabling after an edit checks the changed file and reuses the unchanged file. Existing inactive history is retained; disabled is not physical uninstall."
+    },
+    {
+      "requirement": "Exact source removal",
+      "status": "verified scoped reversible patch proof retained",
+      "evidence": [
+        "portable-patch-v2-proof.json",
+        "original C20 guarded removal"
+      ],
+      "transfer": "Current five-file patch applies and reverses exact preimages in the prior source fixture. This is source rollback proof, not a new full owner build after uninstall."
+    },
+    {
+      "requirement": "Actual Elasticsearch build and complete required outputs",
+      "status": "verified for exploratory development revisions 17-20",
+      "evidence": [
+        "BO-05 16 owner builds, 8 live comparisons and 8 independent comparisons"
+      ],
+      "transfer": "Both runs use supported V2 and the frozen complete output policy. No change 21-100 is consumed."
+    }
+  ],
+  "newFixtureStarts": 8,
+  "newCompilerCommands": 1,
+  "actualCompiledClassesMatched": 8,
+  "newProtectedValidationStarts": 0,
+  "limits": "Fixture controls and inherited proof do not establish all configurations, manual MVP delivery or long-history value."
+}

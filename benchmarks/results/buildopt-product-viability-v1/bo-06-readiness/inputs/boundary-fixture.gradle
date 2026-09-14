@@ -1,0 +1,47 @@
+buildscript { dependencies { classpath files(["/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/classes-v2", "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/build-conventions.jar"]) } }
+ext.engineJars = ["/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-prototype/native-state/gradle/caches/modules-2/files-2.1/com.puppycrawl.tools/checkstyle/13.11.0/63cded1939d5de5c273ea76f48c2e453b2d3f4bb/checkstyle-13.11.0.jar", "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-prototype/native-state/gradle/caches/modules-2/files-2.1/info.picocli/picocli/4.7.7/82bcae3dc45ddeb08b4954e2f596772a42219715/picocli-4.7.7.jar", "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-prototype/native-state/gradle/caches/modules-2/files-2.1/org.antlr/antlr4-runtime/4.13.2/fc3db6d844df652a3d5db31c87fa12757f13691d/antlr4-runtime-4.13.2.jar", "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-prototype/native-state/gradle/caches/modules-2/files-2.1/commons-beanutils/commons-beanutils/1.11.0/ac03ea606d13de04c2e4508227680faff151f491/commons-beanutils-1.11.0.jar", "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-prototype/native-state/gradle/caches/modules-2/files-2.1/com.google.guava/guava/33.6.0-jre/c376b13067cc99a5774403530953f7b05a91e218/guava-33.6.0-jre.jar", "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-prototype/native-state/gradle/caches/modules-2/files-2.1/org.reflections/reflections/0.10.2/b638d7ca0e0fe0146b60a0e7ba232ad852a73b31/reflections-0.10.2.jar", "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-prototype/native-state/gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-simple/2.0.18/503354e24cb3a2c61f808a83934b76c2dc4ec4d8/slf4j-simple-2.0.18.jar", "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-prototype/native-state/gradle/caches/modules-2/files-2.1/net.sf.saxon/Saxon-HE/12.9/1397a02bd22c63db3e902b28b23c59009fa3b5c4/Saxon-HE-12.9.jar", "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-prototype/native-state/gradle/caches/modules-2/files-2.1/commons-collections/commons-collections/3.2.2/8ad72fe39fa8c91eaaf12aadb21e0c3661fe26d5/commons-collections-3.2.2.jar", "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-prototype/native-state/gradle/caches/modules-2/files-2.1/org.javassist/javassist/3.28.0-GA/9a958811a88381bb159cc2f5ed79c34a45c4af7a/javassist-3.28.0-GA.jar", "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-prototype/native-state/gradle/caches/modules-2/files-2.1/com.google.code.findbugs/jsr305/3.0.2/25ea2e8b0c338a877313bd4672d3fe056ea78f0d/jsr305-3.0.2.jar", "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-prototype/native-state/gradle/caches/modules-2/files-2.1/org.xmlresolver/xmlresolver/5.3.3/1b838b0d69eef8d46c813d88a604e3cb4c6035fe/xmlresolver-5.3.3.jar", "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-prototype/native-state/gradle/caches/modules-2/files-2.1/org.xmlresolver/xmlresolver/5.3.3/e0c9cb7fcad389a50c1fbe3237af8857eca9c2b3/xmlresolver-5.3.3-data.jar", "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-prototype/native-state/gradle/wrapper/dists/gradle-9.7.1-bin/1w1c7tv4s851m17nbqdsro2tv/gradle-9.7.1/lib/jcl-over-slf4j-2.0.17.jar", "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-prototype/native-state/gradle/wrapper/dists/gradle-9.7.1-bin/1w1c7tv4s851m17nbqdsro2tv/gradle-9.7.1/lib/slf4j-api-2.0.17.jar", "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-prototype/native-state/gradle/wrapper/dists/gradle-9.7.1-bin/1w1c7tv4s851m17nbqdsro2tv/gradle-9.7.1/lib/failureaccess-1.0.3.jar"]
+ext.ruleJar = "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/build-conventions.jar"
+import org.elasticsearch.gradle.internal.precommit.CheckstyleSuccessHistory
+import org.elasticsearch.gradle.internal.checkstyle.CheckstyleSuccessState
+import groovy.json.JsonOutput
+@org.gradle.api.tasks.CacheableTask
+abstract class ObservedCheckstyle extends Checkstyle {
+    @org.gradle.api.tasks.Internal abstract org.gradle.api.provider.Property<String> getObservationFile()
+    @org.gradle.api.tasks.Internal abstract org.gradle.api.provider.Property<String> getPauseFile()
+    @org.gradle.api.tasks.Internal abstract org.gradle.api.provider.Property<String> getObserverAgent()
+    @Override protected void configureForkOptions(org.gradle.process.JavaForkOptions options) {
+        super.configureForkOptions(options)
+        options.jvmArgs('-javaagent:' + observerAgent.get())
+        options.systemProperty('buildopt.checkstyle.observation', observationFile.get())
+        if (pauseFile.isPresent()) options.systemProperty('buildopt.checkstyle.pause', pauseFile.get())
+    }
+}
+project(':server') {
+    apply plugin: 'checkstyle'
+    ['Native','NativeViolation','Main','Second','NoSource','Failure','ReportChange','ReportMissing','ContextChange','Violation','Cancel','Fallback'].each { name ->
+        tasks.register('checkstyle'+name, ObservedCheckstyle) { t ->
+            def key = name=='Native' ? 'Main' : name=='NativeViolation' ? 'Violation' : name
+            source = fileTree('src/'+key) { include '**/*.java' }
+            classpath = files()
+            checkstyleClasspath = files(rootProject.engineJars) + files(rootProject.ruleJar)
+            configDirectory = file('config/'+key)
+            configFile = file('config/'+key+'/checkstyle.xml')
+            maxHeapSize = '256m'
+            reports { xml.required=true; html.required=false; sarif.required=false }
+            observationFile = providers.gradleProperty('observationFile')
+            observerAgent = providers.gradleProperty('observerAgent')
+            if (name=='Cancel') pauseFile = providers.gradleProperty('pauseFile')
+            if (!name.startsWith('Native') && !providers.gradleProperty('disableCorrection').isPresent()) CheckstyleSuccessHistory.install(project,t,configFile,file('adapted-'+key+'.xml'))
+            println('FINALIZATION_ACTIONS '+JsonOutput.toJson([task:t.path,actions:t.actions.size()]))
+            if (name=='Fallback') t.configProperties.remove('buildopt_state')
+            if (['Failure','ReportChange','ReportMissing','ContextChange'].contains(name)) t.doLast {
+                if (providers.gradleProperty('phase').get()=='faults') {
+                    if(name=='Failure') throw new GradleException('controlled failure after successful checking')
+                    if(name=='ReportChange') reports.xml.outputLocation.get().asFile.text='<checkstyle version="13.11.0"/>'
+                    if(name=='ReportMissing') reports.xml.outputLocation.get().asFile.delete()
+                    if(name=='ContextChange') t.configProperties.put('late_change','true')
+                }
+            }
+        }
+    }
+}

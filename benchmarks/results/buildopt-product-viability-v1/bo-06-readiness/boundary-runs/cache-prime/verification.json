@@ -1,0 +1,18 @@
+{
+  "case": "cache-prime",
+  "exitCode": 0,
+  "xmlEqual": true,
+  "processedFiles": 4,
+  "successExists": true,
+  "fromCache": false,
+  "outputSHA256": "946b0e7b4a886a56786f4d8102480639279439290e213e986618d3dc57825312",
+  "request": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/boundary-runs/cache-prime/end.json",
+    "sha256": "1bc967ff986c87f7afa439babdafa9e0ab0fd52a85774d74a2de576570cf4a5e"
+  },
+  "log": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/boundary-runs/cache-prime/build.log",
+    "sha256": "1d23a1ab07abbe13c274da42f67d3ad0d60d79a4632f5caa4a1bcbcc90e60329"
+  },
+  "successSHA256": "13b8d9eace97d63e8523dc3cea93a7bd384e7a51fe1fb6dbd9d93f3b7bba8b8a"
+}

@@ -1,0 +1,17 @@
+{
+  "case": "changed-rules",
+  "exitCode": 0,
+  "xmlEqual": true,
+  "processedFiles": 4,
+  "successExists": false,
+  "fromCache": false,
+  "outputSHA256": "946b0e7b4a886a56786f4d8102480639279439290e213e986618d3dc57825312",
+  "request": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/boundary-runs/changed-rules/end.json",
+    "sha256": "1dde132ce7eb65156abd8682a272a1675576401d1f1a88bac0d580e7ff28d2c9"
+  },
+  "log": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/boundary-runs/changed-rules/build.log",
+    "sha256": "cb8f0e2bb2d00f8310ad68bac6317ef4ad8f46f0f4ce7532e8336adc96c4be0d"
+  }
+}

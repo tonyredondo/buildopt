@@ -1,0 +1,19 @@
+{
+  "status": "verified",
+  "exportedSourceBindings": 94,
+  "independentFixtureComparisons": 8,
+  "compiledClasses": 8,
+  "histories": 7,
+  "jsonFilesParsed": 46,
+  "localLinksChecked": 147,
+  "actualGradleStarts": 8,
+  "actualCompilerCommands": 1,
+  "standaloneComparatorJVMStarts": 0,
+  "protectedValidationStarts": 0,
+  "ownedServicesClosed": 8,
+  "retainedStateBytes": 3285923,
+  "decision": "CONFIRMATION_NOT_ADMITTED",
+  "bo06Status": "partial",
+  "proposalApproved": false,
+  "limits": "Correctness/readiness audit only; no value or G0/G3 promotion."
+}

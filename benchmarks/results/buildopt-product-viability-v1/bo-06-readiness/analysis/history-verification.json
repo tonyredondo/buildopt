@@ -1,0 +1,20 @@
+{
+  "status": "verified",
+  "seed": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/inputs/seed-history.json",
+    "sha256": "e997cdd4e6499d10a89e89c653e96fd5a78d642af21a1283513d1de95919043d"
+  },
+  "priorSeed": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/inputs/seed-history-v2-101.json",
+    "sha256": "e997cdd4e6499d10a89e89c653e96fd5a78d642af21a1283513d1de95919043d"
+  },
+  "seedRevisions": 101,
+  "replicationHistories": 6,
+  "replicationRevisions": 606,
+  "preservedSeed": true,
+  "preservedOrderAndEndpoints": true,
+  "reads": "Git commit/tree metadata and changed-path digests only",
+  "candidateValidationSourcesRead": false,
+  "candidateValidationTimingsRead": false,
+  "nativeStarts": 0
+}

@@ -1,0 +1,18 @@
+{
+  "case": "disabled",
+  "exitCode": 0,
+  "xmlEqual": true,
+  "processedFiles": 4,
+  "successExists": true,
+  "fromCache": false,
+  "outputSHA256": "946b0e7b4a886a56786f4d8102480639279439290e213e986618d3dc57825312",
+  "request": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/boundary-runs/disabled/end.json",
+    "sha256": "493254d11e75be1aff7a136941d8bde67b3906d59a19131f2ab40ee587999d7c"
+  },
+  "log": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/boundary-runs/disabled/build.log",
+    "sha256": "69e8eb03488cc1e6da2d2e740608b2c245fee238e2d4b10b361b090b4b0768c8"
+  },
+  "successSHA256": "a77daf0d8c37bee6436e91acb4ac3270c1362d7c976a41e3240afc76c80e6587"
+}

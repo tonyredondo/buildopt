@@ -1,0 +1,152 @@
+{
+  "status": "verified",
+  "cases": [
+    {
+      "case": "cache-prime",
+      "exitCode": 0,
+      "xmlEqual": true,
+      "processedFiles": 4,
+      "successExists": true,
+      "fromCache": false,
+      "outputSHA256": "946b0e7b4a886a56786f4d8102480639279439290e213e986618d3dc57825312",
+      "request": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/boundary-runs/cache-prime/end.json",
+        "sha256": "1bc967ff986c87f7afa439babdafa9e0ab0fd52a85774d74a2de576570cf4a5e"
+      },
+      "log": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/boundary-runs/cache-prime/build.log",
+        "sha256": "1d23a1ab07abbe13c274da42f67d3ad0d60d79a4632f5caa4a1bcbcc90e60329"
+      },
+      "successSHA256": "13b8d9eace97d63e8523dc3cea93a7bd384e7a51fe1fb6dbd9d93f3b7bba8b8a"
+    },
+    {
+      "case": "cache-restore",
+      "exitCode": 0,
+      "xmlEqual": true,
+      "processedFiles": 0,
+      "successExists": false,
+      "fromCache": true,
+      "outputSHA256": "946b0e7b4a886a56786f4d8102480639279439290e213e986618d3dc57825312",
+      "request": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/boundary-runs/cache-restore/end.json",
+        "sha256": "172cc2c4c8ac8c0d8c99cc8f2fa0e9adc43aa09ce0ddb9060356cd49b7632f96"
+      },
+      "log": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/boundary-runs/cache-restore/build.log",
+        "sha256": "75ef25dfbe03fd9ce2db9886ea53fb77d7c84fa630d0bb04832fc63d88417ba2"
+      }
+    },
+    {
+      "case": "edit-after-restore",
+      "exitCode": 0,
+      "xmlEqual": true,
+      "processedFiles": 4,
+      "successExists": true,
+      "fromCache": false,
+      "outputSHA256": "946b0e7b4a886a56786f4d8102480639279439290e213e986618d3dc57825312",
+      "request": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/boundary-runs/edit-after-restore/end.json",
+        "sha256": "0a2c5f0dbb6bcde846272d91e456c50a26c53238e7400566600127ec09fe92d6"
+      },
+      "log": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/boundary-runs/edit-after-restore/build.log",
+        "sha256": "361ff810e865e052c7332a63f0f6b277b97deec53133a237bad07d1d4ef0d655"
+      },
+      "successSHA256": "89041ad1874a9f38a26abc4fb2663241e546389a916cdf05f1ca8046485a4c7b"
+    },
+    {
+      "case": "reuse",
+      "exitCode": 0,
+      "xmlEqual": true,
+      "processedFiles": 2,
+      "successExists": true,
+      "fromCache": false,
+      "outputSHA256": "946b0e7b4a886a56786f4d8102480639279439290e213e986618d3dc57825312",
+      "request": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/boundary-runs/reuse/end.json",
+        "sha256": "2943de23c6e608d51ae6ab1336c49b4941635617be091ee6d201dadb3a5d1a55"
+      },
+      "log": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/boundary-runs/reuse/build.log",
+        "sha256": "c92d1248fabaf400c91a649b571c07fb0a5396b9648cff0686d6b1e6efa0d274"
+      },
+      "successSHA256": "1413c86a456678f68f60d702e2cef7915b4e9f46cf9e32fb52d1c4aff92fc1e4"
+    },
+    {
+      "case": "changed-rules",
+      "exitCode": 0,
+      "xmlEqual": true,
+      "processedFiles": 4,
+      "successExists": false,
+      "fromCache": false,
+      "outputSHA256": "946b0e7b4a886a56786f4d8102480639279439290e213e986618d3dc57825312",
+      "request": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/boundary-runs/changed-rules/end.json",
+        "sha256": "1dde132ce7eb65156abd8682a272a1675576401d1f1a88bac0d580e7ff28d2c9"
+      },
+      "log": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/boundary-runs/changed-rules/build.log",
+        "sha256": "cb8f0e2bb2d00f8310ad68bac6317ef4ad8f46f0f4ce7532e8336adc96c4be0d"
+      }
+    },
+    {
+      "case": "restored-rules",
+      "exitCode": 0,
+      "xmlEqual": true,
+      "processedFiles": 4,
+      "successExists": true,
+      "fromCache": false,
+      "outputSHA256": "946b0e7b4a886a56786f4d8102480639279439290e213e986618d3dc57825312",
+      "request": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/boundary-runs/restored-rules/end.json",
+        "sha256": "dabcad9b874b50e6fa3079fe699feeb3832177a6c411038adcc7a63eb5336b43"
+      },
+      "log": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/boundary-runs/restored-rules/build.log",
+        "sha256": "35e4338a84c37f95e3ed67e62b527cd68c924d6cd8e60bfb0fca440c80bcd1dd"
+      },
+      "successSHA256": "a77daf0d8c37bee6436e91acb4ac3270c1362d7c976a41e3240afc76c80e6587"
+    },
+    {
+      "case": "disabled",
+      "exitCode": 0,
+      "xmlEqual": true,
+      "processedFiles": 4,
+      "successExists": true,
+      "fromCache": false,
+      "outputSHA256": "946b0e7b4a886a56786f4d8102480639279439290e213e986618d3dc57825312",
+      "request": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/boundary-runs/disabled/end.json",
+        "sha256": "493254d11e75be1aff7a136941d8bde67b3906d59a19131f2ab40ee587999d7c"
+      },
+      "log": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/boundary-runs/disabled/build.log",
+        "sha256": "69e8eb03488cc1e6da2d2e740608b2c245fee238e2d4b10b361b090b4b0768c8"
+      },
+      "successSHA256": "a77daf0d8c37bee6436e91acb4ac3270c1362d7c976a41e3240afc76c80e6587"
+    },
+    {
+      "case": "reenabled",
+      "exitCode": 0,
+      "xmlEqual": true,
+      "processedFiles": 3,
+      "successExists": true,
+      "fromCache": false,
+      "outputSHA256": "946b0e7b4a886a56786f4d8102480639279439290e213e986618d3dc57825312",
+      "request": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/boundary-runs/reenabled/end.json",
+        "sha256": "273e2f4eb4c9d1a62e7ece0804369c63d79402fa691d2595504ac81dd6e5bbb9"
+      },
+      "log": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/boundary-runs/reenabled/build.log",
+        "sha256": "ebee9b0265a2d730d7c6eccce50cee7c103cede63ad42d59530bbef902acb66e"
+      },
+      "successSHA256": "817e437c02049d010cca75fb3627d3daf241b9186f7fc32f43941c25cc2b1134"
+    }
+  ],
+  "actualGradleStarts": 8,
+  "protectedValidationStarts": 0,
+  "helperJVMStarts": 0,
+  "scope": "Gradle 9.7.1, Java21, Configuration Cache off; fixture checks, no walltime result",
+  "elapsedSeconds": 162.56032602896448
+}

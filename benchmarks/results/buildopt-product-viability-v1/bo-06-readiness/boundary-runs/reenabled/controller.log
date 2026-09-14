@@ -1,0 +1,6 @@
+Running as unit: buildopt-bo06-reenabled.service
+          Finished with result: success
+Main processes terminated with: code=exited, status=0/SUCCESS
+               Service runtime: 5.185s
+             CPU time consumed: 18.135s
+                   Memory peak: 987.3M (swap: 0B)

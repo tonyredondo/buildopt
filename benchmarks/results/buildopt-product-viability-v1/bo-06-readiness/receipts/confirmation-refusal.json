@@ -1,0 +1,13 @@
+{
+  "command": [
+    "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/history-replay-owner",
+    "validate",
+    "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/inputs/confirmation-not-admitted.json"
+  ],
+  "exitCode": 1,
+  "error": "confirmation missing qualification/subjects binding",
+  "missingField": "overhead",
+  "nativeStarts": 0,
+  "runRootCreated": false,
+  "limits": "Structural refusal only. The copied expired 16-start limits are not a proposed or authorized confirmation allocation."
+}

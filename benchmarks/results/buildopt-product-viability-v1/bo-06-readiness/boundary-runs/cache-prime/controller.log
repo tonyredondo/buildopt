@@ -1,0 +1,6 @@
+Running as unit: buildopt-bo06-cache-prime.service
+          Finished with result: success
+Main processes terminated with: code=exited, status=0/SUCCESS
+               Service runtime: 1min 40.647s
+             CPU time consumed: 23.088s
+                   Memory peak: 1.1G (swap: 0B)

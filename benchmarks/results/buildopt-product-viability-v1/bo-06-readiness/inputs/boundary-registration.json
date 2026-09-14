@@ -1,0 +1,47 @@
+{
+  "frozenUTC": "2026-09-14T20:19:48.002975+00:00",
+  "scope": "Supported V2 Gradle fixture only",
+  "cases": [
+    "cache-prime",
+    "cache-restore",
+    "edit-after-restore",
+    "reuse",
+    "changed-rules",
+    "restored-rules",
+    "disabled",
+    "reenabled"
+  ],
+  "maxGradleStarts": 8,
+  "actualGradleStarts": 0,
+  "maxElapsedSeconds": 1200,
+  "perRequestSeconds": 120,
+  "maxNewBytes": 1073741824,
+  "minimumFreeBytes": 42949672960,
+  "noRetries": true,
+  "protectedValidationStarts": 0,
+  "expected": "Complete native/candidate XML equal on each request; FROM-CACHE clears local history; next edit processes all files; warm reuse processes none; changed rules fall back; disabling checks all files and reenabling checks changed files",
+  "implementation": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/candidate-v2",
+    "sha256": "0e9432a6f5916fb80d7d6bb3b05ade936d00c851690b5574baaf932b67601c9b"
+  },
+  "runtimeClasses": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/classes-v2",
+    "sha256": "1e7c317590e6f5a945e0a3af0be2bf61bc87b975305d81b4ef1ed8d7613ce480"
+  },
+  "rulesJar": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/build-conventions.jar",
+    "sha256": "98414787861c94f726a2335e1c9bd227d01d5ea71dc47b122ed99689296e8935"
+  },
+  "agent": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-prototype/observer/agent.jar",
+    "sha256": "12c022ee280a322c1354c0f75dfbc555fc58a8bbdbd781530b2247d66309fef8"
+  },
+  "fixture": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/fixture",
+    "sha256": "0e8259fe129d170db9c457ff467362eb9f1c2efaffefb3a323bbc67db53ec825"
+  },
+  "script": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/boundary-checks.py",
+    "sha256": "5a79b559acaa60b465527da9acf0947782ea62b61f28af7f9e899f1ddf8b73fa"
+  }
+}

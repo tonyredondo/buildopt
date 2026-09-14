@@ -70,13 +70,31 @@ error are preserved separately. Across both attempts, 32 reservations were
 charged, 24 owner builds actually ran and 20 comparator JVMs started. No earlier
 timing contributes to the new decision.
 
-The task record is
-`.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay-2026-09-14/task-state.json`.
-Early BO-06 scoped proof is retained; complete confirmation readiness, formal
-G0/G3 and the protected validation history remain incomplete or unrun. Generic
-plan selection/reuse, adaptive fragments, runtime sweeps and another general
-cache remain retired. The user has authorized commit and push after each work
-block. BO-05 completion does not admit BO-07 or establish product viability.
+The [BO-06 readiness review](../benchmarks/results/buildopt-product-viability-v1/bo-06-readiness/README.md)
+verifies eight additional small Gradle checks: native cache restoration and
+subsequent edits, changed configuration, and disabling/reactivating supported V2.
+All reports match; a fresh compile reproduces the eight runtime classes exactly.
+The seed and all six replication histories retain their frozen endpoints and
+101 revisions each. No protected source was inspected for candidate selection
+and no Elasticsearch build ran in this block.
+
+BO-06 remains **partial**. The current exploratory measurement does not have
+the actual-owner overhead qualification required for confirmation. The older
+100-ms precision attempt remains failed/infeasible; process-sampling coverage
+is also unqualified. The executable rejects the incomplete confirmation manifest.
+Scientific choices and source bindings are preserved, but the final measurement
+mode, complete V2 development-prefix check and confirmation allocation remain
+unresolved. G3 is untested, not a prerequisite that must pass before BO-07.
+
+The next decision is the [proposed measurement change](../benchmarks/results/buildopt-product-viability-v1/bo-06-readiness/measurement-decision.md).
+It needs approval because it changes instrument admission and limits the initial
+claim to the declared instrumented workflow. It preserves every value criterion;
+it is not an active protocol or native allocation. Current task record:
+`.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/task-state.json`.
+BO-07 and protected changes 21–100 remain deferred. Generic plan selection/reuse,
+adaptive fragments, runtime sweeps and another general cache remain retired.
+The user has authorized commit and push after each work block. Product viability
+is not established.
 
 The earlier BV plan/tracker preserve execution evidence; their conflicting
 next-step and commercial instructions are superseded. Their old references to

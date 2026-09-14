@@ -1,0 +1,6 @@
+Running as unit: buildopt-bo06-restored-rules.service
+          Finished with result: success
+Main processes terminated with: code=exited, status=0/SUCCESS
+               Service runtime: 6.732s
+             CPU time consumed: 17.621s
+                   Memory peak: 940.9M (swap: 0B)

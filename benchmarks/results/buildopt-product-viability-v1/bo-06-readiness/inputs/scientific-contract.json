@@ -1,0 +1,46 @@
+{
+  "source": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/versions/owner-readiness-v5/protocol.json",
+    "sha256": "616e2e0cfbc276450cba000fe9afd1132a7c41bf772e5e070bf4547e5feeef41"
+  },
+  "governingPlan": {
+    "repository": "https://github.com/tonyredondo/buildopt.git",
+    "revision": "26f90b4c4aef081d2d564ebc4abfe5ff1bf0653d",
+    "path": "docs/plans/buildopt-research-execution-plan-2026-09-14.md",
+    "sha256": "bf03ca0751f03a23020ee76f62bcb4bc8b55c78ab60ec66600b6fa146c15f6a3"
+  },
+  "replayContract": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/docs/plans/buildopt-product-viability-v1-replay.md",
+    "sha256": "e1c05531f016e58162182c1b0b1b0633d23f8a4796dc2edf96da3fc5c7a8ec5a"
+  },
+  "fixedImplementation": "checkstyle-shared-service-finalization-v2",
+  "replications": 2,
+  "anchor": 0,
+  "prefixEnd": 20,
+  "validationEnd": 100,
+  "scheduledStarts": 404,
+  "comparatorJVMStarts": 404,
+  "validationSlotsPerReplication": 80,
+  "minimumNetFraction": 0.05,
+  "minimumNetSecondsPerScheduledSlot": 1,
+  "minimumComparableSlots": 76,
+  "bootstrap": {
+    "blocks": [
+      5,
+      10
+    ],
+    "samples": 10000,
+    "seed": 20260908,
+    "positiveLower95Required": true
+  },
+  "p95Allowance": {
+    "seconds": 1,
+    "nativeFraction": 0.05,
+    "use": "larger"
+  },
+  "sameMechanismOwnersRequired": 2,
+  "totalSelectedOwners": 3,
+  "costRule": "Full request plus required machine work outside it once. No prefix saving credit; charge positive aggregate prefix excess. Preserve unavailable-slot candidate costs.",
+  "allocationActive": false,
+  "confirmationAdmitted": false
+}

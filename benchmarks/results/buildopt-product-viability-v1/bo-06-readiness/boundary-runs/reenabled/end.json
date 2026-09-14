@@ -1,0 +1,25 @@
+{
+  "case": "reenabled",
+  "command": [
+    "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-prototype/native-state/gradle/wrapper/dists/gradle-9.7.1-bin/1w1c7tv4s851m17nbqdsro2tv/gradle-9.7.1/bin/gradle",
+    "--offline",
+    "--no-daemon",
+    "--no-configuration-cache",
+    "--build-cache",
+    "--console=plain",
+    "--max-workers=2",
+    "--warning-mode=fail",
+    "-Pphase=boundary",
+    "-PobservationFile=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/boundary-runs/reenabled/processing.tsv",
+    "-PobserverAgent=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-prototype/observer/agent.jar",
+    "--rerun-tasks",
+    ":server:checkstyleNative",
+    ":server:checkstyleMain"
+  ],
+  "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/fixture",
+  "unit": "buildopt-bo06-reenabled",
+  "startedUTC": "2026-09-14T20:22:27.221765+00:00",
+  "exitCode": 0,
+  "endedUTC": "2026-09-14T20:22:32.445071+00:00",
+  "unitState": "inactive"
+}

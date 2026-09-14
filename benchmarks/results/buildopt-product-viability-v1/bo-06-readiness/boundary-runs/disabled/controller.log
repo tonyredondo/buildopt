@@ -1,0 +1,6 @@
+Running as unit: buildopt-bo06-disabled.service
+          Finished with result: success
+Main processes terminated with: code=exited, status=0/SUCCESS
+               Service runtime: 8.886s
+             CPU time consumed: 17.395s
+                   Memory peak: 925.8M (swap: 0B)

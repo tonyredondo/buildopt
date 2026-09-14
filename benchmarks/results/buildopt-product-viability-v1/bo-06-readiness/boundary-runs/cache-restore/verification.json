@@ -1,0 +1,17 @@
+{
+  "case": "cache-restore",
+  "exitCode": 0,
+  "xmlEqual": true,
+  "processedFiles": 0,
+  "successExists": false,
+  "fromCache": true,
+  "outputSHA256": "946b0e7b4a886a56786f4d8102480639279439290e213e986618d3dc57825312",
+  "request": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/boundary-runs/cache-restore/end.json",
+    "sha256": "172cc2c4c8ac8c0d8c99cc8f2fa0e9adc43aa09ce0ddb9060356cd49b7632f96"
+  },
+  "log": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-readiness-2026-09-14/boundary-runs/cache-restore/build.log",
+    "sha256": "75ef25dfbe03fd9ce2db9886ea53fb77d7c84fa630d0bb04832fc63d88417ba2"
+  }
+}
