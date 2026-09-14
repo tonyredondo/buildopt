@@ -1,0 +1,459 @@
+{
+  "schemaVersion": "buildopt.research/candidate-recovery/v1",
+  "step": "BO-01",
+  "date": "2026-09-14",
+  "baselineCommit": "53aed170f62f0e076858f30092c9a97e70d81978",
+  "status": "Candidate inventory recovered; individual readiness limits explicit",
+  "nativeBuildStarts": 0,
+  "validationSourceRead": false,
+  "candidates": [
+    {
+      "id": "elasticsearch-checkstyle-supported-v2",
+      "repository": "elastic/elasticsearch",
+      "mechanism": "Content-aware Checkstyle with supported end-of-build persistence",
+      "command": [
+        "{repo}/gradlew",
+        "--offline",
+        "--no-scan",
+        "--max-workers=8",
+        ":server:precommit",
+        "--continue"
+      ],
+      "commandSource": "Frozen supported comparison manifest; additional cache policy and agent are bound there",
+      "sourceRevisions": [
+        "b653442570bc16718c8b75b6bd318dd98e5599b8",
+        "3a00a9167b54dc298e015cf92ef692d6ddacab77"
+      ],
+      "originalOrdinals": [
+        6,
+        7
+      ],
+      "commonGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/eic-native-v1/repos/elasticsearch.git",
+      "candidate": {
+        "identity": "checkstyle-shared-service-finalization-v2",
+        "files": [
+          {
+            "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstylePrecommitPlugin.java",
+            "beforeSHA256": "4bcb596e7d09d08cdcf8ea1c94472421c223769c5e139c200f16dddc3e301015",
+            "beforeMode": 420,
+            "after": {
+              "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/candidate-v2/build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstylePrecommitPlugin.java",
+              "sha256": "b68ff283db91915c84a0792343971843798305aee5374a7dfc6a896e501dcd8d"
+            },
+            "afterMode": 420
+          },
+          {
+            "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/CheckstyleSuccessState.java",
+            "beforeSHA256": "",
+            "beforeMode": 0,
+            "after": {
+              "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/candidate-v2/build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/CheckstyleSuccessState.java",
+              "sha256": "d8a314167c7bc933463ccdb6e33e78045f807b6a104c66a0f26fe0d2c8ed1ae5"
+            },
+            "afterMode": 420
+          },
+          {
+            "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareChecker.java",
+            "beforeSHA256": "",
+            "beforeMode": 0,
+            "after": {
+              "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/candidate-v2/build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareChecker.java",
+              "sha256": "631f0710963324ae493fdecb4f35dc94fce5934ad94a7c1ff90586c6b402b73b"
+            },
+            "afterMode": 420
+          },
+          {
+            "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstyleSuccessHistory.java",
+            "beforeSHA256": "",
+            "beforeMode": 0,
+            "after": {
+              "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/candidate-v2/build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstyleSuccessHistory.java",
+              "sha256": "19ddb089b59efc7b90e6b5e0fa87ee790d03779813c306992d2e21ab34ae21e1"
+            },
+            "afterMode": 420
+          },
+          {
+            "path": "build-tools-internal/src/test/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareCheckerTests.java",
+            "beforeSHA256": "",
+            "beforeMode": 0,
+            "after": {
+              "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/candidate-v2/build-tools-internal/src/test/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareCheckerTests.java",
+              "sha256": "7a3ea710afdc2b22a9d38955092eb37afb9f1f4705e8cfd8ae72a4dd1d0bf9d9"
+            },
+            "afterMode": 420
+          }
+        ],
+        "prerequisites": {
+          "gradle/wrapper/gradle-wrapper.properties": "d0bebe8133babb74ab29a31ee6616c56ef8985fc801e1fd16c61b5ed2189e907",
+          "build-tools-internal/src/main/resources/checkstyle.xml": "51d4149c0e631af64016e63f14d5467a7d4f0022d2b4c6a6c5cc2398ad62a81f",
+          "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/SnippetLengthCheck.java": "e921f57b903c4c9cbe3fe45ccbcb242e9ed8ae50f50938447ad3e3a90356abd4",
+          "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/StringFormattingCheck.java": "2db1debd76815b776f935a542839274ed52381aaa73b00e4488f000a4d74f28f",
+          "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/SwitchBetweenCheck.java": "b2fb9c6e49d5b92c4936175875256169fe96d67b780590bcc58a6a473470af40"
+        }
+      },
+      "baseline": {
+        "identity": "retained-native-forbidden-patterns-baseline",
+        "files": [
+          {
+            "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/ForbiddenPatternsTask.java",
+            "beforeSHA256": "61fe2eaa06ff463c2a49cea656b147889060855acfa094288ebb8b31567e11b6",
+            "beforeMode": 420,
+            "after": {
+              "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/inputs/postimages/ForbiddenPatternsTask.java",
+              "sha256": "d6858f5ac43ad671496cf1e54e7af309cb98ebda4a9be53e61578df8baefa2d0"
+            },
+            "afterMode": 420
+          }
+        ],
+        "prerequisites": {}
+      },
+      "outputContract": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/inputs/owner-policy-corrected.json",
+        "sha256": "028d31d8be73de2debda8a337c39782952b9a15f42b44d1e57413062b03c0114"
+      },
+      "gradle": "9.7.1",
+      "configurationCache": false,
+      "recoveredProof": "19 frozen bindings; 4 exact retained worktrees; 36 source preconditions at original ordinals 6,7,17,18,19,20; static full manifest validation",
+      "timingScope": "Previous versus revised optimized implementation; mixed outcome preserved. Not a native-versus-candidate validation.",
+      "history": "Engineering prefix has been inspected; validation 21-100 remains reserved and was not executed here.",
+      "next": "BO-02 four-build identical-code control with a fresh manifest, allocation and run root",
+      "unresolved": [
+        "Timing schedule quality",
+        "Sustained net saving versus native",
+        "Installed delivery and adaptive value"
+      ],
+      "readiness": "Recovered for control preparation; no new native build started"
+    },
+    {
+      "id": "micronaut-python-vfs-bytecode-compile-relative-v1",
+      "repository": "https://github.com/micronaut-projects/micronaut-core.git",
+      "mechanism": "ADD_RELATIVE_PATH_NORMALIZATION_AND_CACHEABLE_MARKER_V1",
+      "sourceRevision": "428ddeb3ad2acdabef2027cc06af3bf46865956a",
+      "commonGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-admission/repos/micronaut-core.git",
+      "taskPaths": [
+        ":micronaut-context-python:compileVfsPythonBytecode"
+      ],
+      "commandCompleteness": "Task paths recovered; exact historical launch flags, full environment and timing logs are not retained by this portfolio result. Do not invent them.",
+      "patch": {
+        "schemaVersion": "buildopt.patch/normalization-aware-cacheability/v2",
+        "path": "buildSrc/src/main/groovy/io/micronaut/build/internal/python/PythonVfsBytecodeCompile.java",
+        "className": "PythonVfsBytecodeCompile",
+        "expectedSourceSha256": "2751e8434d1cdd6be5052abe4d3205662e4669d78fcbc9168e3c73a261c0adca",
+        "patchedSourceSha256": "2cfc774746985253205acb2f360df84c70a9f4ba985d2ef1f32e8ecbcfa464ed",
+        "edits": [
+          {
+            "offset": 1460,
+            "insertedText": "    @org.gradle.api.tasks.PathSensitive(org.gradle.api.tasks.PathSensitivity.RELATIVE)\n"
+          },
+          {
+            "offset": 1257,
+            "insertedText": "@org.gradle.api.tasks.CacheableTask\n"
+          }
+        ]
+      },
+      "sourceRecovery": {
+        "revision": "428ddeb3ad2acdabef2027cc06af3bf46865956a",
+        "path": "buildSrc/src/main/groovy/io/micronaut/build/internal/python/PythonVfsBytecodeCompile.java",
+        "preimageSHA256": "2751e8434d1cdd6be5052abe4d3205662e4669d78fcbc9168e3c73a261c0adca",
+        "preimageMatches": true,
+        "postimageSHA256": "2cfc774746985253205acb2f360df84c70a9f4ba985d2ef1f32e8ecbcfa464ed",
+        "postimageMatches": true
+      },
+      "gradleDeclaredBySource": "9.7.1",
+      "recordedOutputs": {
+        "fresh": true,
+        "controlDigest": "57f26ac45ef0738ca90e30f92ac99223eb3dbe796eddcf9b01af78197450dc27",
+        "candidateDigest": "57f26ac45ef0738ca90e30f92ac99223eb3dbe796eddcf9b01af78197450dc27",
+        "crossRootDigest": "57f26ac45ef0738ca90e30f92ac99223eb3dbe796eddcf9b01af78197450dc27",
+        "outputFiles": 3,
+        "crossRootFromCache": true,
+        "exactRevert": true,
+        "nativeFallback": true,
+        "productFailures": 0
+      },
+      "outputLocations": "Output directories declared by the original task source; file bytes were not reconstructed in BO-01",
+      "historicalSummary": {
+        "positivePairs": 8,
+        "controlMeanMs": 10909.25,
+        "candidateMeanMs": 3988.125,
+        "meanSavedMs": 6921.125,
+        "meanReductionRatio": 0.6344272062699086,
+        "paired95Ms": [
+          4492.125,
+          9980.75
+        ],
+        "controlP95Ms": 19683,
+        "candidateP95Ms": 5961
+      },
+      "recordedPreparation": {
+        "costComponents": [
+          {
+            "phase": "generation-and-diagnostics",
+            "chargedMs": 180000
+          },
+          {
+            "phase": "correctness-and-validation",
+            "chargedMs": 360000
+          },
+          {
+            "phase": "delivery-and-revert",
+            "chargedMs": 60000
+          }
+        ],
+        "chargedMachineCostMs": 600000,
+        "machinePaybackBuilds": 87,
+        "humanReviewMs": "NOT_MEASURED"
+      },
+      "recoveredProof": "Original eight-pair metrics and patch source digests reproduce; prior correctness claims retain their recorded scope",
+      "history": "Eight comparisons at one revision; no lifetime replay for this patch. Frozen replication history exists and remains unmeasured.",
+      "readiness": "Source and arithmetic recovered; local native buildability not verified",
+      "next": "BO-03 assess opportunity in a complete requested command before any timing",
+      "unresolved": [
+        "Complete workflow and frequency of affected task",
+        "State/reset policy of the original task comparison",
+        "Native build dependencies and output comparison in a new run",
+        "Sustained saving including preparation and maintenance"
+      ]
+    },
+    {
+      "id": "spring-architecture-check-v1",
+      "repository": "https://github.com/spring-projects/spring-framework.git",
+      "mechanism": "ADD_CACHEABLE_TASK_MARKER_V2",
+      "sourceRevision": "91eb42645e26a7ef9382b4a655bcefe5c8682fee",
+      "commonGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-admission/repos/spring-framework.git",
+      "taskPaths": [
+        ":spring-core:checkArchitectureMain"
+      ],
+      "commandCompleteness": "Task paths recovered; exact historical launch flags, full environment and timing logs are not retained by this portfolio result. Do not invent them.",
+      "patch": {
+        "schemaVersion": "buildopt.patch/normalization-aware-cacheability/v2",
+        "path": "buildSrc/src/main/java/org/springframework/build/architecture/ArchitectureCheck.java",
+        "className": "ArchitectureCheck",
+        "expectedSourceSha256": "22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04",
+        "patchedSourceSha256": "dd75bc28223141ac121f6377f7ba95832fd250739861196f60120264dd4c2d1d",
+        "edits": [
+          {
+            "offset": 2452,
+            "insertedText": "@org.gradle.api.tasks.CacheableTask\n"
+          }
+        ]
+      },
+      "sourceRecovery": {
+        "revision": "91eb42645e26a7ef9382b4a655bcefe5c8682fee",
+        "path": "buildSrc/src/main/java/org/springframework/build/architecture/ArchitectureCheck.java",
+        "preimageSHA256": "22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04",
+        "preimageMatches": true,
+        "postimageSHA256": "dd75bc28223141ac121f6377f7ba95832fd250739861196f60120264dd4c2d1d",
+        "postimageMatches": true
+      },
+      "gradleDeclaredBySource": "9.7.1",
+      "recordedOutputs": {
+        "fresh": true,
+        "controlDigest": "06055891d654753ac9e31f765613184cf829f4b27cd358ca5ba97e8c4eb067b2",
+        "candidateDigest": "06055891d654753ac9e31f765613184cf829f4b27cd358ca5ba97e8c4eb067b2",
+        "crossRootDigest": "06055891d654753ac9e31f765613184cf829f4b27cd358ca5ba97e8c4eb067b2",
+        "outputFiles": 1,
+        "crossRootFromCache": true,
+        "exactRevert": true,
+        "nativeFallback": true,
+        "productFailures": 0
+      },
+      "outputLocations": "Output directories declared by the original task source; file bytes were not reconstructed in BO-01",
+      "historicalSummary": {
+        "positivePairs": 8,
+        "controlMeanMs": 2788.5,
+        "candidateMeanMs": 1803,
+        "meanSavedMs": 985.5,
+        "meanReductionRatio": 0.3534158149542765,
+        "paired95Ms": [
+          795.375,
+          1153.375
+        ],
+        "controlP95Ms": 3443,
+        "candidateP95Ms": 2134
+      },
+      "recordedPreparation": {
+        "costComponents": [
+          {
+            "phase": "generation-and-diagnostics",
+            "chargedMs": 60000
+          },
+          {
+            "phase": "correctness-and-validation",
+            "chargedMs": 240000
+          },
+          {
+            "phase": "delivery-and-revert",
+            "chargedMs": 60000
+          }
+        ],
+        "chargedMachineCostMs": 360000,
+        "machinePaybackBuilds": 366,
+        "humanReviewMs": "NOT_MEASURED"
+      },
+      "recoveredProof": "Original eight-pair metrics and patch source digests reproduce; prior correctness claims retain their recorded scope",
+      "history": "Eight comparisons at one revision; no lifetime replay for this patch. Frozen replication history exists and remains unmeasured.",
+      "readiness": "Source and arithmetic recovered; local native buildability not verified",
+      "next": "BO-03 assess opportunity in a complete requested command before any timing",
+      "unresolved": [
+        "Complete workflow and frequency of affected task",
+        "State/reset policy of the original task comparison",
+        "Native build dependencies and output comparison in a new run",
+        "Sustained saving including preparation and maintenance"
+      ]
+    },
+    {
+      "id": "ktor-selected-build-impact",
+      "repository": "ktorio/ktor",
+      "mechanism": "Selected structural Build Impact",
+      "baseRevision": "bc7de799f4eb997a63250f2f70492d85f5c92f50",
+      "sourceRevision": "640e0bf3ccae96b35437272d99dd3d9c0b309da3",
+      "originalRequestedEntrypoints": [
+        "jvmJar"
+      ],
+      "candidateEntrypoints": [
+        ":ktor-server-webjars:jvmJar"
+      ],
+      "gradleOptions": [
+        "--max-workers=12",
+        "--build-cache",
+        "--console=plain",
+        "--no-scan"
+      ],
+      "gradleVersion": "9.5.1",
+      "requiredOutputs": [
+        "ktor-server/ktor-server-plugins/ktor-server-webjars/build/libs/ktor-server-webjars-jvm-3.6.0-SNAPSHOT.jar"
+      ],
+      "outputScope": "Only these declared outputs were compared; equivalence of all outputs of the original broad command was not established.",
+      "sourceBindings": {
+        "generatedManifestSha256": "138cd43cdbdce9fe187968050e4f4477cb7a1273665d12b1f07df3c97da2b72a",
+        "graphSha256": "d2e49d1ef26d0ef1c2930bbb559cd5d59cbae94ef0d967ca62600a54b79463c5",
+        "manifestSha256": "122f690acd70b31d5f75915332e13e5b553ae369ee219a6a92c94130f08d9680",
+        "resolvedDependenciesSha256": "53bef47643433c6b65d2d7f75f1c4a0c43b78857270c9da5efce61825803e993",
+        "sourceEvidenceSha256": "aabf5ecc843b79580721e4d527a91ea9de3c30210f676435785c112ed5aa31e2"
+      },
+      "package": {
+        "asset": "buildopt-0.6.1-linux-amd64.tar.gz",
+        "assetSha256": "a543acda9ec47914f25f1b4994e9337aae5873fa89d32bedb807d078357307f9",
+        "executableSha256": "f7cd46f3d9460090cd2e80398eca3c1e062a17f8cfe714b5446e1f14fc251101",
+        "freshPrefix": true,
+        "installerSha256": "57d63b6a0dce7794a3a26123ef4326c2b0bbe63ca6e2964041e573452337a2ec",
+        "publicRelease": true,
+        "releaseRunId": 32053101651,
+        "releaseRunUrl": "https://github.com/tonyredondo/buildopt/actions/runs/32053101651",
+        "releaseUrl": "https://github.com/tonyredondo/buildopt/releases/tag/v0.6.1",
+        "sourceRevision": "a354e3ee7fffc7abe83b8abe0a125956b159e01a",
+        "tag": "v0.6.1",
+        "version": "0.6.1"
+      },
+      "historicalSummary": {
+        "candidateMeanMs": 7830.375,
+        "controlMeanMs": 38809.75,
+        "decision": "QUALIFY_STRUCTURAL_PROFILE",
+        "executionShapeObserved": true,
+        "executionShapeStable": true,
+        "interval95SavedMs": [
+          24679.375,
+          38922
+        ],
+        "meanSavedMs": 30979.375,
+        "pairs": 8,
+        "positivePairs": 8,
+        "qualified": true,
+        "reductionRatio": 0.7982369121161563,
+        "targetWarmupShapeObserved": true,
+        "targetWarmupShapeStable": true
+      },
+      "recordedPreparationMS": 784031,
+      "estimatedPaybackApplicableBuilds": 26,
+      "recoveredProof": "Portable raw-result and qualification-snapshot digests and eight paired observations pass the existing verifier",
+      "localRecovery": "BuildOpt release source commit exists locally. No registered original subject checkout, generated profile or installed release binary was recovered from the available records.",
+      "history": "Selected revision pair; no lifetime replay of this exact setup. Ktor has a separate negative Jetty-profile lifetime study.",
+      "readiness": "Evidence review only; native reconstruction and full output-scope decision pending",
+      "next": "BO-04 decide whether an unanswered hypothesis merits a new bounded protocol",
+      "unresolved": [
+        "Define legitimate requested results before reducing scope",
+        "Distinguish an untested hypothesis from retired plan reuse",
+        "Recover exact subject source, profile and runtime if admitted",
+        "Recurring benefit after unrelated changes and preparation costs"
+      ]
+    },
+    {
+      "id": "beam-selected-build-impact",
+      "repository": "apache/beam",
+      "mechanism": "Selected structural Build Impact",
+      "baseRevision": "dd896e2b2395937201b7721251d9f66936f9340c",
+      "sourceRevision": "db6daeecbd9b9a50a0dfc0d9118f312716e34f94",
+      "originalRequestedEntrypoints": [
+        "classes"
+      ],
+      "candidateEntrypoints": [
+        ":examples:java:twitter:classes"
+      ],
+      "gradleOptions": [
+        "--max-workers=12",
+        "--build-cache",
+        "--console=plain",
+        "--no-scan"
+      ],
+      "gradleVersion": "8.14.3",
+      "requiredOutputs": [
+        "examples/java/twitter/build/classes/java/main/**"
+      ],
+      "outputScope": "Only these declared outputs were compared; equivalence of all outputs of the original broad command was not established.",
+      "sourceBindings": {
+        "generatedManifestSha256": "aa61ba8def992df2299bc95e653f5a26ee861cc0e5ef8fac0a2992b4a186bf37",
+        "graphSha256": "c342444dba6510aa52b51b87fd21fa2429d9805d56a4ddd01acb84c55fc2f790",
+        "manifestSha256": "c33c0d1b7c5ffef2480af1d689acbfa306e6ad3a1763025e419c0abba7eaa6fa",
+        "resolvedDependenciesSha256": "311576d0f2ae86a60d7d01931d3b390504474a8897d6af49185bb2e8fa8f7cf7",
+        "sourceEvidenceSha256": "1df3390476c3559802d2310a5633a36d974e377246f82dcda63abbefb8e3a779"
+      },
+      "package": {
+        "asset": "buildopt-0.6.1-linux-amd64.tar.gz",
+        "assetSha256": "a543acda9ec47914f25f1b4994e9337aae5873fa89d32bedb807d078357307f9",
+        "executableSha256": "f7cd46f3d9460090cd2e80398eca3c1e062a17f8cfe714b5446e1f14fc251101",
+        "freshPrefix": true,
+        "installerSha256": "57d63b6a0dce7794a3a26123ef4326c2b0bbe63ca6e2964041e573452337a2ec",
+        "publicRelease": true,
+        "releaseRunId": 32053101651,
+        "releaseRunUrl": "https://github.com/tonyredondo/buildopt/actions/runs/32053101651",
+        "releaseUrl": "https://github.com/tonyredondo/buildopt/releases/tag/v0.6.1",
+        "sourceRevision": "a354e3ee7fffc7abe83b8abe0a125956b159e01a",
+        "tag": "v0.6.1",
+        "version": "0.6.1"
+      },
+      "historicalSummary": {
+        "candidateMeanMs": 24958.125,
+        "controlMeanMs": 65080.875,
+        "decision": "QUALIFY_STRUCTURAL_PROFILE",
+        "executionShapeObserved": true,
+        "executionShapeStable": true,
+        "interval95SavedMs": [
+          33867.125,
+          51469.5
+        ],
+        "meanSavedMs": 40122.75,
+        "pairs": 8,
+        "positivePairs": 8,
+        "qualified": true,
+        "reductionRatio": 0.6165060011869846,
+        "targetWarmupShapeObserved": true,
+        "targetWarmupShapeStable": true
+      },
+      "recordedPreparationMS": 1096653,
+      "estimatedPaybackApplicableBuilds": 28,
+      "recoveredProof": "Portable raw-result and qualification-snapshot digests and eight paired observations pass the existing verifier",
+      "localRecovery": "BuildOpt release source commit exists locally. No registered original subject checkout, generated profile or installed release binary was recovered from the available records.",
+      "history": "Selected revision pair; no lifetime replay of this exact setup. Ktor has a separate negative Jetty-profile lifetime study.",
+      "readiness": "Evidence review only; native reconstruction and full output-scope decision pending",
+      "next": "BO-04 decide whether an unanswered hypothesis merits a new bounded protocol",
+      "unresolved": [
+        "Define legitimate requested results before reducing scope",
+        "Distinguish an untested hypothesis from retired plan reuse",
+        "Recover exact subject source, profile and runtime if admitted",
+        "Recurring benefit after unrelated changes and preparation costs"
+      ]
+    }
+  ],
+  "stateLocator": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-01-candidate-recovery-2026-09-14/task-state.json"
+}

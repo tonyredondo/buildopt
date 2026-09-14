@@ -1,0 +1,803 @@
+{
+  "step": "BO-01",
+  "checks": {
+    "doctor.receipt": {
+      "command": [
+        "./dev/doctor",
+        "--json"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 16.599,
+      "log": "doctor.log"
+    },
+    "go-version.receipt": {
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "go",
+        "--",
+        "go",
+        "version"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.032,
+      "log": "go-version.log"
+    },
+    "jdk21-version.receipt": {
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "temurin-jdk-21",
+        "--",
+        "java",
+        "-version"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 1.005,
+      "log": "jdk21-version.log"
+    },
+    "jdk25-version.receipt": {
+      "command": [
+        "./dev/run",
+        "--toolchain",
+        "temurin-jdk-25",
+        "--",
+        "java",
+        "-version"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.892,
+      "log": "jdk25-version.log"
+    },
+    "magic-evidence.receipt": {
+      "command": [
+        "./dev/check-magic-end-to-end-value-v2"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.108,
+      "log": "magic-evidence.log"
+    },
+    "patch-evidence.receipt": {
+      "command": [
+        "./dev/check-reviewed-native-patch-portfolio"
+      ],
+      "exitCode": 1,
+      "elapsedSeconds": 0.591,
+      "log": "patch-evidence.log"
+    },
+    "checkstyle-manifest-validation": {
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/history-replay-owner",
+        "validate",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/profiles/supported/manifest.json"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 164.62136106999242,
+      "output": "manifest valid; no workflow started\n",
+      "scope": "Static manifest and bound-input validation only; expired execution allocation is not reopened"
+    },
+    "patch-validator-verification": [
+      {
+        "case": "original",
+        "expectedExit": 0,
+        "actualExit": 0,
+        "passed": true
+      },
+      {
+        "case": "wrong-schema",
+        "expectedExit": 1,
+        "actualExit": 1,
+        "passed": true
+      },
+      {
+        "case": "missing-row",
+        "expectedExit": 1,
+        "actualExit": 1,
+        "passed": true
+      },
+      {
+        "case": "changed-timing",
+        "expectedExit": 1,
+        "actualExit": 1,
+        "passed": true
+      },
+      {
+        "case": "output-mismatch",
+        "expectedExit": 1,
+        "actualExit": 1,
+        "passed": true
+      },
+      {
+        "case": "incorrect-count",
+        "expectedExit": 1,
+        "actualExit": 1,
+        "passed": true
+      },
+      {
+        "case": "missing-cost",
+        "expectedExit": 1,
+        "actualExit": 1,
+        "passed": true
+      },
+      {
+        "case": "wrong-decision",
+        "expectedExit": 1,
+        "actualExit": 1,
+        "passed": true
+      },
+      {
+        "case": "full-script",
+        "command": [
+          "./dev/check-reviewed-native-patch-portfolio"
+        ],
+        "expectedExit": 0,
+        "actualExit": 0,
+        "passed": true,
+        "output": "reviewed native patch portfolio: 2/4 proposals, 2 families, 7906.625 ms, payback 296\n"
+      },
+      {
+        "case": "bash-syntax",
+        "command": [
+          "bash",
+          "-n",
+          "dev/check-reviewed-native-patch-portfolio"
+        ],
+        "expectedExit": 0,
+        "actualExit": 0,
+        "passed": true,
+        "output": ""
+      },
+      {
+        "case": "shellcheck",
+        "command": [
+          "./dev/run",
+          "--toolchain",
+          "shellcheck",
+          "--",
+          "shellcheck",
+          "dev/check-reviewed-native-patch-portfolio"
+        ],
+        "expectedExit": 0,
+        "actualExit": 0,
+        "passed": true,
+        "output": ""
+      }
+    ],
+    "checkstyle-frozen-inputs": [
+      {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/run-comparison-supported.py",
+        "sha256": "aeb261f2feb8b1f061c7f652363207ecd2f36b968eb94c04c1a8857e759152ce",
+        "actualSha256": "aeb261f2feb8b1f061c7f652363207ecd2f36b968eb94c04c1a8857e759152ce",
+        "matches": true
+      },
+      {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/profiles/supported/manifest.json",
+        "sha256": "d9113c93082d77d0fc9e9a7d4a06e0de15b1f133410aa88f19626bdda284d877",
+        "actualSha256": "d9113c93082d77d0fc9e9a7d4a06e0de15b1f133410aa88f19626bdda284d877",
+        "matches": true
+      },
+      {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/analysis/preliminary-controller.json",
+        "sha256": "b70d16f1ff7916b9bd964623d0ea9317081a5dd11e4b3d70f1f87fc63cd3559d",
+        "actualSha256": "b70d16f1ff7916b9bd964623d0ea9317081a5dd11e4b3d70f1f87fc63cd3559d",
+        "matches": true
+      },
+      {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/analysis/correctness-v2.json",
+        "sha256": "fe3e21b1ae327fb40ea97ac2ea305120d54a554e68a46014d854731100894747",
+        "actualSha256": "fe3e21b1ae327fb40ea97ac2ea305120d54a554e68a46014d854731100894747",
+        "matches": true
+      },
+      {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/inputs/comparison-design.json",
+        "sha256": "9001a1a43d9a0a224eee72f6335a904c4cae5fa9ed519101914bff7c89a83b0c",
+        "actualSha256": "9001a1a43d9a0a224eee72f6335a904c4cae5fa9ed519101914bff7c89a83b0c",
+        "matches": true
+      },
+      {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/inputs/owner-policy-corrected.json",
+        "sha256": "028d31d8be73de2debda8a337c39782952b9a15f42b44d1e57413062b03c0114",
+        "actualSha256": "028d31d8be73de2debda8a337c39782952b9a15f42b44d1e57413062b03c0114",
+        "matches": true
+      },
+      {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/inputs/owner-runner-preserved.json",
+        "sha256": "d5f93f608d5480195bba9242741f1c1e18ff2aa723d08afe5dc826af033636e5",
+        "actualSha256": "d5f93f608d5480195bba9242741f1c1e18ff2aa723d08afe5dc826af033636e5",
+        "matches": true
+      },
+      {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/receipts/owner-runner-final-proof.json",
+        "sha256": "64198da282f8f1334099438b0f15684cc6e910dd78b569b749e89b45595371e7",
+        "actualSha256": "64198da282f8f1334099438b0f15684cc6e910dd78b569b749e89b45595371e7",
+        "matches": true
+      },
+      {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/receipts/manifest-validation-supported.json",
+        "sha256": "3edd741d0deb0f48478fa95f36fbae096b3524cf8f92b9c53feb19825b8d08c1",
+        "actualSha256": "3edd741d0deb0f48478fa95f36fbae096b3524cf8f92b9c53feb19825b8d08c1",
+        "matches": true
+      },
+      {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/diagnostics/FinalizationAgent.java",
+        "sha256": "2a938c5937cfe1b3fbe722b58fbb53c44a0224ef009efea61b4148b16739ffea",
+        "actualSha256": "2a938c5937cfe1b3fbe722b58fbb53c44a0224ef009efea61b4148b16739ffea",
+        "matches": true
+      },
+      {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/diagnostics/FinalizationLog.java",
+        "sha256": "ca4e503aaaf3b6d0c74836dada522a062698cff8b532590c9bc500da171c9e17",
+        "actualSha256": "ca4e503aaaf3b6d0c74836dada522a062698cff8b532590c9bc500da171c9e17",
+        "matches": true
+      },
+      {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/diagnostics-v2/FinalizationForkProof.java",
+        "sha256": "dd0ab4cb87076287ab37ddf883633631562befc78e19237e9b4da9d070080abb",
+        "actualSha256": "dd0ab4cb87076287ab37ddf883633631562befc78e19237e9b4da9d070080abb",
+        "matches": true
+      },
+      {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/diagnostics/finalization-agent.jar",
+        "sha256": "dc19666fa91b75022bc63a292d4e9164ac4ad973b77aa074ed75126aaa998bf7",
+        "actualSha256": "dc19666fa91b75022bc63a292d4e9164ac4ad973b77aa074ed75126aaa998bf7",
+        "matches": true
+      },
+      {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/diagnostics/finalization-log.jar",
+        "sha256": "ef0c63b93bb569bec3e395cba16982f482c71fc303143407d4458a503fe1f141",
+        "actualSha256": "ef0c63b93bb569bec3e395cba16982f482c71fc303143407d4458a503fe1f141",
+        "matches": true
+      },
+      {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/receipts/agent-proof-v2-verified.json",
+        "sha256": "1951134199ddb2d09047622f22768da49fc2919ea28bc15e29641bc0620eb9be",
+        "actualSha256": "1951134199ddb2d09047622f22768da49fc2919ea28bc15e29641bc0620eb9be",
+        "matches": true
+      },
+      {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/docs/plans/buildopt-checkstyle-finalization-v2.md",
+        "sha256": "4b378afcb9b6c2322f5aa37a254c5e665bf4743fb2dd2819ad1b37cdfbd0134b",
+        "actualSha256": "4b378afcb9b6c2322f5aa37a254c5e665bf4743fb2dd2819ad1b37cdfbd0134b",
+        "matches": true
+      },
+      {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/candidate-v2",
+        "sha256": "0e9432a6f5916fb80d7d6bb3b05ade936d00c851690b5574baaf932b67601c9b",
+        "actualSha256": "0e9432a6f5916fb80d7d6bb3b05ade936d00c851690b5574baaf932b67601c9b",
+        "matches": true
+      },
+      {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/inputs/owner-replay-source",
+        "sha256": "d937fafd0cbd7c63eba130f16f28be3c3956bfe0805d30a52db2f5be4960fb9c",
+        "actualSha256": "d937fafd0cbd7c63eba130f16f28be3c3956bfe0805d30a52db2f5be4960fb9c",
+        "matches": true
+      },
+      {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/history-replay-owner",
+        "sha256": "f395ee95bc9f5b39dec925fb7bc4a3ceb337d1d03f2934e8f898ecc6965bced5",
+        "actualSha256": "f395ee95bc9f5b39dec925fb7bc4a3ceb337d1d03f2934e8f898ecc6965bced5",
+        "matches": true
+      }
+    ],
+    "checkstyle-prefix-source-checks": [
+      {
+        "ordinal": 6,
+        "commit": "b653442570bc16718c8b75b6bd318dd98e5599b8",
+        "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/ForbiddenPatternsTask.java",
+        "matches": true,
+        "actualSha256": "61fe2eaa06ff463c2a49cea656b147889060855acfa094288ebb8b31567e11b6"
+      },
+      {
+        "ordinal": 6,
+        "commit": "b653442570bc16718c8b75b6bd318dd98e5599b8",
+        "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstylePrecommitPlugin.java",
+        "matches": true,
+        "actualSha256": "4bcb596e7d09d08cdcf8ea1c94472421c223769c5e139c200f16dddc3e301015"
+      },
+      {
+        "ordinal": 6,
+        "commit": "b653442570bc16718c8b75b6bd318dd98e5599b8",
+        "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/CheckstyleSuccessState.java",
+        "matches": true,
+        "actualSha256": ""
+      },
+      {
+        "ordinal": 6,
+        "commit": "b653442570bc16718c8b75b6bd318dd98e5599b8",
+        "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareChecker.java",
+        "matches": true,
+        "actualSha256": ""
+      },
+      {
+        "ordinal": 6,
+        "commit": "b653442570bc16718c8b75b6bd318dd98e5599b8",
+        "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstyleSuccessHistory.java",
+        "matches": true,
+        "actualSha256": ""
+      },
+      {
+        "ordinal": 6,
+        "commit": "b653442570bc16718c8b75b6bd318dd98e5599b8",
+        "path": "build-tools-internal/src/test/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareCheckerTests.java",
+        "matches": true,
+        "actualSha256": ""
+      },
+      {
+        "ordinal": 7,
+        "commit": "3a00a9167b54dc298e015cf92ef692d6ddacab77",
+        "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/ForbiddenPatternsTask.java",
+        "matches": true,
+        "actualSha256": "61fe2eaa06ff463c2a49cea656b147889060855acfa094288ebb8b31567e11b6"
+      },
+      {
+        "ordinal": 7,
+        "commit": "3a00a9167b54dc298e015cf92ef692d6ddacab77",
+        "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstylePrecommitPlugin.java",
+        "matches": true,
+        "actualSha256": "4bcb596e7d09d08cdcf8ea1c94472421c223769c5e139c200f16dddc3e301015"
+      },
+      {
+        "ordinal": 7,
+        "commit": "3a00a9167b54dc298e015cf92ef692d6ddacab77",
+        "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/CheckstyleSuccessState.java",
+        "matches": true,
+        "actualSha256": ""
+      },
+      {
+        "ordinal": 7,
+        "commit": "3a00a9167b54dc298e015cf92ef692d6ddacab77",
+        "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareChecker.java",
+        "matches": true,
+        "actualSha256": ""
+      },
+      {
+        "ordinal": 7,
+        "commit": "3a00a9167b54dc298e015cf92ef692d6ddacab77",
+        "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstyleSuccessHistory.java",
+        "matches": true,
+        "actualSha256": ""
+      },
+      {
+        "ordinal": 7,
+        "commit": "3a00a9167b54dc298e015cf92ef692d6ddacab77",
+        "path": "build-tools-internal/src/test/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareCheckerTests.java",
+        "matches": true,
+        "actualSha256": ""
+      },
+      {
+        "ordinal": 17,
+        "commit": "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe",
+        "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/ForbiddenPatternsTask.java",
+        "matches": true,
+        "actualSha256": "61fe2eaa06ff463c2a49cea656b147889060855acfa094288ebb8b31567e11b6"
+      },
+      {
+        "ordinal": 17,
+        "commit": "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe",
+        "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstylePrecommitPlugin.java",
+        "matches": true,
+        "actualSha256": "4bcb596e7d09d08cdcf8ea1c94472421c223769c5e139c200f16dddc3e301015"
+      },
+      {
+        "ordinal": 17,
+        "commit": "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe",
+        "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/CheckstyleSuccessState.java",
+        "matches": true,
+        "actualSha256": ""
+      },
+      {
+        "ordinal": 17,
+        "commit": "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe",
+        "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareChecker.java",
+        "matches": true,
+        "actualSha256": ""
+      },
+      {
+        "ordinal": 17,
+        "commit": "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe",
+        "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstyleSuccessHistory.java",
+        "matches": true,
+        "actualSha256": ""
+      },
+      {
+        "ordinal": 17,
+        "commit": "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe",
+        "path": "build-tools-internal/src/test/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareCheckerTests.java",
+        "matches": true,
+        "actualSha256": ""
+      },
+      {
+        "ordinal": 18,
+        "commit": "d47f43f5ff06883d3f0a04f3d40af627ecf5142e",
+        "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/ForbiddenPatternsTask.java",
+        "matches": true,
+        "actualSha256": "61fe2eaa06ff463c2a49cea656b147889060855acfa094288ebb8b31567e11b6"
+      },
+      {
+        "ordinal": 18,
+        "commit": "d47f43f5ff06883d3f0a04f3d40af627ecf5142e",
+        "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstylePrecommitPlugin.java",
+        "matches": true,
+        "actualSha256": "4bcb596e7d09d08cdcf8ea1c94472421c223769c5e139c200f16dddc3e301015"
+      },
+      {
+        "ordinal": 18,
+        "commit": "d47f43f5ff06883d3f0a04f3d40af627ecf5142e",
+        "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/CheckstyleSuccessState.java",
+        "matches": true,
+        "actualSha256": ""
+      },
+      {
+        "ordinal": 18,
+        "commit": "d47f43f5ff06883d3f0a04f3d40af627ecf5142e",
+        "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareChecker.java",
+        "matches": true,
+        "actualSha256": ""
+      },
+      {
+        "ordinal": 18,
+        "commit": "d47f43f5ff06883d3f0a04f3d40af627ecf5142e",
+        "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstyleSuccessHistory.java",
+        "matches": true,
+        "actualSha256": ""
+      },
+      {
+        "ordinal": 18,
+        "commit": "d47f43f5ff06883d3f0a04f3d40af627ecf5142e",
+        "path": "build-tools-internal/src/test/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareCheckerTests.java",
+        "matches": true,
+        "actualSha256": ""
+      },
+      {
+        "ordinal": 19,
+        "commit": "72aa4d4120d09157106325096f0e7b2cc1852f59",
+        "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/ForbiddenPatternsTask.java",
+        "matches": true,
+        "actualSha256": "61fe2eaa06ff463c2a49cea656b147889060855acfa094288ebb8b31567e11b6"
+      },
+      {
+        "ordinal": 19,
+        "commit": "72aa4d4120d09157106325096f0e7b2cc1852f59",
+        "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstylePrecommitPlugin.java",
+        "matches": true,
+        "actualSha256": "4bcb596e7d09d08cdcf8ea1c94472421c223769c5e139c200f16dddc3e301015"
+      },
+      {
+        "ordinal": 19,
+        "commit": "72aa4d4120d09157106325096f0e7b2cc1852f59",
+        "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/CheckstyleSuccessState.java",
+        "matches": true,
+        "actualSha256": ""
+      },
+      {
+        "ordinal": 19,
+        "commit": "72aa4d4120d09157106325096f0e7b2cc1852f59",
+        "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareChecker.java",
+        "matches": true,
+        "actualSha256": ""
+      },
+      {
+        "ordinal": 19,
+        "commit": "72aa4d4120d09157106325096f0e7b2cc1852f59",
+        "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstyleSuccessHistory.java",
+        "matches": true,
+        "actualSha256": ""
+      },
+      {
+        "ordinal": 19,
+        "commit": "72aa4d4120d09157106325096f0e7b2cc1852f59",
+        "path": "build-tools-internal/src/test/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareCheckerTests.java",
+        "matches": true,
+        "actualSha256": ""
+      },
+      {
+        "ordinal": 20,
+        "commit": "22d6425e9a44ec9e1aedc2785f4478b8019c851a",
+        "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/ForbiddenPatternsTask.java",
+        "matches": true,
+        "actualSha256": "61fe2eaa06ff463c2a49cea656b147889060855acfa094288ebb8b31567e11b6"
+      },
+      {
+        "ordinal": 20,
+        "commit": "22d6425e9a44ec9e1aedc2785f4478b8019c851a",
+        "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstylePrecommitPlugin.java",
+        "matches": true,
+        "actualSha256": "4bcb596e7d09d08cdcf8ea1c94472421c223769c5e139c200f16dddc3e301015"
+      },
+      {
+        "ordinal": 20,
+        "commit": "22d6425e9a44ec9e1aedc2785f4478b8019c851a",
+        "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/CheckstyleSuccessState.java",
+        "matches": true,
+        "actualSha256": ""
+      },
+      {
+        "ordinal": 20,
+        "commit": "22d6425e9a44ec9e1aedc2785f4478b8019c851a",
+        "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareChecker.java",
+        "matches": true,
+        "actualSha256": ""
+      },
+      {
+        "ordinal": 20,
+        "commit": "22d6425e9a44ec9e1aedc2785f4478b8019c851a",
+        "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstyleSuccessHistory.java",
+        "matches": true,
+        "actualSha256": ""
+      },
+      {
+        "ordinal": 20,
+        "commit": "22d6425e9a44ec9e1aedc2785f4478b8019c851a",
+        "path": "build-tools-internal/src/test/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareCheckerTests.java",
+        "matches": true,
+        "actualSha256": ""
+      }
+    ],
+    "checkstyle-materialized-sources": [
+      {
+        "worktree": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/profiles/supported/run/r1/N/repo",
+        "arm": "N",
+        "files": [
+          {
+            "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/ForbiddenPatternsTask.java",
+            "sha256": "d6858f5ac43ad671496cf1e54e7af309cb98ebda4a9be53e61578df8baefa2d0",
+            "matches": true
+          },
+          {
+            "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstylePrecommitPlugin.java",
+            "sha256": "b68ff283db91915c84a0792343971843798305aee5374a7dfc6a896e501dcd8d",
+            "matches": true
+          },
+          {
+            "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/CheckstyleSuccessState.java",
+            "sha256": "d8a314167c7bc933463ccdb6e33e78045f807b6a104c66a0f26fe0d2c8ed1ae5",
+            "matches": true
+          },
+          {
+            "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareChecker.java",
+            "sha256": "ef4788dc5bc4dd59390e019f76cd62d320a43b9fba4764aac814567959240200",
+            "matches": true
+          },
+          {
+            "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstyleSuccessHistory.java",
+            "sha256": "b7dafcd3707085249a9339c898e852cd9fc86f58cd2a3942321e470a731f0a7c",
+            "matches": true
+          },
+          {
+            "path": "build-tools-internal/src/test/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareCheckerTests.java",
+            "sha256": "307ac5e3c50e46a98c72d2f220a70325ae61b9409a1baa2eee71795367e0802f",
+            "matches": true
+          }
+        ],
+        "undeclaredSourceChanges": []
+      },
+      {
+        "worktree": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/profiles/supported/run/r1/I/repo",
+        "arm": "I",
+        "files": [
+          {
+            "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/ForbiddenPatternsTask.java",
+            "sha256": "d6858f5ac43ad671496cf1e54e7af309cb98ebda4a9be53e61578df8baefa2d0",
+            "matches": true
+          },
+          {
+            "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstylePrecommitPlugin.java",
+            "sha256": "b68ff283db91915c84a0792343971843798305aee5374a7dfc6a896e501dcd8d",
+            "matches": true
+          },
+          {
+            "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/CheckstyleSuccessState.java",
+            "sha256": "d8a314167c7bc933463ccdb6e33e78045f807b6a104c66a0f26fe0d2c8ed1ae5",
+            "matches": true
+          },
+          {
+            "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareChecker.java",
+            "sha256": "631f0710963324ae493fdecb4f35dc94fce5934ad94a7c1ff90586c6b402b73b",
+            "matches": true
+          },
+          {
+            "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstyleSuccessHistory.java",
+            "sha256": "19ddb089b59efc7b90e6b5e0fa87ee790d03779813c306992d2e21ab34ae21e1",
+            "matches": true
+          },
+          {
+            "path": "build-tools-internal/src/test/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareCheckerTests.java",
+            "sha256": "7a3ea710afdc2b22a9d38955092eb37afb9f1f4705e8cfd8ae72a4dd1d0bf9d9",
+            "matches": true
+          }
+        ],
+        "undeclaredSourceChanges": []
+      },
+      {
+        "worktree": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/profiles/supported/run/r2/N/repo",
+        "arm": "N",
+        "files": [
+          {
+            "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/ForbiddenPatternsTask.java",
+            "sha256": "d6858f5ac43ad671496cf1e54e7af309cb98ebda4a9be53e61578df8baefa2d0",
+            "matches": true
+          },
+          {
+            "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstylePrecommitPlugin.java",
+            "sha256": "b68ff283db91915c84a0792343971843798305aee5374a7dfc6a896e501dcd8d",
+            "matches": true
+          },
+          {
+            "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/CheckstyleSuccessState.java",
+            "sha256": "d8a314167c7bc933463ccdb6e33e78045f807b6a104c66a0f26fe0d2c8ed1ae5",
+            "matches": true
+          },
+          {
+            "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareChecker.java",
+            "sha256": "ef4788dc5bc4dd59390e019f76cd62d320a43b9fba4764aac814567959240200",
+            "matches": true
+          },
+          {
+            "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstyleSuccessHistory.java",
+            "sha256": "b7dafcd3707085249a9339c898e852cd9fc86f58cd2a3942321e470a731f0a7c",
+            "matches": true
+          },
+          {
+            "path": "build-tools-internal/src/test/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareCheckerTests.java",
+            "sha256": "307ac5e3c50e46a98c72d2f220a70325ae61b9409a1baa2eee71795367e0802f",
+            "matches": true
+          }
+        ],
+        "undeclaredSourceChanges": []
+      },
+      {
+        "worktree": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/profiles/supported/run/r2/I/repo",
+        "arm": "I",
+        "files": [
+          {
+            "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/ForbiddenPatternsTask.java",
+            "sha256": "d6858f5ac43ad671496cf1e54e7af309cb98ebda4a9be53e61578df8baefa2d0",
+            "matches": true
+          },
+          {
+            "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstylePrecommitPlugin.java",
+            "sha256": "b68ff283db91915c84a0792343971843798305aee5374a7dfc6a896e501dcd8d",
+            "matches": true
+          },
+          {
+            "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/CheckstyleSuccessState.java",
+            "sha256": "d8a314167c7bc933463ccdb6e33e78045f807b6a104c66a0f26fe0d2c8ed1ae5",
+            "matches": true
+          },
+          {
+            "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareChecker.java",
+            "sha256": "631f0710963324ae493fdecb4f35dc94fce5934ad94a7c1ff90586c6b402b73b",
+            "matches": true
+          },
+          {
+            "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstyleSuccessHistory.java",
+            "sha256": "19ddb089b59efc7b90e6b5e0fa87ee790d03779813c306992d2e21ab34ae21e1",
+            "matches": true
+          },
+          {
+            "path": "build-tools-internal/src/test/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareCheckerTests.java",
+            "sha256": "7a3ea710afdc2b22a9d38955092eb37afb9f1f4705e8cfd8ae72a4dd1d0bf9d9",
+            "matches": true
+          }
+        ],
+        "undeclaredSourceChanges": []
+      }
+    ],
+    "replication-source-recovery": [
+      {
+        "repository": "https://github.com/apache/groovy.git",
+        "localGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-admission/repos/groovy.git",
+        "endpoint": "fe0f8c2232e9e0b0d1453559840bb51070a430ab",
+        "anchor": "5973097fafabd2627690988ae8c371a353cf68aa",
+        "exists": true,
+        "bare": "true",
+        "currentEndpoint": "fe0f8c2232e9e0b0d1453559840bb51070a430ab",
+        "commits": 101,
+        "anchorMatches": true,
+        "worktrees": "worktree /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-admission/repos/groovy.git\nbare\n\n"
+      },
+      {
+        "repository": "https://github.com/apache/kafka.git",
+        "localGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-admission/repos/kafka.git",
+        "endpoint": "5ce7e34250273652e5496846a5278e87e78b13fd",
+        "anchor": "ed86298dc7fd68ac98be6d3fbc21b77a323301a7",
+        "exists": true,
+        "bare": "true",
+        "currentEndpoint": "5ce7e34250273652e5496846a5278e87e78b13fd",
+        "commits": 101,
+        "anchorMatches": true,
+        "worktrees": "worktree /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-admission/repos/kafka.git\nbare\n\n"
+      },
+      {
+        "repository": "https://github.com/spring-projects/spring-framework.git",
+        "localGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-admission/repos/spring-framework.git",
+        "endpoint": "4c8c6409a27a62ab163d3b6196ad862b7c835440",
+        "anchor": "04e5c9216285549ff2d402ce269a3778226cd3ce",
+        "exists": true,
+        "bare": "true",
+        "currentEndpoint": "4c8c6409a27a62ab163d3b6196ad862b7c835440",
+        "commits": 101,
+        "anchorMatches": true,
+        "worktrees": "worktree /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-admission/repos/spring-framework.git\nbare\n\n",
+        "candidateRevisionPresent": true,
+        "sourceRecovery": {
+          "revision": "91eb42645e26a7ef9382b4a655bcefe5c8682fee",
+          "path": "buildSrc/src/main/java/org/springframework/build/architecture/ArchitectureCheck.java",
+          "preimageSHA256": "22b20c6a01db4cc0ca93f871e8add20cbb105b8c20d9e6e8b3c55d705a3efd04",
+          "preimageMatches": true,
+          "postimageSHA256": "dd75bc28223141ac121f6377f7ba95832fd250739861196f60120264dd4c2d1d",
+          "postimageMatches": true
+        }
+      },
+      {
+        "repository": "https://github.com/open-telemetry/opentelemetry-java.git",
+        "localGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-admission/repos/opentelemetry-java.git",
+        "endpoint": "c87b50ec476f6589a362403a6753ba98514045cf",
+        "anchor": "21171384e9e95136ee746a7291013dfa1525c20c",
+        "exists": true,
+        "bare": "true",
+        "currentEndpoint": "c87b50ec476f6589a362403a6753ba98514045cf",
+        "commits": 101,
+        "anchorMatches": true,
+        "worktrees": "worktree /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-admission/repos/opentelemetry-java.git\nbare\n\n"
+      },
+      {
+        "repository": "https://github.com/micronaut-projects/micronaut-core.git",
+        "localGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-admission/repos/micronaut-core.git",
+        "endpoint": "605d679849f07f7ac221cfb4fb236dfe34689fb1",
+        "anchor": "c419ce675423bf1847a95e5900799347317ba5a0",
+        "exists": true,
+        "bare": "true",
+        "currentEndpoint": "605d679849f07f7ac221cfb4fb236dfe34689fb1",
+        "commits": 101,
+        "anchorMatches": true,
+        "worktrees": "worktree /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-admission/repos/micronaut-core.git\nbare\n\n",
+        "candidateRevisionPresent": true,
+        "sourceRecovery": {
+          "revision": "428ddeb3ad2acdabef2027cc06af3bf46865956a",
+          "path": "buildSrc/src/main/groovy/io/micronaut/build/internal/python/PythonVfsBytecodeCompile.java",
+          "preimageSHA256": "2751e8434d1cdd6be5052abe4d3205662e4669d78fcbc9168e3c73a261c0adca",
+          "preimageMatches": true,
+          "postimageSHA256": "2cfc774746985253205acb2f360df84c70a9f4ba985d2ef1f32e8ecbcfa464ed",
+          "postimageMatches": true
+        }
+      },
+      {
+        "repository": "https://github.com/hibernate/hibernate-orm.git",
+        "localGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-admission/repos/hibernate-orm.git",
+        "endpoint": "f2c20adb6125a30b8c5f8cdf0d119248218f89e4",
+        "anchor": "59f9253f3f23613f0267393e9548679aa6f75752",
+        "exists": true,
+        "bare": "true",
+        "currentEndpoint": "f2c20adb6125a30b8c5f8cdf0d119248218f89e4",
+        "commits": 101,
+        "anchorMatches": true,
+        "worktrees": "worktree /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-admission/repos/hibernate-orm.git\nbare\n\n"
+      }
+    ]
+  },
+  "sourceSHA256": {
+    "dev/check-reviewed-native-patch-portfolio": "a632a64c59f8ddaef7faa298717cf08f726ad384a47636c3f85911fcb5361dbb",
+    "dev/check-magic-end-to-end-value-v2": "2d0d0e01c20bd0f22c466d73143b47269842f3ef33f8aed213c1cf95352e9a34",
+    "benchmarks/results/reviewed-native-patch-portfolio-v1/result.json": "b31cf065b8675d0445340432a262e7ffa6b6b631455461ec0bfc60397c04670c",
+    "benchmarks/results/reviewed-native-patch-portfolio-v1/accepted-proposals.json": "804003a8b65f87dbb23a61e0465f060b4e7020857301c4567f51c2123b59f789",
+    "benchmarks/results/poc-magic-end-to-end-value-v2/summary.json": "6e712bef94ba29fe417ddb3277c9659d0054cb2cbde7e2994aecb68e45b80937",
+    "benchmarks/results/buildopt-product-viability-v1/bv006-checkstyle-finalization/summary.json": "f10ff6031944b83b7ad5bad4dd62dd4ce12a0cb5ffaf25227292d77eb8d6ce11"
+  },
+  "validatorRepair": {
+    "problem": "jq bound a boolean conjunction to qualifiedCount, giving true instead of 2",
+    "change": "Compute aggregate values before evaluating the unchanged predicates",
+    "outcome": "Original data accepted; seven altered cases rejected; Bash syntax and pinned ShellCheck pass",
+    "historicalDataModified": false
+  },
+  "nativeBuildStarts": 0,
+  "publication": "Local changes only",
+  "documentation": {
+    "command": "timeout 300 ./dev/check-documentation",
+    "exitCode": 1,
+    "preExistingUntrackedBrokenLinks": 1620,
+    "diagnosticsInChangedOrTrackedFiles": 0,
+    "sameDiagnosticsAsBeforeBO01": true,
+    "classification": "Unrelated existing broken links in untracked experiment copies; no new diagnostics"
+  }
+}

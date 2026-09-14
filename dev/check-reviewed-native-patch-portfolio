@@ -114,6 +114,10 @@ jq -e --slurpfile selection "$selection" --slurpfile contract "$contract" '
      $p.summary.meanReductionRatio >= $contract[0].value.minimumMeanReductionRatio and
      $p.summary.paired95Ms[0] > 0 and
      $p.summary.candidateP95Ms <= $p.summary.controlP95Ms);
+  ([.proposals[]|select(.decision=="QUALIFY_REVIEWED_NATIVE_PATCH")]|length) as $qualifiedCount |
+  ([.proposals[]|select(.decision=="QUALIFY_REVIEWED_NATIVE_PATCH")|.family]|unique|length) as $qualifiedFamilies |
+  ([.proposals[]|select(.decision=="QUALIFY_REVIEWED_NATIVE_PATCH")|.summary.meanSavedMs]|add) as $portfolioSaving |
+  ([.proposals[].economics.chargedMachineCostMs]|add) as $campaignCost |
   .schemaVersion=="buildopt.evidence/reviewed-native-patch-portfolio/v1" and
   .block=="RNPP-002..005" and
   .costPolicy.kind=="CONSERVATIVE_CEILING_OF_OBSERVED_CAMPAIGN_WALL_TIME" and
@@ -143,10 +147,6 @@ jq -e --slurpfile selection "$selection" --slurpfile contract "$contract" '
     .economics.humanReviewMs=="NOT_MEASURED" and
     ((qualifies(.) and .decision=="QUALIFY_REVIEWED_NATIVE_PATCH") or
      ((qualifies(.)|not) and .decision=="REJECT_RUNTIME_GATES"))) and
-  ([.proposals[]|select(.decision=="QUALIFY_REVIEWED_NATIVE_PATCH")]|length) as $qualifiedCount |
-  ([.proposals[]|select(.decision=="QUALIFY_REVIEWED_NATIVE_PATCH")|.family]|unique|length) as $qualifiedFamilies |
-  ([.proposals[]|select(.decision=="QUALIFY_REVIEWED_NATIVE_PATCH")|.summary.meanSavedMs]|add) as $portfolioSaving |
-  ([.proposals[].economics.chargedMachineCostMs]|add) as $campaignCost |
   .portfolio.qualifiedProposals==$qualifiedCount and
   .portfolio.qualifiedFamilies==$qualifiedFamilies and
   close(.portfolio.meanSavedMsPerCompatiblePortfolioBuild;$portfolioSaving) and
