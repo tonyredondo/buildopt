@@ -1,0 +1,15 @@
+{
+  "profile": "control",
+  "command": [
+    "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/history-replay-quiet",
+    "run",
+    "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/control/manifest.json"
+  ],
+  "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+  "startUTC": "2026-09-15T10:38:40.018130+00:00",
+  "startBootNS": 345191031006598,
+  "gradleReserved": 8,
+  "helperJVMReserved": 8,
+  "pid": 1920018,
+  "procStartTicks": 34519103
+}

@@ -1,0 +1,17 @@
+{
+  "status": "verified",
+  "measurementIdentity": "b59d6a66c1ba948541d22adf0e7bc9632ff6f3e7b4a3330d86944d4f4ad483cc",
+  "control": "CONTROL_PASSED",
+  "controlSummary": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/analysis/control-summary-v4.json",
+  "developmentAdmission": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/receipts/prefix-validation.json",
+  "nativeSeconds": 128.494426424,
+  "candidateSeconds": 128.362723907,
+  "absoluteDifferenceSeconds": 0.131702517,
+  "percentOfFaster": 0.10260184030951205,
+  "ownerStarts": 8,
+  "comparatorJVMs": 8,
+  "livePairs": 4,
+  "independentPairs": 4,
+  "productSavingClaim": false,
+  "next": "Complete all 42 development builds under the same remaining allocation. No BO-07 or protected changes."
+}

@@ -1,0 +1,17 @@
+{
+  "id": "r1-001-g0-I-capture",
+  "class": "research",
+  "purpose": "complete-output-state-and-invocation-capture",
+  "replication": 1,
+  "ordinal": 1,
+  "arm": "I",
+  "attempt": "r1-001-g0-I",
+  "startNS": 350651414943173,
+  "endNS": 350672241808380,
+  "durationNS": 20826865207,
+  "insideEnvelope": false,
+  "workflowStarts": 0,
+  "gradleStarts": 0,
+  "nestedStarts": 0,
+  "bytes": 0
+}

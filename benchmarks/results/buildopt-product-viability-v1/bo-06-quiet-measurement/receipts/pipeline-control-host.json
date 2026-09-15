@@ -1,0 +1,13 @@
+{
+  "script": "analyze_host.py",
+  "args": [
+    "control"
+  ],
+  "exitCode": 0,
+  "startedUTC": "2026-09-15T11:38:49.605860+00:00",
+  "endedUTC": "2026-09-15T11:38:50.283011+00:00",
+  "log": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/logs/pipeline-control-host.log",
+    "sha256": "84c7264363cb25916871fd8e8198494eee36a48bef6888c9c27be31fc6674f93"
+  }
+}

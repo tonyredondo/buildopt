@@ -1,0 +1,58 @@
+{
+  "request": {
+    "quietStart": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/control/run/attempts/r1-002-g0-I/quiet-start.json",
+      "sha256": "a9f3b4069b5d24d914ded5ecca12ffcc9123355afaf5dd07588c0ab503e82489"
+    },
+    "schema": "buildopt.history-replay/record/v2",
+    "attempt": "r1-002-g0-I",
+    "directory": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/control/run/r1/I/repo",
+    "command": [
+      "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/control/run/r1/I/repo/gradlew",
+      "--offline",
+      "--no-scan",
+      "--max-workers=8",
+      ":server:precommit",
+      "--continue",
+      "--no-configuration-cache",
+      "--build-cache",
+      "--console=plain",
+      "--init-script",
+      "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/versions/owner-readiness-v5/source/capture.init.gradle",
+      "--daemon"
+    ],
+    "environment": {
+      "BUILDOPT_REPLAY_CAPTURE": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/control/run/attempts/r1-002-g0-I/graph.jsonl",
+      "CI": "false",
+      "GRADLE_USER_HOME": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/control/run/r1/I/gradle",
+      "HOME": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/control/run/r1/I/home",
+      "JAVA_HOME": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155",
+      "JAVA_TOOL_OPTIONS": "-Dfile.encoding=UTF-8 -Duser.home=\"/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/control/run/r1/I/home\" -Dmaven.repo.local=\"/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/control/run/r1/I/home/.m2/repository\"",
+      "LANG": "C.UTF-8",
+      "LC_ALL": "C.UTF-8",
+      "PATH": "/usr/bin:/bin",
+      "RUNTIME_JAVA_HOME": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155",
+      "TMPDIR": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/control/run/r1/I/tmp",
+      "TZ": "UTC",
+      "XDG_CACHE_HOME": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/control/run/r1/I/cache"
+    },
+    "evidence": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/control/run/attempts/r1-002-g0-I",
+    "timeoutNS": 899998479897
+  },
+  "supervisor": {
+    "pid": 1944525,
+    "startTicks": 34699007,
+    "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-83767c66ff2420f0-r1-I-2.service",
+    "command": [
+      "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/history-replay-quiet",
+      "worker",
+      "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/control/run/sessions/r1-000-g0-I/worker-config.json",
+      "7240c3bc61cce2005033b2bb7cf1eaa6eb574901b008409608bc361a21eda324"
+    ]
+  },
+  "at": {
+    "ns": 347969013343800,
+    "utc": "2026-09-15T11:24:58.000494881Z",
+    "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5"
+  }
+}

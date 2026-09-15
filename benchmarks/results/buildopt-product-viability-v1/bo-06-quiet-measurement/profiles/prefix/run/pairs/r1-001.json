@@ -1,0 +1,37 @@
+{
+  "schema": "buildopt.history-replay/record/v2",
+  "replication": 1,
+  "ordinal": 1,
+  "generation": 0,
+  "attempts": [
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-001-g0-I/end.json",
+      "sha256": "5eeb16f8729df6c27065f147bac0238b4597bd4f00c2a8fa204276f19c72c7fb"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-001-g0-N/end.json",
+      "sha256": "769ea84ca6624868717585b9766d19355b9df7851fbdf59b11cb7568b3a5aac7"
+    }
+  ],
+  "slot": {
+    "ownerMetadataJVMStarts": 1,
+    "ordinal": 1,
+    "class": "COMPARABLE",
+    "reason": "",
+    "nativeNS": 7367466469,
+    "candidateNS": 7634214737,
+    "extraCandidateNS": 0,
+    "nativeActions": 5,
+    "candidateActions": 5,
+    "attempts": [
+      "r1-001-g0-N",
+      "r1-001-g0-I"
+    ]
+  },
+  "previous": "f6ec55736619949c05b6f7c7c45560c0a03e2534bf77d0855a2b6a92db474a30",
+  "at": {
+    "ns": 350765826427589,
+    "utc": "2026-09-15T12:11:34.81358514Z",
+    "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5"
+  }
+}

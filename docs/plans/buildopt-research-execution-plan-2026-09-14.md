@@ -1,7 +1,7 @@
 # Build Optimization research execution plan
 
 Date: 2026-09-14. Program: `BUILDOPT-VIABILITY-V1`.
-Status: governing plan in execution; BO-01 through BO-05 verified; BO-06 partial; quiet-start runner integration verified and next control inputs frozen; a fresh control and development sequence remain unrun.
+Status: governing plan in execution; BO-01 through BO-05 verified; BO-06 partial; the fresh quiet-start control passed; development stopped after 17 of 42 builds because storage pressure prevented the next launch.
 
 This plan records the direction agreed after the research review and its
 discussion. It owns research priorities, sequencing and the
@@ -139,7 +139,7 @@ the outcome may be negative. Advance only on the outcome required below.
 | BO-03 | Estimate realistic whole-build opportunity per candidate | BO-01; measurement readiness before fresh timing | verified; [five candidate assessments](../../benchmarks/results/buildopt-product-viability-v1/bo-03-opportunity-assessment/README.md); only Checkstyle warrants the planned short screen after readiness checks; missing workflow evidence remains unqualified |
 | BO-04 | Admit or reject a focused Build Impact hypothesis | BO-01 and existing evidence review | verified; [no new trial admitted](../../benchmarks/results/buildopt-product-viability-v1/bo-04-build-impact-review/README.md); original savings retained |
 | BO-05 | Select a candidate through short comparisons | BO-02 as applicable, BO-03, early BO-06 correctness, and BO-04 for Build Impact | verified; [both fresh sequences passed](../../benchmarks/results/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay/README.md), saving 34.14% and 28.17%; the interrupted attempt remains separate |
-| BO-06 | Qualify correctness and freeze the implementation and protocol | Admitted opportunity; screen integration proof before BO-05, final freeze afterward | partial; [quiet-start integration](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-quiet-start-integration/README.md) verified with retained waiting costs and outer-process observations; new control inputs admitted; a fresh passing control and complete development sequence remain required |
+| BO-06 | Qualify correctness and freeze the implementation and protocol | Admitted opportunity; screen integration proof before BO-05, final freeze afterward | partial; the fresh quiet-start control passed with a 0.132-second difference (0.103%); all eight builds and eight output comparisons passed; [development stopped after 17 of 42 builds](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-quiet-measurement/README.md) because the next launch could not obtain low storage pressure |
 | BO-07 | Establish sustained saving in the first repository | BO-05 and complete BO-06 | deferred |
 | BO-08 | Test the same mechanism on two other repositories | BO-07 positive | deferred |
 | BO-09 | Deliver and measure an MVP with manual controls | BO-08 positive | deferred |
@@ -491,6 +491,38 @@ preparation. No owner allocation was activated by this integration block.
 The full-tree disk guard remains unchanged; its contribution to the earlier
 supervisor cost is still unproven. BO-06 remains partial. Current state:
 `.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/task-state.json`.
+
+**Quiet-start measurement closed, 2026-09-15:** the authorized control passed:
+128.494 versus 128.363 seconds across the three measured changes. Individual
+differences were 0.745, 0.434 and 0.443 seconds. All eight builds, four live
+comparisons and four independent reconstructions passed. This qualifies the
+registered control; it does not establish general precision or a correction's
+saving.
+
+The genuine control admitted the 42-build development sequence. Seventeen builds
+completed successfully. Eight pairs passed both live and independent comparison;
+the native side at change 8 also completed but has no candidate comparison.
+The candidate side was refused before launch after the full three-minute wait:
+storage-wait pressure exceeded 10% in all 179 observed intervals. The remaining
+25 builds did not run. Nine completed development builds also retain their
+registered host-pressure flags; a quiet start does not guarantee a quiet build.
+
+The [control and interrupted development result](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-quiet-measurement/README.md)
+retains every scheduled outcome, the unpaired build and the refusal. The runner's
+`INCOMPLETE_EVIDENCE` result is unchanged. Its conservative counter keeps the
+unlaunched reservation as unknown; the timeout receipt and pre-launch return path
+explain that reservation without changing the raw result. No complete-sequence
+saving is claimed. The allocation and all four worker sessions are closed, with
+25 owner builds and 24 comparison JVMs, no retries and no protected builds.
+
+Next, use these retained observations to investigate sustained storage pressure
+and define the conditions for a complete development run. The exact cause is
+unproven. Do not raise thresholds, discard the interruption, resume this closed
+allocation or move to BO-07. Any changed measurement method needs its affected
+proof and inputs checked before another timing allocation. BO-06 and its final
+freeze remain partial; BO-07 and protected changes 21–100 remain deferred.
+Task record:
+`.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/task-state.json`.
 
 ### BO-07: Measure sustained saving on the first repository
 

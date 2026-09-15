@@ -1,0 +1,16 @@
+{
+  "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15",
+  "unchanged": [
+    "common.py",
+    "pipeline.py",
+    "run_trial.py",
+    "analyze_trial_v4.py",
+    "analyze_host.py"
+  ],
+  "changes": {
+    "prepare_trial.py": "Use the published quiet-start proposals, readiness and qualification bindings. Change only run location, allocation limits and genuine readiness evidence.",
+    "reporting/closeout.py": "Check the quiet-start identity instead of the previous control identity."
+  },
+  "measuredSourceChanged": false,
+  "executedOwnerBuilds": 0
+}

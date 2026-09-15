@@ -1,0 +1,17 @@
+{
+  "id": "r1-008-I-source",
+  "class": "research",
+  "purpose": "neutral-source-advancement",
+  "replication": 1,
+  "ordinal": 8,
+  "arm": "I",
+  "attempt": "",
+  "startNS": 352873105882105,
+  "endNS": 352882121242749,
+  "durationNS": 9015360644,
+  "insideEnvelope": false,
+  "workflowStarts": 0,
+  "gradleStarts": 0,
+  "nestedStarts": 0,
+  "bytes": 0
+}

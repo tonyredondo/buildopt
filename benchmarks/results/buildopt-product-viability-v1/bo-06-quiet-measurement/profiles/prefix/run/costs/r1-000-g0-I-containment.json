@@ -1,0 +1,17 @@
+{
+  "id": "r1-000-g0-I-containment",
+  "class": "research",
+  "purpose": "owned-process-supervision",
+  "replication": 1,
+  "ordinal": 0,
+  "arm": "I",
+  "attempt": "r1-000-g0-I",
+  "startNS": 350141081742741,
+  "endNS": 350141193135750,
+  "durationNS": 111393009,
+  "insideEnvelope": false,
+  "workflowStarts": 0,
+  "gradleStarts": 0,
+  "nestedStarts": 0,
+  "bytes": 0
+}

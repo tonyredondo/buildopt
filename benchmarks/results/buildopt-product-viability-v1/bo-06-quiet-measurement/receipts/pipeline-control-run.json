@@ -1,0 +1,13 @@
+{
+  "script": "run_trial.py",
+  "args": [
+    "control"
+  ],
+  "exitCode": 0,
+  "startedUTC": "2026-09-15T10:38:39.976271+00:00",
+  "endedUTC": "2026-09-15T11:38:42.591335+00:00",
+  "log": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/logs/pipeline-control-run.log",
+    "sha256": "742ff9147735ad12c84abbad1d913178cd823c55580e2e2a22d32060a962f11a"
+  }
+}

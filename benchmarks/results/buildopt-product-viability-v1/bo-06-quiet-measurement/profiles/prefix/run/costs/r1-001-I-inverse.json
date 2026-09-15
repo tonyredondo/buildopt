@@ -1,0 +1,17 @@
+{
+  "id": "r1-001-I-inverse",
+  "class": "customer-machine",
+  "purpose": "candidate-inverse",
+  "replication": 1,
+  "ordinal": 1,
+  "arm": "I",
+  "attempt": "",
+  "startNS": 350573476576793,
+  "endNS": 350573479729618,
+  "durationNS": 3152825,
+  "insideEnvelope": false,
+  "workflowStarts": 0,
+  "gradleStarts": 0,
+  "nestedStarts": 0,
+  "bytes": 0
+}

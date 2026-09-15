@@ -1,0 +1,25 @@
+{
+  "schema": "buildopt.history-replay/record/v2",
+  "cost": {
+    "id": "r1-006-g0-N-quiet-start",
+    "class": "research",
+    "purpose": "quiet-start",
+    "replication": 1,
+    "ordinal": 6,
+    "arm": "N",
+    "attempt": "r1-006-g0-N",
+    "startNS": 351842777905165,
+    "endNS": 0,
+    "durationNS": 0,
+    "insideEnvelope": false,
+    "workflowStarts": 0,
+    "gradleStarts": 0,
+    "nestedStarts": 0,
+    "bytes": 0
+  },
+  "at": {
+    "ns": 351842777905165,
+    "utc": "2026-09-15T12:29:31.765057976Z",
+    "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5"
+  }
+}

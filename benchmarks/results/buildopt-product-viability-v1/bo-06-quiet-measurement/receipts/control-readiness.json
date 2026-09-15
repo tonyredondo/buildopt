@@ -1,0 +1,9 @@
+{
+  "schema": "buildopt.lean-research/readiness/v1",
+  "mode": "P_LEAN_RESEARCH_V1",
+  "identity": "b59d6a66c1ba948541d22adf0e7bc9632ff6f3e7b4a3330d86944d4f4ad483cc",
+  "localProof": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/receipts/local-proof.json",
+    "sha256": "b1f99680867a8238a249bf8e24d7e45bb3e227c7e6c05c05d9d8cf6df99492ed"
+  }
+}

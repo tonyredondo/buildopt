@@ -1,0 +1,17 @@
+{
+  "id": "r1-004-g0-N-request",
+  "class": "customer-machine",
+  "purpose": "complete-request",
+  "replication": 1,
+  "ordinal": 4,
+  "arm": "N",
+  "attempt": "r1-004-g0-N",
+  "startNS": 351426063350614,
+  "endNS": 351443975278727,
+  "durationNS": 17911928113,
+  "insideEnvelope": true,
+  "workflowStarts": 1,
+  "gradleStarts": 0,
+  "nestedStarts": 0,
+  "bytes": 0
+}

@@ -1,0 +1,17 @@
+{
+  "id": "r1-007-g0-N-quiet-start",
+  "class": "research",
+  "purpose": "quiet-start",
+  "replication": 1,
+  "ordinal": 7,
+  "arm": "N",
+  "attempt": "r1-007-g0-N",
+  "startNS": 352347733699060,
+  "endNS": 352399190558496,
+  "durationNS": 51456859436,
+  "insideEnvelope": false,
+  "workflowStarts": 0,
+  "gradleStarts": 0,
+  "nestedStarts": 0,
+  "bytes": 0
+}

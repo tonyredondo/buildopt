@@ -1,0 +1,2008 @@
+{
+  "status": "verified incomplete accounting",
+  "decision": "INCOMPLETE_DEVELOPMENT_QUIET_TIMEOUT",
+  "complete": false,
+  "requests": 17,
+  "scheduledBuilds": 42,
+  "unstartedBuilds": 25,
+  "livePairs": 8,
+  "independentPairs": 8,
+  "coverage": [
+    {
+      "ordinal": 0,
+      "arm": "N",
+      "outcome": "COMPLETED_PAIR",
+      "wholeRequestSeconds": 207.950179015,
+      "evidence": [
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-000-g0-N/start.json",
+          "sha256": "452ed8ac81e1c95327de96c2b45b3cef8a3cf45304033ba692fd3bae455d0ebf"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-000-g0-N/native-finish.json",
+          "sha256": "d851e5431ac544e1b9816ae2da252753296e4de10e361e33ae4eb3fab172f0cf"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-000-g0-N/end.json",
+          "sha256": "18524f01eac850cb55b77427764886bf68e57dbab6c064b7bccc528f1f9b560a"
+        }
+      ]
+    },
+    {
+      "ordinal": 0,
+      "arm": "I",
+      "outcome": "COMPLETED_PAIR",
+      "wholeRequestSeconds": 209.709976401,
+      "evidence": [
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-000-g0-I/start.json",
+          "sha256": "f5f23d1fe50693f44534e73890848697523ad1e630cf546697f33930758bb697"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-000-g0-I/native-finish.json",
+          "sha256": "1d271aac423d7ab00ab747f4684aced2f7d99132cb36ecd0a262124b3a380343"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-000-g0-I/end.json",
+          "sha256": "b08e8d6b693922f75bb61324ce5183651833bb9984ba2fa5a480b0899bc2963c"
+        }
+      ]
+    },
+    {
+      "ordinal": 1,
+      "arm": "N",
+      "outcome": "COMPLETED_PAIR",
+      "wholeRequestSeconds": 7.367466469,
+      "evidence": [
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-001-g0-N/start.json",
+          "sha256": "21c293dd0575994cf57f51ef7bcf1c3cd3ce89d9f9cd6a901cccf4055b2b7f73"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-001-g0-N/native-finish.json",
+          "sha256": "13dd3be63bd1e3c8c183264d99f0d6c8f3281207ce59462459152186d3772460"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-001-g0-N/end.json",
+          "sha256": "769ea84ca6624868717585b9766d19355b9df7851fbdf59b11cb7568b3a5aac7"
+        }
+      ]
+    },
+    {
+      "ordinal": 1,
+      "arm": "I",
+      "outcome": "COMPLETED_PAIR",
+      "wholeRequestSeconds": 7.634214737,
+      "evidence": [
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-001-g0-I/start.json",
+          "sha256": "9c0b826c256d9863868d75921faa4a88dd9e54188cc5899634fa7f1c01c23710"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-001-g0-I/native-finish.json",
+          "sha256": "e13a9f3cbeaf7ca598e0796e22ace781e864eeb9ba64af5af9ad99ed7484becc"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-001-g0-I/end.json",
+          "sha256": "5eeb16f8729df6c27065f147bac0238b4597bd4f00c2a8fa204276f19c72c7fb"
+        }
+      ]
+    },
+    {
+      "ordinal": 2,
+      "arm": "N",
+      "outcome": "COMPLETED_PAIR",
+      "wholeRequestSeconds": 6.189598587,
+      "evidence": [
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-002-g0-N/start.json",
+          "sha256": "c2fec12e4a929cb01ec6c5558cd5779359ccab20d434670a6e16af611d768242"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-002-g0-N/native-finish.json",
+          "sha256": "40cfb9434cb2338639f60c06033a472ab6e614f189718924d5f74c104337d12f"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-002-g0-N/end.json",
+          "sha256": "b0e41aad7816aad45f3d535260a977aa337296524b3adb53239284b8e4eda347"
+        }
+      ]
+    },
+    {
+      "ordinal": 2,
+      "arm": "I",
+      "outcome": "COMPLETED_PAIR",
+      "wholeRequestSeconds": 6.156591395,
+      "evidence": [
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-002-g0-I/start.json",
+          "sha256": "84b9835413d6e4d70e8d878ed728405282db11745ea6de0f9f22c23604777388"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-002-g0-I/native-finish.json",
+          "sha256": "0a02a26659d536ebec633264a8c2d7b8fafa36840c873510113dea1ef89ac5f6"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-002-g0-I/end.json",
+          "sha256": "92c96449d02f504d79c03e84251c710a2b750c3d7f394dd07e60e3923142bff4"
+        }
+      ]
+    },
+    {
+      "ordinal": 3,
+      "arm": "N",
+      "outcome": "COMPLETED_PAIR",
+      "wholeRequestSeconds": 19.014978694,
+      "evidence": [
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-003-g0-N/start.json",
+          "sha256": "7f721820999f061abbbd331580595525c650edbc7a40f206b3fb40cf3e8438a5"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-003-g0-N/native-finish.json",
+          "sha256": "79a75a5151ee7a646639ed3fc552c1182ffdfc2c9e1cdef417a26c2d15816c11"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-003-g0-N/end.json",
+          "sha256": "5fe3dd0e208f5b9994be9ca7ff9c9c19189f78b3da943085e1949afd1bfe5f4d"
+        }
+      ]
+    },
+    {
+      "ordinal": 3,
+      "arm": "I",
+      "outcome": "COMPLETED_PAIR",
+      "wholeRequestSeconds": 18.323136724,
+      "evidence": [
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-003-g0-I/start.json",
+          "sha256": "2e4494cad27169333a6b0e7ccb618e412de78590da48e07221e5f610840a5c40"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-003-g0-I/native-finish.json",
+          "sha256": "ce7faadab468cbbbe848e6e19b55f403738cac1bf34796c9b11b54f15095e7ff"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-003-g0-I/end.json",
+          "sha256": "d9959ae427ffdc6ac1f2b22b043df36fae0c64d8cd89f1698c17ad22aa09fadf"
+        }
+      ]
+    },
+    {
+      "ordinal": 4,
+      "arm": "N",
+      "outcome": "COMPLETED_PAIR",
+      "wholeRequestSeconds": 17.911928113,
+      "evidence": [
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-004-g0-N/start.json",
+          "sha256": "1a1288d8c3038c1034959ceb2ea46a5623baa3b41680c9dd593afc3adb9cf4e8"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-004-g0-N/native-finish.json",
+          "sha256": "213a9491ca4ca1ad542246874ab489723db86358e1e5367bd6f9068728fa21da"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-004-g0-N/end.json",
+          "sha256": "829244b314aecc8f4887b8413681d7bda8853304047db44cf4b511cf75fdbca7"
+        }
+      ]
+    },
+    {
+      "ordinal": 4,
+      "arm": "I",
+      "outcome": "COMPLETED_PAIR",
+      "wholeRequestSeconds": 17.590338643,
+      "evidence": [
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-004-g0-I/start.json",
+          "sha256": "bc05daa9e390ddffe2dae506db25de4be5c803d9070191e38d727a337c672eff"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-004-g0-I/native-finish.json",
+          "sha256": "4a17066b9215400210897e4da6fe4bf8c7e8810f1da70ea99aa3ce2f12f47d0f"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-004-g0-I/end.json",
+          "sha256": "fde1ab5d2aa69395873e22cc4af3bf0fe764ee315592fc93c7ea56c62ec1de18"
+        }
+      ]
+    },
+    {
+      "ordinal": 5,
+      "arm": "N",
+      "outcome": "COMPLETED_PAIR",
+      "wholeRequestSeconds": 5.889677599,
+      "evidence": [
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-005-g0-N/start.json",
+          "sha256": "7eaac8a84aa5953757c7a0ed85dea9ed11e38e91a546f52621c17f3e771411af"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-005-g0-N/native-finish.json",
+          "sha256": "f824754d62f21ce1818d846d4eeedaabdc146bd52f5a1ce06015e547307f7130"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-005-g0-N/end.json",
+          "sha256": "e9622ec9c05b94fddaf676addd179caa398fb3ccddaee07d52494be8cd52e241"
+        }
+      ]
+    },
+    {
+      "ordinal": 5,
+      "arm": "I",
+      "outcome": "COMPLETED_PAIR",
+      "wholeRequestSeconds": 5.989371392,
+      "evidence": [
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-005-g0-I/start.json",
+          "sha256": "948eeae331c97ebc42b53e1a3d4b235f59426887297fb6c46224545527072212"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-005-g0-I/native-finish.json",
+          "sha256": "eaa189925d7836a1d29ae0acb116e8875cc686d33663df3478ef56d2bf1bbc45"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-005-g0-I/end.json",
+          "sha256": "254020c87d834f88c705a5ecdcffa1fa2f3acfaa92a5cc58597dfb6b15f56cfb"
+        }
+      ]
+    },
+    {
+      "ordinal": 6,
+      "arm": "N",
+      "outcome": "COMPLETED_PAIR",
+      "wholeRequestSeconds": 5.969556235,
+      "evidence": [
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-006-g0-N/start.json",
+          "sha256": "399f0d980d3f1f5a4219a1a719491b7c704cab6322f575741569f1bd9482c301"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-006-g0-N/native-finish.json",
+          "sha256": "d3d62065adc674941f946b94f6cefcdf3a5816e003a5e303827456c344810a42"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-006-g0-N/end.json",
+          "sha256": "eb443c6bd547d47833daf16882d461aea75261b1d73dda60a7a44f21483563fe"
+        }
+      ]
+    },
+    {
+      "ordinal": 6,
+      "arm": "I",
+      "outcome": "COMPLETED_PAIR",
+      "wholeRequestSeconds": 5.845447967,
+      "evidence": [
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-006-g0-I/start.json",
+          "sha256": "1391b78916bdf908658e56d73a30bf17a561654ac3d15551fb931446313ac0bf"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-006-g0-I/native-finish.json",
+          "sha256": "c07acb0993ec58d51d05227de97ce0d582ed268fc55de2588c733f8aa925f842"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-006-g0-I/end.json",
+          "sha256": "9b19df39b1aa5d652872eaac488cf5611738806b7676126f31996218cf44d35e"
+        }
+      ]
+    },
+    {
+      "ordinal": 7,
+      "arm": "N",
+      "outcome": "COMPLETED_PAIR",
+      "wholeRequestSeconds": 125.947449167,
+      "evidence": [
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-007-g0-N/start.json",
+          "sha256": "7dd78adefb4d4bb422ce183bd664deb9269816be2cda2d9519f1e034cd0aceba"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-007-g0-N/native-finish.json",
+          "sha256": "202acd8ea16650edb817e178524205da368e242a1a0b846927c7e8de9e235586"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-007-g0-N/end.json",
+          "sha256": "168fb27ab89edc347c412176fefa117aeb395de1b798514f14af9a90bfa807e1"
+        }
+      ]
+    },
+    {
+      "ordinal": 7,
+      "arm": "I",
+      "outcome": "COMPLETED_PAIR",
+      "wholeRequestSeconds": 87.815194559,
+      "evidence": [
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-007-g0-I/start.json",
+          "sha256": "3ecb5a6d493455ca45218a285f220b3fbda581356aca1d7db04612a3e3bb6f45"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-007-g0-I/native-finish.json",
+          "sha256": "bebd52a0a4fd100448bde5e8ebe7d5301a7d8d272a7252855cab0c32918ac4d8"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-007-g0-I/end.json",
+          "sha256": "1483d813e85f9c8a258759b44c2060e51578f7a12986d81969d2ac5a514bce3f"
+        }
+      ]
+    },
+    {
+      "ordinal": 8,
+      "arm": "N",
+      "outcome": "COMPLETED_UNPAIRED",
+      "wholeRequestSeconds": 7.289710712,
+      "evidence": [
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-008-g0-N/start.json",
+          "sha256": "73a1381bcd58c98a03092299f848ae6fa75c6b6bc2f2ee01ca5fff0d66533635"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-008-g0-N/native-finish.json",
+          "sha256": "845321371b1a89d7166d512641c06c936d12490cb823718e31124d26c1b9f0de"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-008-g0-N/end.json",
+          "sha256": "c5f2258e07f4ed99fc580a3c05e848fb6adf93439fdd9a5cefba40646b82bdfe"
+        }
+      ]
+    },
+    {
+      "ordinal": 8,
+      "arm": "I",
+      "outcome": "NOT_RUN_QUIET",
+      "wholeRequestSeconds": null,
+      "evidence": [
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-008-g0-I/start.json",
+          "sha256": "593dbe3fc1b7bedfbd7d4e304c6a860e63926d8bc4f2546c35bcf25659532870"
+        },
+        {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-008-g0-I/quiet-start.json",
+          "sha256": "e987df9a90ead94b1226ffd58f74dc3feceae404f10eabf9222e0b9b4faa6ab7"
+        }
+      ]
+    },
+    {
+      "ordinal": 9,
+      "arm": "N",
+      "outcome": "NOT_RUN_DEPENDENCY",
+      "wholeRequestSeconds": null,
+      "evidence": []
+    },
+    {
+      "ordinal": 9,
+      "arm": "I",
+      "outcome": "NOT_RUN_DEPENDENCY",
+      "wholeRequestSeconds": null,
+      "evidence": []
+    },
+    {
+      "ordinal": 10,
+      "arm": "N",
+      "outcome": "NOT_RUN_DEPENDENCY",
+      "wholeRequestSeconds": null,
+      "evidence": []
+    },
+    {
+      "ordinal": 10,
+      "arm": "I",
+      "outcome": "NOT_RUN_DEPENDENCY",
+      "wholeRequestSeconds": null,
+      "evidence": []
+    },
+    {
+      "ordinal": 11,
+      "arm": "N",
+      "outcome": "NOT_RUN_DEPENDENCY",
+      "wholeRequestSeconds": null,
+      "evidence": []
+    },
+    {
+      "ordinal": 11,
+      "arm": "I",
+      "outcome": "NOT_RUN_DEPENDENCY",
+      "wholeRequestSeconds": null,
+      "evidence": []
+    },
+    {
+      "ordinal": 12,
+      "arm": "N",
+      "outcome": "NOT_RUN_DEPENDENCY",
+      "wholeRequestSeconds": null,
+      "evidence": []
+    },
+    {
+      "ordinal": 12,
+      "arm": "I",
+      "outcome": "NOT_RUN_DEPENDENCY",
+      "wholeRequestSeconds": null,
+      "evidence": []
+    },
+    {
+      "ordinal": 13,
+      "arm": "N",
+      "outcome": "NOT_RUN_DEPENDENCY",
+      "wholeRequestSeconds": null,
+      "evidence": []
+    },
+    {
+      "ordinal": 13,
+      "arm": "I",
+      "outcome": "NOT_RUN_DEPENDENCY",
+      "wholeRequestSeconds": null,
+      "evidence": []
+    },
+    {
+      "ordinal": 14,
+      "arm": "N",
+      "outcome": "NOT_RUN_DEPENDENCY",
+      "wholeRequestSeconds": null,
+      "evidence": []
+    },
+    {
+      "ordinal": 14,
+      "arm": "I",
+      "outcome": "NOT_RUN_DEPENDENCY",
+      "wholeRequestSeconds": null,
+      "evidence": []
+    },
+    {
+      "ordinal": 15,
+      "arm": "N",
+      "outcome": "NOT_RUN_DEPENDENCY",
+      "wholeRequestSeconds": null,
+      "evidence": []
+    },
+    {
+      "ordinal": 15,
+      "arm": "I",
+      "outcome": "NOT_RUN_DEPENDENCY",
+      "wholeRequestSeconds": null,
+      "evidence": []
+    },
+    {
+      "ordinal": 16,
+      "arm": "N",
+      "outcome": "NOT_RUN_DEPENDENCY",
+      "wholeRequestSeconds": null,
+      "evidence": []
+    },
+    {
+      "ordinal": 16,
+      "arm": "I",
+      "outcome": "NOT_RUN_DEPENDENCY",
+      "wholeRequestSeconds": null,
+      "evidence": []
+    },
+    {
+      "ordinal": 17,
+      "arm": "N",
+      "outcome": "NOT_RUN_DEPENDENCY",
+      "wholeRequestSeconds": null,
+      "evidence": []
+    },
+    {
+      "ordinal": 17,
+      "arm": "I",
+      "outcome": "NOT_RUN_DEPENDENCY",
+      "wholeRequestSeconds": null,
+      "evidence": []
+    },
+    {
+      "ordinal": 18,
+      "arm": "N",
+      "outcome": "NOT_RUN_DEPENDENCY",
+      "wholeRequestSeconds": null,
+      "evidence": []
+    },
+    {
+      "ordinal": 18,
+      "arm": "I",
+      "outcome": "NOT_RUN_DEPENDENCY",
+      "wholeRequestSeconds": null,
+      "evidence": []
+    },
+    {
+      "ordinal": 19,
+      "arm": "N",
+      "outcome": "NOT_RUN_DEPENDENCY",
+      "wholeRequestSeconds": null,
+      "evidence": []
+    },
+    {
+      "ordinal": 19,
+      "arm": "I",
+      "outcome": "NOT_RUN_DEPENDENCY",
+      "wholeRequestSeconds": null,
+      "evidence": []
+    },
+    {
+      "ordinal": 20,
+      "arm": "N",
+      "outcome": "NOT_RUN_DEPENDENCY",
+      "wholeRequestSeconds": null,
+      "evidence": []
+    },
+    {
+      "ordinal": 20,
+      "arm": "I",
+      "outcome": "NOT_RUN_DEPENDENCY",
+      "wholeRequestSeconds": null,
+      "evidence": []
+    }
+  ],
+  "result": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/result.json",
+    "sha256": "a59aa744d0db46ad67560df919cd7c1ca39b121117d428b23e9e5b6a6c6ccffb"
+  },
+  "independentResult": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/results/0001.json",
+    "sha256": "a59aa744d0db46ad67560df919cd7c1ca39b121117d428b23e9e5b6a6c6ccffb"
+  },
+  "runnerDecision": "INCOMPLETE_EVIDENCE",
+  "runnerUnknownReservations": 1,
+  "unknownReservationExplanation": "The runner conservatively retains the unlaunched I8 reservation as unknown. The timeout receipt and frozen pre-launch return path identify why it has no native invocation; the runner result is not rewritten.",
+  "refusal": {
+    "evidence": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-008-g0-I/quiet-start.json",
+      "sha256": "e987df9a90ead94b1226ffd58f74dc3feceae404f10eabf9222e0b9b4faa6ab7"
+    },
+    "seconds": 180.00015015,
+    "intervals": 179,
+    "pressure": {
+      "cpu": {
+        "intervalsAboveThreshold": 0,
+        "weightedFraction": 0.0009334411264721045,
+        "maximumFraction": 0.0030894936471540227
+      },
+      "io": {
+        "intervalsAboveThreshold": 179,
+        "weightedFraction": 0.7742987935516025,
+        "maximumFraction": 0.9810902102517924
+      },
+      "memory": {
+        "intervalsAboveThreshold": 2,
+        "weightedFraction": 0.005268587680877283,
+        "maximumFraction": 0.4373789495736276
+      }
+    },
+    "intervalsData": [
+      {
+        "seconds": 1.000227278,
+        "pressure": {
+          "cpu": 0.0011567370991055895,
+          "io": 0.7168660721128624,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.00031345,
+        "pressure": {
+          "cpu": 0.0013535757216900362,
+          "io": 0.839836753169719,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.00021016,
+        "pressure": {
+          "cpu": 0.0010697751760490016,
+          "io": 0.9598942686205068,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000202932,
+        "pressure": {
+          "cpu": 0.0007468484405522618,
+          "io": 0.9636904363723661,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000196764,
+        "pressure": {
+          "cpu": 0.0017076639932020416,
+          "io": 0.7996496577347455,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000209824,
+        "pressure": {
+          "cpu": 0.0016866461011684683,
+          "io": 0.8530580079565385,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000311236,
+        "pressure": {
+          "cpu": 0.0015615140006285005,
+          "io": 0.9730921386951211,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000214108,
+        "pressure": {
+          "cpu": 0.0014766838301784881,
+          "io": 0.9420443007788488,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.001213379,
+        "pressure": {
+          "cpu": 0.0011346232719489059,
+          "io": 0.9649741206664398,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000196648,
+        "pressure": {
+          "cpu": 0.0018086443337090648,
+          "io": 0.8253346995819966,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000293451,
+        "pressure": {
+          "cpu": 0.0008667456526214926,
+          "io": 0.8015277908682419,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000210163,
+        "pressure": {
+          "cpu": 0.0009328039591215391,
+          "io": 0.9282289206253546,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000200384,
+        "pressure": {
+          "cpu": 0.0010237948478931998,
+          "io": 0.9677100863820505,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000234986,
+        "pressure": {
+          "cpu": 0.000848800543755425,
+          "io": 0.9733452774866246,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.001117085,
+        "pressure": {
+          "cpu": 0.0010927792726661938,
+          "io": 0.866911586070874,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000190767,
+        "pressure": {
+          "cpu": 0.001390734693714684,
+          "io": 0.5309567109811163,
+          "memory": 0.02248571046847106
+        }
+      },
+      {
+        "seconds": 1.000287128,
+        "pressure": {
+          "cpu": 0.0006098249021954824,
+          "io": 0.9701514423566591,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000303669,
+        "pressure": {
+          "cpu": 0.0004648588367818933,
+          "io": 0.5719243243123604,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000196252,
+        "pressure": {
+          "cpu": 0.00045890993800684626,
+          "io": 0.879008492825266,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000187821,
+        "pressure": {
+          "cpu": 0.000521901975848994,
+          "io": 0.7734267342173525,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000282494,
+        "pressure": {
+          "cpu": 0.0017675006916596102,
+          "io": 0.6266299807902066,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000342123,
+        "pressure": {
+          "cpu": 0.0008467103209248742,
+          "io": 0.6014702232028272,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000326155,
+        "pressure": {
+          "cpu": 0.00048584154035240636,
+          "io": 0.9577356297356836,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000204837,
+        "pressure": {
+          "cpu": 0.0007668429221963461,
+          "io": 0.4238851726328934,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000335209,
+        "pressure": {
+          "cpu": 0.0008727074606048381,
+          "io": 0.7779572217376586,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000194118,
+        "pressure": {
+          "cpu": 0.0016876723924105302,
+          "io": 0.6626523672477745,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.00019011,
+        "pressure": {
+          "cpu": 0.0009818133474645135,
+          "io": 0.9781550429447857,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000200431,
+        "pressure": {
+          "cpu": 0.0008268342767790709,
+          "io": 0.9136358790471267,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000291485,
+        "pressure": {
+          "cpu": 0.0007787729993522838,
+          "io": 0.978325832694657,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000194504,
+        "pressure": {
+          "cpu": 0.000959813312471471,
+          "io": 0.9530636253126222,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000186565,
+        "pressure": {
+          "cpu": 0.00147872412183421,
+          "io": 0.7509638964206643,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000249317,
+        "pressure": {
+          "cpu": 0.0011967016419367372,
+          "io": 0.947105870405708,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000343999,
+        "pressure": {
+          "cpu": 0.0008107211127479358,
+          "io": 0.7620068703985897,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000240621,
+        "pressure": {
+          "cpu": 0.0006048544593151451,
+          "io": 0.9554880895004163,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.00023186,
+        "pressure": {
+          "cpu": 0.0007438275361474688,
+          "io": 0.6631402443029559,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000209021,
+        "pressure": {
+          "cpu": 0.0027844179981656053,
+          "io": 0.5433324321117076,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000217672,
+        "pressure": {
+          "cpu": 0.0011747442910606763,
+          "io": 0.7914797170270353,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000351114,
+        "pressure": {
+          "cpu": 0.0007497367569283278,
+          "io": 0.5075637872484041,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000197474,
+        "pressure": {
+          "cpu": 0.0009328157931340666,
+          "io": 0.6994558756504118,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000225277,
+        "pressure": {
+          "cpu": 0.0008828011252109159,
+          "io": 0.8980676860058997,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.001166318,
+        "pressure": {
+          "cpu": 0.0012005997189370088,
+          "io": 0.6872814113189133,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.001015291,
+        "pressure": {
+          "cpu": 0.002052915693172963,
+          "io": 0.38900504667715413,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000393599,
+        "pressure": {
+          "cpu": 0.0004818103599241442,
+          "io": 0.740440563334712,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000337892,
+        "pressure": {
+          "cpu": 0.0005228233421752657,
+          "io": 0.9473638933193586,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000203242,
+        "pressure": {
+          "cpu": 0.0009418085849395797,
+          "io": 0.8268059583034225,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000591113,
+        "pressure": {
+          "cpu": 0.0008984689033511334,
+          "io": 0.8951268788652533,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000282644,
+        "pressure": {
+          "cpu": 0.0011106860712460787,
+          "io": 0.49680658060083266,
+          "memory": 0.0033520525624555373
+        }
+      },
+      {
+        "seconds": 1.001206237,
+        "pressure": {
+          "cpu": 0.0004674361612072139,
+          "io": 0.527619565757859,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000254385,
+        "pressure": {
+          "cpu": 0.0006938235017085179,
+          "io": 0.9644106683921211,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000219918,
+        "pressure": {
+          "cpu": 0.0005798724756049099,
+          "io": 0.9665084473952658,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000243998,
+        "pressure": {
+          "cpu": 0.0007318214370330068,
+          "io": 0.6908274394864202,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000214089,
+        "pressure": {
+          "cpu": 0.0012557311617713075,
+          "io": 0.6606445632660949,
+          "memory": 0.007727345660294933
+        }
+      },
+      {
+        "seconds": 1.000310101,
+        "pressure": {
+          "cpu": 0.0007297736964469581,
+          "io": 0.669830284958804,
+          "memory": 0.03364256740620477
+        }
+      },
+      {
+        "seconds": 1.000344152,
+        "pressure": {
+          "cpu": 0.000760738190430287,
+          "io": 0.5481443550239298,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000225861,
+        "pressure": {
+          "cpu": 0.0005168832562308644,
+          "io": 0.691251873160676,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000201644,
+        "pressure": {
+          "cpu": 0.00043291270575036167,
+          "io": 0.9617810626194092,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000338306,
+        "pressure": {
+          "cpu": 0.0007367507527998233,
+          "io": 0.42747538251324346,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000270468,
+        "pressure": {
+          "cpu": 0.00035590373942740453,
+          "io": 0.957964901149116,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000221907,
+        "pressure": {
+          "cpu": 0.000484892398982419,
+          "io": 0.6662471550925548,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.00032473,
+        "pressure": {
+          "cpu": 0.0012256020102592085,
+          "io": 0.4426752500660461,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000281581,
+        "pressure": {
+          "cpu": 0.0010946917556007663,
+          "io": 0.8944651356126491,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000211631,
+        "pressure": {
+          "cpu": 0.0006608601415073927,
+          "io": 0.6945230173993048,
+          "memory": 0.00589975142970518
+        }
+      },
+      {
+        "seconds": 1.000271633,
+        "pressure": {
+          "cpu": 0.0004568758974293536,
+          "io": 0.7779346872670936,
+          "memory": 0.007184048575333337
+        }
+      },
+      {
+        "seconds": 1.000197194,
+        "pressure": {
+          "cpu": 0.0005298955077852377,
+          "io": 0.7979966398506013,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000208494,
+        "pressure": {
+          "cpu": 0.00037592162259721823,
+          "io": 0.9658446271902986,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000208546,
+        "pressure": {
+          "cpu": 0.00038991868401812274,
+          "io": 0.976291398334043,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000432237,
+        "pressure": {
+          "cpu": 0.0004747947761303497,
+          "io": 0.8907249957000336,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000270498,
+        "pressure": {
+          "cpu": 0.0013506346560268141,
+          "io": 0.8788702673504223,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.001256151,
+        "pressure": {
+          "cpu": 0.0009677843167627142,
+          "io": 0.9569908749554339,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.00025323,
+        "pressure": {
+          "cpu": 0.0008087951887943417,
+          "io": 0.44446344852093106,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.001167874,
+        "pressure": {
+          "cpu": 0.000785083121834171,
+          "io": 0.9810902102517924,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000320392,
+        "pressure": {
+          "cpu": 0.000828734480102451,
+          "io": 0.9650897929510568,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.001186586,
+        "pressure": {
+          "cpu": 0.0011536311174668494,
+          "io": 0.6229308389874892,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000259175,
+        "pressure": {
+          "cpu": 0.0006258377984885768,
+          "io": 0.9696586887093538,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.001202557,
+        "pressure": {
+          "cpu": 0.0005852961480201254,
+          "io": 0.8004394259652295,
+          "memory": 0.019062076766150328
+        }
+      },
+      {
+        "seconds": 1.000196797,
+        "pressure": {
+          "cpu": 0.0007018618756884502,
+          "io": 0.9708749347254708,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000323638,
+        "pressure": {
+          "cpu": 0.000664784850360599,
+          "io": 0.8932139220327012,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.00019981,
+        "pressure": {
+          "cpu": 0.0013157371025695355,
+          "io": 0.6489823268412739,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.00020581,
+        "pressure": {
+          "cpu": 0.0007088541107354695,
+          "io": 0.6601011445834333,
+          "memory": 0.09323581113770975
+        }
+      },
+      {
+        "seconds": 1.000350913,
+        "pressure": {
+          "cpu": 0.0005398105734522381,
+          "io": 0.640282316611431,
+          "memory": 0.13650709788475995
+        }
+      },
+      {
+        "seconds": 1.000204232,
+        "pressure": {
+          "cpu": 0.0008708221502506101,
+          "io": 0.8639315575301425,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000206033,
+        "pressure": {
+          "cpu": 0.001372717174962291,
+          "io": 0.6252911693844982,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000288195,
+        "pressure": {
+          "cpu": 0.0009897147691521042,
+          "io": 0.7586113719956478,
+          "memory": 0.4373789495736276
+        }
+      },
+      {
+        "seconds": 1.001145557,
+        "pressure": {
+          "cpu": 0.0004864427521002323,
+          "io": 0.9528584463367897,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000257326,
+        "pressure": {
+          "cpu": 0.0003439115026286746,
+          "io": 0.961731521474505,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000207198,
+        "pressure": {
+          "cpu": 0.00028194158226803724,
+          "io": 0.9518247838084445,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.00024688,
+        "pressure": {
+          "cpu": 0.00033591706879405615,
+          "io": 0.967282197371113,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.001195801,
+        "pressure": {
+          "cpu": 0.0012405165890223306,
+          "io": 0.6309684872519756,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000191322,
+        "pressure": {
+          "cpu": 0.0008358400854031805,
+          "io": 0.9761182471047274,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000202022,
+        "pressure": {
+          "cpu": 0.0004329125421424113,
+          "io": 0.808206724461111,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000205594,
+        "pressure": {
+          "cpu": 0.0007148530305060461,
+          "io": 0.7029404796550258,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000202944,
+        "pressure": {
+          "cpu": 0.0004749036211595074,
+          "io": 0.542854830869204,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000207045,
+        "pressure": {
+          "cpu": 0.0004129145081156672,
+          "io": 0.8645789932423441,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000200397,
+        "pressure": {
+          "cpu": 0.0008088379113090874,
+          "io": 0.4652737605342102,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.001160929,
+        "pressure": {
+          "cpu": 0.0007890839295827134,
+          "io": 0.8147271596133173,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000382778,
+        "pressure": {
+          "cpu": 0.0007876984863487924,
+          "io": 0.8421296512963361,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.001176172,
+        "pressure": {
+          "cpu": 0.0007211518014433927,
+          "io": 0.9682411818326815,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.00030859,
+        "pressure": {
+          "cpu": 0.0008447393218926571,
+          "io": 0.6517178863774428,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000215242,
+        "pressure": {
+          "cpu": 0.0019525797228352976,
+          "io": 0.8377806744120782,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000175572,
+        "pressure": {
+          "cpu": 0.00025095593916384915,
+          "io": 0.9367155389793903,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000441805,
+        "pressure": {
+          "cpu": 0.0007196820408759308,
+          "io": 0.9495204970967801,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000247985,
+        "pressure": {
+          "cpu": 0.0007388167845196909,
+          "io": 0.9608057345899077,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.001163347,
+        "pressure": {
+          "cpu": 0.0009808589207171605,
+          "io": 0.9525818168011698,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000238128,
+        "pressure": {
+          "cpu": 0.0020775052878208218,
+          "io": 0.35716494902501855,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000211058,
+        "pressure": {
+          "cpu": 0.0009368022803843066,
+          "io": 0.7297699762083614,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000219259,
+        "pressure": {
+          "cpu": 0.0003229291948676625,
+          "io": 0.7192882895689174,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.001166721,
+        "pressure": {
+          "cpu": 0.00015182286507503678,
+          "io": 0.9512241867655926,
+          "memory": 0.00014283335332717276
+        }
+      },
+      {
+        "seconds": 1.000205721,
+        "pressure": {
+          "cpu": 0.0001459699709116141,
+          "io": 0.957730974626169,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.001231135,
+        "pressure": {
+          "cpu": 0.0010107556233756156,
+          "io": 0.7159086198413117,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000349873,
+        "pressure": {
+          "cpu": 0.0009016845249302091,
+          "io": 0.8951987941123075,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000208232,
+        "pressure": {
+          "cpu": 0.0007618413602498724,
+          "io": 0.8392722366636151,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000206297,
+        "pressure": {
+          "cpu": 0.000908812514704654,
+          "io": 0.7858288858583341,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000345917,
+        "pressure": {
+          "cpu": 0.0007517399603681294,
+          "io": 0.6985993426112019,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000198448,
+        "pressure": {
+          "cpu": 0.0019296170713514246,
+          "io": 0.5423863645107355,
+          "memory": 0.028159411821042937
+        }
+      },
+      {
+        "seconds": 1.000344318,
+        "pressure": {
+          "cpu": 0.0007697349663958405,
+          "io": 0.6262793607430677,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000299469,
+        "pressure": {
+          "cpu": 0.0004358694706055072,
+          "io": 0.9654858669129215,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.00021638,
+        "pressure": {
+          "cpu": 0.0007578360194421131,
+          "io": 0.7177376959173574,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000307462,
+        "pressure": {
+          "cpu": 0.000668794371145059,
+          "io": 0.9476806242199161,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000198402,
+        "pressure": {
+          "cpu": 0.0009388137374768571,
+          "io": 0.6523595705564824,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000513143,
+        "pressure": {
+          "cpu": 0.001144412752606889,
+          "io": 0.8746261916921165,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000265975,
+        "pressure": {
+          "cpu": 0.0017655304130483895,
+          "io": 0.6681422908541901,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000272985,
+        "pressure": {
+          "cpu": 0.0007497953171253546,
+          "io": 0.6408550561824881,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000263787,
+        "pressure": {
+          "cpu": 0.0007438037942285318,
+          "io": 0.7574781871014591,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000221458,
+        "pressure": {
+          "cpu": 0.000779827301005574,
+          "io": 0.8446999344419184,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000214219,
+        "pressure": {
+          "cpu": 0.0014786832379554485,
+          "io": 0.5142678340588558,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.00018298,
+        "pressure": {
+          "cpu": 0.0007678594970692262,
+          "io": 0.7162349433300694,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000212921,
+        "pressure": {
+          "cpu": 0.0015586681268237685,
+          "io": 0.7267122676972496,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.001218952,
+        "pressure": {
+          "cpu": 0.0009378567975808752,
+          "io": 0.8263956633533641,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000334562,
+        "pressure": {
+          "cpu": 0.0008537143796097291,
+          "io": 0.8135188275140293,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000262062,
+        "pressure": {
+          "cpu": 0.0014746135598212862,
+          "io": 0.46915505228868715,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000205856,
+        "pressure": {
+          "cpu": 0.0012017526120143012,
+          "io": 0.9345346204411744,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.001201807,
+        "pressure": {
+          "cpu": 0.0009348764589275257,
+          "io": 0.9259172261961369,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000257366,
+        "pressure": {
+          "cpu": 0.0008707758918918073,
+          "io": 0.9069315866452714,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000222897,
+        "pressure": {
+          "cpu": 0.0008248161509544007,
+          "io": 0.6956319457261935,
+          "memory": 0.021713160201730516
+        }
+      },
+      {
+        "seconds": 1.001228809,
+        "pressure": {
+          "cpu": 0.0014412290048278066,
+          "io": 0.7627307495903266,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.00118039,
+        "pressure": {
+          "cpu": 0.001148644151929504,
+          "io": 0.9487371201906981,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.00120754,
+        "pressure": {
+          "cpu": 0.0010177710008056871,
+          "io": 0.9329304491654148,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000363761,
+        "pressure": {
+          "cpu": 0.0012415483731222448,
+          "io": 0.7192193760405521,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000254721,
+        "pressure": {
+          "cpu": 0.0010947211515335603,
+          "io": 0.6416565566002462,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000216233,
+        "pressure": {
+          "cpu": 0.0017456225388015672,
+          "io": 0.6073946612302182,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000403154,
+        "pressure": {
+          "cpu": 0.0006807255627664685,
+          "io": 0.6709205157104093,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000395205,
+        "pressure": {
+          "cpu": 0.00096361917288478,
+          "io": 0.732655450902526,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000376447,
+        "pressure": {
+          "cpu": 0.0013534904825683086,
+          "io": 0.9542487759110546,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.001134928,
+        "pressure": {
+          "cpu": 0.0030894936471540227,
+          "io": 0.749756080830695,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000240151,
+        "pressure": {
+          "cpu": 0.0007768134474737757,
+          "io": 0.5337668153655232,
+          "memory": 0.01586618971867287
+        }
+      },
+      {
+        "seconds": 1.000343541,
+        "pressure": {
+          "cpu": 0.0006177877645735706,
+          "io": 0.905110057585707,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000279649,
+        "pressure": {
+          "cpu": 0.0009467352464350697,
+          "io": 0.5534142382616843,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000208918,
+        "pressure": {
+          "cpu": 0.0006668606808002886,
+          "io": 0.7236748113057716,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000316282,
+        "pressure": {
+          "cpu": 0.0007617590693180379,
+          "io": 0.6101170309652123,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000209264,
+        "pressure": {
+          "cpu": 0.0009607989393707516,
+          "io": 0.9763366878793476,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000225635,
+        "pressure": {
+          "cpu": 0.0023454707797006223,
+          "io": 0.6308786516954247,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000201412,
+        "pressure": {
+          "cpu": 0.0009588068847877212,
+          "io": 0.5618448377075477,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000214865,
+        "pressure": {
+          "cpu": 0.0010357774476787045,
+          "io": 0.9650216506230389,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000350727,
+        "pressure": {
+          "cpu": 0.001043633969388818,
+          "io": 0.9566494771988104,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.001194811,
+        "pressure": {
+          "cpu": 0.0009019223732273219,
+          "io": 0.9585307369316759,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.001246471,
+        "pressure": {
+          "cpu": 0.001585024313159352,
+          "io": 0.3810590209810587,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000208118,
+        "pressure": {
+          "cpu": 0.0010757761116272004,
+          "io": 0.9644082892756525,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.00018942,
+        "pressure": {
+          "cpu": 0.0009318234939937677,
+          "io": 0.7814739731999965,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000485081,
+        "pressure": {
+          "cpu": 0.0007356431534834651,
+          "io": 0.9685821591976342,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000194293,
+        "pressure": {
+          "cpu": 0.0004959036493922486,
+          "io": 0.4670222608438739,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000198123,
+        "pressure": {
+          "cpu": 0.0019416153213476885,
+          "io": 0.6089833463924627,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000213014,
+        "pressure": {
+          "cpu": 0.0007328438939907655,
+          "io": 0.640138641507418,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000218624,
+        "pressure": {
+          "cpu": 0.0006798513681744843,
+          "io": 0.6897691998984414,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000266565,
+        "pressure": {
+          "cpu": 0.0006668222485273213,
+          "io": 0.785687563194717,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000200449,
+        "pressure": {
+          "cpu": 0.0009318132189720703,
+          "io": 0.690851519503767,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000195127,
+        "pressure": {
+          "cpu": 0.00098180842266791,
+          "io": 0.7115201632051142,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000167429,
+        "pressure": {
+          "cpu": 0.0003449422466645832,
+          "io": 0.7971885275220255,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.00019436,
+        "pressure": {
+          "cpu": 0.0008068431819591545,
+          "io": 0.7201130388297731,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000183382,
+        "pressure": {
+          "cpu": 0.000331939128338767,
+          "io": 0.9792624208987307,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.00019296,
+        "pressure": {
+          "cpu": 0.0005438950500111498,
+          "io": 0.6588508681364844,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000193132,
+        "pressure": {
+          "cpu": 0.001274753804248278,
+          "io": 0.8369003677581741,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000164923,
+        "pressure": {
+          "cpu": 0.0007498763281463331,
+          "io": 0.7605535672240327,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000183705,
+        "pressure": {
+          "cpu": 0.0009368279000306249,
+          "io": 0.7608162342536864,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000185664,
+        "pressure": {
+          "cpu": 0.0006378815683564927,
+          "io": 0.5090384898778153,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000198147,
+        "pressure": {
+          "cpu": 0.0006508710318576505,
+          "io": 0.8043076288562651,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000207867,
+        "pressure": {
+          "cpu": 0.0009538017360945232,
+          "io": 0.5117406260112929,
+          "memory": 0.016351601041746256
+        }
+      },
+      {
+        "seconds": 1.000184887,
+        "pressure": {
+          "cpu": 0.001705684641083764,
+          "io": 0.8064269021493423,
+          "memory": 0.0
+        }
+      },
+      {
+        "seconds": 1.000202078,
+        "pressure": {
+          "cpu": 0.0007118561495330146,
+          "io": 0.4169127511050822,
+          "memory": 0.04723345515784861
+        }
+      },
+      {
+        "seconds": 1.000179771,
+        "pressure": {
+          "cpu": 0.0004879122875201602,
+          "io": 0.7650194716845558,
+          "memory": 0.04721851148097255
+        }
+      }
+    ]
+  },
+  "netSaving": null,
+  "interpretation": "The scheduled sequence is incomplete. Completed pairs cannot qualify a complete-prefix or product saving. Storage pressure is observed, not attributed to a particular process; PSI is stall time, not disk utilization."
+}

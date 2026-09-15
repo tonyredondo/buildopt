@@ -1,0 +1,17 @@
+{
+  "id": "r1-005-g0-N-preflight",
+  "class": "research",
+  "purpose": "source-input-state-proof",
+  "replication": 1,
+  "ordinal": 5,
+  "arm": "N",
+  "attempt": "r1-005-g0-N",
+  "startNS": 351695612998218,
+  "endNS": 351704256893992,
+  "durationNS": 8643895774,
+  "insideEnvelope": false,
+  "workflowStarts": 0,
+  "gradleStarts": 0,
+  "nestedStarts": 0,
+  "bytes": 0
+}

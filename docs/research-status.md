@@ -129,11 +129,30 @@ allocation for the eight-build control, followed by the complete 42-build
 development sequence only if it passes. Existing ceilings and stopping rules
 remain unchanged. No owner allocation was activated here. The disk guard's
 contribution to supervisor cost remains unproven and its checks are unchanged.
-A fresh passing control and complete development sequence remain prerequisites
-for the final BO-06 freeze. Earlier negative and incomplete results remain as
-recorded. Any result in this mode describes the recorded workflow; BO-09 still
-needs the ordinary-workflow comparison. Current task record:
-`.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/task-state.json`.
+The fresh quiet-start control has now passed: 128.494 versus 128.363 seconds,
+a 0.132-second difference or 0.103% of the faster side. All eight builds and
+four live plus four independent output comparisons passed. Each measured pair
+differed by less than 0.75 seconds. This is a passing control, not an optimization
+saving or a general precision claim.
+
+The genuine control admitted the 42-build development sequence. The
+[retained result](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-quiet-measurement/README.md)
+is incomplete: 17 builds succeeded, eight pairs passed live and independent
+comparison, and the candidate side at change 8 never launched. It could not find
+a quiet window within three minutes; storage pressure exceeded the threshold in
+all 179 intervals. The unpaired native build and all 25 unrun builds remain in
+the record. Nine completed development builds also carry host-pressure flags.
+A quiet start did not ensure quiet conditions throughout execution.
+
+The allocation and all four worker sessions are closed, with 25 owner builds,
+24 comparison JVMs, no retries and no protected builds. There is no complete
+sequence saving or final BO-06 freeze. Next, investigate sustained storage
+pressure from the retained evidence before specifying another development run;
+its cause remains unproven. Do not resume this allocation or weaken the stopping
+rule. Earlier results retain their recorded outcomes. Any saving in this mode
+would describe the recorded workflow; BO-09 still needs the ordinary-workflow
+comparison. Task record:
+`.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/task-state.json`.
 BO-07 and protected changes 21–100 remain deferred. Generic plan selection/reuse,
 adaptive fragments, runtime sweeps and another general cache remain retired.
 The user has authorized commit and push after each work block. Product viability

@@ -1,0 +1,47 @@
+{
+  "cases": [
+    {
+      "case": "owner-count",
+      "exitCode": 1,
+      "rejected": true,
+      "error": [
+        "    assert owner_starts == close['ownerStarts'] == allocation['actualOwnerStarts'] == 25",
+        "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "AssertionError"
+      ]
+    },
+    {
+      "case": "protected-start",
+      "exitCode": 1,
+      "rejected": true,
+      "error": [
+        "    assert close['protectedStarts'] == close['retries'] == 0",
+        "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "AssertionError"
+      ]
+    },
+    {
+      "case": "missing-refusal-file",
+      "exitCode": 1,
+      "rejected": true,
+      "error": [
+        "    assert missing == {str(refused / name) for name in ('end.json','native-start.json','native-pid.json','native-finish.json','stdout.log','stderr.log','supervisor-cpu.json','graph.jsonl')}",
+        "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "AssertionError"
+      ]
+    },
+    {
+      "case": "false-prefix-pass",
+      "exitCode": 1,
+      "rejected": true,
+      "error": [
+        "    assert close['decision'] == allocation['decision'] == index['decision'] == 'INCOMPLETE_DEVELOPMENT_QUIET_TIMEOUT'",
+        "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+        "AssertionError"
+      ]
+    }
+  ],
+  "passed": true,
+  "ownerBuilds": 0,
+  "comparatorStarts": 0
+}

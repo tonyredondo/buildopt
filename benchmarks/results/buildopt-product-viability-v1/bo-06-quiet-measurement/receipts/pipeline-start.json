@@ -1,0 +1,9 @@
+{
+  "pid": 1919260,
+  "startedUTC": "2026-09-15T10:37:48.107062+00:00",
+  "source": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/pipeline.py",
+    "sha256": "c71388391a5f687e75cb5c3731fbf2250f3c5d8306a04c4a27dd955baf15ab77"
+  },
+  "scope": "8 control builds and, after a passing control, all 42 development builds. No retry or confirmation."
+}

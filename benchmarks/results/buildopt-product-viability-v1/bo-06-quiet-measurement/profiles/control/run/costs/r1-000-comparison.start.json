@@ -1,0 +1,25 @@
+{
+  "schema": "buildopt.history-replay/record/v2",
+  "cost": {
+    "id": "r1-000-comparison",
+    "class": "research",
+    "purpose": "owner-output-comparison",
+    "replication": 1,
+    "ordinal": 0,
+    "arm": "",
+    "attempt": "",
+    "startNS": 347332729601799,
+    "endNS": 0,
+    "durationNS": 0,
+    "insideEnvelope": false,
+    "workflowStarts": 0,
+    "gradleStarts": 0,
+    "nestedStarts": 0,
+    "bytes": 0
+  },
+  "at": {
+    "ns": 347332729601799,
+    "utc": "2026-09-15T11:14:21.71675553Z",
+    "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5"
+  }
+}

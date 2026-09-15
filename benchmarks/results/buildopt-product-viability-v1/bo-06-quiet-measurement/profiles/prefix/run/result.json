@@ -1,0 +1,335 @@
+{
+  "schema": "buildopt.history-replay/result/v2",
+  "manifestSHA256": "bb431e102332dec10272bd0e07812bb9b664fcb45016d3da98d95b7966e216b7",
+  "replications": [
+    {
+      "replication": 1,
+      "scheduled": 0,
+      "comparable": 0,
+      "adoptionNS": 25369882,
+      "maintenanceNS": 0,
+      "unpairedCandidateNS": 0,
+      "nativeNS": 0,
+      "netSavedNS": -25369882,
+      "netFraction": 0,
+      "netPerScheduledNS": 0,
+      "nativeP50NS": 0,
+      "nativeP95NS": 0,
+      "candidateP50NS": 0,
+      "candidateP95NS": 0,
+      "worstRegressionNS": 0,
+      "noActionSlots": 0,
+      "noActionDeltaNS": 0,
+      "noActionAttributedSavingNS": 0,
+      "paybackOrdinal": -1,
+      "temporaryCrossings": [],
+      "curveNS": [],
+      "intervals": [],
+      "customerHumanNS": 0,
+      "researchNS": 3591964536482,
+      "researchRecordingAndOtherNS": 393898017466,
+      "studyMachineNS": 4354584722773,
+      "wholeStudySensitivityNetNS": -4354610092655,
+      "fullyLoadedNetNS": -3591989906364,
+      "complete": false,
+      "gate": "INCOMPLETE_EVIDENCE",
+      "reasons": [
+        "qualification/engineering is not confirmation",
+        "HARNESS_INVALID: NOT_RUN_QUIET: NOT_QUIET_TIMEOUT: quiet-start deadline"
+      ]
+    }
+  ],
+  "slots": [
+    [
+      {
+        "ownerMetadataJVMStarts": 1,
+        "ordinal": 0,
+        "class": "COMPARABLE",
+        "reason": "",
+        "nativeNS": 207950179015,
+        "candidateNS": 209709976401,
+        "extraCandidateNS": 0,
+        "nativeActions": 1249,
+        "candidateActions": 1249,
+        "attempts": [
+          "r1-000-g0-N",
+          "r1-000-g0-I"
+        ]
+      },
+      {
+        "ownerMetadataJVMStarts": 1,
+        "ordinal": 1,
+        "class": "COMPARABLE",
+        "reason": "",
+        "nativeNS": 7367466469,
+        "candidateNS": 7634214737,
+        "extraCandidateNS": 0,
+        "nativeActions": 5,
+        "candidateActions": 5,
+        "attempts": [
+          "r1-001-g0-N",
+          "r1-001-g0-I"
+        ]
+      },
+      {
+        "ownerMetadataJVMStarts": 1,
+        "ordinal": 2,
+        "class": "COMPARABLE",
+        "reason": "",
+        "nativeNS": 6189598587,
+        "candidateNS": 6156591395,
+        "extraCandidateNS": 0,
+        "nativeActions": 1,
+        "candidateActions": 1,
+        "attempts": [
+          "r1-002-g0-N",
+          "r1-002-g0-I"
+        ]
+      },
+      {
+        "ownerMetadataJVMStarts": 1,
+        "ordinal": 3,
+        "class": "COMPARABLE",
+        "reason": "",
+        "nativeNS": 19014978694,
+        "candidateNS": 18323136724,
+        "extraCandidateNS": 0,
+        "nativeActions": 48,
+        "candidateActions": 48,
+        "attempts": [
+          "r1-003-g0-N",
+          "r1-003-g0-I"
+        ]
+      },
+      {
+        "ownerMetadataJVMStarts": 1,
+        "ordinal": 4,
+        "class": "COMPARABLE",
+        "reason": "",
+        "nativeNS": 17911928113,
+        "candidateNS": 17590338643,
+        "extraCandidateNS": 0,
+        "nativeActions": 43,
+        "candidateActions": 43,
+        "attempts": [
+          "r1-004-g0-N",
+          "r1-004-g0-I"
+        ]
+      },
+      {
+        "ownerMetadataJVMStarts": 1,
+        "ordinal": 5,
+        "class": "COMPARABLE",
+        "reason": "",
+        "nativeNS": 5889677599,
+        "candidateNS": 5989371392,
+        "extraCandidateNS": 0,
+        "nativeActions": 1,
+        "candidateActions": 1,
+        "attempts": [
+          "r1-005-g0-N",
+          "r1-005-g0-I"
+        ]
+      },
+      {
+        "ownerMetadataJVMStarts": 1,
+        "ordinal": 6,
+        "class": "COMPARABLE",
+        "reason": "",
+        "nativeNS": 5969556235,
+        "candidateNS": 5845447967,
+        "extraCandidateNS": 0,
+        "nativeActions": 5,
+        "candidateActions": 5,
+        "attempts": [
+          "r1-006-g0-N",
+          "r1-006-g0-I"
+        ]
+      },
+      {
+        "ownerMetadataJVMStarts": 1,
+        "ordinal": 7,
+        "class": "COMPARABLE",
+        "reason": "",
+        "nativeNS": 125947449167,
+        "candidateNS": 87815194559,
+        "extraCandidateNS": 0,
+        "nativeActions": 385,
+        "candidateActions": 385,
+        "attempts": [
+          "r1-007-g0-N",
+          "r1-007-g0-I"
+        ]
+      },
+      {
+        "ownerMetadataJVMStarts": 0,
+        "ordinal": 8,
+        "class": "HARNESS_INVALID",
+        "reason": "partial pair retained without saving",
+        "nativeNS": 0,
+        "candidateNS": 0,
+        "extraCandidateNS": 0,
+        "nativeActions": 0,
+        "candidateActions": 0,
+        "attempts": [
+          "r1-008-g0-N",
+          "r1-008-g0-I"
+        ]
+      },
+      {
+        "ownerMetadataJVMStarts": 0,
+        "ordinal": 9,
+        "class": "NOT_RUN_DEPENDENCY",
+        "reason": "scheduled request depends on incomplete preceding work",
+        "nativeNS": 0,
+        "candidateNS": 0,
+        "extraCandidateNS": 0,
+        "nativeActions": 0,
+        "candidateActions": 0,
+        "attempts": []
+      },
+      {
+        "ownerMetadataJVMStarts": 0,
+        "ordinal": 10,
+        "class": "NOT_RUN_DEPENDENCY",
+        "reason": "scheduled request depends on incomplete preceding work",
+        "nativeNS": 0,
+        "candidateNS": 0,
+        "extraCandidateNS": 0,
+        "nativeActions": 0,
+        "candidateActions": 0,
+        "attempts": []
+      },
+      {
+        "ownerMetadataJVMStarts": 0,
+        "ordinal": 11,
+        "class": "NOT_RUN_DEPENDENCY",
+        "reason": "scheduled request depends on incomplete preceding work",
+        "nativeNS": 0,
+        "candidateNS": 0,
+        "extraCandidateNS": 0,
+        "nativeActions": 0,
+        "candidateActions": 0,
+        "attempts": []
+      },
+      {
+        "ownerMetadataJVMStarts": 0,
+        "ordinal": 12,
+        "class": "NOT_RUN_DEPENDENCY",
+        "reason": "scheduled request depends on incomplete preceding work",
+        "nativeNS": 0,
+        "candidateNS": 0,
+        "extraCandidateNS": 0,
+        "nativeActions": 0,
+        "candidateActions": 0,
+        "attempts": []
+      },
+      {
+        "ownerMetadataJVMStarts": 0,
+        "ordinal": 13,
+        "class": "NOT_RUN_DEPENDENCY",
+        "reason": "scheduled request depends on incomplete preceding work",
+        "nativeNS": 0,
+        "candidateNS": 0,
+        "extraCandidateNS": 0,
+        "nativeActions": 0,
+        "candidateActions": 0,
+        "attempts": []
+      },
+      {
+        "ownerMetadataJVMStarts": 0,
+        "ordinal": 14,
+        "class": "NOT_RUN_DEPENDENCY",
+        "reason": "scheduled request depends on incomplete preceding work",
+        "nativeNS": 0,
+        "candidateNS": 0,
+        "extraCandidateNS": 0,
+        "nativeActions": 0,
+        "candidateActions": 0,
+        "attempts": []
+      },
+      {
+        "ownerMetadataJVMStarts": 0,
+        "ordinal": 15,
+        "class": "NOT_RUN_DEPENDENCY",
+        "reason": "scheduled request depends on incomplete preceding work",
+        "nativeNS": 0,
+        "candidateNS": 0,
+        "extraCandidateNS": 0,
+        "nativeActions": 0,
+        "candidateActions": 0,
+        "attempts": []
+      },
+      {
+        "ownerMetadataJVMStarts": 0,
+        "ordinal": 16,
+        "class": "NOT_RUN_DEPENDENCY",
+        "reason": "scheduled request depends on incomplete preceding work",
+        "nativeNS": 0,
+        "candidateNS": 0,
+        "extraCandidateNS": 0,
+        "nativeActions": 0,
+        "candidateActions": 0,
+        "attempts": []
+      },
+      {
+        "ownerMetadataJVMStarts": 0,
+        "ordinal": 17,
+        "class": "NOT_RUN_DEPENDENCY",
+        "reason": "scheduled request depends on incomplete preceding work",
+        "nativeNS": 0,
+        "candidateNS": 0,
+        "extraCandidateNS": 0,
+        "nativeActions": 0,
+        "candidateActions": 0,
+        "attempts": []
+      },
+      {
+        "ownerMetadataJVMStarts": 0,
+        "ordinal": 18,
+        "class": "NOT_RUN_DEPENDENCY",
+        "reason": "scheduled request depends on incomplete preceding work",
+        "nativeNS": 0,
+        "candidateNS": 0,
+        "extraCandidateNS": 0,
+        "nativeActions": 0,
+        "candidateActions": 0,
+        "attempts": []
+      },
+      {
+        "ownerMetadataJVMStarts": 0,
+        "ordinal": 19,
+        "class": "NOT_RUN_DEPENDENCY",
+        "reason": "scheduled request depends on incomplete preceding work",
+        "nativeNS": 0,
+        "candidateNS": 0,
+        "extraCandidateNS": 0,
+        "nativeActions": 0,
+        "candidateActions": 0,
+        "attempts": []
+      },
+      {
+        "ownerMetadataJVMStarts": 0,
+        "ordinal": 20,
+        "class": "NOT_RUN_DEPENDENCY",
+        "reason": "scheduled request depends on incomplete preceding work",
+        "nativeNS": 0,
+        "candidateNS": 0,
+        "extraCandidateNS": 0,
+        "nativeActions": 0,
+        "candidateActions": 0,
+        "attempts": []
+      }
+    ]
+  ],
+  "workflowStarts": 17,
+  "gradleReservations": 18,
+  "actualGradleStarts": 17,
+  "nestedStarts": 0,
+  "unknownGradleReservations": 1,
+  "decision": "INCOMPLETE_EVIDENCE",
+  "reasons": [
+    "incomplete native invocation accounting",
+    "incomplete or unsafe scheduled horizon"
+  ]
+}

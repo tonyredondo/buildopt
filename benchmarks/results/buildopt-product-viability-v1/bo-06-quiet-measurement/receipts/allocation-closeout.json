@@ -1,0 +1,95 @@
+{
+  "status": "verified",
+  "decision": "INCOMPLETE_DEVELOPMENT_QUIET_TIMEOUT",
+  "ownerStarts": 25,
+  "comparisonJVMs": 24,
+  "ownerReservations": 50,
+  "helperReservations": 50,
+  "retries": 0,
+  "protectedStarts": 0,
+  "allocatedBytes": 29032902656,
+  "freeBytes": 753449013248,
+  "diagnosticBytes": 162345980,
+  "allocation": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/inputs/closed-allocation.json",
+    "sha256": "9a184315eff742ccc7e3c081a17c0e52c69a3f592c095e5946b38f1fe0e4066c"
+  },
+  "measurementIdentity": "b59d6a66c1ba948541d22adf0e7bc9632ff6f3e7b4a3330d86944d4f4ad483cc",
+  "trials": [
+    {
+      "label": "control",
+      "summary": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/analysis/control-summary-v4.json",
+        "sha256": "8050b97554695b40027795f049f89bf87b129cb3737baf512f265e2d396b2cd3"
+      },
+      "decision": "CONTROL_PASSED",
+      "requests": 8,
+      "livePairs": 4,
+      "independentPairs": 4
+    },
+    {
+      "label": "prefix",
+      "summary": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/analysis/prefix-retained-summary.json",
+        "sha256": "1e809586a714547c6c2a7e12210bdc424e0989e9b8f64656729b25b0c259a2a4"
+      },
+      "decision": "INCOMPLETE_DEVELOPMENT_QUIET_TIMEOUT",
+      "requests": 17,
+      "livePairs": 8,
+      "independentPairs": 8
+    }
+  ],
+  "units": [
+    {
+      "unit": "buildopt-replay-83767c66ff2420f0-r1-I-2.service",
+      "status": "inactive",
+      "closure": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/control/run/sessions/r1-000-g0-I/closed.json",
+        "sha256": "2b34d39f68dc3542b0ca41e00e251cd932438d78b8ddc5c4c4f2ceaec23a8080"
+      }
+    },
+    {
+      "unit": "buildopt-replay-83767c66ff2420f0-r1-N-1.service",
+      "status": "inactive",
+      "closure": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/control/run/sessions/r1-000-g0-N/closed.json",
+        "sha256": "9b5203cc86483dc6fc1cbe1d456f9fd403837e3a7bad6a13f6860117cd6a6ef7"
+      }
+    },
+    {
+      "unit": "buildopt-replay-6d711c02adc479f0-r1-I-2.service",
+      "status": "inactive",
+      "closure": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/sessions/r1-000-g0-I/closed.json",
+        "sha256": "b145961e51816e895a0503481202bd610237b45cf1de0ed78e0cb6c3fd98cf78"
+      }
+    },
+    {
+      "unit": "buildopt-replay-6d711c02adc479f0-r1-N-1.service",
+      "status": "inactive",
+      "closure": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/sessions/r1-000-g0-N/closed.json",
+        "sha256": "f8be08b519149257f27181a3f0277c8b0c4ec9edadc33f546ec9b66fb640a738"
+      }
+    }
+  ],
+  "controllers": [
+    {
+      "pid": 1920018,
+      "startTicks": 34519103,
+      "originalProcessAbsent": true
+    },
+    {
+      "pid": 1972716,
+      "startTicks": 34880769,
+      "originalProcessAbsent": true
+    },
+    {
+      "pid": 1919260,
+      "originalProcessAbsent": true
+    }
+  ],
+  "sourcesUnchanged": true,
+  "recordedWorkflowOnly": true,
+  "ordinaryGradleClaim": false
+}

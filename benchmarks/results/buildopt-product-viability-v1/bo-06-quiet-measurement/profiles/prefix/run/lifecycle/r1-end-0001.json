@@ -1,0 +1,12 @@
+{
+  "schema": "buildopt.history-replay/record/v2",
+  "replication": 1,
+  "lastOrdinal": 8,
+  "status": "HARNESS_INVALID",
+  "reason": "NOT_RUN_QUIET: NOT_QUIET_TIMEOUT: quiet-start deadline",
+  "at": {
+    "ns": 353166927868701,
+    "utc": "2026-09-15T12:51:35.915058343Z",
+    "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5"
+  }
+}

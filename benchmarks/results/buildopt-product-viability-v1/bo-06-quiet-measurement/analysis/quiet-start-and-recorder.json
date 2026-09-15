@@ -1,0 +1,2375 @@
+{
+  "scope": "Retained observations; no new builds, retries or output comparisons.",
+  "quietStarts": [
+    {
+      "profile": "control",
+      "attempt": "r1-000-g0-I",
+      "decision": "QUIET_START",
+      "reason": "quiet window",
+      "observationSeconds": 37.014997127,
+      "phaseSeconds": 37.079247382,
+      "samples": 38,
+      "nativeFinishRecorded": true,
+      "launchAgeMS": 301.360474
+    },
+    {
+      "profile": "control",
+      "attempt": "r1-000-g0-N",
+      "decision": "QUIET_START",
+      "reason": "quiet window",
+      "observationSeconds": 38.020667138,
+      "phaseSeconds": 38.091918129,
+      "samples": 39,
+      "nativeFinishRecorded": true,
+      "launchAgeMS": 373.553928
+    },
+    {
+      "profile": "control",
+      "attempt": "r1-001-g0-I",
+      "decision": "QUIET_START",
+      "reason": "quiet window",
+      "observationSeconds": 117.053855571,
+      "phaseSeconds": 117.148595292,
+      "samples": 118,
+      "nativeFinishRecorded": true,
+      "launchAgeMS": 544.234269
+    },
+    {
+      "profile": "control",
+      "attempt": "r1-001-g0-N",
+      "decision": "QUIET_START",
+      "reason": "quiet window",
+      "observationSeconds": 30.009664632,
+      "phaseSeconds": 30.078610896,
+      "samples": 31,
+      "nativeFinishRecorded": true,
+      "launchAgeMS": 348.896074
+    },
+    {
+      "profile": "control",
+      "attempt": "r1-002-g0-I",
+      "decision": "QUIET_START",
+      "reason": "quiet window",
+      "observationSeconds": 46.020705739,
+      "phaseSeconds": 46.078714454,
+      "samples": 47,
+      "nativeFinishRecorded": true,
+      "launchAgeMS": 306.051644
+    },
+    {
+      "profile": "control",
+      "attempt": "r1-002-g0-N",
+      "decision": "QUIET_START",
+      "reason": "quiet window",
+      "observationSeconds": 30.017377607,
+      "phaseSeconds": 30.056146612,
+      "samples": 31,
+      "nativeFinishRecorded": true,
+      "launchAgeMS": 241.155811
+    },
+    {
+      "profile": "control",
+      "attempt": "r1-003-g0-I",
+      "decision": "QUIET_START",
+      "reason": "quiet window",
+      "observationSeconds": 53.024747891,
+      "phaseSeconds": 53.078740798,
+      "samples": 54,
+      "nativeFinishRecorded": true,
+      "launchAgeMS": 280.043098
+    },
+    {
+      "profile": "control",
+      "attempt": "r1-003-g0-N",
+      "decision": "QUIET_START",
+      "reason": "quiet window",
+      "observationSeconds": 41.014222636,
+      "phaseSeconds": 41.268036712,
+      "samples": 42,
+      "nativeFinishRecorded": true,
+      "launchAgeMS": 478.492934
+    },
+    {
+      "profile": "prefix",
+      "attempt": "r1-000-g0-I",
+      "decision": "QUIET_START",
+      "reason": "quiet window",
+      "observationSeconds": 53.027333721,
+      "phaseSeconds": 53.112644006,
+      "samples": 54,
+      "nativeFinishRecorded": true,
+      "launchAgeMS": 513.452779
+    },
+    {
+      "profile": "prefix",
+      "attempt": "r1-000-g0-N",
+      "decision": "QUIET_START",
+      "reason": "quiet window",
+      "observationSeconds": 60.02284861,
+      "phaseSeconds": 60.091673214,
+      "samples": 61,
+      "nativeFinishRecorded": true,
+      "launchAgeMS": 473.25275
+    },
+    {
+      "profile": "prefix",
+      "attempt": "r1-001-g0-I",
+      "decision": "QUIET_START",
+      "reason": "quiet window",
+      "observationSeconds": 49.018369409,
+      "phaseSeconds": 49.090099645,
+      "samples": 50,
+      "nativeFinishRecorded": true,
+      "launchAgeMS": 409.512721
+    },
+    {
+      "profile": "prefix",
+      "attempt": "r1-001-g0-N",
+      "decision": "QUIET_START",
+      "reason": "quiet window",
+      "observationSeconds": 30.013742993,
+      "phaseSeconds": 30.100952255,
+      "samples": 31,
+      "nativeFinishRecorded": true,
+      "launchAgeMS": 423.721623
+    },
+    {
+      "profile": "prefix",
+      "attempt": "r1-002-g0-I",
+      "decision": "QUIET_START",
+      "reason": "quiet window",
+      "observationSeconds": 52.019756162,
+      "phaseSeconds": 52.134263477,
+      "samples": 53,
+      "nativeFinishRecorded": true,
+      "launchAgeMS": 430.106896
+    },
+    {
+      "profile": "prefix",
+      "attempt": "r1-002-g0-N",
+      "decision": "QUIET_START",
+      "reason": "quiet window",
+      "observationSeconds": 41.014042723,
+      "phaseSeconds": 41.200718733,
+      "samples": 42,
+      "nativeFinishRecorded": true,
+      "launchAgeMS": 567.362185
+    },
+    {
+      "profile": "prefix",
+      "attempt": "r1-003-g0-I",
+      "decision": "QUIET_START",
+      "reason": "quiet window",
+      "observationSeconds": 77.031201775,
+      "phaseSeconds": 77.301753761,
+      "samples": 78,
+      "nativeFinishRecorded": true,
+      "launchAgeMS": 721.579232
+    },
+    {
+      "profile": "prefix",
+      "attempt": "r1-003-g0-N",
+      "decision": "QUIET_START",
+      "reason": "quiet window",
+      "observationSeconds": 79.029172626,
+      "phaseSeconds": 79.125791791,
+      "samples": 80,
+      "nativeFinishRecorded": true,
+      "launchAgeMS": 544.58019
+    },
+    {
+      "profile": "prefix",
+      "attempt": "r1-004-g0-I",
+      "decision": "QUIET_START",
+      "reason": "quiet window",
+      "observationSeconds": 42.022270636,
+      "phaseSeconds": 42.112343103,
+      "samples": 43,
+      "nativeFinishRecorded": true,
+      "launchAgeMS": 417.220407
+    },
+    {
+      "profile": "prefix",
+      "attempt": "r1-004-g0-N",
+      "decision": "QUIET_START",
+      "reason": "quiet window",
+      "observationSeconds": 38.014560681,
+      "phaseSeconds": 38.111959852,
+      "samples": 39,
+      "nativeFinishRecorded": true,
+      "launchAgeMS": 478.585226
+    },
+    {
+      "profile": "prefix",
+      "attempt": "r1-005-g0-I",
+      "decision": "QUIET_START",
+      "reason": "quiet window",
+      "observationSeconds": 30.010586654,
+      "phaseSeconds": 30.05639918,
+      "samples": 31,
+      "nativeFinishRecorded": true,
+      "launchAgeMS": 506.302455
+    },
+    {
+      "profile": "prefix",
+      "attempt": "r1-005-g0-N",
+      "decision": "QUIET_START",
+      "reason": "quiet window",
+      "observationSeconds": 33.011957963,
+      "phaseSeconds": 33.089745134,
+      "samples": 34,
+      "nativeFinishRecorded": true,
+      "launchAgeMS": 469.648476
+    },
+    {
+      "profile": "prefix",
+      "attempt": "r1-006-g0-I",
+      "decision": "QUIET_START",
+      "reason": "quiet window",
+      "observationSeconds": 41.019010261,
+      "phaseSeconds": 41.089800968,
+      "samples": 42,
+      "nativeFinishRecorded": true,
+      "launchAgeMS": 420.157534
+    },
+    {
+      "profile": "prefix",
+      "attempt": "r1-006-g0-N",
+      "decision": "QUIET_START",
+      "reason": "quiet window",
+      "observationSeconds": 82.030127314,
+      "phaseSeconds": 82.125140688,
+      "samples": 83,
+      "nativeFinishRecorded": true,
+      "launchAgeMS": 499.140055
+    },
+    {
+      "profile": "prefix",
+      "attempt": "r1-007-g0-I",
+      "decision": "QUIET_START",
+      "reason": "quiet window",
+      "observationSeconds": 30.011335321,
+      "phaseSeconds": 30.07827373,
+      "samples": 31,
+      "nativeFinishRecorded": true,
+      "launchAgeMS": 438.104681
+    },
+    {
+      "profile": "prefix",
+      "attempt": "r1-007-g0-N",
+      "decision": "QUIET_START",
+      "reason": "quiet window",
+      "observationSeconds": 51.019249271,
+      "phaseSeconds": 51.456859436,
+      "samples": 52,
+      "nativeFinishRecorded": true,
+      "launchAgeMS": 962.948827
+    },
+    {
+      "profile": "prefix",
+      "attempt": "r1-008-g0-I",
+      "decision": "NOT_QUIET_TIMEOUT",
+      "reason": "quiet-start deadline",
+      "observationSeconds": 180.00015015,
+      "phaseSeconds": 180.283007019,
+      "samples": 180,
+      "nativeFinishRecorded": false,
+      "launchAgeMS": null
+    },
+    {
+      "profile": "prefix",
+      "attempt": "r1-008-g0-N",
+      "decision": "QUIET_START",
+      "reason": "quiet window",
+      "observationSeconds": 33.011746671,
+      "phaseSeconds": 33.08983789,
+      "samples": 34,
+      "nativeFinishRecorded": true,
+      "launchAgeMS": 492.211656
+    }
+  ],
+  "totalQuietPhaseSeconds": 1396.5312741569999,
+  "recorderPhases": [
+    {
+      "profile": "control",
+      "phase": "r1-000-comparison",
+      "purpose": "owner-output-comparison",
+      "elapsedSeconds": 19.92095056,
+      "outerCPUSeconds": 5.166577,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 1783074319,
+        "read_bytes": 34697216,
+        "syscr": 282953,
+        "syscw": 168,
+        "wchar": 86557,
+        "write_bytes": 507904
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-000-g0-I-capture",
+      "purpose": "complete-output-state-and-invocation-capture",
+      "elapsedSeconds": 94.560870577,
+      "outerCPUSeconds": 19.508644,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 8939916392,
+        "read_bytes": 1391620096,
+        "syscr": 1097029,
+        "syscw": 1846,
+        "wchar": 96513289,
+        "write_bytes": 172892160
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-000-g0-I-containment",
+      "purpose": "owned-process-supervision",
+      "elapsedSeconds": 0.112649011,
+      "outerCPUSeconds": 0.002577,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 16952,
+        "read_bytes": 61440,
+        "syscr": 56,
+        "syscw": 6,
+        "wchar": 3493,
+        "write_bytes": 348160
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-000-g0-I-preflight",
+      "purpose": "source-input-state-proof",
+      "elapsedSeconds": 268.451383255,
+      "outerCPUSeconds": 7.456582,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 4861076090,
+        "read_bytes": 2528481280,
+        "syscr": 334124,
+        "syscw": 1841,
+        "wchar": 7507529,
+        "write_bytes": 327680
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-000-g0-I-quiet-start",
+      "purpose": "quiet-start",
+      "elapsedSeconds": 37.079247382,
+      "outerCPUSeconds": 0.011172,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 41369,
+        "read_bytes": 0,
+        "syscr": 782,
+        "syscw": 5,
+        "wchar": 18984,
+        "write_bytes": 446464
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-000-g0-N-capture",
+      "purpose": "complete-output-state-and-invocation-capture",
+      "elapsedSeconds": 462.680959043,
+      "outerCPUSeconds": 32.696119,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 9227550681,
+        "read_bytes": 473030656,
+        "syscr": 1188066,
+        "syscw": 1845,
+        "wchar": 96513055,
+        "write_bytes": 868573184
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-000-g0-N-containment",
+      "purpose": "owned-process-supervision",
+      "elapsedSeconds": 0.11043684,
+      "outerCPUSeconds": 0.002967,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 16928,
+        "read_bytes": 0,
+        "syscr": 56,
+        "syscw": 6,
+        "wchar": 3493,
+        "write_bytes": 512000
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-000-g0-N-preflight",
+      "purpose": "source-input-state-proof",
+      "elapsedSeconds": 204.538403188,
+      "outerCPUSeconds": 7.482987,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 4861157652,
+        "read_bytes": 253685760,
+        "syscr": 334045,
+        "syscw": 1841,
+        "wchar": 7507529,
+        "write_bytes": 425984
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-000-g0-N-quiet-start",
+      "purpose": "quiet-start",
+      "elapsedSeconds": 38.091918129,
+      "outerCPUSeconds": 0.012071,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 42399,
+        "read_bytes": 0,
+        "syscr": 802,
+        "syscw": 5,
+        "wchar": 19428,
+        "write_bytes": 512000
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-001-I-inverse",
+      "purpose": "candidate-inverse",
+      "elapsedSeconds": 0.003268187,
+      "outerCPUSeconds": 0.002717,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 77810,
+        "read_bytes": 0,
+        "syscr": 72,
+        "syscw": 6,
+        "wchar": 14342,
+        "write_bytes": 663552
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-001-I-source",
+      "purpose": "neutral-source-advancement",
+      "elapsedSeconds": 8.479894847,
+      "outerCPUSeconds": 7.852958,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 5989210718,
+        "read_bytes": 0,
+        "syscr": 512640,
+        "syscw": 1991,
+        "wchar": 65941989,
+        "write_bytes": 59502592
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-001-N-source",
+      "purpose": "neutral-source-advancement",
+      "elapsedSeconds": 8.502416196,
+      "outerCPUSeconds": 7.838447,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 5977258209,
+        "read_bytes": 8015872,
+        "syscr": 511062,
+        "syscw": 2000,
+        "wchar": 66003565,
+        "write_bytes": 59895808
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-001-comparison",
+      "purpose": "owner-output-comparison",
+      "elapsedSeconds": 21.074182251,
+      "outerCPUSeconds": 5.201672,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 2401741347,
+        "read_bytes": 0,
+        "syscr": 283746,
+        "syscw": 168,
+        "wchar": 86557,
+        "write_bytes": 458752
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-001-g0-I-capture",
+      "purpose": "complete-output-state-and-invocation-capture",
+      "elapsedSeconds": 20.892011758,
+      "outerCPUSeconds": 18.320376,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 8931740954,
+        "read_bytes": 14200832,
+        "syscr": 1096964,
+        "syscw": 1844,
+        "wchar": 96526780,
+        "write_bytes": 177152000
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-001-g0-I-preflight",
+      "purpose": "source-input-state-proof",
+      "elapsedSeconds": 8.591640876,
+      "outerCPUSeconds": 8.424276,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6764924157,
+        "read_bytes": 0,
+        "syscr": 534641,
+        "syscw": 1843,
+        "wchar": 7507571,
+        "write_bytes": 327680
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-001-g0-I-quiet-start",
+      "purpose": "quiet-start",
+      "elapsedSeconds": 117.148595292,
+      "outerCPUSeconds": 0.041394,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 124001,
+        "read_bytes": 0,
+        "syscr": 2383,
+        "syscw": 5,
+        "wchar": 54407,
+        "write_bytes": 446464
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-001-g0-N-capture",
+      "purpose": "complete-output-state-and-invocation-capture",
+      "elapsedSeconds": 20.013919264,
+      "outerCPUSeconds": 17.984757,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 8928015364,
+        "read_bytes": 11157504,
+        "syscr": 1096727,
+        "syscw": 1847,
+        "wchar": 96526578,
+        "write_bytes": 155557888
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-001-g0-N-preflight",
+      "purpose": "source-input-state-proof",
+      "elapsedSeconds": 8.606669832,
+      "outerCPUSeconds": 8.440584,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6765108080,
+        "read_bytes": 0,
+        "syscr": 534888,
+        "syscw": 1843,
+        "wchar": 7507572,
+        "write_bytes": 638976
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-001-g0-N-quiet-start",
+      "purpose": "quiet-start",
+      "elapsedSeconds": 30.078610896,
+      "outerCPUSeconds": 0.019516,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 34028,
+        "read_bytes": 0,
+        "syscr": 642,
+        "syscw": 5,
+        "wchar": 15876,
+        "write_bytes": 540672
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-002-I-inverse",
+      "purpose": "candidate-inverse",
+      "elapsedSeconds": 0.002713096,
+      "outerCPUSeconds": 0.002507,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 80670,
+        "read_bytes": 0,
+        "syscr": 72,
+        "syscw": 6,
+        "wchar": 14343,
+        "write_bytes": 532480
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-002-I-source",
+      "purpose": "neutral-source-advancement",
+      "elapsedSeconds": 8.424779968,
+      "outerCPUSeconds": 7.929534,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6004625503,
+        "read_bytes": 0,
+        "syscr": 511232,
+        "syscw": 1932,
+        "wchar": 65113306,
+        "write_bytes": 58548224
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-002-N-source",
+      "purpose": "neutral-source-advancement",
+      "elapsedSeconds": 8.390968456,
+      "outerCPUSeconds": 7.917175,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6004209737,
+        "read_bytes": 0,
+        "syscr": 511392,
+        "syscw": 1937,
+        "wchar": 65174850,
+        "write_bytes": 58810368
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-002-comparison",
+      "purpose": "owner-output-comparison",
+      "elapsedSeconds": 24.470654846,
+      "outerCPUSeconds": 5.196121,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 2889104427,
+        "read_bytes": 0,
+        "syscr": 284011,
+        "syscw": 168,
+        "wchar": 86558,
+        "write_bytes": 458752
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-002-g0-I-capture",
+      "purpose": "complete-output-state-and-invocation-capture",
+      "elapsedSeconds": 21.291665514,
+      "outerCPUSeconds": 18.961751,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 8966273753,
+        "read_bytes": 27541504,
+        "syscr": 1098022,
+        "syscw": 1848,
+        "wchar": 96530213,
+        "write_bytes": 186068992
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-002-g0-I-preflight",
+      "purpose": "source-input-state-proof",
+      "elapsedSeconds": 8.658117426,
+      "outerCPUSeconds": 8.500258,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6796924212,
+        "read_bytes": 0,
+        "syscr": 535959,
+        "syscw": 1842,
+        "wchar": 7507563,
+        "write_bytes": 475136
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-002-g0-I-quiet-start",
+      "purpose": "quiet-start",
+      "elapsedSeconds": 46.078714454,
+      "outerCPUSeconds": 0.013201,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 50532,
+        "read_bytes": 0,
+        "syscr": 962,
+        "syscw": 5,
+        "wchar": 22969,
+        "write_bytes": 532480
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-002-g0-N-capture",
+      "purpose": "complete-output-state-and-invocation-capture",
+      "elapsedSeconds": 20.847279385,
+      "outerCPUSeconds": 18.767268,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 8973161650,
+        "read_bytes": 28635136,
+        "syscr": 1097875,
+        "syscw": 1844,
+        "wchar": 96529954,
+        "write_bytes": 182644736
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-002-g0-N-preflight",
+      "purpose": "source-input-state-proof",
+      "elapsedSeconds": 8.60258279,
+      "outerCPUSeconds": 8.440224,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6796207580,
+        "read_bytes": 0,
+        "syscr": 535807,
+        "syscw": 1843,
+        "wchar": 7507570,
+        "write_bytes": 409600
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-002-g0-N-quiet-start",
+      "purpose": "quiet-start",
+      "elapsedSeconds": 30.056146612,
+      "outerCPUSeconds": 0.011606,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 34035,
+        "read_bytes": 0,
+        "syscr": 642,
+        "syscw": 5,
+        "wchar": 15881,
+        "write_bytes": 458752
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-003-I-inverse",
+      "purpose": "candidate-inverse",
+      "elapsedSeconds": 0.002653165,
+      "outerCPUSeconds": 0.002714,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 80672,
+        "read_bytes": 0,
+        "syscr": 69,
+        "syscw": 6,
+        "wchar": 14343,
+        "write_bytes": 548864
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-003-I-source",
+      "purpose": "neutral-source-advancement",
+      "elapsedSeconds": 8.424734779,
+      "outerCPUSeconds": 7.967255,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6012992944,
+        "read_bytes": 0,
+        "syscr": 510479,
+        "syscw": 1939,
+        "wchar": 65196743,
+        "write_bytes": 58568704
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-003-N-source",
+      "purpose": "neutral-source-advancement",
+      "elapsedSeconds": 8.435570725,
+      "outerCPUSeconds": 7.97799,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6018992915,
+        "read_bytes": 0,
+        "syscr": 510414,
+        "syscw": 1945,
+        "wchar": 65258293,
+        "write_bytes": 58929152
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-003-comparison",
+      "purpose": "owner-output-comparison",
+      "elapsedSeconds": 25.389835878,
+      "outerCPUSeconds": 5.216241,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 3048439135,
+        "read_bytes": 208896,
+        "syscr": 284104,
+        "syscw": 168,
+        "wchar": 86558,
+        "write_bytes": 458752
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-003-g0-I-capture",
+      "purpose": "complete-output-state-and-invocation-capture",
+      "elapsedSeconds": 22.126558287,
+      "outerCPUSeconds": 18.583742,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 9261002980,
+        "read_bytes": 31850496,
+        "syscr": 1107283,
+        "syscw": 1849,
+        "wchar": 96592745,
+        "write_bytes": 164438016
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-003-g0-I-preflight",
+      "purpose": "source-input-state-proof",
+      "elapsedSeconds": 8.680786117,
+      "outerCPUSeconds": 8.517466,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6813597489,
+        "read_bytes": 0,
+        "syscr": 536335,
+        "syscw": 1841,
+        "wchar": 7507851,
+        "write_bytes": 376832
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-003-g0-I-quiet-start",
+      "purpose": "quiet-start",
+      "elapsedSeconds": 53.078740798,
+      "outerCPUSeconds": 0.045775,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 57642,
+        "read_bytes": 0,
+        "syscr": 1102,
+        "syscw": 5,
+        "wchar": 26071,
+        "write_bytes": 421888
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-003-g0-N-capture",
+      "purpose": "complete-output-state-and-invocation-capture",
+      "elapsedSeconds": 30.547420004,
+      "outerCPUSeconds": 19.709219,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 9250311116,
+        "read_bytes": 85463040,
+        "syscr": 1106884,
+        "syscw": 1845,
+        "wchar": 96592490,
+        "write_bytes": 193355776
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-003-g0-N-preflight",
+      "purpose": "source-input-state-proof",
+      "elapsedSeconds": 8.869685908,
+      "outerCPUSeconds": 8.488118,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6819323253,
+        "read_bytes": 4775936,
+        "syscr": 536641,
+        "syscw": 1844,
+        "wchar": 7507875,
+        "write_bytes": 442368
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-003-g0-N-quiet-start",
+      "purpose": "quiet-start",
+      "elapsedSeconds": 41.268036712,
+      "outerCPUSeconds": 0.012733,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 45305,
+        "read_bytes": 0,
+        "syscr": 862,
+        "syscw": 5,
+        "wchar": 20765,
+        "write_bytes": 479232
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-I-acquisition",
+      "purpose": "native-state-preparation",
+      "elapsedSeconds": 311.659314964,
+      "outerCPUSeconds": 10.032811,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 9741536634,
+        "read_bytes": 3762323456,
+        "syscr": 410795,
+        "syscw": 63193,
+        "wchar": 487632481,
+        "write_bytes": 899866624
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-N-acquisition",
+      "purpose": "native-state-preparation",
+      "elapsedSeconds": 282.933553087,
+      "outerCPUSeconds": 9.318414,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 9741830599,
+        "read_bytes": 3079512064,
+        "syscr": 410856,
+        "syscw": 63203,
+        "wchar": 487681123,
+        "write_bytes": 899448832
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-000-comparison",
+      "purpose": "owner-output-comparison",
+      "elapsedSeconds": 21.367465932,
+      "outerCPUSeconds": 5.153645,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 1782288743,
+        "read_bytes": 51392512,
+        "syscr": 282930,
+        "syscw": 169,
+        "wchar": 86274,
+        "write_bytes": 376832
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-000-g0-I-capture",
+      "purpose": "complete-output-state-and-invocation-capture",
+      "elapsedSeconds": 77.688983764,
+      "outerCPUSeconds": 19.965401,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 8937139698,
+        "read_bytes": 792772608,
+        "syscr": 1097448,
+        "syscw": 1843,
+        "wchar": 96398033,
+        "write_bytes": 173998080
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-000-g0-I-containment",
+      "purpose": "owned-process-supervision",
+      "elapsedSeconds": 0.111393009,
+      "outerCPUSeconds": 0.003959,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 16926,
+        "read_bytes": 0,
+        "syscr": 56,
+        "syscw": 6,
+        "wchar": 3490,
+        "write_bytes": 364544
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-000-g0-I-preflight",
+      "purpose": "source-input-state-proof",
+      "elapsedSeconds": 5.194781461,
+      "outerCPUSeconds": 5.080954,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 4860438001,
+        "read_bytes": 0,
+        "syscr": 334421,
+        "syscw": 1836,
+        "wchar": 7485592,
+        "write_bytes": 278528
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-000-g0-I-quiet-start",
+      "purpose": "quiet-start",
+      "elapsedSeconds": 53.112644006,
+      "outerCPUSeconds": 0.02238,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 57866,
+        "read_bytes": 0,
+        "syscr": 1102,
+        "syscw": 5,
+        "wchar": 26071,
+        "write_bytes": 454656
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-000-g0-N-capture",
+      "purpose": "complete-output-state-and-invocation-capture",
+      "elapsedSeconds": 464.251812536,
+      "outerCPUSeconds": 33.150016,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 9221912731,
+        "read_bytes": 637468672,
+        "syscr": 1188126,
+        "syscw": 1839,
+        "wchar": 96391868,
+        "write_bytes": 921579520
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-000-g0-N-containment",
+      "purpose": "owned-process-supervision",
+      "elapsedSeconds": 0.247158142,
+      "outerCPUSeconds": 0.002823,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 16923,
+        "read_bytes": 57344,
+        "syscr": 56,
+        "syscw": 6,
+        "wchar": 3488,
+        "write_bytes": 364544
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-000-g0-N-preflight",
+      "purpose": "source-input-state-proof",
+      "elapsedSeconds": 5.060467128,
+      "outerCPUSeconds": 4.964204,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 4860437999,
+        "read_bytes": 0,
+        "syscr": 334531,
+        "syscw": 1836,
+        "wchar": 7485592,
+        "write_bytes": 442368
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-000-g0-N-quiet-start",
+      "purpose": "quiet-start",
+      "elapsedSeconds": 60.091673214,
+      "outerCPUSeconds": 0.016973,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 65088,
+        "read_bytes": 0,
+        "syscr": 1242,
+        "syscw": 5,
+        "wchar": 29165,
+        "write_bytes": 438272
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-001-I-inverse",
+      "purpose": "candidate-inverse",
+      "elapsedSeconds": 0.003152825,
+      "outerCPUSeconds": 0.002456,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 80653,
+        "read_bytes": 0,
+        "syscr": 72,
+        "syscw": 6,
+        "wchar": 14343,
+        "write_bytes": 516096
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-001-I-source",
+      "purpose": "neutral-source-advancement",
+      "elapsedSeconds": 8.502320463,
+      "outerCPUSeconds": 7.851179,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 5994267294,
+        "read_bytes": 0,
+        "syscr": 513847,
+        "syscw": 1918,
+        "wchar": 64925615,
+        "write_bytes": 58232832
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-001-N-source",
+      "purpose": "neutral-source-advancement",
+      "elapsedSeconds": 8.824548839,
+      "outerCPUSeconds": 7.857713,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6025271479,
+        "read_bytes": 2600960,
+        "syscr": 519041,
+        "syscw": 1919,
+        "wchar": 64921470,
+        "write_bytes": 58359808
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-001-comparison",
+      "purpose": "owner-output-comparison",
+      "elapsedSeconds": 20.704912261,
+      "outerCPUSeconds": 5.141932,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 2410675646,
+        "read_bytes": 0,
+        "syscr": 283736,
+        "syscw": 168,
+        "wchar": 86264,
+        "write_bytes": 376832
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-001-g0-I-capture",
+      "purpose": "complete-output-state-and-invocation-capture",
+      "elapsedSeconds": 20.826865207,
+      "outerCPUSeconds": 18.070303,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 8889971730,
+        "read_bytes": 5259264,
+        "syscr": 1095866,
+        "syscw": 1842,
+        "wchar": 96405631,
+        "write_bytes": 154460160
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-001-g0-I-preflight",
+      "purpose": "source-input-state-proof",
+      "elapsedSeconds": 8.590010151,
+      "outerCPUSeconds": 8.419147,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6762259439,
+        "read_bytes": 0,
+        "syscr": 535337,
+        "syscw": 1836,
+        "wchar": 7485592,
+        "write_bytes": 425984
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-001-g0-I-quiet-start",
+      "purpose": "quiet-start",
+      "elapsedSeconds": 49.090099645,
+      "outerCPUSeconds": 0.015986,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 53709,
+        "read_bytes": 0,
+        "syscr": 1022,
+        "syscw": 5,
+        "wchar": 24299,
+        "write_bytes": 499712
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-001-g0-N-capture",
+      "purpose": "complete-output-state-and-invocation-capture",
+      "elapsedSeconds": 22.350882026,
+      "outerCPUSeconds": 18.69846,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 8887036649,
+        "read_bytes": 4890624,
+        "syscr": 1095327,
+        "syscw": 1841,
+        "wchar": 96399491,
+        "write_bytes": 175329280
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-001-g0-N-preflight",
+      "purpose": "source-input-state-proof",
+      "elapsedSeconds": 8.616545208,
+      "outerCPUSeconds": 8.451008,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6759639101,
+        "read_bytes": 0,
+        "syscr": 535216,
+        "syscw": 1839,
+        "wchar": 7485616,
+        "write_bytes": 425984
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-001-g0-N-quiet-start",
+      "purpose": "quiet-start",
+      "elapsedSeconds": 30.100952255,
+      "outerCPUSeconds": 0.010208,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 34028,
+        "read_bytes": 0,
+        "syscr": 642,
+        "syscw": 5,
+        "wchar": 15876,
+        "write_bytes": 458752
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-002-I-inverse",
+      "purpose": "candidate-inverse",
+      "elapsedSeconds": 0.002801505,
+      "outerCPUSeconds": 0.002888,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 80657,
+        "read_bytes": 0,
+        "syscr": 72,
+        "syscw": 6,
+        "wchar": 14342,
+        "write_bytes": 532480
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-002-I-source",
+      "purpose": "neutral-source-advancement",
+      "elapsedSeconds": 8.44656565,
+      "outerCPUSeconds": 7.98322,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 5963675574,
+        "read_bytes": 0,
+        "syscr": 508658,
+        "syscw": 1915,
+        "wchar": 64883136,
+        "write_bytes": 58302464
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-002-N-source",
+      "purpose": "neutral-source-advancement",
+      "elapsedSeconds": 8.4244173,
+      "outerCPUSeconds": 7.945412,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 5961011884,
+        "read_bytes": 0,
+        "syscr": 508694,
+        "syscw": 1916,
+        "wchar": 64878990,
+        "write_bytes": 58232832
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-002-comparison",
+      "purpose": "owner-output-comparison",
+      "elapsedSeconds": 21.942185539,
+      "outerCPUSeconds": 5.107814,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 2571256400,
+        "read_bytes": 0,
+        "syscr": 283833,
+        "syscw": 168,
+        "wchar": 86264,
+        "write_bytes": 393216
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-002-g0-I-capture",
+      "purpose": "complete-output-state-and-invocation-capture",
+      "elapsedSeconds": 24.491209588,
+      "outerCPUSeconds": 18.996871,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 8889751791,
+        "read_bytes": 4829184,
+        "syscr": 1095844,
+        "syscw": 1840,
+        "wchar": 96405628,
+        "write_bytes": 188325888
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-002-g0-I-preflight",
+      "purpose": "source-input-state-proof",
+      "elapsedSeconds": 8.666735667,
+      "outerCPUSeconds": 8.489369,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6764451587,
+        "read_bytes": 0,
+        "syscr": 534971,
+        "syscw": 1836,
+        "wchar": 7485591,
+        "write_bytes": 311296
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-002-g0-I-quiet-start",
+      "purpose": "quiet-start",
+      "elapsedSeconds": 52.134263477,
+      "outerCPUSeconds": 0.016185,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 56744,
+        "read_bytes": 0,
+        "syscr": 1082,
+        "syscw": 5,
+        "wchar": 25628,
+        "write_bytes": 401408
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-002-g0-N-capture",
+      "purpose": "complete-output-state-and-invocation-capture",
+      "elapsedSeconds": 24.380639305,
+      "outerCPUSeconds": 18.910633,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 8887147939,
+        "read_bytes": 4870144,
+        "syscr": 1095589,
+        "syscw": 1840,
+        "wchar": 96399495,
+        "write_bytes": 185274368
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-002-g0-N-preflight",
+      "purpose": "source-input-state-proof",
+      "elapsedSeconds": 8.650348442,
+      "outerCPUSeconds": 8.475244,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6761791172,
+        "read_bytes": 0,
+        "syscr": 535164,
+        "syscw": 1836,
+        "wchar": 7485591,
+        "write_bytes": 475136
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-002-g0-N-quiet-start",
+      "purpose": "quiet-start",
+      "elapsedSeconds": 41.200718733,
+      "outerCPUSeconds": 0.020777,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 45361,
+        "read_bytes": 0,
+        "syscr": 862,
+        "syscw": 5,
+        "wchar": 20753,
+        "write_bytes": 512000
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-003-I-inverse",
+      "purpose": "candidate-inverse",
+      "elapsedSeconds": 0.003390128,
+      "outerCPUSeconds": 0.002704,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 80659,
+        "read_bytes": 0,
+        "syscr": 72,
+        "syscw": 6,
+        "wchar": 14343,
+        "write_bytes": 516096
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-003-I-source",
+      "purpose": "neutral-source-advancement",
+      "elapsedSeconds": 8.469598925,
+      "outerCPUSeconds": 7.977453,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 5963821148,
+        "read_bytes": 0,
+        "syscr": 508663,
+        "syscw": 1999,
+        "wchar": 66108076,
+        "write_bytes": 59576320
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-003-N-source",
+      "purpose": "neutral-source-advancement",
+      "elapsedSeconds": 8.446867949,
+      "outerCPUSeconds": 7.956777,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 5961157644,
+        "read_bytes": 0,
+        "syscr": 508553,
+        "syscw": 1998,
+        "wchar": 66103912,
+        "write_bytes": 59867136
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-003-comparison",
+      "purpose": "owner-output-comparison",
+      "elapsedSeconds": 22.378023842,
+      "outerCPUSeconds": 5.111033,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 2732105248,
+        "read_bytes": 0,
+        "syscr": 283954,
+        "syscw": 168,
+        "wchar": 86265,
+        "write_bytes": 475136
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-003-g0-I-capture",
+      "purpose": "complete-output-state-and-invocation-capture",
+      "elapsedSeconds": 24.426164576,
+      "outerCPUSeconds": 18.52608,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 8951215280,
+        "read_bytes": 8740864,
+        "syscr": 1098133,
+        "syscw": 1842,
+        "wchar": 96446359,
+        "write_bytes": 165167104
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-003-g0-I-preflight",
+      "purpose": "source-input-state-proof",
+      "elapsedSeconds": 8.6497801,
+      "outerCPUSeconds": 8.476577,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6764685403,
+        "read_bytes": 0,
+        "syscr": 535490,
+        "syscw": 1838,
+        "wchar": 7486537,
+        "write_bytes": 327680
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-003-g0-I-quiet-start",
+      "purpose": "quiet-start",
+      "elapsedSeconds": 77.301753761,
+      "outerCPUSeconds": 0.021297,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 82470,
+        "read_bytes": 0,
+        "syscr": 1583,
+        "syscw": 5,
+        "wchar": 36696,
+        "write_bytes": 413696
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-003-g0-N-capture",
+      "purpose": "complete-output-state-and-invocation-capture",
+      "elapsedSeconds": 21.235844673,
+      "outerCPUSeconds": 19.229693,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 8945357576,
+        "read_bytes": 5558272,
+        "syscr": 1097759,
+        "syscw": 1844,
+        "wchar": 96440242,
+        "write_bytes": 191586304
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-003-g0-N-preflight",
+      "purpose": "source-input-state-proof",
+      "elapsedSeconds": 8.689243191,
+      "outerCPUSeconds": 8.527341,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6762048635,
+        "read_bytes": 0,
+        "syscr": 534964,
+        "syscw": 1837,
+        "wchar": 7486529,
+        "write_bytes": 458752
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-003-g0-N-quiet-start",
+      "purpose": "quiet-start",
+      "elapsedSeconds": 79.125791791,
+      "outerCPUSeconds": 0.021217,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 84593,
+        "read_bytes": 0,
+        "syscr": 1623,
+        "syscw": 5,
+        "wchar": 37586,
+        "write_bytes": 495616
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-004-I-inverse",
+      "purpose": "candidate-inverse",
+      "elapsedSeconds": 0.003405698,
+      "outerCPUSeconds": 0.002296,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 80660,
+        "read_bytes": 0,
+        "syscr": 72,
+        "syscw": 6,
+        "wchar": 14342,
+        "write_bytes": 483328
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-004-I-source",
+      "purpose": "neutral-source-advancement",
+      "elapsedSeconds": 8.46885818,
+      "outerCPUSeconds": 7.987383,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6024327750,
+        "read_bytes": 0,
+        "syscr": 511114,
+        "syscw": 1926,
+        "wchar": 65065041,
+        "write_bytes": 58593280
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-004-N-source",
+      "purpose": "neutral-source-advancement",
+      "elapsedSeconds": 8.502135823,
+      "outerCPUSeconds": 7.999023,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6021621079,
+        "read_bytes": 0,
+        "syscr": 511090,
+        "syscw": 1927,
+        "wchar": 65060894,
+        "write_bytes": 58523648
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-004-comparison",
+      "purpose": "owner-output-comparison",
+      "elapsedSeconds": 22.855487004,
+      "outerCPUSeconds": 5.151354,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 2892650820,
+        "read_bytes": 0,
+        "syscr": 284057,
+        "syscw": 170,
+        "wchar": 86282,
+        "write_bytes": 425984
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-004-g0-I-capture",
+      "purpose": "complete-output-state-and-invocation-capture",
+      "elapsedSeconds": 20.502863445,
+      "outerCPUSeconds": 18.445528,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 8957685126,
+        "read_bytes": 5554176,
+        "syscr": 1098284,
+        "syscw": 1840,
+        "wchar": 96438015,
+        "write_bytes": 172171264
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-004-g0-I-preflight",
+      "purpose": "source-input-state-proof",
+      "elapsedSeconds": 8.741985053,
+      "outerCPUSeconds": 8.563131,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6821804472,
+        "read_bytes": 0,
+        "syscr": 536898,
+        "syscw": 1835,
+        "wchar": 7486593,
+        "write_bytes": 507904
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-004-g0-I-quiet-start",
+      "purpose": "quiet-start",
+      "elapsedSeconds": 42.112343103,
+      "outerCPUSeconds": 0.015055,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 46324,
+        "read_bytes": 0,
+        "syscr": 882,
+        "syscw": 5,
+        "wchar": 21206,
+        "write_bytes": 479232
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-004-g0-N-capture",
+      "purpose": "complete-output-state-and-invocation-capture",
+      "elapsedSeconds": 21.914023536,
+      "outerCPUSeconds": 18.421197,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 8955441940,
+        "read_bytes": 5988352,
+        "syscr": 1097517,
+        "syscw": 1840,
+        "wchar": 96431883,
+        "write_bytes": 164511744
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-004-g0-N-preflight",
+      "purpose": "source-input-state-proof",
+      "elapsedSeconds": 8.693625146,
+      "outerCPUSeconds": 8.512911,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6819101101,
+        "read_bytes": 0,
+        "syscr": 537065,
+        "syscw": 1838,
+        "wchar": 7486617,
+        "write_bytes": 425984
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-004-g0-N-quiet-start",
+      "purpose": "quiet-start",
+      "elapsedSeconds": 38.111959852,
+      "outerCPUSeconds": 0.02244,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 42206,
+        "read_bytes": 0,
+        "syscr": 802,
+        "syscw": 5,
+        "wchar": 19437,
+        "write_bytes": 430080
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-005-I-inverse",
+      "purpose": "candidate-inverse",
+      "elapsedSeconds": 0.003631838,
+      "outerCPUSeconds": 0.00851,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 80660,
+        "read_bytes": 0,
+        "syscr": 72,
+        "syscw": 6,
+        "wchar": 14342,
+        "write_bytes": 548864
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-005-I-source",
+      "purpose": "neutral-source-advancement",
+      "elapsedSeconds": 8.513034638,
+      "outerCPUSeconds": 8.049893,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6033795395,
+        "read_bytes": 0,
+        "syscr": 511402,
+        "syscw": 1916,
+        "wchar": 64951820,
+        "write_bytes": 58335232
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-005-N-source",
+      "purpose": "neutral-source-advancement",
+      "elapsedSeconds": 8.446684982,
+      "outerCPUSeconds": 7.983922,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6031121562,
+        "read_bytes": 0,
+        "syscr": 511482,
+        "syscw": 1918,
+        "wchar": 64947682,
+        "write_bytes": 58445824
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-005-comparison",
+      "purpose": "owner-output-comparison",
+      "elapsedSeconds": 23.798440155,
+      "outerCPUSeconds": 5.213375,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 3053248183,
+        "read_bytes": 0,
+        "syscr": 284153,
+        "syscw": 168,
+        "wchar": 86263,
+        "write_bytes": 425984
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-005-g0-I-capture",
+      "purpose": "complete-output-state-and-invocation-capture",
+      "elapsedSeconds": 21.713723947,
+      "outerCPUSeconds": 19.759854,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 8957163923,
+        "read_bytes": 4935680,
+        "syscr": 1098077,
+        "syscw": 1839,
+        "wchar": 96438133,
+        "write_bytes": 204480512
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-005-g0-I-preflight",
+      "purpose": "source-input-state-proof",
+      "elapsedSeconds": 8.724940476,
+      "outerCPUSeconds": 8.549097,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6831396854,
+        "read_bytes": 0,
+        "syscr": 537385,
+        "syscw": 1837,
+        "wchar": 7486609,
+        "write_bytes": 442368
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-005-g0-I-quiet-start",
+      "purpose": "quiet-start",
+      "elapsedSeconds": 30.05639918,
+      "outerCPUSeconds": 0.010801,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 33971,
+        "read_bytes": 0,
+        "syscr": 642,
+        "syscw": 5,
+        "wchar": 15887,
+        "write_bytes": 458752
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-005-g0-N-capture",
+      "purpose": "complete-output-state-and-invocation-capture",
+      "elapsedSeconds": 21.791845318,
+      "outerCPUSeconds": 19.805705,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 8954562375,
+        "read_bytes": 4972544,
+        "syscr": 1098094,
+        "syscw": 1840,
+        "wchar": 96432008,
+        "write_bytes": 208044032
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-005-g0-N-preflight",
+      "purpose": "source-input-state-proof",
+      "elapsedSeconds": 8.643895774,
+      "outerCPUSeconds": 8.474626,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6828716957,
+        "read_bytes": 0,
+        "syscr": 537365,
+        "syscw": 1836,
+        "wchar": 7486600,
+        "write_bytes": 589824
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-005-g0-N-quiet-start",
+      "purpose": "quiet-start",
+      "elapsedSeconds": 33.089745134,
+      "outerCPUSeconds": 0.010595,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 37063,
+        "read_bytes": 0,
+        "syscr": 702,
+        "syscw": 5,
+        "wchar": 17223,
+        "write_bytes": 606208
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-006-I-inverse",
+      "purpose": "candidate-inverse",
+      "elapsedSeconds": 0.002878717,
+      "outerCPUSeconds": 0.002469,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 80660,
+        "read_bytes": 0,
+        "syscr": 69,
+        "syscw": 6,
+        "wchar": 14343,
+        "write_bytes": 499712
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-006-I-source",
+      "purpose": "neutral-source-advancement",
+      "elapsedSeconds": 8.568965633,
+      "outerCPUSeconds": 8.091426,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6030680519,
+        "read_bytes": 0,
+        "syscr": 510868,
+        "syscw": 1924,
+        "wchar": 65041850,
+        "write_bytes": 58433536
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-006-N-source",
+      "purpose": "neutral-source-advancement",
+      "elapsedSeconds": 8.502172015,
+      "outerCPUSeconds": 8.036085,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6027967790,
+        "read_bytes": 0,
+        "syscr": 510921,
+        "syscw": 1924,
+        "wchar": 65037695,
+        "write_bytes": 58675200
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-006-comparison",
+      "purpose": "owner-output-comparison",
+      "elapsedSeconds": 25.080295239,
+      "outerCPUSeconds": 5.287496,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 3213924882,
+        "read_bytes": 0,
+        "syscr": 284249,
+        "syscw": 168,
+        "wchar": 86260,
+        "write_bytes": 491520
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-006-g0-I-capture",
+      "purpose": "complete-output-state-and-invocation-capture",
+      "elapsedSeconds": 22.646897759,
+      "outerCPUSeconds": 20.141356,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 8959137650,
+        "read_bytes": 4976640,
+        "syscr": 1098412,
+        "syscw": 1838,
+        "wchar": 96452305,
+        "write_bytes": 217178112
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-006-g0-I-preflight",
+      "purpose": "source-input-state-proof",
+      "elapsedSeconds": 8.766528677,
+      "outerCPUSeconds": 8.586465,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6831454478,
+        "read_bytes": 0,
+        "syscr": 537336,
+        "syscw": 1838,
+        "wchar": 7486696,
+        "write_bytes": 458752
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-006-g0-I-quiet-start",
+      "purpose": "quiet-start",
+      "elapsedSeconds": 41.089800968,
+      "outerCPUSeconds": 0.016088,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 45285,
+        "read_bytes": 0,
+        "syscr": 862,
+        "syscw": 5,
+        "wchar": 20756,
+        "write_bytes": 512000
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-006-g0-N-capture",
+      "purpose": "complete-output-state-and-invocation-capture",
+      "elapsedSeconds": 21.747299954,
+      "outerCPUSeconds": 18.886707,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 8956700011,
+        "read_bytes": 5242880,
+        "syscr": 1098091,
+        "syscw": 1842,
+        "wchar": 96446203,
+        "write_bytes": 176107520
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-006-g0-N-preflight",
+      "purpose": "source-input-state-proof",
+      "elapsedSeconds": 8.721019093,
+      "outerCPUSeconds": 8.540716,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6828740761,
+        "read_bytes": 0,
+        "syscr": 537251,
+        "syscw": 1837,
+        "wchar": 7486688,
+        "write_bytes": 311296
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-006-g0-N-quiet-start",
+      "purpose": "quiet-start",
+      "elapsedSeconds": 82.125140688,
+      "outerCPUSeconds": 0.025018,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 87473,
+        "read_bytes": 0,
+        "syscr": 1683,
+        "syscw": 5,
+        "wchar": 38915,
+        "write_bytes": 499712
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-007-I-inverse",
+      "purpose": "candidate-inverse",
+      "elapsedSeconds": 0.003282808,
+      "outerCPUSeconds": 0.002655,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 80661,
+        "read_bytes": 0,
+        "syscr": 72,
+        "syscw": 6,
+        "wchar": 14343,
+        "write_bytes": 516096
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-007-I-source",
+      "purpose": "neutral-source-advancement",
+      "elapsedSeconds": 8.669421498,
+      "outerCPUSeconds": 8.170298,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6032448646,
+        "read_bytes": 0,
+        "syscr": 510848,
+        "syscw": 1966,
+        "wchar": 65703823,
+        "write_bytes": 59437056
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-007-N-source",
+      "purpose": "neutral-source-advancement",
+      "elapsedSeconds": 8.626132612,
+      "outerCPUSeconds": 8.134111,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6029734649,
+        "read_bytes": 0,
+        "syscr": 511215,
+        "syscw": 1967,
+        "wchar": 65699677,
+        "write_bytes": 59596800
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-007-comparison",
+      "purpose": "owner-output-comparison",
+      "elapsedSeconds": 25.950958145,
+      "outerCPUSeconds": 5.334963,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 3332591125,
+        "read_bytes": 13041664,
+        "syscr": 284247,
+        "syscw": 168,
+        "wchar": 86267,
+        "write_bytes": 393216
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-007-g0-I-capture",
+      "purpose": "complete-output-state-and-invocation-capture",
+      "elapsedSeconds": 55.634495834,
+      "outerCPUSeconds": 20.680686,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 9173850006,
+        "read_bytes": 386383872,
+        "syscr": 1118917,
+        "syscw": 1838,
+        "wchar": 98805012,
+        "write_bytes": 199847936
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-007-g0-I-preflight",
+      "purpose": "source-input-state-proof",
+      "elapsedSeconds": 8.84400667,
+      "outerCPUSeconds": 8.667033,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6833151356,
+        "read_bytes": 0,
+        "syscr": 537630,
+        "syscw": 1841,
+        "wchar": 7486576,
+        "write_bytes": 491520
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-007-g0-I-quiet-start",
+      "purpose": "quiet-start",
+      "elapsedSeconds": 30.07827373,
+      "outerCPUSeconds": 0.020402,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 33977,
+        "read_bytes": 0,
+        "syscr": 642,
+        "syscw": 5,
+        "wchar": 15895,
+        "write_bytes": 491520
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-007-g0-N-capture",
+      "purpose": "complete-output-state-and-invocation-capture",
+      "elapsedSeconds": 199.229696924,
+      "outerCPUSeconds": 22.106863,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 9138883828,
+        "read_bytes": 645836800,
+        "syscr": 1117578,
+        "syscw": 1845,
+        "wchar": 98798938,
+        "write_bytes": 216178688
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-007-g0-N-preflight",
+      "purpose": "source-input-state-proof",
+      "elapsedSeconds": 54.936052106,
+      "outerCPUSeconds": 10.199309,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6830471522,
+        "read_bytes": 419561472,
+        "syscr": 537559,
+        "syscw": 1837,
+        "wchar": 7486544,
+        "write_bytes": 540672
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-007-g0-N-quiet-start",
+      "purpose": "quiet-start",
+      "elapsedSeconds": 51.456859436,
+      "outerCPUSeconds": 0.015557,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 55852,
+        "read_bytes": 0,
+        "syscr": 1062,
+        "syscw": 5,
+        "wchar": 25195,
+        "write_bytes": 548864
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-008-I-inverse",
+      "purpose": "candidate-inverse",
+      "elapsedSeconds": 0.002826363,
+      "outerCPUSeconds": 0.002207,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 80667,
+        "read_bytes": 0,
+        "syscr": 72,
+        "syscw": 6,
+        "wchar": 14342,
+        "write_bytes": 401408
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-008-I-source",
+      "purpose": "neutral-source-advancement",
+      "elapsedSeconds": 9.015360644,
+      "outerCPUSeconds": 8.305478,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6193994740,
+        "read_bytes": 2752512,
+        "syscr": 530553,
+        "syscw": 1914,
+        "wchar": 67275692,
+        "write_bytes": 60661760
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-008-N-source",
+      "purpose": "neutral-source-advancement",
+      "elapsedSeconds": 9.282771962,
+      "outerCPUSeconds": 8.313426,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6191278013,
+        "read_bytes": 2797568,
+        "syscr": 530435,
+        "syscw": 1914,
+        "wchar": 67271541,
+        "write_bytes": 60624896
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-008-g0-I-preflight",
+      "purpose": "source-input-state-proof",
+      "elapsedSeconds": 8.961086438,
+      "outerCPUSeconds": 8.78152,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6984291560,
+        "read_bytes": 0,
+        "syscr": 555939,
+        "syscw": 1837,
+        "wchar": 7486544,
+        "write_bytes": 425984
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-008-g0-I-quiet-start",
+      "purpose": "quiet-start",
+      "elapsedSeconds": 180.283007019,
+      "outerCPUSeconds": 0.089397,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 188438,
+        "read_bytes": 0,
+        "syscr": 3629,
+        "syscw": 6,
+        "wchar": 81882,
+        "write_bytes": 507904
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-008-g0-N-capture",
+      "purpose": "complete-output-state-and-invocation-capture",
+      "elapsedSeconds": 31.581824631,
+      "outerCPUSeconds": 20.708294,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 9110055772,
+        "read_bytes": 5173248,
+        "syscr": 1116653,
+        "syscw": 1839,
+        "wchar": 98800040,
+        "write_bytes": 232448000
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-008-g0-N-preflight",
+      "purpose": "source-input-state-proof",
+      "elapsedSeconds": 9.037896932,
+      "outerCPUSeconds": 8.865331,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 6981588759,
+        "read_bytes": 0,
+        "syscr": 555807,
+        "syscw": 1835,
+        "wchar": 7486528,
+        "write_bytes": 425984
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-008-g0-N-quiet-start",
+      "purpose": "quiet-start",
+      "elapsedSeconds": 33.08983789,
+      "outerCPUSeconds": 0.023139,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 37214,
+        "read_bytes": 0,
+        "syscr": 702,
+        "syscw": 5,
+        "wchar": 17222,
+        "write_bytes": 475136
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-I-acquisition",
+      "purpose": "native-state-preparation",
+      "elapsedSeconds": 283.180132147,
+      "outerCPUSeconds": 9.582132,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 9741479532,
+        "read_bytes": 2529050624,
+        "syscr": 410600,
+        "syscw": 63085,
+        "wchar": 487182975,
+        "write_bytes": 896471040
+      }
+    },
+    {
+      "profile": "prefix",
+      "phase": "r1-N-acquisition",
+      "purpose": "native-state-preparation",
+      "elapsedSeconds": 296.48492587,
+      "outerCPUSeconds": 9.618199,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 9741478957,
+        "read_bytes": 2529050624,
+        "syscr": 410588,
+        "syscw": 63091,
+        "wchar": 487183021,
+        "write_bytes": 896225280
+      }
+    }
+  ],
+  "interpretation": "Waiting is research preparation outside request timing and within the allocation. CPU and I/O counters cover only the outer recorder. They are not additional elapsed time and do not establish the cause of any build-time difference."
+}

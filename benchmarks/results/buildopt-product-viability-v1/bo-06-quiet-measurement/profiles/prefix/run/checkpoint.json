@@ -1,0 +1,128 @@
+{
+  "schema": "buildopt.history-replay/record/v2",
+  "manifest": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/manifest.json",
+    "sha256": "bb431e102332dec10272bd0e07812bb9b664fcb45016d3da98d95b7966e216b7"
+  },
+  "replication": 1,
+  "lastOrdinal": 7,
+  "lastPair": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/pairs/r1-007.json",
+    "sha256": "eecd72e205736dbd07c58c492030a7e7eed2da690ac9c6493d647f63f7dfe233"
+  },
+  "states": [
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-007-g0-N/after.json",
+      "sha256": "b40a72c8741ce8c31102f7830c5735139b47cd8dd14b6f02ef6166b488e7d42d"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts/r1-007-g0-I/after.json",
+      "sha256": "9cc2759812a146e429fb1f45e4f81d55a8a314923ea52b1ce3c0c7d7eb808cd4"
+    }
+  ],
+  "remaining": [
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+  ],
+  "attempts": 16,
+  "gradleReservations": 16,
+  "retryPairs": 0,
+  "sessions": [
+    {
+      "schema": "buildopt.history-replay/record/v2",
+      "manifest": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/manifest.json",
+        "sha256": "bb431e102332dec10272bd0e07812bb9b664fcb45016d3da98d95b7966e216b7"
+      },
+      "executable": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/history-replay-quiet",
+        "sha256": "fce62470e2b27d141d9f8ae17a1254e2adea4e0bb1db83be27fcd3b5db2f704c"
+      },
+      "parent": {
+        "pid": 1972716,
+        "startTicks": 34880769,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/paseo.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/history-replay-quiet",
+          "run",
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/manifest.json"
+        ]
+      },
+      "unit": "buildopt-replay-6d711c02adc479f0-r1-N-1.service",
+      "socket": "@buildopt-replay-6d711c02adc479f0-r1-N-1",
+      "armRoot": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/r1/N",
+      "evidenceRoot": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts",
+      "runRoot": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run",
+      "policy": "REPLICATION",
+      "limits": {
+        "deadlineUTC": "2026-09-15T20:33:00+00:00",
+        "maxRequestNS": 900000000000,
+        "maxRunNS": 32049691578000,
+        "maxBytes": 70883147776,
+        "minimumFreeBytes": 42949672960,
+        "maxWorkflowStarts": 42,
+        "maxGradleStarts": 42,
+        "nestedReservePerRequest": 0,
+        "retryPairs": 0
+      },
+      "nativeAffinity": "0-7",
+      "observerAffinity": "8"
+    },
+    {
+      "schema": "buildopt.history-replay/record/v2",
+      "manifest": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/manifest.json",
+        "sha256": "bb431e102332dec10272bd0e07812bb9b664fcb45016d3da98d95b7966e216b7"
+      },
+      "executable": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/history-replay-quiet",
+        "sha256": "fce62470e2b27d141d9f8ae17a1254e2adea4e0bb1db83be27fcd3b5db2f704c"
+      },
+      "parent": {
+        "pid": 1972716,
+        "startTicks": 34880769,
+        "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/paseo.service",
+        "command": [
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/history-replay-quiet",
+          "run",
+          "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/manifest.json"
+        ]
+      },
+      "unit": "buildopt-replay-6d711c02adc479f0-r1-I-2.service",
+      "socket": "@buildopt-replay-6d711c02adc479f0-r1-I-2",
+      "armRoot": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/r1/I",
+      "evidenceRoot": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/attempts",
+      "runRoot": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run",
+      "policy": "REPLICATION",
+      "limits": {
+        "deadlineUTC": "2026-09-15T20:33:00+00:00",
+        "maxRequestNS": 900000000000,
+        "maxRunNS": 32049691578000,
+        "maxBytes": 70883147776,
+        "minimumFreeBytes": 42949672960,
+        "maxWorkflowStarts": 42,
+        "maxGradleStarts": 42,
+        "nestedReservePerRequest": 0,
+        "retryPairs": 0
+      },
+      "nativeAffinity": "0-7",
+      "observerAffinity": "8"
+    }
+  ],
+  "at": {
+    "ns": 352752423417663,
+    "utc": "2026-09-15T12:44:41.410571114Z",
+    "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5"
+  }
+}

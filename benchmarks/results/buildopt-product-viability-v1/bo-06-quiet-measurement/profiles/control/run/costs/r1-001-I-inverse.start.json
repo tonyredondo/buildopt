@@ -1,0 +1,25 @@
+{
+  "schema": "buildopt.history-replay/record/v2",
+  "cost": {
+    "id": "r1-001-I-inverse",
+    "class": "customer-machine",
+    "purpose": "candidate-inverse",
+    "replication": 1,
+    "ordinal": 1,
+    "arm": "I",
+    "attempt": "",
+    "startNS": 347474974674659,
+    "endNS": 0,
+    "durationNS": 0,
+    "insideEnvelope": false,
+    "workflowStarts": 0,
+    "gradleStarts": 0,
+    "nestedStarts": 0,
+    "bytes": 0
+  },
+  "at": {
+    "ns": 347474974674659,
+    "utc": "2026-09-15T11:16:43.96182503Z",
+    "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5"
+  }
+}

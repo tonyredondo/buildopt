@@ -1,0 +1,58 @@
+{
+  "schema": "buildopt.recorder-resources/v1",
+  "phase": "r1-002-g0-N-preflight",
+  "before": {
+    "begin": {
+      "ns": 347815576077647,
+      "utc": "2026-09-15T11:22:24.563238858Z",
+      "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5"
+    },
+    "end": {
+      "ns": 347815576150907,
+      "utc": "2026-09-15T11:22:24.563302688Z",
+      "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5"
+    },
+    "pid": 1920018,
+    "startTicks": 34519103,
+    "cpu": {
+      "userNS": 139439689000,
+      "systemNS": 93754667000
+    },
+    "io": {
+      "cancelled_write_bytes": 0,
+      "rchar": 137678616704,
+      "read_bytes": 12845256704,
+      "syscr": 11921532,
+      "syscw": 156826,
+      "wchar": 1684214511,
+      "write_bytes": 3423854592
+    }
+  },
+  "after": {
+    "begin": {
+      "ns": 347824448340273,
+      "utc": "2026-09-15T11:22:33.435526884Z",
+      "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5"
+    },
+    "end": {
+      "ns": 347824448464253,
+      "utc": "2026-09-15T11:22:33.435618514Z",
+      "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5"
+    },
+    "pid": 1920018,
+    "startTicks": 34519103,
+    "cpu": {
+      "userNS": 145468625000,
+      "systemNS": 96165955000
+    },
+    "io": {
+      "cancelled_write_bytes": 0,
+      "rchar": 144474824284,
+      "read_bytes": 12845256704,
+      "syscr": 12457339,
+      "syscw": 158669,
+      "wchar": 1691722081,
+      "write_bytes": 3424264192
+    }
+  }
+}

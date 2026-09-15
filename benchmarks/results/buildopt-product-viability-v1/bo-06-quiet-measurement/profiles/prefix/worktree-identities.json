@@ -1,0 +1,24 @@
+[
+  {
+    "repository": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/r1/N/repo",
+    "branch": "bv-replay-6d711c02adc4-r1-N-008",
+    "head": "a48778e0c3fcd8c0e1eef8eea0b61b5656a20d67",
+    "commonGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/eic-native-v1/repos/elasticsearch.git",
+    "remoteTarget": "read-only subject history; no publication",
+    "locator": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/task-state.json",
+    "arm": "N",
+    "replication": 1,
+    "profile": 8
+  },
+  {
+    "repository": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run/r1/I/repo",
+    "branch": "bv-replay-6d711c02adc4-r1-I-008",
+    "head": "a48778e0c3fcd8c0e1eef8eea0b61b5656a20d67",
+    "commonGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/eic-native-v1/repos/elasticsearch.git",
+    "remoteTarget": "read-only subject history; no publication",
+    "locator": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/task-state.json",
+    "arm": "I",
+    "replication": 1,
+    "profile": 8
+  }
+]

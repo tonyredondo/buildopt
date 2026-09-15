@@ -1,0 +1,33 @@
+{
+  "schema": "buildopt.history-replay/record/v2",
+  "id": "r1-001-g0-N",
+  "begin": {
+    "ns": 347705167055572,
+    "utc": "2026-09-15T11:20:34.154223213Z",
+    "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5"
+  },
+  "end": {
+    "ns": 347733724374707,
+    "utc": "2026-09-15T11:21:02.711539908Z",
+    "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5"
+  },
+  "durationNS": 28557319135,
+  "native": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/control/run/attempts/r1-001-g0-N/native-finish.json",
+    "sha256": "0cea13a66fb51f4401f4fdf429196e85aa6b42e062a793d5c110b20d3b84c84e"
+  },
+  "after": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/control/run/attempts/r1-001-g0-N/after.json",
+    "sha256": "0ca15e270960e49398c09d4d39488c81c291aede674a86d3a9f1aa32fffcac72"
+  },
+  "capture": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/control/run/attempts/r1-001-g0-N/capture.json",
+    "sha256": "462a026071e86a9cea103e71f73ee593818dff3988aa44c2a07063b869273848"
+  },
+  "candidateApplied": false,
+  "class": "COMPARABLE",
+  "reason": "",
+  "costs": [
+    "r1-001-g0-N-request"
+  ]
+}
