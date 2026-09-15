@@ -106,13 +106,21 @@ retries. Nearly all the difference appeared at change 20, alongside higher
 disk-wait pressure and slower compilation tasks; task outcomes matched and
 Checkstyle itself was slightly faster in the slower build. The exact cause
 remains unproven. No timing was excluded and no candidate saving is claimed.
-Address the observed measurement conditions before another control; a fresh
-passing control and the complete development sequence remain prerequisites
-for the final BO-06 freeze.
+The [recording-pressure diagnosis](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-recording-pressure/README.md)
+found high disk and memory pressure before the slow build and roughly one core
+of supervisor CPU use during most builds. Bulk result copying follows native
+execution. Its possible effects on the next build remain unproven, as does the
+cause of the complete timing difference. A standalone quiet-start observer passed
+nine tests and one live observation; it is not integrated into the runner.
+Next, integrate and verify the pre-build condition, retain waiting costs, and
+measure the outer recorder separately before freezing inputs for another
+control. This diagnosis started no owner build or comparator JVM. A fresh
+passing control and complete development sequence remain prerequisites for
+the final BO-06 freeze.
 The earlier precision and process-observation failures remain unchanged.
 Any future result in this mode describes the recorded workflow; BO-09 still
 needs the ordinary-workflow comparison. Current task record:
-`.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/task-state.json`.
+`.tools/state/buildopt-product-viability-v1/bo-06-recording-pressure-2026-09-15/task-state.json`.
 BO-07 and protected changes 21–100 remain deferred. Generic plan selection/reuse,
 adaptive fragments, runtime sweeps and another general cache remain retired.
 The user has authorized commit and push after each work block. Product viability

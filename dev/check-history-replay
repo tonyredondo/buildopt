@@ -26,6 +26,8 @@ case "$buildopt_replay_mode" in
             go vet -mod=readonly ./dev/history-replay
         timeout --signal=TERM --kill-after=5s 60s \
             python3 -B -I dev/history-replay/precision_statistics_test.py
+        timeout --signal=TERM --kill-after=5s 60s \
+            python3 -B -I dev/history-replay/quiet_start_test.py
         ;;
     --integration)
         # At most 104 fixture workflows plus bounded projector helpers, no Gradle.

@@ -18,6 +18,23 @@ its rejection behavior. These qualification tests do not advance seed history.
 
 ## Build and validate
 
+`quiet_start.py` is a separate Linux diagnostic. It observes `/proc/pressure`
+for a recent 30-second window with no sampled resource-pressure interval above
+10%, retaining all observations. It never starts a build and is not yet called
+by the replay runner. Its result cannot qualify a later build on its own.
+The [recording-pressure diagnosis](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-recording-pressure/README.md)
+sets out the required integration and remaining limits.
+
+```bash
+python3 -B dev/history-replay/quiet_start.py --output /existing/parent/new-observation.json
+python3 -B -I dev/history-replay/quiet_start_test.py
+```
+
+The observation waits at most 180 seconds by default; `--timeout-seconds`
+accepts 1–180. Exit codes are 0 for a quiet window, 2 for timeout, 1 for failed
+observation and 130 for cancellation. The output path must be new. These tests
+also run in `--unit` below and Base CI; no live wait runs in CI.
+
 ```bash
 ./dev/run --toolchain go -- go build -mod=readonly -o .tools/bin/history-replay github.com/tonyredondo/buildopt/dev/history-replay
 .tools/bin/history-replay validate /absolute/path/to/manifest.json

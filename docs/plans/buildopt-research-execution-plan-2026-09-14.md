@@ -1,7 +1,7 @@
 # Build Optimization research execution plan
 
 Date: 2026-09-14. Program: `BUILDOPT-VIABILITY-V1`.
-Status: governing plan in execution; BO-01 through BO-05 verified; BO-06 partial; qualified control completed with a material timing difference; development did not start.
+Status: governing plan in execution; BO-01 through BO-05 verified; BO-06 partial; control diagnosis complete, quiet-start utility tested separately; runner integration is next; development did not start.
 
 This plan records the direction agreed after the research review and its
 discussion. It owns research priorities, sequencing and the
@@ -139,7 +139,7 @@ the outcome may be negative. Advance only on the outcome required below.
 | BO-03 | Estimate realistic whole-build opportunity per candidate | BO-01; measurement readiness before fresh timing | verified; [five candidate assessments](../../benchmarks/results/buildopt-product-viability-v1/bo-03-opportunity-assessment/README.md); only Checkstyle warrants the planned short screen after readiness checks; missing workflow evidence remains unqualified |
 | BO-04 | Admit or reject a focused Build Impact hypothesis | BO-01 and existing evidence review | verified; [no new trial admitted](../../benchmarks/results/buildopt-product-viability-v1/bo-04-build-impact-review/README.md); original savings retained |
 | BO-05 | Select a candidate through short comparisons | BO-02 as applicable, BO-03, early BO-06 correctness, and BO-04 for Build Impact | verified; [both fresh sequences passed](../../benchmarks/results/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay/README.md), saving 34.14% and 28.17%; the interrupted attempt remains separate |
-| BO-06 | Qualify correctness and freeze the implementation and protocol | Admitted opportunity; screen integration proof before BO-05, final freeze afterward | partial; [qualified control completed](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-qualified-measurement/README.md) with a 43.259-second difference between identical-code runs; all outputs match, but the timing rule stops development; allocation closed |
+| BO-06 | Qualify correctness and freeze the implementation and protocol | Admitted opportunity; screen integration proof before BO-05, final freeze afterward | partial; [control diagnosis](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-recording-pressure/README.md) found pressure before the slow build and high supervisor CPU use; quiet-start utility tested separately; integration and a fresh passing control are still required |
 | BO-07 | Establish sustained saving in the first repository | BO-05 and complete BO-06 | deferred |
 | BO-08 | Test the same mechanism on two other repositories | BO-07 positive | deferred |
 | BO-09 | Deliver and measure an MVP with manual controls | BO-08 positive | deferred |
@@ -458,7 +458,25 @@ retains every pair and the diagnostic limitations. Address the measurement
 conditions before another control; no result is discarded and the correction
 and stopping rule remain unchanged. A fresh passing control, complete
 development replay and final freeze are still required before BO-07.
-Current state: `.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/task-state.json`.
+
+**Recording-pressure diagnosis, 2026-09-15:** bulk result copying follows native
+execution, with no overlap in the eight recorded builds. Before the slow side
+at change 20, the preceding 30 seconds averaged 53.40% disk-wait and 32.59%
+memory-wait pressure. The supervisor also used roughly one CPU core during most
+builds; its work includes repeatedly walking the entire experiment directory.
+These observations identify measurement problems but do not prove the cause
+of the full timing difference. Missing outer-recorder and per-thread observations
+prevent complete attribution. The original negative control is retained.
+
+A standalone quiet-start utility passed nine tests and one live observation.
+It is not integrated into the runner. Follow the
+[next measurement conditions](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-recording-pressure/README.md#conditions-for-the-next-attempt):
+integrate the observation after preparation, verify request freshness and failure
+paths, retain waiting costs and record the outer recorder separately. Investigate
+the disk guard's cost without weakening its limits. Freeze and qualify the actual
+resulting inputs before a new control; none starts in this diagnosis block.
+BO-06 remains partial. Current state:
+`.tools/state/buildopt-product-viability-v1/bo-06-recording-pressure-2026-09-15/task-state.json`.
 
 ### BO-07: Measure sustained saving on the first repository
 

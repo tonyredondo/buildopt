@@ -1,0 +1,14 @@
+test_assessment_preserves_input (__main__.QuietStartTests.test_assessment_preserves_input) ... ok
+test_deadline_and_cancellation_do_not_admit (__main__.QuietStartTests.test_deadline_and_cancellation_do_not_admit) ... ok
+test_delayed_read_and_gap_are_not_quiet (__main__.QuietStartTests.test_delayed_read_and_gap_are_not_quiet) ... ok
+test_full_window_required (__main__.QuietStartTests.test_full_window_required) ... ok
+test_observer_ready_timeout_and_failure (__main__.QuietStartTests.test_observer_ready_timeout_and_failure) ... ok
+test_old_burst_can_be_followed_by_complete_quiet_window (__main__.QuietStartTests.test_old_burst_can_be_followed_by_complete_quiet_window) ... ok
+test_reset_and_overlapping_read_are_not_quiet (__main__.QuietStartTests.test_reset_and_overlapping_read_are_not_quiet) ... ok
+test_single_recent_burst_blocks_each_resource (__main__.QuietStartTests.test_single_recent_burst_blocks_each_resource) ... ok
+test_threshold_boundary (__main__.QuietStartTests.test_threshold_boundary) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.001s
+
+OK

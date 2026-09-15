@@ -1,0 +1,625 @@
+{
+  "schema": "buildopt.recording-pressure/v1",
+  "decision": "CAUSE_NOT_FULLY_ATTRIBUTED",
+  "originalDecisionUnchanged": "CONTROL_MATERIAL_DIFFERENCE",
+  "newOwnerStarts": 0,
+  "inputs": {
+    "analysis/control-host-pressure.json": "5bcbd65802a13a9939509446b841b5db4dd4d7d637bef8421df57c66f251fa86",
+    "profiles/control/manifest.json": "af52fa47dcb0b0e822f225c8fd37559d47e0afde22a41191d9d2f1965485909b",
+    "profiles/control/process-samples.jsonl.gz": "31238b1eab50dab84042fc7a70087adeebeb51c68f04a88e6cb2f2ea507fd4ae",
+    "profiles/control/run/attempts/r1-000-g0-I/native-finish.json": "f66e8fe6bbc8aa547e7b0d4787d1518ed332904759b5f2e381786d6cdc5074bf",
+    "profiles/control/run/attempts/r1-000-g0-I/supervisor-cpu.json": "8f57fa377e069899db3204250e2d0a76b35da119973bc501083c88afa416410f",
+    "profiles/control/run/attempts/r1-000-g0-N/native-finish.json": "1f540e74d37c3875b3247f0563c48b6fa7caa3479f179801a1e23798563f14ef",
+    "profiles/control/run/attempts/r1-000-g0-N/supervisor-cpu.json": "e739107e845827db44d7ff6b78c2fd307cc1714e6b39296164edd49b56b6fcc7",
+    "profiles/control/run/attempts/r1-001-g0-I/native-finish.json": "a844886d4d99531783c1433ba833b8320a250ab9b6e0adbefcb17293729ed703",
+    "profiles/control/run/attempts/r1-001-g0-I/supervisor-cpu.json": "cce03f01af42be7867d430c3301db68589ef391d5a1244f36dd7e4b224a0f961",
+    "profiles/control/run/attempts/r1-001-g0-N/native-finish.json": "35fb3c906970476ea6e72c95ab023b3fc249ed68434f47e764c0a9d66521e8c1",
+    "profiles/control/run/attempts/r1-001-g0-N/supervisor-cpu.json": "8812e4f04cfa4890054c078ab30b5abe99853d7527e17059034b7fc7ebca6966",
+    "profiles/control/run/attempts/r1-002-g0-I/native-finish.json": "cebb7610a61f23a9b5cb0062eed1246f16acc378854fd48026031ca55aac565f",
+    "profiles/control/run/attempts/r1-002-g0-I/supervisor-cpu.json": "a32c21ff5980046f038b120c54f419051eaea50fc98aa9e7cd55ee7faa0253b7",
+    "profiles/control/run/attempts/r1-002-g0-N/native-finish.json": "719fdf9e3befe6f62d57a0960b3256a7ef3a323b987387261dcd973d756287b7",
+    "profiles/control/run/attempts/r1-002-g0-N/supervisor-cpu.json": "4410c520d539f52c1fb38fe8f3fac1f0c5b7e38a416046780bb2449d70e5900c",
+    "profiles/control/run/attempts/r1-003-g0-I/native-finish.json": "417eba962462204550c6844e5d086bda3cba1a172fb5e2a5462c3647bbaa7857",
+    "profiles/control/run/attempts/r1-003-g0-I/supervisor-cpu.json": "6acc7f402de51794bf25656d593bdc24973794879e5440cfe01643f444a05f1d",
+    "profiles/control/run/attempts/r1-003-g0-N/native-finish.json": "d715967c577f46ff3962221d92c29d2f60acb6a54350080bc6df6acc7acd6bae",
+    "profiles/control/run/attempts/r1-003-g0-N/supervisor-cpu.json": "e92cab34ada5ff93aad713fc2bb65b4dd8edabd4c9344aa148930228bb3f63a4",
+    "profiles/control/run/costs/r1-000-comparison.end.json": "019789b63423f55a467384f575c00801aace82584464c46319b30de9ea383932",
+    "profiles/control/run/costs/r1-000-comparison.json": "162df8e19527d78422c8931ccf19f131b43f00bbe5b91df90615aa691e2b4a65",
+    "profiles/control/run/costs/r1-000-comparison.start.json": "a5196fd8bd20fe06dc7dc7ac513784b2503214a613d1182c98ed8d8b5d22efa7",
+    "profiles/control/run/costs/r1-000-comparison.work-start.json": "16555cad26592e557a0c9521179ccfe009e35cb6eb62b1cd51f7cfcdb279b41b",
+    "profiles/control/run/costs/r1-000-g0-I-capture.end.json": "e21261174c65ac783ff097de8baab17543769f7ee4a7495f0c0af89c01f25616",
+    "profiles/control/run/costs/r1-000-g0-I-capture.json": "d59878f2ccc52e1e0ee04e60b387b4011dba09a4080e0fde75bb6718f8436184",
+    "profiles/control/run/costs/r1-000-g0-I-capture.start.json": "ca239b25ffaf677334568c0ddadd3a0c7c554c13bbd078ffb3c7cdf1d679acbd",
+    "profiles/control/run/costs/r1-000-g0-I-capture.work-start.json": "a891a81844b6272ae5e1193a2dfa01bf1d99891cdcfa44a130825fa22ec77506",
+    "profiles/control/run/costs/r1-000-g0-I-containment.end.json": "6924a57994a5782a412e96753bea068523fb3e32603d3687e5177f89c03cc3ac",
+    "profiles/control/run/costs/r1-000-g0-I-containment.json": "5dc94a0c46d026cbd4dd13de50d3afee0bd07b45590999ccb0322546e51c3b3b",
+    "profiles/control/run/costs/r1-000-g0-I-containment.start.json": "a944ca55e8f55972e82ec467766f7f4cdb54f557c94cc94b8ad5d5ee39a53130",
+    "profiles/control/run/costs/r1-000-g0-I-containment.work-start.json": "8699b2c88a85b1e18ee5b6f1eef308233fcadc3783cd5ff646da54b0d2694be6",
+    "profiles/control/run/costs/r1-000-g0-I-preflight.end.json": "2ef5143eb46e488ee07df0f82c946488e22471e36a8e3c715f8ae2273bf7d2ac",
+    "profiles/control/run/costs/r1-000-g0-I-preflight.json": "ed7ae4592c2348016699e392c08276ff76037ffcfaf483d1a5826f0b16f57351",
+    "profiles/control/run/costs/r1-000-g0-I-preflight.start.json": "43ef1e3079d52651c2ff5c81b80e322736757ea73b46c7626f61efa256892939",
+    "profiles/control/run/costs/r1-000-g0-I-preflight.work-start.json": "9c2c51d790add9c89513a8a1d1b61588e07c9055c1a55accf87d9cdd763abf23",
+    "profiles/control/run/costs/r1-000-g0-I-request.end.json": "348702a5f57f35945b40b12cebfe69318717d6f8c22cbafe2d864edfdeb4880c",
+    "profiles/control/run/costs/r1-000-g0-I-request.json": "93f9211db5eeb835a2df7e1abd7c8505c236a19e96765a377637117c437057e4",
+    "profiles/control/run/costs/r1-000-g0-I-request.start.json": "ea321ac19220c83883d54bd8683d9e655fe0a4ea0872f586efcd728b595fda1a",
+    "profiles/control/run/costs/r1-000-g0-I-request.work-start.json": "8d3b40bacfbc2a95dcdd5a2001c46212f8ca251772b78a58310bf8e0969e576a",
+    "profiles/control/run/costs/r1-000-g0-N-capture.end.json": "e404d44f44970c2e3f84ce63309f2e44a0e2021cd2281bfef508814bf6f311bb",
+    "profiles/control/run/costs/r1-000-g0-N-capture.json": "629b53ebc89eccc447f94b74369166ad795eb9b481372a06a44675e3896ead60",
+    "profiles/control/run/costs/r1-000-g0-N-capture.start.json": "1eb8643bc116c6becc8b4b9032fc79de54a99abdfe91786c9e65c137e606f70d",
+    "profiles/control/run/costs/r1-000-g0-N-capture.work-start.json": "0722f6e202daafbb08517e4bf1ee53773c13df1483979feda475a422d2ddcb34",
+    "profiles/control/run/costs/r1-000-g0-N-containment.end.json": "587b64a6d710c841bf1e1ef4ffd7d526f4f9352e22c2fe11b056e5436dc69616",
+    "profiles/control/run/costs/r1-000-g0-N-containment.json": "ef45c97917e55386aa905484095996024bc9061eeadec9726535a48a3efa40f7",
+    "profiles/control/run/costs/r1-000-g0-N-containment.start.json": "f197f9a283fcee01f2116e4a4b778e064277df3ead16a1d38a573d79c2f0d9c1",
+    "profiles/control/run/costs/r1-000-g0-N-containment.work-start.json": "ef0a7ca8c35ac12ba665d879659b6e621e5010ce203a5839f31687f49d31a2f8",
+    "profiles/control/run/costs/r1-000-g0-N-preflight.end.json": "275066e2ef7e17b78e02b58bec72f081ada502982b9ab8940319653bc527455a",
+    "profiles/control/run/costs/r1-000-g0-N-preflight.json": "95392a6ff632917131d4b9c9e4fbad19d0ff3126ef4e5a5cd647035ca4005792",
+    "profiles/control/run/costs/r1-000-g0-N-preflight.start.json": "dc9f3cd35dfb98419b63dee2cb577962ab6832efb8e52e17521318b259e15ce4",
+    "profiles/control/run/costs/r1-000-g0-N-preflight.work-start.json": "597b7b86656e4f6dcd49b7624b1a8439ae94df360bc9028b6bc6379b5d2af739",
+    "profiles/control/run/costs/r1-000-g0-N-request.end.json": "7c69fd4557deee381863294e10d1802847aabc19e7ae786d0c54a762d9e68141",
+    "profiles/control/run/costs/r1-000-g0-N-request.json": "43e6c2a7d4c3a06be126b5955be388b406b83d0bff4599423cb55af99851bbdf",
+    "profiles/control/run/costs/r1-000-g0-N-request.start.json": "cac7911d75d22ba8e0cb76372cd32929d279e2357581960ed6127d1cde088080",
+    "profiles/control/run/costs/r1-000-g0-N-request.work-start.json": "19120f77820f1a723c8f8af76fcd1f24c44c33a2ade2620334d8864d9dd586c2",
+    "profiles/control/run/costs/r1-001-I-inverse.end.json": "dccc574938ab4809a1b47c77b503ea7b9c8b80eef0297ed723b875c04adb24da",
+    "profiles/control/run/costs/r1-001-I-inverse.json": "7091f384da47ef0c5b233d9fa93b8efa9ac453110e9ff20f826f0c35f2cc4352",
+    "profiles/control/run/costs/r1-001-I-inverse.start.json": "095e1ac0e27d3c332915b9804a67b8e014c4760ae4633354b230d599bfd965ab",
+    "profiles/control/run/costs/r1-001-I-inverse.work-start.json": "30a80d246d45eb4107d7b9d240847b979b1cf58e674c6b4fbc42e7999595bcfc",
+    "profiles/control/run/costs/r1-001-I-source.end.json": "97c70384c15b08016286ee4ccc027884e77a6b1e88878264d0fb4ba0e44190f0",
+    "profiles/control/run/costs/r1-001-I-source.json": "0f0084c1e31ab9e7cb646ad4537ea4bba95d9386a661a57a127ac47f1e7a352e",
+    "profiles/control/run/costs/r1-001-I-source.start.json": "72065ddb96be2d9d54dfd3fc24c9b7c2648aa4952cf8502480b0a18484edbcb4",
+    "profiles/control/run/costs/r1-001-I-source.work-start.json": "d34412949a6117739e53ec1bda98d74e02871e1c31a3e50d4b8798f118c9eb44",
+    "profiles/control/run/costs/r1-001-N-source.end.json": "98277cb4cea8ccb18181ff2a88f93073eca638f3bd313cc02dc921625bbf068e",
+    "profiles/control/run/costs/r1-001-N-source.json": "6d6487a4e72aedbc35d943bb487163ec7133c5ccf55ee0dc04c7e109e522e4a8",
+    "profiles/control/run/costs/r1-001-N-source.start.json": "440b51fef0115b2b4d49969a59622d087591f3fd3298167f8971cb5c2d384946",
+    "profiles/control/run/costs/r1-001-N-source.work-start.json": "35d7e2ced22db05e026eee91394cf61448a48e640d5162ac4d8f590fbe841a63",
+    "profiles/control/run/costs/r1-001-comparison.end.json": "0dfc62aea87c5c39f906cb5310dd4c68854b81518dce14cc8acedb6e271a698d",
+    "profiles/control/run/costs/r1-001-comparison.json": "859a3c062f0368f88583a3c624c8be198ab70f50b3fbbbec9ac92a9db5c6a0d2",
+    "profiles/control/run/costs/r1-001-comparison.start.json": "48f6cc6760f7ed84a1c68d053c72f5c5b653247d919801ba56c9e5c4199517a0",
+    "profiles/control/run/costs/r1-001-comparison.work-start.json": "3e7fddca75c7748865f7050faffbc874cf86c7fbf3c42e34ba0702a4e2680dd6",
+    "profiles/control/run/costs/r1-001-g0-I-capture.end.json": "54a83c6be28ac905484a0642e7b8f8af8ed4901cbef58525ef010c463e229944",
+    "profiles/control/run/costs/r1-001-g0-I-capture.json": "85d6896d9f29d78d1194ebc4cb0028aab6613864321947672e1e08da6fe3592f",
+    "profiles/control/run/costs/r1-001-g0-I-capture.start.json": "5bed8ca49ec1d951b9c3e2f77c201645d376c2a96e1ca9f43855bf918e5a2aaa",
+    "profiles/control/run/costs/r1-001-g0-I-capture.work-start.json": "ebf77f709f16c78c6f4861b227acec95304b3c4c2b9ce80dfd262709559a848f",
+    "profiles/control/run/costs/r1-001-g0-I-preflight.end.json": "e2686decc082d8862bbc0feb64c71f273de63870db49d04ee2e53d483b22b26b",
+    "profiles/control/run/costs/r1-001-g0-I-preflight.json": "3d8b342b873d288f7e0a08a4b078ca3fda3291701fd6bb54d86fe36b60b9900e",
+    "profiles/control/run/costs/r1-001-g0-I-preflight.start.json": "839ae2382cbeb69d03a6e1f9d7ba6650b1475ef2ebff9d5b24558a1289e53340",
+    "profiles/control/run/costs/r1-001-g0-I-preflight.work-start.json": "0aead10f361a9007e4bad612eba4f7864bc1b80f602397e5cca9a9eb0266a8a3",
+    "profiles/control/run/costs/r1-001-g0-I-request.end.json": "e565ebb2943b0922eafbf7cebccecf40a6d28617ddceceaa77c5ede4b4b909f8",
+    "profiles/control/run/costs/r1-001-g0-I-request.json": "8f71016e96b06ce136138b02c869af0056c748b28e58526773419d4c6a0f401b",
+    "profiles/control/run/costs/r1-001-g0-I-request.start.json": "c076e559c1bf0df137cc5691df149e3ba53f8cb4f16368d313906eaa78229753",
+    "profiles/control/run/costs/r1-001-g0-I-request.work-start.json": "1ba41fc773ddfa35d795a6c7205d0e472f8ca528f2422ca56386b1ad16ea772e",
+    "profiles/control/run/costs/r1-001-g0-N-capture.end.json": "aeca0e2c1535823775115caa11d235be87ce1d9e44cd8c53606691af8102d0bb",
+    "profiles/control/run/costs/r1-001-g0-N-capture.json": "8ab5ed71b0c5ffe4a6be97005f691d7515744ee28b05c752a1d7442515ed0673",
+    "profiles/control/run/costs/r1-001-g0-N-capture.start.json": "26c148142f6c3cf77667f9d71aacc0d5bc17e0c980a22c98644cf576c0f367f2",
+    "profiles/control/run/costs/r1-001-g0-N-capture.work-start.json": "c18c01e58aa96ec2ee5c1e4b885bd99d941d56319fa3daa962e2239ee9b0c39d",
+    "profiles/control/run/costs/r1-001-g0-N-preflight.end.json": "e24fc62e8f23292c11dc3f7a6137a87aac71275b8cc950ed939626091c69907b",
+    "profiles/control/run/costs/r1-001-g0-N-preflight.json": "6830aa9fa15b2fe38acc214d1c05adff88c7265f6e2e0f7f0013eceae93c52c0",
+    "profiles/control/run/costs/r1-001-g0-N-preflight.start.json": "eb404dac0fa2b8b1657da02d7628eaa38b6525dd0e6835f0772057c6fb048186",
+    "profiles/control/run/costs/r1-001-g0-N-preflight.work-start.json": "a350a481c6ef25bb0c705c3cafe5335fbffcbd1dc0f272caa2be18272605e3c3",
+    "profiles/control/run/costs/r1-001-g0-N-request.end.json": "65a0022486a9e97a9fd583148773c9277c9eb8595d06ea8f16ac76c2877d04ce",
+    "profiles/control/run/costs/r1-001-g0-N-request.json": "20a54b5700f121289d440a11b8de99fcee0ce10dd18db6e762cdcc12c741e034",
+    "profiles/control/run/costs/r1-001-g0-N-request.start.json": "2806f1b79d5e756d947dd3718aa6b7b1de56931bfd73c9cb6da30ddd4f0142b4",
+    "profiles/control/run/costs/r1-001-g0-N-request.work-start.json": "4c81dfd4a76e0f31ee2f2912abb94399a4907a32c2acd0fe1ee2017406a4f30f",
+    "profiles/control/run/costs/r1-002-I-inverse.end.json": "dbab1eb4e5dcec10359fa6f728080507404a5c96db17c6dcc3c0969aa65c1e1f",
+    "profiles/control/run/costs/r1-002-I-inverse.json": "42c8a12e77dfc56d851ab3ee519b8ce27fe378545e426d5ef556ab75a590cd2a",
+    "profiles/control/run/costs/r1-002-I-inverse.start.json": "eeee5b394b852dd904839e1717e04e41035d1c1b709e116839bdbe02ad64792b",
+    "profiles/control/run/costs/r1-002-I-inverse.work-start.json": "22deebbb5d95235bf2cce4c74af324076c5e05430067955cc89bc40a2ecb53c6",
+    "profiles/control/run/costs/r1-002-I-source.end.json": "fa783db42c67ce8dd6afaa283c2c4a8f848788d99c65199a8b937760575785c4",
+    "profiles/control/run/costs/r1-002-I-source.json": "8609f4edd445b8138aac3a45b4a0c5ff5056beadcbbd3b5a612b81508325c2ec",
+    "profiles/control/run/costs/r1-002-I-source.start.json": "8dbfb08aa501a00b468d60481532c5ec789bd4bd4907e854890cb3e34b848cfc",
+    "profiles/control/run/costs/r1-002-I-source.work-start.json": "67162a5bf50746a7b64378b5e60bccfc00264d532137df8a43ff8921a528406b",
+    "profiles/control/run/costs/r1-002-N-source.end.json": "1c0a172ed87c066513557f381fa36bc907e9e0dcab848c6163d450ae5fe65110",
+    "profiles/control/run/costs/r1-002-N-source.json": "2e4cf16f0332bd61c45ce63000afb36b11c11ba26a288bfd9e35bcceb757946a",
+    "profiles/control/run/costs/r1-002-N-source.start.json": "f8974d1ebacb96e552760a9502f56374a118e6cd16188c43e879c0ee0932512d",
+    "profiles/control/run/costs/r1-002-N-source.work-start.json": "91ba0d3a85cb6aeaad729cfd8e9ec9f0dc2b783ed3bedef86dc4247dbc0c71b0",
+    "profiles/control/run/costs/r1-002-comparison.end.json": "ca0243eb75b11c272a3a15a9a7cf9a5a2b24920df4261f1d2140c98b317d9391",
+    "profiles/control/run/costs/r1-002-comparison.json": "855ecf862347824a7b1c737a6557c21dc50c1fd09b094eeee6666afe60f9f916",
+    "profiles/control/run/costs/r1-002-comparison.start.json": "0cec9e90a459cc129ee8e7d2af553338f831445d5ff5d355e9b47183335e67d2",
+    "profiles/control/run/costs/r1-002-comparison.work-start.json": "c2eec2426618a9750541ec7c3b05c5946e8c8d9b55b054e8619bfe16c6bfc640",
+    "profiles/control/run/costs/r1-002-g0-I-capture.end.json": "00bc892e68e502f1d1c2f8cc66566c3ff3b2a4a627425dcde946735359a66266",
+    "profiles/control/run/costs/r1-002-g0-I-capture.json": "504cf5579ea4f79db4b99d91b2d01d33b1d1b686927437aeba1d00a7e6683cf6",
+    "profiles/control/run/costs/r1-002-g0-I-capture.start.json": "26109800a12e46b7c928b9ef33972588bf1198476a953fc6dfdba055dfbfa6ae",
+    "profiles/control/run/costs/r1-002-g0-I-capture.work-start.json": "43b96c6f2a5e30bdb2d55e8ef2b831d30f3a640a322ce86a31972ddd2ca82cb2",
+    "profiles/control/run/costs/r1-002-g0-I-preflight.end.json": "9a2adc4597540ffb287b075eb133e323bfb5a8d2abfde826b8bc81e1e5640467",
+    "profiles/control/run/costs/r1-002-g0-I-preflight.json": "aea6be8d55b3f0c415286c0e0c4c00c3c008295ec177d41eed096d10bf5220a9",
+    "profiles/control/run/costs/r1-002-g0-I-preflight.start.json": "0dfcf2acf8e6bdcf62a74f9a99497da52c1604aa7ef1bf766965ec354e73765c",
+    "profiles/control/run/costs/r1-002-g0-I-preflight.work-start.json": "bf6c3224dd8dd80ec0e1829d73139f5ba52ca3e9b5e95951f17985ec938a2df5",
+    "profiles/control/run/costs/r1-002-g0-I-request.end.json": "2e9e485c6b7068efc7b5e7014c27d5d5b6ee0626181f5a853ad55ddd7e434c22",
+    "profiles/control/run/costs/r1-002-g0-I-request.json": "6e26b261908a0300411c9d3b56a479267144f00b388dad3b8a4888b33ad25562",
+    "profiles/control/run/costs/r1-002-g0-I-request.start.json": "c76d35b1c70d687546b6ec3acacb817f2618c6cd8f6b3f629aa9c9cfb30acae7",
+    "profiles/control/run/costs/r1-002-g0-I-request.work-start.json": "a719400b46809b9b77b433aeb5401500b7909186732ab542ba4451344aadb385",
+    "profiles/control/run/costs/r1-002-g0-N-capture.end.json": "eb45d60379211e02241c7df62e0a48d71f3995ba540e34a695a7c51cf3d70635",
+    "profiles/control/run/costs/r1-002-g0-N-capture.json": "511f4d6639c6cc4cd47054db111dcca218de3dd790660f340b4f9ae4f6c4620b",
+    "profiles/control/run/costs/r1-002-g0-N-capture.start.json": "9469f78624d785146e331734af3c700d4b932a3fc05a23fc57e8c9f03369ca54",
+    "profiles/control/run/costs/r1-002-g0-N-capture.work-start.json": "a0a593818549a51505afa13b4ca6ffda79d1a9594b8f8d88736598aa7e9ce86a",
+    "profiles/control/run/costs/r1-002-g0-N-preflight.end.json": "1bf31f08edbc4f1990ac380336075266905faef05f3b956d306608f42300364c",
+    "profiles/control/run/costs/r1-002-g0-N-preflight.json": "18097306fe1472c4a53c85e81f9bb1e7ced5a52c0b3b1f90fbe6e01ad5ba65b5",
+    "profiles/control/run/costs/r1-002-g0-N-preflight.start.json": "22a0b2e2176f5d21884960e19f340023928e0d0e65581ab943b5b43258b983df",
+    "profiles/control/run/costs/r1-002-g0-N-preflight.work-start.json": "dec976501b35ccf9bbd387a8835c44486860934edbe3c0cf94091b79ff880be0",
+    "profiles/control/run/costs/r1-002-g0-N-request.end.json": "c3aed746d726d998bcc0b8b0733eeaae4c3add8805ee0468620117e6b38b0af1",
+    "profiles/control/run/costs/r1-002-g0-N-request.json": "a967c02d2c486587a56656efe799c553e8f4b47d92b4b0e0d917f3c71fa53a06",
+    "profiles/control/run/costs/r1-002-g0-N-request.start.json": "5bd4e5acc11ac2c69808128e6ec62945045cb8cb66249241d32394ca6fe6c05b",
+    "profiles/control/run/costs/r1-002-g0-N-request.work-start.json": "16c37dd8a73d865b3af0ac903a21636ef801d68cd00eb6be415588e3ab50e9ea",
+    "profiles/control/run/costs/r1-003-I-inverse.end.json": "73677eb60dfbfbb22ca73762970b98404348f8b39b81254baafbb2a3d034b1cf",
+    "profiles/control/run/costs/r1-003-I-inverse.json": "7c4b517fc08626d4112a7761414f651684baa7e28c94172773e1e60311e84333",
+    "profiles/control/run/costs/r1-003-I-inverse.start.json": "efc405c0510e74981bfeff7eff79b1fdbaea9c306a9a2113c0c4dd9bb97c4871",
+    "profiles/control/run/costs/r1-003-I-inverse.work-start.json": "03ca46b13a2f78ac039cace6d2add15624a44ba31049c3fca0dadfab962cb770",
+    "profiles/control/run/costs/r1-003-I-source.end.json": "13f2e1c376f4d31428494810084ef3c6dfdd8cf0d3a9885907eec590a6662087",
+    "profiles/control/run/costs/r1-003-I-source.json": "8758678fe2480a8963f4c36c95b13985cd0e3ae7542fafdaec42996510073dc4",
+    "profiles/control/run/costs/r1-003-I-source.start.json": "9116c47ce3ef97dd2f2afe547976249262641b6a051c51b83c1d66221806e7af",
+    "profiles/control/run/costs/r1-003-I-source.work-start.json": "bb54b6ac59c3b11a95dfca429a1056439675f994ef48d0cc2df3ec4ad5c205b4",
+    "profiles/control/run/costs/r1-003-N-source.end.json": "6596b95b70e8df14adecb3532b1b5c7441e4b88b62ae09b93d825cbab6ba16d9",
+    "profiles/control/run/costs/r1-003-N-source.json": "b61196e47673fb231bbc40524e1408ba7898a47595e30ca0894f650fbbb0760d",
+    "profiles/control/run/costs/r1-003-N-source.start.json": "3d10ed286143aff386d4c9f4d4ba341e9e81d8bb182c96d8f92c8543fa8665d5",
+    "profiles/control/run/costs/r1-003-N-source.work-start.json": "3055f20f863bf5b034c30150f31e6baa28ecd761627b67e5256df7180cf4954c",
+    "profiles/control/run/costs/r1-003-comparison.end.json": "36c9f2e501cdb907507ab51fcbd9fb80f3b199e5259e4de3cdeeded23b436222",
+    "profiles/control/run/costs/r1-003-comparison.json": "f874eb5e84d0cc584c5ee1def774d7f92565a5e0065d23f714c31b46ad88274a",
+    "profiles/control/run/costs/r1-003-comparison.start.json": "a4d35517f71432f3d48e20391a5bf2c83883ec27118ef5a90ee0d300bb6a4283",
+    "profiles/control/run/costs/r1-003-comparison.work-start.json": "32f4c7dd7d3cc634b36d29144db27c593592c225dfcf8b95af3874e8257f3b2c",
+    "profiles/control/run/costs/r1-003-g0-I-capture.end.json": "9f354727ae7993f4c8c1e384e7c09c3187150fb59d1611c26f0a734bd757d709",
+    "profiles/control/run/costs/r1-003-g0-I-capture.json": "d05284ac5aa3572df4be481c073e619fd758ab91c39165cfc0f994f9222d627d",
+    "profiles/control/run/costs/r1-003-g0-I-capture.start.json": "722b9f84062e16b435b070a42c6d9e5c4ffe7e229472e0fcf639142707db0b69",
+    "profiles/control/run/costs/r1-003-g0-I-capture.work-start.json": "211157734f9b89b6e32be704295dd2adba763ea0e6e0a421944ddcbac93ee936",
+    "profiles/control/run/costs/r1-003-g0-I-preflight.end.json": "61e4c04d7860302c91a4ac9e8e8b130f48fbcd51d3a4bdcba94683059b2e978e",
+    "profiles/control/run/costs/r1-003-g0-I-preflight.json": "fe2584537906777d1c5aa96807e757b11eca2e338b59054b2b7919132977bf48",
+    "profiles/control/run/costs/r1-003-g0-I-preflight.start.json": "4e66d7a77291e09aa9dbd2fff4b10d789d32e9e8dddebedf663c408a67e26cf8",
+    "profiles/control/run/costs/r1-003-g0-I-preflight.work-start.json": "d21639bbb87b2c8446d50f73bba36f3b0b5ee0dae92b3b14ef7dc6d78ecfd424",
+    "profiles/control/run/costs/r1-003-g0-I-request.end.json": "dd67d515b9bed236430a5dea746eda758cbb43e129e26dc308c1d1e158678f9b",
+    "profiles/control/run/costs/r1-003-g0-I-request.json": "182fff9cb49506e4087230331c8ef69ff13c8ed610ec80fe0cc275e0567ea61a",
+    "profiles/control/run/costs/r1-003-g0-I-request.start.json": "d6d01c0ce21f8677337121e8ab966c144c6c60f9270233307adf91ed482ef3a6",
+    "profiles/control/run/costs/r1-003-g0-I-request.work-start.json": "161ff38651463dd4e4daf2f4a28a9ed815a822d7bf598193f4e11081e3bd2416",
+    "profiles/control/run/costs/r1-003-g0-N-capture.end.json": "e6a25493caee3f91b5f15f72a60af65c4212503fc1c5831e2262a6c322e85229",
+    "profiles/control/run/costs/r1-003-g0-N-capture.json": "189b6de41d7ba4fc6650d1e609ac7b7a1c6939f7c66cddc1fca123ce2181f971",
+    "profiles/control/run/costs/r1-003-g0-N-capture.start.json": "7b9992593426e5a7f53f9cf890c828d3a88caf07853f7b2a919da969435f8d7d",
+    "profiles/control/run/costs/r1-003-g0-N-capture.work-start.json": "632340711b76a85607c5d49a534b88bf17d4ff8ea10cfd371ab17b994a2a0129",
+    "profiles/control/run/costs/r1-003-g0-N-preflight.end.json": "b92db68fdac7681845971ec76f00baeb51e65bc8f7c9d57a338f8e264b274c95",
+    "profiles/control/run/costs/r1-003-g0-N-preflight.json": "9879742337eec9c0e4d663dad836b917362f25fc5d26da1cd4dfb98377a94263",
+    "profiles/control/run/costs/r1-003-g0-N-preflight.start.json": "28aaeb752f01b01802d6059e4ba8cf45971b93b48d839b49d2780e69cd0a3b65",
+    "profiles/control/run/costs/r1-003-g0-N-preflight.work-start.json": "c12c1643c4740f56682379e1687261461f15735e13a242ee65ac45bddf90b75c",
+    "profiles/control/run/costs/r1-003-g0-N-request.end.json": "8b8b5009629e36cde1186448051637fb60e333954b5eb9708035053fcc52e762",
+    "profiles/control/run/costs/r1-003-g0-N-request.json": "48b6d6d91172ff76e8f5512465a56acd2ab4c189055a0c69ad1823c271a838da",
+    "profiles/control/run/costs/r1-003-g0-N-request.start.json": "125e849452301a2bcd8a0175fec0bc9135fbd4c44e2bda4710c527d2b8b95b12",
+    "profiles/control/run/costs/r1-003-g0-N-request.work-start.json": "b9908563b585883539a2767b6d13bed4f3fdc2c6d2c427423329f350a9eb68ea",
+    "profiles/control/run/costs/r1-I-acquisition.end.json": "d24a30a1912a8c5fe0b77ff2df14a5ca1fc234485656ff855e3b81ec9144f5e3",
+    "profiles/control/run/costs/r1-I-acquisition.json": "fcd5745ea35995d562326fea28d7b4d2a6980607cf2da6e709e810e81715cca7",
+    "profiles/control/run/costs/r1-I-acquisition.start.json": "720655b4367c78f89092c14248aaa8cb46ddd8d0b56996d22c7eed2b3e0f9d78",
+    "profiles/control/run/costs/r1-I-acquisition.work-start.json": "9e0b1ae994b0747e10246c332e746e9aa1682d0a67c8f8430e8db42d0c449bc9",
+    "profiles/control/run/costs/r1-N-acquisition.end.json": "cd870c32778321c4904af2bb5be1a5643d3903afd893824a9c0a3642aa604540",
+    "profiles/control/run/costs/r1-N-acquisition.json": "93eb7447dcb6d324b8c16e9462cfee4d5fab27cebc6008baecae49d655781eb4",
+    "profiles/control/run/costs/r1-N-acquisition.start.json": "fd2b425cec81d9ef26d544877d06bfa1947d55d9128b5fc8a353cb44ecce0226",
+    "profiles/control/run/costs/r1-N-acquisition.work-start.json": "8d15309776143e650bd6892314712870c591535c0d04d3eae470e3a29255ef23",
+    "runner-source.tar.gz": "a2de78452669a85daff7d8b9ac508b1836bc015a9078cdfc06cd5e49e1829a4e"
+  },
+  "measuredSourceFiles": {
+    "runner.go": "363877138b07016b9f60f6640a9666fcc654d678218c2c92dc8295366a30acf4",
+    "process_linux.go": "b19cf48695f4f843be958656f4097754f4f534f626ff602edc3dabe9cf1c984b",
+    "watch_linux.go": "3987e803cf1a1b32ec0e6281355779a19766c4a25bbe87bc1d0f2e2e9fef1030",
+    "files.go": "97dac0ad3b6200c0544501e607819a17d03a00df3bf4d4e7950b49724baaadb6",
+    "capture.init.gradle": "cac81f720c86919c57b6a8478007c075db41b4365630f16b99c2b50b41d2c240"
+  },
+  "requests": [
+    {
+      "attempt": "r1-000-g0-I",
+      "originalOrdinal": 17,
+      "arm": "I",
+      "nativeStartNS": 328493658841741,
+      "nativeEndNS": 328723240049432,
+      "nativeSeconds": 229.581207691,
+      "supervisorCPUSeconds": 226.292661,
+      "supervisorCoreEquivalent": 0.9856758890500038,
+      "bulkCaptureOverlapSeconds": 0.0,
+      "ownCaptureSeconds": 156.530770182,
+      "previousCapture": {
+        "attempt": "r1-000-g0-N",
+        "endNS": 328415510685159,
+        "gapToNativeSeconds": 78.148156582
+      },
+      "prior30Seconds": {
+        "startNS": 328463658841741,
+        "endNS": 328493658841741,
+        "coverageSeconds": 30.0,
+        "maximumSampleGapSeconds": 1.018944243,
+        "averageSomePressure": {
+          "cpu": 0.019171150993871372,
+          "io": 0.7840889016488825,
+          "memory": 0.0
+        },
+        "method": "overlap-weighted sampled intervals; approximate at window boundaries"
+      },
+      "duringNative": {
+        "averagePressure": {
+          "cpu": 0.10489085908577367,
+          "io": 0.11789132196170726,
+          "memory": 0.0012871088316501785
+        },
+        "samplingQualified": true,
+        "maximumSampleGapSeconds": 1.578858347
+      }
+    },
+    {
+      "attempt": "r1-000-g0-N",
+      "originalOrdinal": 17,
+      "arm": "N",
+      "nativeStartNS": 327474371877110,
+      "nativeEndNS": 327691657411633,
+      "nativeSeconds": 217.285534523,
+      "supervisorCPUSeconds": 207.583422,
+      "supervisorCoreEquivalent": 0.9553485576281057,
+      "bulkCaptureOverlapSeconds": 0.0,
+      "ownCaptureSeconds": 722.274568777,
+      "previousCapture": null,
+      "prior30Seconds": {
+        "startNS": 327444371877110,
+        "endNS": 327474371877110,
+        "coverageSeconds": 30.0,
+        "maximumSampleGapSeconds": 2.576908203,
+        "averageSomePressure": {
+          "cpu": 0.022279667226867673,
+          "io": 0.40679846052276625,
+          "memory": 1.4233333333333333e-05
+        },
+        "method": "overlap-weighted sampled intervals; approximate at window boundaries"
+      },
+      "duringNative": {
+        "averagePressure": {
+          "cpu": 0.13804771932173,
+          "io": 0.04857773284314773,
+          "memory": 0.001162249391775108
+        },
+        "samplingQualified": false,
+        "maximumSampleGapSeconds": 6.206532437
+      }
+    },
+    {
+      "attempt": "r1-001-g0-I",
+      "originalOrdinal": 18,
+      "arm": "I",
+      "nativeStartNS": 329061882758254,
+      "nativeEndNS": 329090763657549,
+      "nativeSeconds": 28.880899295,
+      "supervisorCPUSeconds": 28.354902,
+      "supervisorCoreEquivalent": 0.9817873643882321,
+      "bulkCaptureOverlapSeconds": 0.0,
+      "ownCaptureSeconds": 21.747389672,
+      "previousCapture": {
+        "attempt": "r1-000-g0-I",
+        "endNS": 328881974671897,
+        "gapToNativeSeconds": 179.908086357
+      },
+      "prior30Seconds": {
+        "startNS": 329031882758254,
+        "endNS": 329061882758254,
+        "coverageSeconds": 30.0,
+        "maximumSampleGapSeconds": 1.034289767,
+        "averageSomePressure": {
+          "cpu": 0.045610347656604995,
+          "io": 0.04382471426883095,
+          "memory": 0.0
+        },
+        "method": "overlap-weighted sampled intervals; approximate at window boundaries"
+      },
+      "duringNative": {
+        "averagePressure": {
+          "cpu": 0.034606807853740394,
+          "io": 0.008691450563349294,
+          "memory": 0.0
+        },
+        "samplingQualified": true,
+        "maximumSampleGapSeconds": 1.01244819
+      }
+    },
+    {
+      "attempt": "r1-001-g0-N",
+      "originalOrdinal": 18,
+      "arm": "N",
+      "nativeStartNS": 329125186075375,
+      "nativeEndNS": 329154424042172,
+      "nativeSeconds": 29.237966797,
+      "supervisorCPUSeconds": 28.755309,
+      "supervisorCoreEquivalent": 0.9834920875192483,
+      "bulkCaptureOverlapSeconds": 0.0,
+      "ownCaptureSeconds": 21.913777226,
+      "previousCapture": {
+        "attempt": "r1-001-g0-I",
+        "endNS": 329113230756279,
+        "gapToNativeSeconds": 11.955319096
+      },
+      "prior30Seconds": {
+        "startNS": 329095186075375,
+        "endNS": 329125186075375,
+        "coverageSeconds": 30.0,
+        "maximumSampleGapSeconds": 1.073320623,
+        "averageSomePressure": {
+          "cpu": 0.0452534561267056,
+          "io": 0.125716052488976,
+          "memory": 0.0026371666666666666
+        },
+        "method": "overlap-weighted sampled intervals; approximate at window boundaries"
+      },
+      "duringNative": {
+        "averagePressure": {
+          "cpu": 0.02891014020762676,
+          "io": 0.031677011509827886,
+          "memory": 7.832281963720434e-06
+        },
+        "samplingQualified": true,
+        "maximumSampleGapSeconds": 1.011641496
+      }
+    },
+    {
+      "attempt": "r1-002-g0-I",
+      "originalOrdinal": 19,
+      "arm": "I",
+      "nativeStartNS": 329328353080157,
+      "nativeEndNS": 329364083076073,
+      "nativeSeconds": 35.729995916,
+      "supervisorCPUSeconds": 35.222675,
+      "supervisorCoreEquivalent": 0.9858012601738692,
+      "bulkCaptureOverlapSeconds": 0.0,
+      "ownCaptureSeconds": 21.226054,
+      "previousCapture": {
+        "attempt": "r1-002-g0-N",
+        "endNS": 329316085225688,
+        "gapToNativeSeconds": 12.267854469
+      },
+      "prior30Seconds": {
+        "startNS": 329298353080157,
+        "endNS": 329328353080157,
+        "coverageSeconds": 30.0,
+        "maximumSampleGapSeconds": 1.021272052,
+        "averageSomePressure": {
+          "cpu": 0.04514664530385793,
+          "io": 0.1366809799035782,
+          "memory": 1.8e-06
+        },
+        "method": "overlap-weighted sampled intervals; approximate at window boundaries"
+      },
+      "duringNative": {
+        "averagePressure": {
+          "cpu": 0.06190972614994364,
+          "io": 0.007914121128564582,
+          "memory": 1.7268403876970653e-05
+        },
+        "samplingQualified": true,
+        "maximumSampleGapSeconds": 1.015404715
+      }
+    },
+    {
+      "attempt": "r1-002-g0-N",
+      "originalOrdinal": 19,
+      "arm": "N",
+      "nativeStartNS": 329258379801512,
+      "nativeEndNS": 329293228144743,
+      "nativeSeconds": 34.848343231,
+      "supervisorCPUSeconds": 34.354576,
+      "supervisorCoreEquivalent": 0.9858309697041563,
+      "bulkCaptureOverlapSeconds": 0.0,
+      "ownCaptureSeconds": 21.55825786,
+      "previousCapture": {
+        "attempt": "r1-001-g0-N",
+        "endNS": 329177166547248,
+        "gapToNativeSeconds": 81.213254264
+      },
+      "prior30Seconds": {
+        "startNS": 329228379801512,
+        "endNS": 329258379801512,
+        "coverageSeconds": 30.0,
+        "maximumSampleGapSeconds": 1.023002676,
+        "averageSomePressure": {
+          "cpu": 0.03713718147940965,
+          "io": 0.23125024939163294,
+          "memory": 0.0
+        },
+        "method": "overlap-weighted sampled intervals; approximate at window boundaries"
+      },
+      "duringNative": {
+        "averagePressure": {
+          "cpu": 0.04469882228921727,
+          "io": 0.015096137697947305,
+          "memory": 1.721746127277175e-07
+        },
+        "samplingQualified": true,
+        "maximumSampleGapSeconds": 1.010503593
+      }
+    },
+    {
+      "attempt": "r1-003-g0-I",
+      "originalOrdinal": 20,
+      "arm": "I",
+      "nativeStartNS": 329462627030223,
+      "nativeEndNS": 329529957391061,
+      "nativeSeconds": 67.330360838,
+      "supervisorCPUSeconds": 64.620438,
+      "supervisorCoreEquivalent": 0.9597518444239412,
+      "bulkCaptureOverlapSeconds": 0.0,
+      "ownCaptureSeconds": 27.881376055,
+      "previousCapture": {
+        "attempt": "r1-002-g0-I",
+        "endNS": 329386256188198,
+        "gapToNativeSeconds": 76.370842025
+      },
+      "prior30Seconds": {
+        "startNS": 329432627030223,
+        "endNS": 329462627030223,
+        "coverageSeconds": 30.0,
+        "maximumSampleGapSeconds": 1.0324599,
+        "averageSomePressure": {
+          "cpu": 0.04737796507253222,
+          "io": 0.03204063495079578,
+          "memory": 0.00010756666666666665
+        },
+        "method": "overlap-weighted sampled intervals; approximate at window boundaries"
+      },
+      "duringNative": {
+        "averagePressure": {
+          "cpu": 0.1127394863183104,
+          "io": 0.04251503686908069,
+          "memory": 0.00014195676186849786
+        },
+        "samplingQualified": true,
+        "maximumSampleGapSeconds": 1.769315232
+      }
+    },
+    {
+      "attempt": "r1-003-g0-N",
+      "originalOrdinal": 20,
+      "arm": "N",
+      "nativeStartNS": 329574385079477,
+      "nativeEndNS": 329686468568751,
+      "nativeSeconds": 112.083489274,
+      "supervisorCPUSeconds": 87.00131,
+      "supervisorCoreEquivalent": 0.7762187862238662,
+      "bulkCaptureOverlapSeconds": 0.0,
+      "ownCaptureSeconds": 27.761532558,
+      "previousCapture": {
+        "attempt": "r1-003-g0-I",
+        "endNS": 329560363773438,
+        "gapToNativeSeconds": 14.021306039
+      },
+      "prior30Seconds": {
+        "startNS": 329544385079477,
+        "endNS": 329574385079477,
+        "coverageSeconds": 30.0,
+        "maximumSampleGapSeconds": 1.021643055,
+        "averageSomePressure": {
+          "cpu": 0.017148790787125476,
+          "io": 0.5339678347097047,
+          "memory": 0.32592101370447835
+        },
+        "method": "overlap-weighted sampled intervals; approximate at window boundaries"
+      },
+      "duringNative": {
+        "averagePressure": {
+          "cpu": 0.03774772275047169,
+          "io": 0.3880181891640344,
+          "memory": 0.04032747925803702
+        },
+        "samplingQualified": false,
+        "maximumSampleGapSeconds": 11.834269657
+      }
+    }
+  ],
+  "phaseSeconds": {
+    "candidate-inverse": 0.008681251,
+    "complete-output-state-and-invocation-capture": 1020.89372633,
+    "complete-request": 758.583751142,
+    "native-state-preparation": 976.014954554,
+    "neutral-source-advancement": 51.246564212,
+    "owned-process-supervision": 0.387782026,
+    "owner-output-comparison": 94.529238914,
+    "source-input-state-proof": 136.708595508
+  },
+  "lastPairSampledProcesses": [
+    {
+      "attempt": "r1-003-g0-I",
+      "role": "Gradle daemon",
+      "pid": 1086486,
+      "startTicks": 32849421,
+      "sampleCount": 66,
+      "firstSampleNS": 329463029031356,
+      "lastSampleNS": 329529313027768,
+      "missingStartSeconds": 0.402001133,
+      "missingEndSeconds": 0.644363293,
+      "maximumSampleGapSeconds": 1.769315232,
+      "observedThreadMasks": [
+        "0,1,2,3,4,5,6,7"
+      ],
+      "sampledCPUSeconds": 191.36,
+      "sampledMajorFaults": 0,
+      "sampledIOCounterDeltas": {
+        "rchar": 4033907806,
+        "wchar": 1053832977,
+        "syscr": 959610,
+        "syscw": 594870,
+        "read_bytes": 65536,
+        "write_bytes": 1187037184,
+        "cancelled_write_bytes": 0
+      }
+    },
+    {
+      "attempt": "r1-003-g0-I",
+      "role": "supervisor",
+      "pid": 1086316,
+      "startTicks": 32849311,
+      "sampleCount": 66,
+      "firstSampleNS": 329463029031356,
+      "lastSampleNS": 329529313027768,
+      "missingStartSeconds": 0.402001133,
+      "missingEndSeconds": 0.644363293,
+      "maximumSampleGapSeconds": 1.769315232,
+      "observedThreadMasks": [
+        "8"
+      ],
+      "sampledCPUSeconds": 63.69,
+      "sampledMajorFaults": 13,
+      "sampledIOCounterDeltas": {
+        "rchar": 9513472,
+        "wchar": 94607,
+        "syscr": 57130,
+        "syscw": 367,
+        "read_bytes": 49152,
+        "write_bytes": 319488,
+        "cancelled_write_bytes": 0
+      }
+    },
+    {
+      "attempt": "r1-003-g0-N",
+      "role": "Gradle daemon",
+      "pid": 1071446,
+      "startTicks": 32747489,
+      "sampleCount": 84,
+      "firstSampleNS": 329574874708346,
+      "lastSampleNS": 329686120538174,
+      "missingStartSeconds": 0.489628869,
+      "missingEndSeconds": 0.348030577,
+      "maximumSampleGapSeconds": 11.834269657,
+      "observedThreadMasks": [
+        "0,1,2,3,4,5,6,7"
+      ],
+      "sampledCPUSeconds": 194.62,
+      "sampledMajorFaults": 0,
+      "sampledIOCounterDeltas": {
+        "rchar": 4179108319,
+        "wchar": 1100317624,
+        "syscr": 1086339,
+        "syscw": 598438,
+        "read_bytes": 5996544,
+        "write_bytes": 1240391680,
+        "cancelled_write_bytes": 0
+      }
+    },
+    {
+      "attempt": "r1-003-g0-N",
+      "role": "supervisor",
+      "pid": 1071305,
+      "startTicks": 32747397,
+      "sampleCount": 84,
+      "firstSampleNS": 329574874708346,
+      "lastSampleNS": 329686120538174,
+      "missingStartSeconds": 0.489628869,
+      "missingEndSeconds": 0.348030577,
+      "maximumSampleGapSeconds": 11.834269657,
+      "observedThreadMasks": [
+        "8"
+      ],
+      "sampledCPUSeconds": 86.27,
+      "sampledMajorFaults": 0,
+      "sampledIOCounterDeltas": {
+        "rchar": 16364662,
+        "wchar": 99272,
+        "syscr": 98621,
+        "syscw": 310,
+        "read_bytes": 0,
+        "write_bytes": 475136,
+        "cancelled_write_bytes": 0
+      }
+    }
+  ],
+  "limits": [
+    "Pre-build pressure is descriptive, not retrospective admission or sample filtering.",
+    "Supervisor CPU is measured; CPU spent in each observer function was not profiled.",
+    "Bulk capture follows native execution; lingering effects on later builds are unproven.",
+    "Process I/O covers sampled intervals, with missing boundaries and sampling gaps.",
+    "Outer recorder CPU/I/O, per-thread waits and per-cgroup I/O pressure were not captured.",
+    "Host pressure identifies stalls, not their responsible process."
+  ]
+}
