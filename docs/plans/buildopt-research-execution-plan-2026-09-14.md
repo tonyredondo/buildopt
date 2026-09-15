@@ -1,7 +1,7 @@
 # Build Optimization research execution plan
 
 Date: 2026-09-14. Program: `BUILDOPT-VIABILITY-V1`.
-Status: governing plan in execution; BO-01 through BO-05 verified; BO-06 partial after a passing control and blocked development admission.
+Status: governing plan in execution; BO-01 through BO-05 verified; BO-06 partial; current comparator qualified and next control/development measurement proposed.
 
 This plan records the direction agreed after the research review and its
 discussion. It owns research priorities, sequencing and the
@@ -139,7 +139,7 @@ the outcome may be negative. Advance only on the outcome required below.
 | BO-03 | Estimate realistic whole-build opportunity per candidate | BO-01; measurement readiness before fresh timing | verified; [five candidate assessments](../../benchmarks/results/buildopt-product-viability-v1/bo-03-opportunity-assessment/README.md); only Checkstyle warrants the planned short screen after readiness checks; missing workflow evidence remains unqualified |
 | BO-04 | Admit or reject a focused Build Impact hypothesis | BO-01 and existing evidence review | verified; [no new trial admitted](../../benchmarks/results/buildopt-product-viability-v1/bo-04-build-impact-review/README.md); original savings retained |
 | BO-05 | Select a candidate through short comparisons | BO-02 as applicable, BO-03, early BO-06 correctness, and BO-04 for Build Impact | verified; [both fresh sequences passed](../../benchmarks/results/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay/README.md), saving 34.14% and 28.17%; the interrupted attempt remains separate |
-| BO-06 | Qualify correctness and freeze the implementation and protocol | Admitted opportunity; screen integration proof before BO-05, final freeze afterward | partial; [lean control passed](../../benchmarks/results/buildopt-product-viability-v1/bo-06-lean-measurement/README.md), but the actual development manifest lacks comparator qualification; allocation closed before the prefix; complete that prerequisite before another freeze |
+| BO-06 | Qualify correctness and freeze the implementation and protocol | Admitted opportunity; screen integration proof before BO-05, final freeze afterward | partial; [comparator and admission qualification passed](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-comparator-qualification/README.md); new policy and shared inputs fixed; fresh control and complete development replay remain proposed |
 | BO-07 | Establish sustained saving in the first repository | BO-05 and complete BO-06 | deferred |
 | BO-08 | Test the same mechanism on two other repositories | BO-07 positive | deferred |
 | BO-09 | Deliver and measure an MVP with manual controls | BO-08 positive | deferred |
@@ -420,11 +420,21 @@ identity, so this control cannot silently admit that changed input. The
 are retained. The allocation is closed as incomplete, with eight owner builds,
 eight comparison JVMs, no owner retries and no protected builds.
 
-Follow the [continuation requirements](../../benchmarks/results/buildopt-product-viability-v1/bo-06-lean-measurement/continuation.md):
-recover and complete comparator qualification, validate the real admission
-paths, then freeze consistent inputs before proposing further measurement.
-The candidate and savings criteria are unchanged. BO-07 and protected changes
-21–100 remain deferred.
+**Qualification completed, 2026-09-15:** all 33 comparator tests, six comparisons
+of retained Elasticsearch outputs and 20 full admission cases passed. One
+focused Go check also verified reader binding. This used eight comparator JVMs
+and no owner or fixture builds. The [qualification record](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-comparator-qualification/README.md)
+includes a new qualified policy and consistent control/development inputs.
+Positive admission tests use synthetic trial records strictly as test data;
+the live development proposal still refuses to proceed without a genuine
+control. The old control correctly fails admission for the new policy.
+
+Follow the [next measurement plan](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-comparator-qualification/next-measurement.md):
+eight control builds, then all 42 development builds if the control passes,
+within one proposed ten-hour allocation. No retries or additional profiles.
+The candidate and savings criteria are unchanged. Confirmation will also
+need evidenced preparation costs for each repetition. BO-06 remains partial;
+BO-07 and protected changes 21–100 remain deferred.
 
 ### BO-07: Measure sustained saving on the first repository
 

@@ -1,0 +1,50 @@
+{
+  "name": "native-reuse-000",
+  "status": "verified",
+  "request": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/native-reuse-000-request.json",
+    "sha256": "c1a4c3b23911e1d72ab774f9eeefd130c5a364e07d395694e976939bdaabf8f0"
+  },
+  "report": {
+    "status": "equivalent",
+    "policySHA256": "028d31d8be73de2debda8a337c39782952b9a15f42b44d1e57413062b03c0114",
+    "captures": [
+      {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/native-calibration-04/attempts/r1-000-g0-N/capture.json",
+        "sha256": "322533922d5347e1e09775f72722b58dc533668571b43529998eedc39db8aaaf"
+      },
+      {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/native-calibration-04/attempts/r1-000-g0-I/capture.json",
+        "sha256": "3f82cf45d0c005f6922c7cfc10844043fb5aa83fb30c85e448b0097687a736c2"
+      }
+    ],
+    "counts": {
+      "exact": 50151,
+      "date": 64,
+      "checkstyle": 3,
+      "rat": 1,
+      "compilationMetadata": 2,
+      "causalOrigins": 0,
+      "candidateOnly": 0
+    },
+    "metadataJVMStarts": 1
+  },
+  "durationNS": 123098555679,
+  "subprocesses": [
+    {
+      "executable": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-prototype/output-tools/project-output",
+      "java": false,
+      "startNS": 322995496931284,
+      "endNS": 322996930260460,
+      "exitCode": 0
+    },
+    {
+      "executable": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/bin/java",
+      "java": true,
+      "startNS": 322996931341412,
+      "endNS": 322999200943153,
+      "exitCode": 0
+    }
+  ],
+  "newBuilds": 0
+}

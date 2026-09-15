@@ -1,0 +1,50 @@
+{
+  "name": "screen-native-corrected",
+  "status": "verified",
+  "request": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/screen-native-corrected-request.json",
+    "sha256": "d56eb2dbfef36a6de66d7fd5fc675da921f6092a052fe021f582fe833c43f711"
+  },
+  "report": {
+    "status": "equivalent",
+    "policySHA256": "028d31d8be73de2debda8a337c39782952b9a15f42b44d1e57413062b03c0114",
+    "captures": [
+      {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay-2026-09-14/profiles/supported/run/attempts/r1-003-g0-N/capture.json",
+        "sha256": "aecb3d2ed966f2f6123ba288b8fbc5c57dc48f90ee3dfc26bdea44bf00fe089d"
+      },
+      {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay-2026-09-14/profiles/supported/run/attempts/r1-003-g0-I/capture.json",
+        "sha256": "c0a020ac3bce0677f1b91a9d1f93c2098cc08b2892b685c4de1e2adbc1486756"
+      }
+    ],
+    "counts": {
+      "exact": 50155,
+      "date": 64,
+      "checkstyle": 3,
+      "rat": 1,
+      "compilationMetadata": 2,
+      "causalOrigins": 256,
+      "candidateOnly": 1
+    },
+    "metadataJVMStarts": 1
+  },
+  "durationNS": 59373261622,
+  "subprocesses": [
+    {
+      "executable": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-prototype/output-tools/project-output",
+      "java": false,
+      "startNS": 323212295573568,
+      "endNS": 323213813971932,
+      "exitCode": 0
+    },
+    {
+      "executable": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/bin/java",
+      "java": true,
+      "startNS": 323213815091174,
+      "endNS": 323216099444533,
+      "exitCode": 0
+    }
+  ],
+  "newBuilds": 0
+}

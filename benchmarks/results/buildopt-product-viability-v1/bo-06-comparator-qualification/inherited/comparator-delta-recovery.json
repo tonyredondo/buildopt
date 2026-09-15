@@ -1,0 +1,32 @@
+{
+  "status": "static recovery only",
+  "currentPolicy": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/inputs/owner-policy-corrected.json",
+    "sha256": "028d31d8be73de2debda8a337c39782952b9a15f42b44d1e57413062b03c0114"
+  },
+  "oldPolicy": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/benchmarks/results/buildopt-product-viability-v1/bv006/owner-readiness-v5/owner-policy.json",
+    "sha256": "599716acbf2b2ddaffdd1bdb1b5d5d6ecba8bdac8dd1d44fe3913db5778b0425"
+  },
+  "oldSourceArchive": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/benchmarks/results/buildopt-product-viability-v1/bv006/owner-readiness-v5/source.tar.gz",
+    "sha256": "509eab6e355dd9f76c3449d42f5c7b01fa94c7d188ae90ca23e067242a41bcdc"
+  },
+  "diff": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/analysis/comparator-delta-recovery.patch",
+    "sha256": "36fb5b254f4583cc169c0445c16649c70db8762c77d66f4026096f13a1f5e6e7"
+  },
+  "sameReaderHashes": {
+    "baseContract": true,
+    "dateContract": true,
+    "interpreter": true,
+    "lexicalProjector": true,
+    "metadataJava": true,
+    "metadataClasspathOrder": true
+  },
+  "observedChange": "85-line source diff adds controlAdapted handling for identical-code controls and validates generated configuration on either adapted side.",
+  "qualificationEstablished": false,
+  "ownerStarts": 0,
+  "comparisonJVMs": 0,
+  "next": "Use this bounded delta to identify reusable old evidence and missing control-adapter rejection cases. It does not solve the changed-policy measurement identity."
+}

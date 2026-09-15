@@ -1,0 +1,297 @@
+{
+  "status": "verified",
+  "cases": [
+    {
+      "name": "valid-control",
+      "manifest": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/valid-control-manifest.json",
+        "sha256": "950de40597b5ab57d9c4d6931fa1ab26a1b660d42f22d238a53693a0f0ef903a"
+      },
+      "expected": "accepted",
+      "exitCode": 0,
+      "stdout": "manifest valid; no workflow started\n",
+      "stderr": "",
+      "durationNS": 3768048721,
+      "runRootAbsent": true,
+      "syntheticTrialData": true
+    },
+    {
+      "name": "valid-engineering",
+      "manifest": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/valid-engineering-manifest.json",
+        "sha256": "4009a4bd320ff9ab987c4fc1afa129a621ab7fa4cacefb59ac753713c93b23bf"
+      },
+      "expected": "accepted",
+      "exitCode": 0,
+      "stdout": "manifest valid; no workflow started\n",
+      "stderr": "",
+      "durationNS": 4293497047,
+      "runRootAbsent": true,
+      "syntheticTrialData": true
+    },
+    {
+      "name": "valid-confirmation",
+      "manifest": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/valid-confirmation-manifest.json",
+        "sha256": "7168306bf28d42476c0afb535116059c4b1e1c624c36d4d945876b1261d449ea"
+      },
+      "expected": "accepted",
+      "exitCode": 0,
+      "stdout": "manifest valid; no workflow started\n",
+      "stderr": "",
+      "durationNS": 4271772557,
+      "runRootAbsent": true,
+      "syntheticTrialData": true
+    },
+    {
+      "name": "missing-local-proof",
+      "manifest": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/missing-local-proof-manifest.json",
+        "sha256": "a26fabe272bc542e85d3df2abbecc9cbe1f88ec051df1ece491a75e4ba3279ba"
+      },
+      "expected": "own readiness",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "lean research missing its own readiness receipt\n",
+      "durationNS": 2855685,
+      "runRootAbsent": true,
+      "syntheticTrialData": true
+    },
+    {
+      "name": "missing-control",
+      "manifest": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/missing-control-manifest.json",
+        "sha256": "80d22d85fa63fe7a85eb6aa1c9cc97afeb6228f7356ebc93eb1c87e51c54fd85"
+      },
+      "expected": "missing required control or prefix proof",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "lean research missing required control or prefix proof\n",
+      "durationNS": 3541537,
+      "runRootAbsent": true,
+      "syntheticTrialData": true
+    },
+    {
+      "name": "old-real-control",
+      "manifest": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/old-real-control-manifest.json",
+        "sha256": "a2b85a8c2caba9ba4f006fed94d224e71ff70ced078133ca87cfdbc5af05a4bb"
+      },
+      "expected": "scope, sources or completeness differs",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "lean research trial scope, sources or completeness differs\n",
+      "durationNS": 12449804,
+      "runRootAbsent": true,
+      "syntheticTrialData": true
+    },
+    {
+      "name": "control-negative",
+      "manifest": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/control-negative-manifest.json",
+        "sha256": "c60980220759b98e042bf7eafcce34141d89e62725273f4c541ad84a2ce19e9a"
+      },
+      "expected": "material difference",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "identical-code control produced a material difference\n",
+      "durationNS": 4311598,
+      "runRootAbsent": true,
+      "syntheticTrialData": true
+    },
+    {
+      "name": "control-incomplete",
+      "manifest": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/control-incomplete-manifest.json",
+        "sha256": "0323787a8d60d8d862dada8e001f2242dc7241b3b131934a7a9a0e1270f86dfa"
+      },
+      "expected": "scope, sources or completeness differs",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "lean research trial scope, sources or completeness differs\n",
+      "durationNS": 4266669,
+      "runRootAbsent": true,
+      "syntheticTrialData": true
+    },
+    {
+      "name": "control-open",
+      "manifest": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/control-open-manifest.json",
+        "sha256": "a2bf3ab91a19e12288ccaf92ffa273daa0dd20db128acb245eede2120ad68217"
+      },
+      "expected": "process closure incomplete",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "research comparison or process closure incomplete\n",
+      "durationNS": 4326468,
+      "runRootAbsent": true,
+      "syntheticTrialData": true
+    },
+    {
+      "name": "control-wrong-history",
+      "manifest": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/control-wrong-history-manifest.json",
+        "sha256": "bfb281299599a6d811138398530f08735a4656c26fcb35a404d64e29e985097d"
+      },
+      "expected": "another history window",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "trial used another history window\n",
+      "durationNS": 4353418,
+      "runRootAbsent": true,
+      "syntheticTrialData": true
+    },
+    {
+      "name": "missing-prefix",
+      "manifest": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/missing-prefix-manifest.json",
+        "sha256": "e77116ad35b01e0bf379aa65ddf481155b7f67d7f1b34ddb819a62c16a76f32b"
+      },
+      "expected": "missing required control or prefix proof",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "lean research missing required control or prefix proof\n",
+      "durationNS": 4358679,
+      "runRootAbsent": true,
+      "syntheticTrialData": true
+    },
+    {
+      "name": "prefix-negative",
+      "manifest": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/prefix-negative-manifest.json",
+        "sha256": "7cf463896dc199959023f832a1be43fb4c180e74fbe80cce60b4c7faf7e485cd"
+      },
+      "expected": "did not save enough time",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "development prefix did not save enough time\n",
+      "durationNS": 6757203,
+      "runRootAbsent": true,
+      "syntheticTrialData": true
+    },
+    {
+      "name": "prefix-incomplete",
+      "manifest": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/prefix-incomplete-manifest.json",
+        "sha256": "e7cde1def36792d82b676f7b89955205d51323bf80431c83eafd8629a80e1360"
+      },
+      "expected": "scope, sources or completeness differs",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "lean research trial scope, sources or completeness differs\n",
+      "durationNS": 6061952,
+      "runRootAbsent": true,
+      "syntheticTrialData": true
+    },
+    {
+      "name": "changed-candidate",
+      "manifest": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/changed-candidate-manifest.json",
+        "sha256": "0569c93920e6c11312379fd144c1e99549bafc8527f3eff0069a6a0efae8748a"
+      },
+      "expected": "does not bind this implementation",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "lean research readiness does not bind this implementation and workflow\n",
+      "durationNS": 3710167,
+      "runRootAbsent": true,
+      "syntheticTrialData": true
+    },
+    {
+      "name": "changed-source",
+      "manifest": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/changed-source-manifest.json",
+        "sha256": "481d856bce5411d14e3ff3078a41908cd9e0aea34c4877ce6d1e9c72ebb323e3"
+      },
+      "expected": "does not bind this implementation",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "lean research readiness does not bind this implementation and workflow\n",
+      "durationNS": 3421906,
+      "runRootAbsent": true,
+      "syntheticTrialData": true
+    },
+    {
+      "name": "java-agent",
+      "manifest": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/java-agent-manifest.json",
+        "sha256": "0fd5988fe36012fe7f989a0a5ed7adbbf494ddd05834ac817bd0b9d638d900c0"
+      },
+      "expected": "forbids diagnostic Java agents",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "lean research forbids diagnostic Java agents\n",
+      "durationNS": 2403874,
+      "runRootAbsent": true,
+      "syntheticTrialData": true
+    },
+    {
+      "name": "missing-adoption",
+      "manifest": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/missing-adoption-manifest.json",
+        "sha256": "fa7572ff269fae8e9b2753824900f477044cea962c1623d782149d818f15dd10"
+      },
+      "expected": "explicit evidenced external adoption cost",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "confirmation needs explicit evidenced external adoption cost for each replication, including measured zero\n",
+      "durationNS": 3825147386,
+      "runRootAbsent": true,
+      "syntheticTrialData": true
+    },
+    {
+      "name": "missing-qualification",
+      "manifest": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/missing-qualification-manifest.json",
+        "sha256": "a70becdcc27e6f489aad956079c04a25189d61ec147fc9a169507b56c14001c7"
+      },
+      "expected": "lstat",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "lstat : no such file or directory\n",
+      "durationNS": 3756441625,
+      "runRootAbsent": true,
+      "syntheticTrialData": true
+    },
+    {
+      "name": "old-qualification",
+      "manifest": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/old-qualification-manifest.json",
+        "sha256": "ccbec9ba3fa01311d66c78a5233ae5abc30ba8828100aebd543512ea4e48364b"
+      },
+      "expected": "qualification is incomplete",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "owner comparison/reuse qualification is incomplete\n",
+      "durationNS": 3741990789,
+      "runRootAbsent": true,
+      "syntheticTrialData": true
+    },
+    {
+      "name": "wrong-reader",
+      "manifest": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/wrong-reader-manifest.json",
+        "sha256": "3df0eaf2bc261ed7164b8aa91a2866bba1f5aac69acc8bea4827270db781705d"
+      },
+      "expected": "qualification is incomplete",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "owner comparison/reuse qualification is incomplete\n",
+      "durationNS": 3821449544,
+      "runRootAbsent": true,
+      "syntheticTrialData": true
+    }
+  ],
+  "runner": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/history-replay-lean",
+    "sha256": "95506d9e7269e1c935a0b461d3cd4dae2cb27a129997fc85d96887c6b36a8d32"
+  },
+  "ownerPolicy": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/qualified-owner-policy.json",
+    "sha256": "2e60df8b397fa85a947ff85bca0c3efb8d40815a7f8089315cb68315db176924"
+  },
+  "ownerBuilds": 0,
+  "fixtureWorkflows": 0,
+  "comparatorJVMs": 0,
+  "scope": "Full actual-runner validate paths with real owner inputs. Trial receipts and adoption costs are synthetic test data only; no live development or confirmation admission is claimed."
+}

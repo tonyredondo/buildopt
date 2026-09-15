@@ -1,0 +1,14 @@
+{
+  "schema": "buildopt.lean-research/closure/v1",
+  "manifestSHA256": "4ec0babe8b2939c7ba5c8b69775f080f3f7dd142002a209948058e3093a70310",
+  "exitCode": 0,
+  "livePairs": 4,
+  "independentPairs": 4,
+  "closed": true,
+  "evidence": [
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/SYNTHETIC-TEST-DATA.txt",
+      "sha256": "e5c1aaa5cbe6056d3dd57e3ebc49715036f328ecc57b8696946af4c3ae80c5d5"
+    }
+  ]
+}

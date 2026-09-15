@@ -1,0 +1,6 @@
+retained-c5 equivalent {'exact': 50020, 'compilationMetadata': 137, 'date': 64, 'checkstyle': 3, 'rat': 1, 'causalOrigins': 0, 'candidateOnly': 1}
+native-reuse-000 equivalent {'exact': 50151, 'date': 64, 'checkstyle': 3, 'rat': 1, 'compilationMetadata': 2, 'causalOrigins': 0, 'candidateOnly': 0}
+native-reuse-001 equivalent {'exact': 50151, 'date': 64, 'checkstyle': 3, 'rat': 1, 'compilationMetadata': 2, 'causalOrigins': 268, 'candidateOnly': 0}
+lean-control-0 equivalent {'exact': 50155, 'date': 64, 'checkstyle': 3, 'rat': 1, 'compilationMetadata': 2, 'causalOrigins': 0, 'candidateOnly': 0}
+lean-control-3 equivalent {'exact': 50156, 'date': 64, 'checkstyle': 3, 'rat': 1, 'compilationMetadata': 2, 'causalOrigins': 256, 'candidateOnly': 0}
+screen-native-corrected equivalent {'exact': 50155, 'date': 64, 'checkstyle': 3, 'rat': 1, 'compilationMetadata': 2, 'causalOrigins': 256, 'candidateOnly': 1}

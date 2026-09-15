@@ -1,0 +1,28 @@
+{
+  "schema": "buildopt.lean-research/readiness/v1",
+  "mode": "P_LEAN_RESEARCH_V1",
+  "identity": "d954d10be2c7d7655587fa868f85b6afb568d315bc4b984c58cc18d625213fd1",
+  "localProof": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/receipts/local-proof.json",
+    "sha256": "2ca40dc22dd00d8cfbb68fefc794ff3db782dfbe47e96ed80e3e435147b76583"
+  },
+  "controlProof": {
+    "manifest": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-trial-old-qualification/manifest.json",
+      "sha256": "013d3ec36b9dc7e95744281c1a4b0e7088a6831bde258db3bb264524eae40119"
+    },
+    "result": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-trial-old-qualification/result.json",
+      "sha256": "58f341994f78e3261187bcbed2d70924e4f7cb9ab6f6d3519c61581763477b98"
+    },
+    "closure": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-trial-old-qualification/closure.json",
+      "sha256": "fbb7898fdfd0f2105b145089ad9a2bf179ab14b9d6099bd15ed46f480e5172b1"
+    },
+    "costs": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-trial-old-qualification/costs",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    "outsideRequestNS": 0
+  }
+}

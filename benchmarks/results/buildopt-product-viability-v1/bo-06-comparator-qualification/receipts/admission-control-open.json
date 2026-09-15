@@ -1,0 +1,14 @@
+{
+  "name": "control-open",
+  "manifest": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/control-open-manifest.json",
+    "sha256": "a2bf3ab91a19e12288ccaf92ffa273daa0dd20db128acb245eede2120ad68217"
+  },
+  "expected": "process closure incomplete",
+  "exitCode": 1,
+  "stdout": "",
+  "stderr": "research comparison or process closure incomplete\n",
+  "durationNS": 4326468,
+  "runRootAbsent": true,
+  "syntheticTrialData": true
+}

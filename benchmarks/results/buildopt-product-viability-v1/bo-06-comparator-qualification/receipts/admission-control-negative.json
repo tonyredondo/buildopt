@@ -1,0 +1,14 @@
+{
+  "name": "control-negative",
+  "manifest": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/control-negative-manifest.json",
+    "sha256": "c60980220759b98e042bf7eafcce34141d89e62725273f4c541ad84a2ce19e9a"
+  },
+  "expected": "material difference",
+  "exitCode": 1,
+  "stdout": "",
+  "stderr": "identical-code control produced a material difference\n",
+  "durationNS": 4311598,
+  "runRootAbsent": true,
+  "syntheticTrialData": true
+}

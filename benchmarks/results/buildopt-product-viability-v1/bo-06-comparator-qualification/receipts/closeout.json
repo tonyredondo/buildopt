@@ -1,0 +1,29 @@
+{
+  "status": "verified",
+  "scope": "Current comparator qualification and admission prerequisites only; BO-06 remains partial.",
+  "allocation": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/closed-allocation.json",
+    "sha256": "f4e461adb1c1f47a7d088a8b2e13e0d476df1cfae5e6adc6a72ac9912b985964"
+  },
+  "ownerBuilds": 0,
+  "fixtureWorkflows": 0,
+  "comparatorJVMs": 8,
+  "comparatorCalls": 43,
+  "goCommands": 1,
+  "retries": 0,
+  "protectedBuilds": 0,
+  "sourcesUnchanged": true,
+  "subprocesses": "All eight synchronous metadata JVM calls returned. The Go test and every validate process returned. No workflow or session was launched.",
+  "comparator": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/owner-qualification.json",
+    "sha256": "faf1f33d618b99ac47b3e585e0b30460c176895e0acacb7b50d0e20bbf967add"
+  },
+  "admission": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/analysis/admission-matrix.json",
+    "sha256": "90e539e9a14d696cc75819cfc519c4b2df65e9e3e82ba977e7b76624b1e8c30c"
+  },
+  "freeze": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/analysis/measurement-freeze.json",
+    "sha256": "d83a477bd5426c3a6ec3a1021ee7b792c77871284d96f5d51be8d31aee9eff81"
+  }
+}

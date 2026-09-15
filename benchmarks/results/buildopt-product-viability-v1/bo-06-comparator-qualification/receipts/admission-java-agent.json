@@ -1,0 +1,14 @@
+{
+  "name": "java-agent",
+  "manifest": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/java-agent-manifest.json",
+    "sha256": "0fd5988fe36012fe7f989a0a5ed7adbbf494ddd05834ac817bd0b9d638d900c0"
+  },
+  "expected": "forbids diagnostic Java agents",
+  "exitCode": 1,
+  "stdout": "",
+  "stderr": "lean research forbids diagnostic Java agents\n",
+  "durationNS": 2403874,
+  "runRootAbsent": true,
+  "syntheticTrialData": true
+}

@@ -1,0 +1,14 @@
+{
+  "name": "prefix-negative",
+  "manifest": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/prefix-negative-manifest.json",
+    "sha256": "7cf463896dc199959023f832a1be43fb4c180e74fbe80cce60b4c7faf7e485cd"
+  },
+  "expected": "did not save enough time",
+  "exitCode": 1,
+  "stdout": "",
+  "stderr": "development prefix did not save enough time\n",
+  "durationNS": 6757203,
+  "runRootAbsent": true,
+  "syntheticTrialData": true
+}

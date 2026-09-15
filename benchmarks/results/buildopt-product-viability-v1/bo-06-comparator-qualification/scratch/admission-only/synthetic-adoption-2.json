@@ -1,0 +1,25 @@
+{
+  "schema": "buildopt.history-replay/external-cost/v1",
+  "id": "synthetic-adoption-2",
+  "purpose": "adoption",
+  "replication": 2,
+  "ordinal": 0,
+  "start": {
+    "ns": 1,
+    "utc": "2026-09-15T00:00:00Z",
+    "boot": "synthetic-test"
+  },
+  "end": {
+    "ns": 1,
+    "utc": "2026-09-15T00:00:00Z",
+    "boot": "synthetic-test"
+  },
+  "evidence": [
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/SYNTHETIC-TEST-DATA.txt",
+      "sha256": "e5c1aaa5cbe6056d3dd57e3ebc49715036f328ecc57b8696946af4c3ae80c5d5"
+    }
+  ],
+  "explanation": "Synthetic admission test only; not measured zero preparation.",
+  "class": "customer-machine"
+}

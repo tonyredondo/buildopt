@@ -1,0 +1,14 @@
+{
+  "name": "control-incomplete",
+  "manifest": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/control-incomplete-manifest.json",
+    "sha256": "0323787a8d60d8d862dada8e001f2242dc7241b3b131934a7a9a0e1270f86dfa"
+  },
+  "expected": "scope, sources or completeness differs",
+  "exitCode": 1,
+  "stdout": "",
+  "stderr": "lean research trial scope, sources or completeness differs\n",
+  "durationNS": 4266669,
+  "runRootAbsent": true,
+  "syntheticTrialData": true
+}

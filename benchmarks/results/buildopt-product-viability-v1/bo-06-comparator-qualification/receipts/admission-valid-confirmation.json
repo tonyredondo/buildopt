@@ -1,0 +1,14 @@
+{
+  "name": "valid-confirmation",
+  "manifest": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/valid-confirmation-manifest.json",
+    "sha256": "7168306bf28d42476c0afb535116059c4b1e1c624c36d4d945876b1261d449ea"
+  },
+  "expected": "accepted",
+  "exitCode": 0,
+  "stdout": "manifest valid; no workflow started\n",
+  "stderr": "",
+  "durationNS": 4271772557,
+  "runRootAbsent": true,
+  "syntheticTrialData": true
+}

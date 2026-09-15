@@ -1,0 +1,29 @@
+{
+  "status": "proposed-not-started",
+  "ownerBuilds": 50,
+  "controlBuilds": 8,
+  "developmentBuilds": 42,
+  "comparatorJVMs": 50,
+  "livePairs": 25,
+  "independentPairs": 25,
+  "maxElapsedSeconds": 36000,
+  "maxRequestSeconds": 900,
+  "maxNewBytes": 85899345920,
+  "minimumFreeBytes": 42949672960,
+  "maxDiagnosticBytes": 268435456,
+  "retries": 0,
+  "replications": 1,
+  "protectedBuilds": 0,
+  "measurementIdentity": "d45f0d316344b46b96d7dbe4376421a33198070d88f54afe41de20d463469ed8",
+  "previousControlAndCloseoutSeconds": 4449.291103,
+  "previousAllocatedBytes": 14171594752,
+  "previousAllocation": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/inputs/closed-allocation.json",
+    "sha256": "689609fc372431353d0b3a78fafd910a0ea9f90c51745c7b7327c379a0e0c7b1"
+  },
+  "basis": "The previous eight-build control and closeout took about 74 minutes and retained 13.2 GiB. Ten hours and 80 GiB retain the earlier bounded proposal; they are stop limits, not a promise that all builds finish.",
+  "activation": "Create a separate live allocation at launch. Set its deadline once and subtract all preparation/control time before development. Revalidate current input hashes and control proposal; attach only genuine passing control proof to development. Do not use admission-only synthetic records.",
+  "controlRule": "Stop when absolute aggregate difference is at least 3 seconds AND 5% of the faster side across measured original commits 18-20.",
+  "developmentRule": "Anchor 0 and all 20 changes, native versus fixed correction. Require at least 5% net saving and 1 second per scheduled non-cold change after required outside-request work. Preserve all outcomes; no retries or replacement commits.",
+  "stop": "Close this measurement after the development decision. BO-07 protected changes remain a later block."
+}

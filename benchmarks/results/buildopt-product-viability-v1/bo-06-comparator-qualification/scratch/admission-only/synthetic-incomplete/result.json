@@ -1,0 +1,52 @@
+{
+  "schema": "buildopt.history-replay/result/v2",
+  "manifestSHA256": "9bd1e5c56ca531a1c7e5d7c40c4d8e6da46728b504e4c6ff765016eca8781d3a",
+  "replications": [],
+  "slots": [
+    [
+      {
+        "ordinal": 0,
+        "class": "COMPARABLE",
+        "reason": "",
+        "nativeNS": 100000000000,
+        "candidateNS": 100000000000,
+        "extraCandidateNS": 0,
+        "nativeActions": 1,
+        "candidateActions": 1,
+        "attempts": [],
+        "ownerMetadataJVMStarts": 0
+      },
+      {
+        "ordinal": 1,
+        "class": "COMPARABLE",
+        "reason": "",
+        "nativeNS": 100000000000,
+        "candidateNS": 100000000000,
+        "extraCandidateNS": 0,
+        "nativeActions": 1,
+        "candidateActions": 1,
+        "attempts": [],
+        "ownerMetadataJVMStarts": 0
+      },
+      {
+        "ordinal": 2,
+        "class": "COMPARABLE",
+        "reason": "",
+        "nativeNS": 100000000000,
+        "candidateNS": 100000000000,
+        "extraCandidateNS": 0,
+        "nativeActions": 1,
+        "candidateActions": 1,
+        "attempts": [],
+        "ownerMetadataJVMStarts": 0
+      }
+    ]
+  ],
+  "workflowStarts": 8,
+  "gradleReservations": 8,
+  "actualGradleStarts": 8,
+  "nestedStarts": 0,
+  "unknownGradleReservations": 0,
+  "decision": "SYNTHETIC_TEST_DATA",
+  "reasons": []
+}

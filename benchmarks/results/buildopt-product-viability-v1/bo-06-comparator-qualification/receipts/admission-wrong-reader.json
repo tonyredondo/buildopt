@@ -1,0 +1,14 @@
+{
+  "name": "wrong-reader",
+  "manifest": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/wrong-reader-manifest.json",
+    "sha256": "3df0eaf2bc261ed7164b8aa91a2866bba1f5aac69acc8bea4827270db781705d"
+  },
+  "expected": "qualification is incomplete",
+  "exitCode": 1,
+  "stdout": "",
+  "stderr": "owner comparison/reuse qualification is incomplete\n",
+  "durationNS": 3821449544,
+  "runRootAbsent": true,
+  "syntheticTrialData": true
+}

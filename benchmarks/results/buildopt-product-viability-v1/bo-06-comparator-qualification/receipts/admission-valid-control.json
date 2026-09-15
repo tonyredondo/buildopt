@@ -1,0 +1,14 @@
+{
+  "name": "valid-control",
+  "manifest": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/valid-control-manifest.json",
+    "sha256": "950de40597b5ab57d9c4d6931fa1ab26a1b660d42f22d238a53693a0f0ef903a"
+  },
+  "expected": "accepted",
+  "exitCode": 0,
+  "stdout": "manifest valid; no workflow started\n",
+  "stderr": "",
+  "durationNS": 3768048721,
+  "runRootAbsent": true,
+  "syntheticTrialData": true
+}

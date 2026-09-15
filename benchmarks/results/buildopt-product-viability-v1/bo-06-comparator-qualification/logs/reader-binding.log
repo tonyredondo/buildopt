@@ -1,0 +1,4 @@
+=== RUN   TestOwnerQualificationCannotBorrowDifferentReaders
+--- PASS: TestOwnerQualificationCannotBorrowDifferentReaders (0.18s)
+PASS
+ok  	github.com/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/tests/runner-source	0.187s

@@ -1,0 +1,31 @@
+{
+  "command": [
+    "./dev/run",
+    "--toolchain",
+    "go",
+    "--",
+    "go",
+    "test",
+    "-count=1",
+    "-v",
+    "-tags=replay_integration,replay_owner",
+    "-run=^TestOwnerQualificationCannotBorrowDifferentReaders$",
+    "./.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/tests/runner-source"
+  ],
+  "exitCode": 0,
+  "durationNS": 1466404095,
+  "log": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/logs/reader-binding.log",
+    "sha256": "5bff0c65cd504a6fa4f148f24e1cd97e8bde1a8034b5916f0d0cd01a55064fc2"
+  },
+  "source": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/tests/runner-source",
+    "sha256": "76b3e240855c7bf6c643d755269fffbb815e5648773df756abfc746a742ae26b"
+  },
+  "ownerPolicy": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/measured-owner-policy.json",
+    "sha256": "028d31d8be73de2debda8a337c39782952b9a15f42b44d1e57413062b03c0114"
+  },
+  "ownerBuilds": 0,
+  "fixtureWorkflows": 0
+}

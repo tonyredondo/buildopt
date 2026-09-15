@@ -1,0 +1,14 @@
+{
+  "name": "old-real-control",
+  "manifest": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/old-real-control-manifest.json",
+    "sha256": "a2b85a8c2caba9ba4f006fed94d224e71ff70ced078133ca87cfdbc5af05a4bb"
+  },
+  "expected": "scope, sources or completeness differs",
+  "exitCode": 1,
+  "stdout": "",
+  "stderr": "lean research trial scope, sources or completeness differs\n",
+  "durationNS": 12449804,
+  "runRootAbsent": true,
+  "syntheticTrialData": true
+}

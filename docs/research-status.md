@@ -83,16 +83,23 @@ BO-06 remains **partial**. The user approved the
 Its [eight-build identical-code control passed](../benchmarks/results/buildopt-product-viability-v1/bo-06-lean-measurement/README.md):
 the measured difference was 1.767 seconds, or 1.38%, below the stopping rule.
 All eight builds and four live plus four independent comparisons passed.
-The planned development sequence did not start: its real owner policy lacks
-comparator qualification, a prerequisite missed in local preparation. The old
-qualification binds different code. BO-06 remains partial and the allocation
+The planned development sequence did not start: its measured owner policy had
+no comparator qualification, a prerequisite missed in local preparation. The
+older qualification bound different code. BO-06 remains partial and the allocation
 is closed as incomplete, with eight owner and eight comparison JVM starts.
-Complete that qualification and validate the actual admission paths before
-another freeze; see the [continuation requirements](../benchmarks/results/buildopt-product-viability-v1/bo-06-lean-measurement/continuation.md).
+The [comparator qualification](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-comparator-qualification/README.md)
+is now verified: 33 comparator tests, six retained output comparisons and 20
+full admission cases passed, with no new owner builds. The new policy binds
+this proof; the measured policy and earlier results are unchanged. Control
+and development inputs now share one identity. Development still needs a
+fresh passing control under that identity; synthetic admission test records
+cannot qualify it. Follow the [next measurement plan](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-comparator-qualification/next-measurement.md):
+eight control builds, then the complete 42-build development sequence only if
+the control passes. This proposal has not started.
 The earlier precision and process-observation failures remain unchanged.
 Any future result in this mode describes the recorded workflow; BO-09 still
 needs the ordinary-workflow comparison. Current task record:
-`.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/task-state.json`.
+`.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/task-state.json`.
 BO-07 and protected changes 21–100 remain deferred. Generic plan selection/reuse,
 adaptive fragments, runtime sweeps and another general cache remain retired.
 The user has authorized commit and push after each work block. Product viability

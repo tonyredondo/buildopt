@@ -1,0 +1,41 @@
+{
+  "policy": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/measured-owner-policy.json",
+    "sha256": "028d31d8be73de2debda8a337c39782952b9a15f42b44d1e57413062b03c0114"
+  },
+  "runRoot": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-retained-fixture-02",
+  "native": {
+    "id": "r1-000-N",
+    "capture": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-retained-fixture-02/attempts/r1-000-N/capture.json",
+      "sha256": "6fd83289b8886ebd035b25603042a5971358f935e045594eab39a7ae004daf89"
+    },
+    "native": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-retained-fixture-02/attempts/r1-000-N/native.json",
+      "sha256": "65c79763b3ec2543cbb2b96c45351416d420d713160da53bca81670fb674de8f"
+    },
+    "after": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-retained-fixture-02/attempts/r1-000-N/state.json",
+      "sha256": "9e307d723acbc88d1ae535125bd9953e6a6c90582e8a1c6ec0c2daac37cfd331"
+    },
+    "candidateApplied": false,
+    "class": "COMPARABLE"
+  },
+  "candidate": {
+    "id": "r1-000-I",
+    "capture": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-retained-fixture-02/attempts/r1-000-I/capture.json",
+      "sha256": "cb652510fde2383ee40da2d8c1de6cb6b69b59838d1d8524eedcac19b608aa60"
+    },
+    "native": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-retained-fixture-02/attempts/r1-000-I/native.json",
+      "sha256": "44e901208797c2c77740dccf6b37ee0555fc22960e207ca5e5a35683bfe8c799"
+    },
+    "after": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-retained-fixture-02/attempts/r1-000-I/state.json",
+      "sha256": "681838dfe200fb7bc5f4ea51023f3fcbe3e40805aac18cad7ee702723bc34bb3"
+    },
+    "candidateApplied": true,
+    "class": "COMPARABLE"
+  }
+}

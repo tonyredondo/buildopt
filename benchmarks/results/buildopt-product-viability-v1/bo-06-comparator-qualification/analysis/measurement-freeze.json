@@ -1,0 +1,77 @@
+{
+  "status": "verified",
+  "scope": "Inputs fixed; control admission verified; real development proof remains missing.",
+  "measurementIdentity": "d45f0d316344b46b96d7dbe4376421a33198070d88f54afe41de20d463469ed8",
+  "previousIdentity": "770570e50044eed08159a4ae813884ea3d163a0bb9a7f76517fa1947c07b8dc8",
+  "qualification": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/owner-qualification.json",
+    "sha256": "faf1f33d618b99ac47b3e585e0b30460c176895e0acacb7b50d0e20bbf967add"
+  },
+  "ownerPolicy": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/qualified-owner-policy.json",
+    "sha256": "2e60df8b397fa85a947ff85bca0c3efb8d40815a7f8089315cb68315db176924"
+  },
+  "localProof": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/local-proof.json",
+    "sha256": "75fae0c554b53c6f89425ce3b613a198092f08b0e8ce2861106ffdadd72d5533"
+  },
+  "sharedFields": [
+    "mode",
+    "protocol",
+    "executable",
+    "package",
+    "commonGit",
+    "command",
+    "environment",
+    "runtime",
+    "baseline",
+    "candidate",
+    "outputs",
+    "acquisition",
+    "generatedPaths",
+    "affinity",
+    "daemonPolicy"
+  ],
+  "proposals": [
+    {
+      "kind": "control",
+      "manifest": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/manifests/control-proposal.json",
+        "sha256": "5664d47a9d9ee7b17cd34001addeaa30b98ff769eb40e9749430cd1f8a8b4495"
+      },
+      "identity": "d45f0d316344b46b96d7dbe4376421a33198070d88f54afe41de20d463469ed8",
+      "exitCode": 0,
+      "stdout": "manifest valid; no workflow started\n",
+      "stderr": "",
+      "expected": "accepted",
+      "durationNS": 3771715533,
+      "runRootAbsent": true,
+      "syntheticTrialData": false
+    },
+    {
+      "kind": "development",
+      "manifest": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/manifests/development-proposal.json",
+        "sha256": "6718ed9ee0de7737fb10d5bccbcd62bfe2a02a1e11e524f1fa807a3a840a4e05"
+      },
+      "identity": "d45f0d316344b46b96d7dbe4376421a33198070d88f54afe41de20d463469ed8",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "lean research missing required control or prefix proof\n",
+      "expected": "lean research missing required control or prefix proof",
+      "durationNS": 3686157,
+      "runRootAbsent": true,
+      "syntheticTrialData": false
+    }
+  ],
+  "ownerBuilds": 0,
+  "oldControlCanQualifyNewPolicy": false,
+  "protectedHistoryStarts": 0,
+  "confirmationPrerequisites": [
+    "Passing genuine control with this identity.",
+    "Passing complete development sequence 0 through 20 with this identity.",
+    "Two fresh full confirmation replications after BO-06 closes.",
+    "Explicit evidenced preparation/adoption cost for each replication, including measured zero.",
+    "Existing correctness and subject bindings; complete scheduled results and independent checks."
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "valid-engineering",
+  "manifest": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/valid-engineering-manifest.json",
+    "sha256": "4009a4bd320ff9ab987c4fc1afa129a621ab7fa4cacefb59ac753713c93b23bf"
+  },
+  "expected": "accepted",
+  "exitCode": 0,
+  "stdout": "manifest valid; no workflow started\n",
+  "stderr": "",
+  "durationNS": 4293497047,
+  "runRootAbsent": true,
+  "syntheticTrialData": true
+}

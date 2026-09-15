@@ -1,0 +1,14 @@
+{
+  "name": "prefix-incomplete",
+  "manifest": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/prefix-incomplete-manifest.json",
+    "sha256": "e7cde1def36792d82b676f7b89955205d51323bf80431c83eafd8629a80e1360"
+  },
+  "expected": "scope, sources or completeness differs",
+  "exitCode": 1,
+  "stdout": "",
+  "stderr": "lean research trial scope, sources or completeness differs\n",
+  "durationNS": 6061952,
+  "runRootAbsent": true,
+  "syntheticTrialData": true
+}

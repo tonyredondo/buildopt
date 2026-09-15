@@ -1,0 +1,14 @@
+{
+  "name": "control-wrong-history",
+  "manifest": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/control-wrong-history-manifest.json",
+    "sha256": "bfb281299599a6d811138398530f08735a4656c26fcb35a404d64e29e985097d"
+  },
+  "expected": "another history window",
+  "exitCode": 1,
+  "stdout": "",
+  "stderr": "trial used another history window\n",
+  "durationNS": 4353418,
+  "runRootAbsent": true,
+  "syntheticTrialData": true
+}

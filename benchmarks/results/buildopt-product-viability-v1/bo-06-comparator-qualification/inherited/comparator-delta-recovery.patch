@@ -1,0 +1,85 @@
+--- qualified-v5
++++ measured-current
+@@ -223,17 +223,18 @@
+         raise ValueError("no earlier executed origin for reused output: " + path)
+ 
+ 
+-def graph_contract(captures, candidate_applied):
++def graph_contract(captures, candidate_applied, control_adapted=False):
+     n, i = captures
+     require(n.tasks.keys() == i.tasks.keys(), "owner task identity set differs")
+     for identity in n.tasks:
+         left, right = n.tasks[identity], i.tasks[identity]
+         require(left["taskClass"] == right["taskClass"] and left["dependencies"] == right["dependencies"] and left["path"] == right["path"], "required task contract differs: " + identity)
+         output_sets = [set(rooted(path, c.root) for path in c.tasks[identity]["outputs"]) for c in captures]
+-        require(EXTRA not in output_sets[0], "native declares candidate-only output")
++        if EXTRA in output_sets[0]:
++            require(control_adapted and identity == EXTRA_OWNER, "native declares candidate-only output")
+         if EXTRA in output_sets[1]:
+             require(candidate_applied and identity == EXTRA_OWNER, "unapproved extra output producer")
+-        require(output_sets[0] == output_sets[1] - {EXTRA}, "declared output roots differ: " + identity)
++        require(output_sets[0] - {EXTRA} == output_sets[1] - {EXTRA}, "declared output roots differ: " + identity)
+         contracts = []
+         for c in captures:
+             inputs = c.tasks[identity]["checkstyle"]
+@@ -245,21 +246,21 @@
+     require(failures[0] == failures[1], "task failure coverage differs")
+ 
+ 
+-def extra_contract(captures, candidate_applied):
+-    n, i = captures
+-    require(EXTRA not in n.outputs, "native has candidate-only output")
+-    if EXTRA not in i.outputs:
+-        require(not candidate_applied, "candidate config declaration missing")
+-        return
+-    extra = i.outputs[EXTRA]
+-    require(candidate_applied and extra["producer"] == EXTRA_OWNER, "unapproved candidate-only output")
+-    if extra["entry"]["kind"] == "absent":
+-        require(i.native["exitCode"] != 0, "successful candidate is missing generated config")
+-        return
+-    original = i.data("server/build/checkstyle/checkstyle.xml")
+-    require(original.count(b'<module name="Checker">') == 1, "ambiguous original Checkstyle config")
+-    require(i.data(EXTRA) == original.replace(b'<module name="Checker">', REPLACEMENT.encode()), "generated candidate config differs")
+-    require(extra["entry"]["mode"] == i.outputs["server/build/checkstyle/checkstyle.xml"]["entry"]["mode"], "generated config mode differs")
++def extra_contract(captures, candidate_applied, control_adapted=False):
++    for capture, adapted in zip(captures, (control_adapted, candidate_applied)):
++        if not adapted:
++            require(EXTRA not in capture.outputs, "native has candidate-only output")
++            continue
++        require(EXTRA in capture.outputs, "candidate config declaration missing")
++        extra = capture.outputs[EXTRA]
++        require(extra["producer"] == EXTRA_OWNER, "unapproved candidate-only output")
++        if extra["entry"]["kind"] == "absent":
++            require(capture.native["exitCode"] != 0, "successful candidate is missing generated config")
++            continue
++        original = capture.data("server/build/checkstyle/checkstyle.xml")
++        require(original.count(b'<module name="Checker">') == 1, "ambiguous original Checkstyle config")
++        require(capture.data(EXTRA) == original.replace(b'<module name="Checker">', REPLACEMENT.encode()), "generated candidate config differs")
++        require(extra["entry"]["mode"] == capture.outputs["server/build/checkstyle/checkstyle.xml"]["entry"]["mode"], "generated config mode differs")
+ 
+ 
+ def member(capture, path, name):
+@@ -282,9 +283,11 @@
+     captures = [Capture(request[arm]) for arm in ("native", "candidate")]
+     n, i = captures
+     require(n.native["exitCode"] == i.native["exitCode"], "workflow exit differs")
+-    graph_contract(captures, request["candidate"]["candidateApplied"])
+-    extra_contract(captures, request["candidate"]["candidateApplied"])
+-    require(set(n.outputs) == set(i.outputs) - {EXTRA}, "required output coverage differs")
++    control_adapted = request.get("controlAdapted", False)
++    require(type(control_adapted) is bool, "invalid control adapter declaration")
++    graph_contract(captures, request["candidate"]["candidateApplied"], control_adapted)
++    extra_contract(captures, request["candidate"]["candidateApplied"], control_adapted)
++    require(set(n.outputs) - {EXTRA} == set(i.outputs) - {EXTRA}, "required output coverage differs")
+     origins = Origins(request["runRoot"], captures)
+     counts = Counter()
+     requests, metadata = [], []
+@@ -344,7 +347,7 @@
+         for left, right in zip(values[::2], values[1::2]):
+             require(left[1] == right[1], "complete compilation-state values differ")
+     counts["causalOrigins"] = origins.reused
+-    counts["candidateOnly"] = int(EXTRA in i.outputs)
++    counts["candidateOnly"] = int(EXTRA in i.outputs and EXTRA not in n.outputs)
+     return {"status": "equivalent", "policySHA256": request["policy"]["sha256"],
+             "captures": [c.end["capture"] for c in captures], "counts": dict(counts), "metadataJVMStarts": int(bool(metadata))}
+ 

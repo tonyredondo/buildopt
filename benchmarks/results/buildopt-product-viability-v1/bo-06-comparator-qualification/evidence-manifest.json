@@ -1,0 +1,1484 @@
+{
+  "schema": "buildopt.comparator-qualification/evidence/v1",
+  "files": [
+    {
+      "export": "inputs/allocation-frozen.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/allocation-frozen.json",
+        "sha256": "ae17db25f2201a101c9a8fc4b2b7648102164902d7075d1cbf66c967daee3323"
+      },
+      "bytes": 496,
+      "sha256": "ae17db25f2201a101c9a8fc4b2b7648102164902d7075d1cbf66c967daee3323"
+    },
+    {
+      "export": "inputs/closed-allocation.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/closed-allocation.json",
+        "sha256": "f4e461adb1c1f47a7d088a8b2e13e0d476df1cfae5e6adc6a72ac9912b985964"
+      },
+      "bytes": 584,
+      "sha256": "f4e461adb1c1f47a7d088a8b2e13e0d476df1cfae5e6adc6a72ac9912b985964"
+    },
+    {
+      "export": "inputs/control-identity-input.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/control-identity-input.json",
+        "sha256": "5adf73f5896b610270d371cfac9b604107921a4d09f5f6e04bd6d3849d5313d1"
+      },
+      "bytes": 15713,
+      "sha256": "5adf73f5896b610270d371cfac9b604107921a4d09f5f6e04bd6d3849d5313d1"
+    },
+    {
+      "export": "inputs/development-identity-input.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/development-identity-input.json",
+        "sha256": "c2f5bdcd30220d78db7cf5663734ddb560212d1765d7823ed996043fc8b59908"
+      },
+      "bytes": 45395,
+      "sha256": "c2f5bdcd30220d78db7cf5663734ddb560212d1765d7823ed996043fc8b59908"
+    },
+    {
+      "export": "inputs/entry-bindings.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/entry-bindings.json",
+        "sha256": "e61b510550dde37551b3f34af19b8fab42359f54e70998640fcd61756dd7f678"
+      },
+      "bytes": 1299,
+      "sha256": "e61b510550dde37551b3f34af19b8fab42359f54e70998640fcd61756dd7f678"
+    },
+    {
+      "export": "inputs/lean-control-0-request.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/lean-control-0-request.json",
+        "sha256": "9ea8b3439a5ddadcc4718fbd78f20b6721e0583344417ba16974bd77d486f79a"
+      },
+      "bytes": 3436,
+      "sha256": "9ea8b3439a5ddadcc4718fbd78f20b6721e0583344417ba16974bd77d486f79a"
+    },
+    {
+      "export": "inputs/lean-control-3-request.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/lean-control-3-request.json",
+        "sha256": "d1bd38c47418c70c056ab63ecdb8b0a60b7bcc0882b79824a1956e474c44c9dd"
+      },
+      "bytes": 3434,
+      "sha256": "d1bd38c47418c70c056ab63ecdb8b0a60b7bcc0882b79824a1956e474c44c9dd"
+    },
+    {
+      "export": "inputs/measured-owner-policy.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/measured-owner-policy.json",
+        "sha256": "028d31d8be73de2debda8a337c39782952b9a15f42b44d1e57413062b03c0114"
+      },
+      "bytes": 125402,
+      "sha256": "028d31d8be73de2debda8a337c39782952b9a15f42b44d1e57413062b03c0114"
+    },
+    {
+      "export": "inputs/native-reuse-000-request.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/native-reuse-000-request.json",
+        "sha256": "c1a4c3b23911e1d72ab774f9eeefd130c5a364e07d395694e976939bdaabf8f0"
+      },
+      "bytes": 3262,
+      "sha256": "c1a4c3b23911e1d72ab774f9eeefd130c5a364e07d395694e976939bdaabf8f0"
+    },
+    {
+      "export": "inputs/native-reuse-001-request.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/native-reuse-001-request.json",
+        "sha256": "eb3ed64eafccd9259c0062def5d068db9c6a35837f1d37c4132b03b7f84d667a"
+      },
+      "bytes": 3260,
+      "sha256": "eb3ed64eafccd9259c0062def5d068db9c6a35837f1d37c4132b03b7f84d667a"
+    },
+    {
+      "export": "inputs/next-measurement-proposal.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/next-measurement-proposal.json",
+        "sha256": "a7a4f866e56a28e2fd45e5d3e8dc70483d07cc7ce284904da30335f5b66374a3"
+      },
+      "bytes": 1913,
+      "sha256": "a7a4f866e56a28e2fd45e5d3e8dc70483d07cc7ce284904da30335f5b66374a3"
+    },
+    {
+      "export": "inputs/owner-qualification.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/owner-qualification.json",
+        "sha256": "faf1f33d618b99ac47b3e585e0b30460c176895e0acacb7b50d0e20bbf967add"
+      },
+      "bytes": 3191,
+      "sha256": "faf1f33d618b99ac47b3e585e0b30460c176895e0acacb7b50d0e20bbf967add"
+    },
+    {
+      "export": "inputs/prior-native-reuse-000-request.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/prior-native-reuse-000-request.json",
+        "sha256": "5c080bfecdd5574d0b592f9eed33ff50001595d6d4cb7df4586b19cba338041e"
+      },
+      "bytes": 3238,
+      "sha256": "5c080bfecdd5574d0b592f9eed33ff50001595d6d4cb7df4586b19cba338041e"
+    },
+    {
+      "export": "inputs/prior-native-reuse-001-request.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/prior-native-reuse-001-request.json",
+        "sha256": "1b29e5d7bd8dd2c3806f0f07fc5318d80869b2aec518731b83c8950e10c0f977"
+      },
+      "bytes": 3236,
+      "sha256": "1b29e5d7bd8dd2c3806f0f07fc5318d80869b2aec518731b83c8950e10c0f977"
+    },
+    {
+      "export": "inputs/prior-retained-c5-request.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/prior-retained-c5-request.json",
+        "sha256": "043dde5b42145fee57b4fe43c46f67a940afff575cdeebaa91b61ae85ee1b192"
+      },
+      "bytes": 2286,
+      "sha256": "043dde5b42145fee57b4fe43c46f67a940afff575cdeebaa91b61ae85ee1b192"
+    },
+    {
+      "export": "inputs/qualified-owner-policy.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/qualified-owner-policy.json",
+        "sha256": "2e60df8b397fa85a947ff85bca0c3efb8d40815a7f8089315cb68315db176924"
+      },
+      "bytes": 125634,
+      "sha256": "2e60df8b397fa85a947ff85bca0c3efb8d40815a7f8089315cb68315db176924"
+    },
+    {
+      "export": "inputs/request.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/request.json",
+        "sha256": "043dde5b42145fee57b4fe43c46f67a940afff575cdeebaa91b61ae85ee1b192"
+      },
+      "bytes": 2286,
+      "sha256": "043dde5b42145fee57b4fe43c46f67a940afff575cdeebaa91b61ae85ee1b192"
+    },
+    {
+      "export": "inputs/retained-c5-request.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/retained-c5-request.json",
+        "sha256": "6cd7d5aea4439f82d1d746a16017b1fdd1fbdea6a16092af65c78cac684a757a"
+      },
+      "bytes": 2310,
+      "sha256": "6cd7d5aea4439f82d1d746a16017b1fdd1fbdea6a16092af65c78cac684a757a"
+    },
+    {
+      "export": "inputs/screen-native-corrected-request.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/screen-native-corrected-request.json",
+        "sha256": "d56eb2dbfef36a6de66d7fd5fc675da921f6092a052fe021f582fe833c43f711"
+      },
+      "bytes": 3520,
+      "sha256": "d56eb2dbfef36a6de66d7fd5fc675da921f6092a052fe021f582fe833c43f711"
+    },
+    {
+      "export": "receipts/admission-changed-candidate.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/admission-changed-candidate.json",
+        "sha256": "9af5c70d42a7ce8834602d358c01dd54ee17f9bd33f05be96886fcc1ff6b5a91"
+      },
+      "bytes": 595,
+      "sha256": "9af5c70d42a7ce8834602d358c01dd54ee17f9bd33f05be96886fcc1ff6b5a91"
+    },
+    {
+      "export": "receipts/admission-changed-source.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/admission-changed-source.json",
+        "sha256": "dc754e505a346f28d5d16a3143ce0bf65e99b17ed9101c0021ff528776d6e3d4"
+      },
+      "bytes": 589,
+      "sha256": "dc754e505a346f28d5d16a3143ce0bf65e99b17ed9101c0021ff528776d6e3d4"
+    },
+    {
+      "export": "receipts/admission-control-incomplete.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/admission-control-incomplete.json",
+        "sha256": "8144f52fb1e09332615a93e4c23b4474b02a7bb984f19927e244420218fad349"
+      },
+      "bytes": 590,
+      "sha256": "8144f52fb1e09332615a93e4c23b4474b02a7bb984f19927e244420218fad349"
+    },
+    {
+      "export": "receipts/admission-control-negative.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/admission-control-negative.json",
+        "sha256": "3ebd4cab26e7ebbf7bbebf351db355ecd8da6a8224261bfbbf6a2dbf327fe83a"
+      },
+      "bytes": 562,
+      "sha256": "3ebd4cab26e7ebbf7bbebf351db355ecd8da6a8224261bfbbf6a2dbf327fe83a"
+    },
+    {
+      "export": "receipts/admission-control-open.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/admission-control-open.json",
+        "sha256": "00d1a04f9569e839c8ccf66596588f902a93c2ad7f956cabda2bde239b611f14"
+      },
+      "bytes": 557,
+      "sha256": "00d1a04f9569e839c8ccf66596588f902a93c2ad7f956cabda2bde239b611f14"
+    },
+    {
+      "export": "receipts/admission-control-wrong-history.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/admission-control-wrong-history.json",
+        "sha256": "b2b6eb27ec854be200c8d0524c98e0cb4bad9e78815072199a5fb2ed64a21aa5"
+      },
+      "bytes": 555,
+      "sha256": "b2b6eb27ec854be200c8d0524c98e0cb4bad9e78815072199a5fb2ed64a21aa5"
+    },
+    {
+      "export": "receipts/admission-java-agent.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/admission-java-agent.json",
+        "sha256": "9b372808e7ec54974d6456f883f026d6dfc277fbbbba3e4ebf21d8bc21698af2"
+      },
+      "bytes": 552,
+      "sha256": "9b372808e7ec54974d6456f883f026d6dfc277fbbbba3e4ebf21d8bc21698af2"
+    },
+    {
+      "export": "receipts/admission-missing-adoption.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/admission-missing-adoption.json",
+        "sha256": "d0256acecab0c1437c85c33d124cd9e2de3d13a7e906f9b670a4a7d24e8b1397"
+      },
+      "bytes": 640,
+      "sha256": "d0256acecab0c1437c85c33d124cd9e2de3d13a7e906f9b670a4a7d24e8b1397"
+    },
+    {
+      "export": "receipts/admission-missing-control.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/admission-missing-control.json",
+        "sha256": "c6febed460d7a78bca5a283ad4154e1ef11190dc18fb55157994d2162753ae71"
+      },
+      "bytes": 582,
+      "sha256": "c6febed460d7a78bca5a283ad4154e1ef11190dc18fb55157994d2162753ae71"
+    },
+    {
+      "export": "receipts/admission-missing-local-proof.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/admission-missing-local-proof.json",
+        "sha256": "55b9b05ed5955b4376fbec51054cf2d1bb70bf4143ff715723f74018bd0cd706"
+      },
+      "bytes": 556,
+      "sha256": "55b9b05ed5955b4376fbec51054cf2d1bb70bf4143ff715723f74018bd0cd706"
+    },
+    {
+      "export": "receipts/admission-missing-prefix.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/admission-missing-prefix.json",
+        "sha256": "75e66932b98e15d370e5b2a1914888bb61a8e47bc943e724d09f6d842cfebfa2"
+      },
+      "bytes": 580,
+      "sha256": "75e66932b98e15d370e5b2a1914888bb61a8e47bc943e724d09f6d842cfebfa2"
+    },
+    {
+      "export": "receipts/admission-missing-qualification.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/admission-missing-qualification.json",
+        "sha256": "b06969c2a25727d6c367a5211f1d63fc6d4def581e12c61096337f531acff6ed"
+      },
+      "bytes": 541,
+      "sha256": "b06969c2a25727d6c367a5211f1d63fc6d4def581e12c61096337f531acff6ed"
+    },
+    {
+      "export": "receipts/admission-old-qualification.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/admission-old-qualification.json",
+        "sha256": "23b505c7c8f3abe83623671bd6276cfbf8cdf6e015d04786c81f7e08d9c151dc"
+      },
+      "bytes": 572,
+      "sha256": "23b505c7c8f3abe83623671bd6276cfbf8cdf6e015d04786c81f7e08d9c151dc"
+    },
+    {
+      "export": "receipts/admission-old-real-control.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/admission-old-real-control.json",
+        "sha256": "492eb0d978e7a7d2f9abfbfd399778fcb773bd05bf311ca4a0ba58f7ddca808c"
+      },
+      "bytes": 587,
+      "sha256": "492eb0d978e7a7d2f9abfbfd399778fcb773bd05bf311ca4a0ba58f7ddca808c"
+    },
+    {
+      "export": "receipts/admission-prefix-incomplete.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/admission-prefix-incomplete.json",
+        "sha256": "da303fcfd5243b41637e3312fc21f8ff3980d5d6f39be3aee61e841ef08209db"
+      },
+      "bytes": 588,
+      "sha256": "da303fcfd5243b41637e3312fc21f8ff3980d5d6f39be3aee61e841ef08209db"
+    },
+    {
+      "export": "receipts/admission-prefix-negative.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/admission-prefix-negative.json",
+        "sha256": "2a47530827c89e183545f58714db1bc56ba6b7dcdd255f18783727680cfead84"
+      },
+      "bytes": 555,
+      "sha256": "2a47530827c89e183545f58714db1bc56ba6b7dcdd255f18783727680cfead84"
+    },
+    {
+      "export": "receipts/admission-valid-confirmation.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/admission-valid-confirmation.json",
+        "sha256": "5e2efcece260bf12891cd00ff2b541c65cae8a56914e133dc2b15d50ef1b9ec0"
+      },
+      "bytes": 540,
+      "sha256": "5e2efcece260bf12891cd00ff2b541c65cae8a56914e133dc2b15d50ef1b9ec0"
+    },
+    {
+      "export": "receipts/admission-valid-control.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/admission-valid-control.json",
+        "sha256": "7ae81e4400c217a1e174376371bfb8cba3b933ecaaafd25a296eb0cbda793b7d"
+      },
+      "bytes": 530,
+      "sha256": "7ae81e4400c217a1e174376371bfb8cba3b933ecaaafd25a296eb0cbda793b7d"
+    },
+    {
+      "export": "receipts/admission-valid-engineering.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/admission-valid-engineering.json",
+        "sha256": "8e90c09cf3b84f5f0db7bd9867a99aa353e5048333829cce93ac533e7f3e3cd1"
+      },
+      "bytes": 538,
+      "sha256": "8e90c09cf3b84f5f0db7bd9867a99aa353e5048333829cce93ac533e7f3e3cd1"
+    },
+    {
+      "export": "receipts/admission-wrong-reader.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/admission-wrong-reader.json",
+        "sha256": "75e79f7963b3284c751226654516cbe01eb37f6f7cade9da5ab345ff95eead5f"
+      },
+      "bytes": 562,
+      "sha256": "75e79f7963b3284c751226654516cbe01eb37f6f7cade9da5ab345ff95eead5f"
+    },
+    {
+      "export": "receipts/closeout.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/closeout.json",
+        "sha256": "0d6d8e673d8183f50216e794477986d2864c8d6f65f9bb480b91e45966cea529"
+      },
+      "bytes": 1614,
+      "sha256": "0d6d8e673d8183f50216e794477986d2864c8d6f65f9bb480b91e45966cea529"
+    },
+    {
+      "export": "receipts/comparator-matrix.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/comparator-matrix.json",
+        "sha256": "61f5c47ccdd9c3b8eb3f1dc9b5347073dcfe6632abbae5cd1cd0399ffc104cce"
+      },
+      "bytes": 5576,
+      "sha256": "61f5c47ccdd9c3b8eb3f1dc9b5347073dcfe6632abbae5cd1cd0399ffc104cce"
+    },
+    {
+      "export": "receipts/control-readiness.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/control-readiness.json",
+        "sha256": "f868b131f7168d392f707dff56a6455f3fe8771f5864935f3128a128c9de1c58"
+      },
+      "bytes": 450,
+      "sha256": "f868b131f7168d392f707dff56a6455f3fe8771f5864935f3128a128c9de1c58"
+    },
+    {
+      "export": "receipts/development-readiness.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/development-readiness.json",
+        "sha256": "f868b131f7168d392f707dff56a6455f3fe8771f5864935f3128a128c9de1c58"
+      },
+      "bytes": 450,
+      "sha256": "f868b131f7168d392f707dff56a6455f3fe8771f5864935f3128a128c9de1c58"
+    },
+    {
+      "export": "receipts/lean-control-0-comparison.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/lean-control-0-comparison.json",
+        "sha256": "32a4dee0281f705155cd8fc141a19d5da2e421256d827247e4500843cc2533b9"
+      },
+      "bytes": 1934,
+      "sha256": "32a4dee0281f705155cd8fc141a19d5da2e421256d827247e4500843cc2533b9"
+    },
+    {
+      "export": "receipts/lean-control-3-comparison.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/lean-control-3-comparison.json",
+        "sha256": "f71f458b463521a1b0a24939dd8e7bcec70a3d3102fd1c1a02a562afd60d792a"
+      },
+      "bytes": 1937,
+      "sha256": "f71f458b463521a1b0a24939dd8e7bcec70a3d3102fd1c1a02a562afd60d792a"
+    },
+    {
+      "export": "receipts/local-proof.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/local-proof.json",
+        "sha256": "75fae0c554b53c6f89425ce3b613a198092f08b0e8ce2861106ffdadd72d5533"
+      },
+      "bytes": 2773,
+      "sha256": "75fae0c554b53c6f89425ce3b613a198092f08b0e8ce2861106ffdadd72d5533"
+    },
+    {
+      "export": "receipts/native-reuse-000-comparison.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/native-reuse-000-comparison.json",
+        "sha256": "535f41ff6985fff070b64dbc95d85afc16011a16e267db3f32da551fbe21b0dc"
+      },
+      "bytes": 1886,
+      "sha256": "535f41ff6985fff070b64dbc95d85afc16011a16e267db3f32da551fbe21b0dc"
+    },
+    {
+      "export": "receipts/native-reuse-001-comparison.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/native-reuse-001-comparison.json",
+        "sha256": "46641c0f52b79077b9c9d4ee682de48a8e64abfee43104cf0e618b06816713f9"
+      },
+      "bytes": 1888,
+      "sha256": "46641c0f52b79077b9c9d4ee682de48a8e64abfee43104cf0e618b06816713f9"
+    },
+    {
+      "export": "receipts/reader-binding.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/reader-binding.json",
+        "sha256": "485e86ad0a106c289423d441a128de154d5e18a47b7f362caf80eb118f71f425"
+      },
+      "bytes": 1276,
+      "sha256": "485e86ad0a106c289423d441a128de154d5e18a47b7f362caf80eb118f71f425"
+    },
+    {
+      "export": "receipts/retained-c5-comparison.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/retained-c5-comparison.json",
+        "sha256": "f7187d469a7aadcd022f82b3e657f8e53e14f863753e4e4d0c5dff21cdb2e660"
+      },
+      "bytes": 1880,
+      "sha256": "f7187d469a7aadcd022f82b3e657f8e53e14f863753e4e4d0c5dff21cdb2e660"
+    },
+    {
+      "export": "receipts/screen-native-corrected-comparison.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/screen-native-corrected-comparison.json",
+        "sha256": "1a01b27791dc7c2d00aad97f24ff87e1802c2e956ec865aff70c082461a21537"
+      },
+      "bytes": 1979,
+      "sha256": "1a01b27791dc7c2d00aad97f24ff87e1802c2e956ec865aff70c082461a21537"
+    },
+    {
+      "export": "analysis/admission-matrix.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/analysis/admission-matrix.json",
+        "sha256": "90e539e9a14d696cc75819cfc519c4b2df65e9e3e82ba977e7b76624b1e8c30c"
+      },
+      "bytes": 13373,
+      "sha256": "90e539e9a14d696cc75819cfc519c4b2df65e9e3e82ba977e7b76624b1e8c30c"
+    },
+    {
+      "export": "analysis/measurement-freeze.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/analysis/measurement-freeze.json",
+        "sha256": "d83a477bd5426c3a6ec3a1021ee7b792c77871284d96f5d51be8d31aee9eff81"
+      },
+      "bytes": 3363,
+      "sha256": "d83a477bd5426c3a6ec3a1021ee7b792c77871284d96f5d51be8d31aee9eff81"
+    },
+    {
+      "export": "analysis/retained-comparisons.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/analysis/retained-comparisons.json",
+        "sha256": "df61bd9e8a2f1b3208a07030c91e7b668cce8bd3a78cfb37422e44e6dcfa2ac9"
+      },
+      "bytes": 12885,
+      "sha256": "df61bd9e8a2f1b3208a07030c91e7b668cce8bd3a78cfb37422e44e6dcfa2ac9"
+    },
+    {
+      "export": "logs/admission-matrix.log",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/logs/admission-matrix.log",
+        "sha256": "3f667fd2150020e810137681ea1f078f932aa6e4a6dda5b42b0aed8ced1e8482"
+      },
+      "bytes": 438,
+      "sha256": "3f667fd2150020e810137681ea1f078f932aa6e4a6dda5b42b0aed8ced1e8482"
+    },
+    {
+      "export": "logs/comparator-matrix.log",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/logs/comparator-matrix.log",
+        "sha256": "fea70debdd86c4c420777278678948f815a52d7dd59478ec42f366a89bf3bd6b"
+      },
+      "bytes": 11494,
+      "sha256": "fea70debdd86c4c420777278678948f815a52d7dd59478ec42f366a89bf3bd6b"
+    },
+    {
+      "export": "logs/freeze-proposals.log",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/logs/freeze-proposals.log",
+        "sha256": "9f6fae20a373e7b603693ec7411ed13c495834809483f503aef12dbcdd7c1d9c"
+      },
+      "bytes": 169,
+      "sha256": "9f6fae20a373e7b603693ec7411ed13c495834809483f503aef12dbcdd7c1d9c"
+    },
+    {
+      "export": "logs/reader-binding.log",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/logs/reader-binding.log",
+        "sha256": "5bff0c65cd504a6fa4f148f24e1cd97e8bde1a8034b5916f0d0cd01a55064fc2"
+      },
+      "bytes": 284,
+      "sha256": "5bff0c65cd504a6fa4f148f24e1cd97e8bde1a8034b5916f0d0cd01a55064fc2"
+    },
+    {
+      "export": "logs/retained-comparisons.log",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/logs/retained-comparisons.log",
+        "sha256": "8609eb0d27628541953f6914dee9fda5ad13103394d0a81a47635d26acf414de"
+      },
+      "bytes": 906,
+      "sha256": "8609eb0d27628541953f6914dee9fda5ad13103394d0a81a47635d26acf414de"
+    },
+    {
+      "export": "manifests/control-proposal.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/manifests/control-proposal.json",
+        "sha256": "5664d47a9d9ee7b17cd34001addeaa30b98ff769eb40e9749430cd1f8a8b4495"
+      },
+      "bytes": 16011,
+      "sha256": "5664d47a9d9ee7b17cd34001addeaa30b98ff769eb40e9749430cd1f8a8b4495"
+    },
+    {
+      "export": "manifests/development-proposal.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/manifests/development-proposal.json",
+        "sha256": "6718ed9ee0de7737fb10d5bccbcd62bfe2a02a1e11e524f1fa807a3a840a4e05"
+      },
+      "bytes": 45697,
+      "sha256": "6718ed9ee0de7737fb10d5bccbcd62bfe2a02a1e11e524f1fa807a3a840a4e05"
+    },
+    {
+      "export": "scratch/admission-only/SYNTHETIC-TEST-DATA.txt",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/SYNTHETIC-TEST-DATA.txt",
+        "sha256": "e5c1aaa5cbe6056d3dd57e3ebc49715036f328ecc57b8696946af4c3ae80c5d5"
+      },
+      "bytes": 76,
+      "sha256": "e5c1aaa5cbe6056d3dd57e3ebc49715036f328ecc57b8696946af4c3ae80c5d5"
+    },
+    {
+      "export": "scratch/admission-only/changed-candidate-manifest.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/changed-candidate-manifest.json",
+        "sha256": "0569c93920e6c11312379fd144c1e99549bafc8527f3eff0069a6a0efae8748a"
+      },
+      "bytes": 45706,
+      "sha256": "0569c93920e6c11312379fd144c1e99549bafc8527f3eff0069a6a0efae8748a"
+    },
+    {
+      "export": "scratch/admission-only/changed-source-manifest.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/changed-source-manifest.json",
+        "sha256": "481d856bce5411d14e3ff3078a41908cd9e0aea34c4877ce6d1e9c72ebb323e3"
+      },
+      "bytes": 45730,
+      "sha256": "481d856bce5411d14e3ff3078a41908cd9e0aea34c4877ce6d1e9c72ebb323e3"
+    },
+    {
+      "export": "scratch/admission-only/control-incomplete-manifest.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/control-incomplete-manifest.json",
+        "sha256": "0323787a8d60d8d862dada8e001f2242dc7241b3b131934a7a9a0e1270f86dfa"
+      },
+      "bytes": 45731,
+      "sha256": "0323787a8d60d8d862dada8e001f2242dc7241b3b131934a7a9a0e1270f86dfa"
+    },
+    {
+      "export": "scratch/admission-only/control-incomplete-readiness.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/control-incomplete-readiness.json",
+        "sha256": "146bf2ea569f4368bf5668fe1587e2ef90d49416038ae1e0665b2b5884b64ca3"
+      },
+      "bytes": 1756,
+      "sha256": "146bf2ea569f4368bf5668fe1587e2ef90d49416038ae1e0665b2b5884b64ca3"
+    },
+    {
+      "export": "scratch/admission-only/control-negative-manifest.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/control-negative-manifest.json",
+        "sha256": "c60980220759b98e042bf7eafcce34141d89e62725273f4c541ad84a2ce19e9a"
+      },
+      "bytes": 45729,
+      "sha256": "c60980220759b98e042bf7eafcce34141d89e62725273f4c541ad84a2ce19e9a"
+    },
+    {
+      "export": "scratch/admission-only/control-negative-readiness.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/control-negative-readiness.json",
+        "sha256": "1a7fe8486f10bada54cf4ebe2f6c2346420aba8ae900cc408f7eda49530de1a6"
+      },
+      "bytes": 1748,
+      "sha256": "1a7fe8486f10bada54cf4ebe2f6c2346420aba8ae900cc408f7eda49530de1a6"
+    },
+    {
+      "export": "scratch/admission-only/control-open-manifest.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/control-open-manifest.json",
+        "sha256": "a2bf3ab91a19e12288ccaf92ffa273daa0dd20db128acb245eede2120ad68217"
+      },
+      "bytes": 45725,
+      "sha256": "a2bf3ab91a19e12288ccaf92ffa273daa0dd20db128acb245eede2120ad68217"
+    },
+    {
+      "export": "scratch/admission-only/control-open-readiness.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/control-open-readiness.json",
+        "sha256": "a6b2ec8ea9f6b60a9bec62e230a465f534bbb495a7ac0fabf6d47d1b3bb46792"
+      },
+      "bytes": 1732,
+      "sha256": "a6b2ec8ea9f6b60a9bec62e230a465f534bbb495a7ac0fabf6d47d1b3bb46792"
+    },
+    {
+      "export": "scratch/admission-only/control-wrong-history-manifest.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/control-wrong-history-manifest.json",
+        "sha256": "bfb281299599a6d811138398530f08735a4656c26fcb35a404d64e29e985097d"
+      },
+      "bytes": 45734,
+      "sha256": "bfb281299599a6d811138398530f08735a4656c26fcb35a404d64e29e985097d"
+    },
+    {
+      "export": "scratch/admission-only/control-wrong-history-readiness.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/control-wrong-history-readiness.json",
+        "sha256": "6a10576282bf80f219e1eaf38e573bf1a8c077cf8dfb4514e7a8c92005db3270"
+      },
+      "bytes": 1768,
+      "sha256": "6a10576282bf80f219e1eaf38e573bf1a8c077cf8dfb4514e7a8c92005db3270"
+    },
+    {
+      "export": "scratch/admission-only/identity-0.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/identity-0.json",
+        "sha256": "a26fabe272bc542e85d3df2abbecc9cbe1f88ec051df1ece491a75e4ba3279ba"
+      },
+      "bytes": 15731,
+      "sha256": "a26fabe272bc542e85d3df2abbecc9cbe1f88ec051df1ece491a75e4ba3279ba"
+    },
+    {
+      "export": "scratch/admission-only/identity-1.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/identity-1.json",
+        "sha256": "c8eac308fa8cecf3d55a81588332f789cad45de394736c4e66a71187afc20202"
+      },
+      "bytes": 45408,
+      "sha256": "c8eac308fa8cecf3d55a81588332f789cad45de394736c4e66a71187afc20202"
+    },
+    {
+      "export": "scratch/admission-only/identity-10.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/identity-10.json",
+        "sha256": "7168306bf28d42476c0afb535116059c4b1e1c624c36d4d945876b1261d449ea"
+      },
+      "bytes": 46541,
+      "sha256": "7168306bf28d42476c0afb535116059c4b1e1c624c36d4d945876b1261d449ea"
+    },
+    {
+      "export": "scratch/admission-only/identity-11.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/identity-11.json",
+        "sha256": "7168306bf28d42476c0afb535116059c4b1e1c624c36d4d945876b1261d449ea"
+      },
+      "bytes": 46541,
+      "sha256": "7168306bf28d42476c0afb535116059c4b1e1c624c36d4d945876b1261d449ea"
+    },
+    {
+      "export": "scratch/admission-only/identity-12.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/identity-12.json",
+        "sha256": "6fff1faab33fa7af6414c89f27a8e4719a2953eba26088b4de27b99e643968c3"
+      },
+      "bytes": 45752,
+      "sha256": "6fff1faab33fa7af6414c89f27a8e4719a2953eba26088b4de27b99e643968c3"
+    },
+    {
+      "export": "scratch/admission-only/identity-13.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/identity-13.json",
+        "sha256": "e47b8ee64f140ba11301f537fc9f080a296646a201af37e8d624461d101f9e44"
+      },
+      "bytes": 45748,
+      "sha256": "e47b8ee64f140ba11301f537fc9f080a296646a201af37e8d624461d101f9e44"
+    },
+    {
+      "export": "scratch/admission-only/identity-14.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/identity-14.json",
+        "sha256": "6a2b4291ab1c6ced1885bb93a3b4347fdebf702b8b0a289e876b8431a88766c8"
+      },
+      "bytes": 45743,
+      "sha256": "6a2b4291ab1c6ced1885bb93a3b4347fdebf702b8b0a289e876b8431a88766c8"
+    },
+    {
+      "export": "scratch/admission-only/identity-2.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/identity-2.json",
+        "sha256": "4555c6c8ccc07b353baf2b439be1d7e31988b5f8fd211b37a370c42711a8e5ff"
+      },
+      "bytes": 46540,
+      "sha256": "4555c6c8ccc07b353baf2b439be1d7e31988b5f8fd211b37a370c42711a8e5ff"
+    },
+    {
+      "export": "scratch/admission-only/identity-3.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/identity-3.json",
+        "sha256": "4009a4bd320ff9ab987c4fc1afa129a621ab7fa4cacefb59ac753713c93b23bf"
+      },
+      "bytes": 45730,
+      "sha256": "4009a4bd320ff9ab987c4fc1afa129a621ab7fa4cacefb59ac753713c93b23bf"
+    },
+    {
+      "export": "scratch/admission-only/identity-4.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/identity-4.json",
+        "sha256": "4009a4bd320ff9ab987c4fc1afa129a621ab7fa4cacefb59ac753713c93b23bf"
+      },
+      "bytes": 45730,
+      "sha256": "4009a4bd320ff9ab987c4fc1afa129a621ab7fa4cacefb59ac753713c93b23bf"
+    },
+    {
+      "export": "scratch/admission-only/identity-5.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/identity-5.json",
+        "sha256": "4009a4bd320ff9ab987c4fc1afa129a621ab7fa4cacefb59ac753713c93b23bf"
+      },
+      "bytes": 45730,
+      "sha256": "4009a4bd320ff9ab987c4fc1afa129a621ab7fa4cacefb59ac753713c93b23bf"
+    },
+    {
+      "export": "scratch/admission-only/identity-6.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/identity-6.json",
+        "sha256": "4009a4bd320ff9ab987c4fc1afa129a621ab7fa4cacefb59ac753713c93b23bf"
+      },
+      "bytes": 45730,
+      "sha256": "4009a4bd320ff9ab987c4fc1afa129a621ab7fa4cacefb59ac753713c93b23bf"
+    },
+    {
+      "export": "scratch/admission-only/identity-7.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/identity-7.json",
+        "sha256": "4009a4bd320ff9ab987c4fc1afa129a621ab7fa4cacefb59ac753713c93b23bf"
+      },
+      "bytes": 45730,
+      "sha256": "4009a4bd320ff9ab987c4fc1afa129a621ab7fa4cacefb59ac753713c93b23bf"
+    },
+    {
+      "export": "scratch/admission-only/identity-8.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/identity-8.json",
+        "sha256": "4009a4bd320ff9ab987c4fc1afa129a621ab7fa4cacefb59ac753713c93b23bf"
+      },
+      "bytes": 45730,
+      "sha256": "4009a4bd320ff9ab987c4fc1afa129a621ab7fa4cacefb59ac753713c93b23bf"
+    },
+    {
+      "export": "scratch/admission-only/identity-9.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/identity-9.json",
+        "sha256": "7168306bf28d42476c0afb535116059c4b1e1c624c36d4d945876b1261d449ea"
+      },
+      "bytes": 46541,
+      "sha256": "7168306bf28d42476c0afb535116059c4b1e1c624c36d4d945876b1261d449ea"
+    },
+    {
+      "export": "scratch/admission-only/java-agent-manifest.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/java-agent-manifest.json",
+        "sha256": "0fd5988fe36012fe7f989a0a5ed7adbbf494ddd05834ac817bd0b9d638d900c0"
+      },
+      "bytes": 16053,
+      "sha256": "0fd5988fe36012fe7f989a0a5ed7adbbf494ddd05834ac817bd0b9d638d900c0"
+    },
+    {
+      "export": "scratch/admission-only/missing-adoption-manifest.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/missing-adoption-manifest.json",
+        "sha256": "fa7572ff269fae8e9b2753824900f477044cea962c1623d782149d818f15dd10"
+      },
+      "bytes": 45941,
+      "sha256": "fa7572ff269fae8e9b2753824900f477044cea962c1623d782149d818f15dd10"
+    },
+    {
+      "export": "scratch/admission-only/missing-control-manifest.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/missing-control-manifest.json",
+        "sha256": "80d22d85fa63fe7a85eb6aa1c9cc97afeb6228f7356ebc93eb1c87e51c54fd85"
+      },
+      "bytes": 45728,
+      "sha256": "80d22d85fa63fe7a85eb6aa1c9cc97afeb6228f7356ebc93eb1c87e51c54fd85"
+    },
+    {
+      "export": "scratch/admission-only/missing-control-readiness.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/missing-control-readiness.json",
+        "sha256": "2a272557c0a01cc49a48edbd72ba08147b557ee33960f14a9c1dd5ab177d8582"
+      },
+      "bytes": 442,
+      "sha256": "2a272557c0a01cc49a48edbd72ba08147b557ee33960f14a9c1dd5ab177d8582"
+    },
+    {
+      "export": "scratch/admission-only/missing-local-proof-manifest.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/missing-local-proof-manifest.json",
+        "sha256": "a26fabe272bc542e85d3df2abbecc9cbe1f88ec051df1ece491a75e4ba3279ba"
+      },
+      "bytes": 15731,
+      "sha256": "a26fabe272bc542e85d3df2abbecc9cbe1f88ec051df1ece491a75e4ba3279ba"
+    },
+    {
+      "export": "scratch/admission-only/missing-prefix-manifest.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/missing-prefix-manifest.json",
+        "sha256": "e77116ad35b01e0bf379aa65ddf481155b7f67d7f1b34ddb819a62c16a76f32b"
+      },
+      "bytes": 46537,
+      "sha256": "e77116ad35b01e0bf379aa65ddf481155b7f67d7f1b34ddb819a62c16a76f32b"
+    },
+    {
+      "export": "scratch/admission-only/missing-prefix-readiness.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/missing-prefix-readiness.json",
+        "sha256": "c89ac452bf9d94326e340db085bb42034b4a5471a8f22dc9ca93832ea9914d4b"
+      },
+      "bytes": 1744,
+      "sha256": "c89ac452bf9d94326e340db085bb42034b4a5471a8f22dc9ca93832ea9914d4b"
+    },
+    {
+      "export": "scratch/admission-only/missing-qualification-manifest.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/missing-qualification-manifest.json",
+        "sha256": "a70becdcc27e6f489aad956079c04a25189d61ec147fc9a169507b56c14001c7"
+      },
+      "bytes": 45756,
+      "sha256": "a70becdcc27e6f489aad956079c04a25189d61ec147fc9a169507b56c14001c7"
+    },
+    {
+      "export": "scratch/admission-only/missing-qualification-policy.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/missing-qualification-policy.json",
+        "sha256": "028d31d8be73de2debda8a337c39782952b9a15f42b44d1e57413062b03c0114"
+      },
+      "bytes": 125402,
+      "sha256": "028d31d8be73de2debda8a337c39782952b9a15f42b44d1e57413062b03c0114"
+    },
+    {
+      "export": "scratch/admission-only/missing-qualification-readiness.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/missing-qualification-readiness.json",
+        "sha256": "c190a3664b5d87d0c204420daf11af6648af0464cc8a77405acab52881eb95db"
+      },
+      "bytes": 1824,
+      "sha256": "c190a3664b5d87d0c204420daf11af6648af0464cc8a77405acab52881eb95db"
+    },
+    {
+      "export": "scratch/admission-only/old-qualification-manifest.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/old-qualification-manifest.json",
+        "sha256": "ccbec9ba3fa01311d66c78a5233ae5abc30ba8828100aebd543512ea4e48364b"
+      },
+      "bytes": 45748,
+      "sha256": "ccbec9ba3fa01311d66c78a5233ae5abc30ba8828100aebd543512ea4e48364b"
+    },
+    {
+      "export": "scratch/admission-only/old-qualification-policy.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/old-qualification-policy.json",
+        "sha256": "6d5deea0182c6099a377097de187ea92166b5eb7aeedb49da8666b6210098770"
+      },
+      "bytes": 125616,
+      "sha256": "6d5deea0182c6099a377097de187ea92166b5eb7aeedb49da8666b6210098770"
+    },
+    {
+      "export": "scratch/admission-only/old-qualification-readiness.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/old-qualification-readiness.json",
+        "sha256": "eb0fb9b99e4f9283dc74684f54ae06445d548fa187c2eb219716911a5fb5700c"
+      },
+      "bytes": 1808,
+      "sha256": "eb0fb9b99e4f9283dc74684f54ae06445d548fa187c2eb219716911a5fb5700c"
+    },
+    {
+      "export": "scratch/admission-only/old-real-control-manifest.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/old-real-control-manifest.json",
+        "sha256": "a2b85a8c2caba9ba4f006fed94d224e71ff70ced078133ca87cfdbc5af05a4bb"
+      },
+      "bytes": 45729,
+      "sha256": "a2b85a8c2caba9ba4f006fed94d224e71ff70ced078133ca87cfdbc5af05a4bb"
+    },
+    {
+      "export": "scratch/admission-only/old-real-control-readiness.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/old-real-control-readiness.json",
+        "sha256": "e8ae3039f930a8f78ad9dd274c7f776941574393bde1df928ba6f7ca2cfc1bb7"
+      },
+      "bytes": 1634,
+      "sha256": "e8ae3039f930a8f78ad9dd274c7f776941574393bde1df928ba6f7ca2cfc1bb7"
+    },
+    {
+      "export": "scratch/admission-only/prefix-incomplete-manifest.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/prefix-incomplete-manifest.json",
+        "sha256": "e7cde1def36792d82b676f7b89955205d51323bf80431c83eafd8629a80e1360"
+      },
+      "bytes": 46540,
+      "sha256": "e7cde1def36792d82b676f7b89955205d51323bf80431c83eafd8629a80e1360"
+    },
+    {
+      "export": "scratch/admission-only/prefix-incomplete-readiness.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/prefix-incomplete-readiness.json",
+        "sha256": "35f5d6ba28fb9f0b6e31dffb96556b488bd4429d8ecc46a770dbcda0b9b09fe5"
+      },
+      "bytes": 3085,
+      "sha256": "35f5d6ba28fb9f0b6e31dffb96556b488bd4429d8ecc46a770dbcda0b9b09fe5"
+    },
+    {
+      "export": "scratch/admission-only/prefix-negative-manifest.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/prefix-negative-manifest.json",
+        "sha256": "7cf463896dc199959023f832a1be43fb4c180e74fbe80cce60b4c7faf7e485cd"
+      },
+      "bytes": 46538,
+      "sha256": "7cf463896dc199959023f832a1be43fb4c180e74fbe80cce60b4c7faf7e485cd"
+    },
+    {
+      "export": "scratch/admission-only/prefix-negative-readiness.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/prefix-negative-readiness.json",
+        "sha256": "8bd977d1c6a8ee02268bb1f748712ce9cb164d61bfcc0755e78a7c3d0e8ace3d"
+      },
+      "bytes": 3077,
+      "sha256": "8bd977d1c6a8ee02268bb1f748712ce9cb164d61bfcc0755e78a7c3d0e8ace3d"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-adoption-1.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-adoption-1.json",
+        "sha256": "4a066de106e2834e2e796a47f7e06b2c530e4fe4c6cec8321c2ccba4744b97a1"
+      },
+      "bytes": 770,
+      "sha256": "4a066de106e2834e2e796a47f7e06b2c530e4fe4c6cec8321c2ccba4744b97a1"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-adoption-2.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-adoption-2.json",
+        "sha256": "b04043ff99ee9dde2ad0591bc5065a60899183753ca4d0862276f500eb08919f"
+      },
+      "bytes": 770,
+      "sha256": "b04043ff99ee9dde2ad0591bc5065a60899183753ca4d0862276f500eb08919f"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-control/closure.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-control/closure.json",
+        "sha256": "04a54cc11c74617962b8bab1c8e3f8a8744636757ad47b06711d4bc613f6c5aa"
+      },
+      "bytes": 535,
+      "sha256": "04a54cc11c74617962b8bab1c8e3f8a8744636757ad47b06711d4bc613f6c5aa"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-control/manifest.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-control/manifest.json",
+        "sha256": "4ec0babe8b2939c7ba5c8b69775f080f3f7dd142002a209948058e3093a70310"
+      },
+      "bytes": 15738,
+      "sha256": "4ec0babe8b2939c7ba5c8b69775f080f3f7dd142002a209948058e3093a70310"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-control/result.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-control/result.json",
+        "sha256": "9127b329548d80967afad5d6d38f7e7c7aef901c3faf73a1a094f1def5da289f"
+      },
+      "bytes": 1629,
+      "sha256": "9127b329548d80967afad5d6d38f7e7c7aef901c3faf73a1a094f1def5da289f"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-incomplete/closure.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-incomplete/closure.json",
+        "sha256": "6266f58bc0f0f893e90c74f9ffb23ca2b23bbbbcd9e3c988f42221900d25a0cf"
+      },
+      "bytes": 535,
+      "sha256": "6266f58bc0f0f893e90c74f9ffb23ca2b23bbbbcd9e3c988f42221900d25a0cf"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-incomplete/manifest.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-incomplete/manifest.json",
+        "sha256": "9bd1e5c56ca531a1c7e5d7c40c4d8e6da46728b504e4c6ff765016eca8781d3a"
+      },
+      "bytes": 15741,
+      "sha256": "9bd1e5c56ca531a1c7e5d7c40c4d8e6da46728b504e4c6ff765016eca8781d3a"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-incomplete/result.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-incomplete/result.json",
+        "sha256": "c1e1fb6cb6614552164f9529c30ccaa85b268e124337a0b76961fe80068286d9"
+      },
+      "bytes": 1316,
+      "sha256": "c1e1fb6cb6614552164f9529c30ccaa85b268e124337a0b76961fe80068286d9"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-negative/closure.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-negative/closure.json",
+        "sha256": "f95ab45e88ce37142b8de6980972860521a660ac1d255d282e4d408978b1f881"
+      },
+      "bytes": 535,
+      "sha256": "f95ab45e88ce37142b8de6980972860521a660ac1d255d282e4d408978b1f881"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-negative/manifest.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-negative/manifest.json",
+        "sha256": "2c3e1840674ee2b8944aa6d826b902529fa7c5a3b945b7f0f8a7644d877a0b0e"
+      },
+      "bytes": 15739,
+      "sha256": "2c3e1840674ee2b8944aa6d826b902529fa7c5a3b945b7f0f8a7644d877a0b0e"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-negative/result.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-negative/result.json",
+        "sha256": "0f8effe3397a60820d9b3ed48287e2b036637764c0bfac128a93d5daaee9c39c"
+      },
+      "bytes": 1629,
+      "sha256": "0f8effe3397a60820d9b3ed48287e2b036637764c0bfac128a93d5daaee9c39c"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-open/closure.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-open/closure.json",
+        "sha256": "1103b623b3bd02e16a1e14d600d440998233856e356342ad2812e358d93b41e7"
+      },
+      "bytes": 536,
+      "sha256": "1103b623b3bd02e16a1e14d600d440998233856e356342ad2812e358d93b41e7"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-open/manifest.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-open/manifest.json",
+        "sha256": "bb0105286bf3e364d20a5b49b8f01163fbdd8eadfd858df9de1b10fde64cb1ed"
+      },
+      "bytes": 15735,
+      "sha256": "bb0105286bf3e364d20a5b49b8f01163fbdd8eadfd858df9de1b10fde64cb1ed"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-open/result.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-open/result.json",
+        "sha256": "29e0ed71525a13cc8fb44af6f3d1fa3192f00d3d9797b705028d64339e79fcd8"
+      },
+      "bytes": 1629,
+      "sha256": "29e0ed71525a13cc8fb44af6f3d1fa3192f00d3d9797b705028d64339e79fcd8"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-prefix/closure.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-prefix/closure.json",
+        "sha256": "afad22b5b42a69295c5e068c11483b3f39822be037dedcebab3bb4ba54f8b5f4"
+      },
+      "bytes": 537,
+      "sha256": "afad22b5b42a69295c5e068c11483b3f39822be037dedcebab3bb4ba54f8b5f4"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-prefix/manifest.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-prefix/manifest.json",
+        "sha256": "f897f25d64ff2e4e0c3e5591a0bfb6944b4db7869aa8d7fd11ea75dd06eec13a"
+      },
+      "bytes": 45409,
+      "sha256": "f897f25d64ff2e4e0c3e5591a0bfb6944b4db7869aa8d7fd11ea75dd06eec13a"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-prefix/result.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-prefix/result.json",
+        "sha256": "6c32586cc4e93aff4a07eda203208a2fb6eba0ce3fc34075931cdc3def1a0d4f"
+      },
+      "bytes": 6943,
+      "sha256": "6c32586cc4e93aff4a07eda203208a2fb6eba0ce3fc34075931cdc3def1a0d4f"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-prefix-incomplete/closure.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-prefix-incomplete/closure.json",
+        "sha256": "079770e6924ae49b3a7efdcacf4ce526340af3a3488e7a64a8cc7a48f6d01453"
+      },
+      "bytes": 537,
+      "sha256": "079770e6924ae49b3a7efdcacf4ce526340af3a3488e7a64a8cc7a48f6d01453"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-prefix-incomplete/manifest.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-prefix-incomplete/manifest.json",
+        "sha256": "ea50bd75bd4624c31690d45df25fa067cee7fe4a908d97bd6857f7b9534a7088"
+      },
+      "bytes": 46228,
+      "sha256": "ea50bd75bd4624c31690d45df25fa067cee7fe4a908d97bd6857f7b9534a7088"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-prefix-incomplete/result.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-prefix-incomplete/result.json",
+        "sha256": "5dc2831d863f56446a8cbf97daae11e9b47e6f51c72ad7f02b7f022d1cfc3b37"
+      },
+      "bytes": 6630,
+      "sha256": "5dc2831d863f56446a8cbf97daae11e9b47e6f51c72ad7f02b7f022d1cfc3b37"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-prefix-negative/closure.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-prefix-negative/closure.json",
+        "sha256": "88bdec2d221bb5a92cec334708ed4d3f764fb00071fe87946837506de75fb84f"
+      },
+      "bytes": 537,
+      "sha256": "88bdec2d221bb5a92cec334708ed4d3f764fb00071fe87946837506de75fb84f"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-prefix-negative/manifest.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-prefix-negative/manifest.json",
+        "sha256": "9b5b7a07f6d5b0f88422e58138f58634414255e9db0016460bd404f346a7df1b"
+      },
+      "bytes": 46226,
+      "sha256": "9b5b7a07f6d5b0f88422e58138f58634414255e9db0016460bd404f346a7df1b"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-prefix-negative/result.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-prefix-negative/result.json",
+        "sha256": "3f485fd0101734fb5a1b4cd14c622d5de0ddc67d6979cd463b290144ee22f80d"
+      },
+      "bytes": 6964,
+      "sha256": "3f485fd0101734fb5a1b4cd14c622d5de0ddc67d6979cd463b290144ee22f80d"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-trial-missing-qualification/closure.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-trial-missing-qualification/closure.json",
+        "sha256": "4baf7b4c96066e62cf5a7de23fbcdb2da09101fecee63a10b92a8da651418ebd"
+      },
+      "bytes": 535,
+      "sha256": "4baf7b4c96066e62cf5a7de23fbcdb2da09101fecee63a10b92a8da651418ebd"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-trial-missing-qualification/manifest.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-trial-missing-qualification/manifest.json",
+        "sha256": "fbc56ff706c172114cf2a11164a411b27717a4ac79f133bb4dd0b4327cb86231"
+      },
+      "bytes": 15780,
+      "sha256": "fbc56ff706c172114cf2a11164a411b27717a4ac79f133bb4dd0b4327cb86231"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-trial-missing-qualification/result.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-trial-missing-qualification/result.json",
+        "sha256": "8448b227c68f5e6eb909a83a7d5aab8bda194757a43a72d02d8026914381e471"
+      },
+      "bytes": 1629,
+      "sha256": "8448b227c68f5e6eb909a83a7d5aab8bda194757a43a72d02d8026914381e471"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-trial-old-qualification/closure.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-trial-old-qualification/closure.json",
+        "sha256": "fbb7898fdfd0f2105b145089ad9a2bf179ab14b9d6099bd15ed46f480e5172b1"
+      },
+      "bytes": 535,
+      "sha256": "fbb7898fdfd0f2105b145089ad9a2bf179ab14b9d6099bd15ed46f480e5172b1"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-trial-old-qualification/manifest.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-trial-old-qualification/manifest.json",
+        "sha256": "013d3ec36b9dc7e95744281c1a4b0e7088a6831bde258db3bb264524eae40119"
+      },
+      "bytes": 15772,
+      "sha256": "013d3ec36b9dc7e95744281c1a4b0e7088a6831bde258db3bb264524eae40119"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-trial-old-qualification/result.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-trial-old-qualification/result.json",
+        "sha256": "58f341994f78e3261187bcbed2d70924e4f7cb9ab6f6d3519c61581763477b98"
+      },
+      "bytes": 1629,
+      "sha256": "58f341994f78e3261187bcbed2d70924e4f7cb9ab6f6d3519c61581763477b98"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-trial-wrong-reader/closure.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-trial-wrong-reader/closure.json",
+        "sha256": "ad3dab1b40e3021d50428f719f94a6f960f1c70b77177d7be5790f23d9c2c3ef"
+      },
+      "bytes": 535,
+      "sha256": "ad3dab1b40e3021d50428f719f94a6f960f1c70b77177d7be5790f23d9c2c3ef"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-trial-wrong-reader/manifest.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-trial-wrong-reader/manifest.json",
+        "sha256": "5e7e7f4db7eaf77ecaa656c37c4661a9873102ffd89ab16209ccb17cff7987c3"
+      },
+      "bytes": 15762,
+      "sha256": "5e7e7f4db7eaf77ecaa656c37c4661a9873102ffd89ab16209ccb17cff7987c3"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-trial-wrong-reader/result.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-trial-wrong-reader/result.json",
+        "sha256": "c56fcfdd42720a01a71065f9e933b2a85f97f8efe509fba3ee67adf455d7c31d"
+      },
+      "bytes": 1629,
+      "sha256": "c56fcfdd42720a01a71065f9e933b2a85f97f8efe509fba3ee67adf455d7c31d"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-wrong-history/closure.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-wrong-history/closure.json",
+        "sha256": "ffea2249476af8198452c0f72d700472177d4e4e9858faeb2951410a500e68f8"
+      },
+      "bytes": 535,
+      "sha256": "ffea2249476af8198452c0f72d700472177d4e4e9858faeb2951410a500e68f8"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-wrong-history/manifest.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-wrong-history/manifest.json",
+        "sha256": "c17305efb1863e31390471ed7676ba95a88b2fd01dc868a734d58342ca5dcb01"
+      },
+      "bytes": 15744,
+      "sha256": "c17305efb1863e31390471ed7676ba95a88b2fd01dc868a734d58342ca5dcb01"
+    },
+    {
+      "export": "scratch/admission-only/synthetic-wrong-history/result.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/synthetic-wrong-history/result.json",
+        "sha256": "f1c64a6aada4652bbf4e53cfd3b1f1a36eaf592a9ea2ff96ed4ba6d5d01bd20e"
+      },
+      "bytes": 1629,
+      "sha256": "f1c64a6aada4652bbf4e53cfd3b1f1a36eaf592a9ea2ff96ed4ba6d5d01bd20e"
+    },
+    {
+      "export": "scratch/admission-only/valid-confirmation-manifest.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/valid-confirmation-manifest.json",
+        "sha256": "7168306bf28d42476c0afb535116059c4b1e1c624c36d4d945876b1261d449ea"
+      },
+      "bytes": 46541,
+      "sha256": "7168306bf28d42476c0afb535116059c4b1e1c624c36d4d945876b1261d449ea"
+    },
+    {
+      "export": "scratch/admission-only/valid-confirmation-readiness.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/valid-confirmation-readiness.json",
+        "sha256": "04c41f549c32642bb6b49cdcac15b1e39ab7ee79e04c9660c79f2fbe6ff03536"
+      },
+      "bytes": 3041,
+      "sha256": "04c41f549c32642bb6b49cdcac15b1e39ab7ee79e04c9660c79f2fbe6ff03536"
+    },
+    {
+      "export": "scratch/admission-only/valid-control-manifest.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/valid-control-manifest.json",
+        "sha256": "950de40597b5ab57d9c4d6931fa1ab26a1b660d42f22d238a53693a0f0ef903a"
+      },
+      "bytes": 16049,
+      "sha256": "950de40597b5ab57d9c4d6931fa1ab26a1b660d42f22d238a53693a0f0ef903a"
+    },
+    {
+      "export": "scratch/admission-only/valid-control-readiness.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/valid-control-readiness.json",
+        "sha256": "2a272557c0a01cc49a48edbd72ba08147b557ee33960f14a9c1dd5ab177d8582"
+      },
+      "bytes": 442,
+      "sha256": "2a272557c0a01cc49a48edbd72ba08147b557ee33960f14a9c1dd5ab177d8582"
+    },
+    {
+      "export": "scratch/admission-only/valid-engineering-manifest.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/valid-engineering-manifest.json",
+        "sha256": "4009a4bd320ff9ab987c4fc1afa129a621ab7fa4cacefb59ac753713c93b23bf"
+      },
+      "bytes": 45730,
+      "sha256": "4009a4bd320ff9ab987c4fc1afa129a621ab7fa4cacefb59ac753713c93b23bf"
+    },
+    {
+      "export": "scratch/admission-only/valid-engineering-readiness.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/valid-engineering-readiness.json",
+        "sha256": "c89ac452bf9d94326e340db085bb42034b4a5471a8f22dc9ca93832ea9914d4b"
+      },
+      "bytes": 1744,
+      "sha256": "c89ac452bf9d94326e340db085bb42034b4a5471a8f22dc9ca93832ea9914d4b"
+    },
+    {
+      "export": "scratch/admission-only/wrong-reader-manifest.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/wrong-reader-manifest.json",
+        "sha256": "3df0eaf2bc261ed7164b8aa91a2866bba1f5aac69acc8bea4827270db781705d"
+      },
+      "bytes": 45738,
+      "sha256": "3df0eaf2bc261ed7164b8aa91a2866bba1f5aac69acc8bea4827270db781705d"
+    },
+    {
+      "export": "scratch/admission-only/wrong-reader-policy.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/wrong-reader-policy.json",
+        "sha256": "7d3b0929f350b98db5e68c37b595810df63e42be8d8c35af7038fa5aa02ea3b0"
+      },
+      "bytes": 125672,
+      "sha256": "7d3b0929f350b98db5e68c37b595810df63e42be8d8c35af7038fa5aa02ea3b0"
+    },
+    {
+      "export": "scratch/admission-only/wrong-reader-readiness.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/wrong-reader-readiness.json",
+        "sha256": "d565ccae2f22dc119505d9e2358ebc310f92fe205dd211349a608f6a7dc9f5b1"
+      },
+      "bytes": 1788,
+      "sha256": "d565ccae2f22dc119505d9e2358ebc310f92fe205dd211349a608f6a7dc9f5b1"
+    },
+    {
+      "export": "scratch/admission-only/wrong-reader.bin",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/wrong-reader.bin",
+        "sha256": "309e3a4ad9565b2b98bc05b32aeec8e5992767439af5ad6e234edfcf904f3894"
+      },
+      "bytes": 27,
+      "sha256": "309e3a4ad9565b2b98bc05b32aeec8e5992767439af5ad6e234edfcf904f3894"
+    },
+    {
+      "export": "source/admission_matrix.py",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/admission_matrix.py",
+        "sha256": "66f568da03e0bae98a24b43f444d5d784e159754f14d2c1983d44652ad09da9e"
+      },
+      "bytes": 8661,
+      "sha256": "66f568da03e0bae98a24b43f444d5d784e159754f14d2c1983d44652ad09da9e"
+    },
+    {
+      "export": "source/close_qualification.py",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/close_qualification.py",
+        "sha256": "8d90aff15426cc4f20db060952dc5605e151634733e607189e3bb3d43df194fe"
+      },
+      "bytes": 1850,
+      "sha256": "8d90aff15426cc4f20db060952dc5605e151634733e607189e3bb3d43df194fe"
+    },
+    {
+      "export": "source/common.py",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/common.py",
+        "sha256": "abbd7ffd272fc6f9aa2948076f8913111ebc0336499c2dd4eb2f09a6a7e51c5b"
+      },
+      "bytes": 1333,
+      "sha256": "abbd7ffd272fc6f9aa2948076f8913111ebc0336499c2dd4eb2f09a6a7e51c5b"
+    },
+    {
+      "export": "source/comparator_matrix.py",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/comparator_matrix.py",
+        "sha256": "1262e8962078c9748c5ca082fca93f551f5f6fa031ece3d5c9cb47a6f98e207f"
+      },
+      "bytes": 6193,
+      "sha256": "1262e8962078c9748c5ca082fca93f551f5f6fa031ece3d5c9cb47a6f98e207f"
+    },
+    {
+      "export": "source/freeze_proposals.py",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/freeze_proposals.py",
+        "sha256": "346d5ba093246edc56e1cf2699a2cf3da597d64e6089275db93e886338d7ce75"
+      },
+      "bytes": 5657,
+      "sha256": "346d5ba093246edc56e1cf2699a2cf3da597d64e6089275db93e886338d7ce75"
+    },
+    {
+      "export": "source/retained_comparisons.py",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/retained_comparisons.py",
+        "sha256": "26a423e221e3d67dc570ee1362b36b6db3e2c602a13be1bb112090a2b655e510"
+      },
+      "bytes": 3738,
+      "sha256": "26a423e221e3d67dc570ee1362b36b6db3e2c602a13be1bb112090a2b655e510"
+    },
+    {
+      "export": "source/run_reader_binding.py",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/run_reader_binding.py",
+        "sha256": "d48cca128a77295893032f2f8e8edbc63448bc976cd8593ed7cc6ab4ac8149b3"
+      },
+      "bytes": 999,
+      "sha256": "d48cca128a77295893032f2f8e8edbc63448bc976cd8593ed7cc6ab4ac8149b3"
+    },
+    {
+      "export": "source/seal_qualification.py",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/seal_qualification.py",
+        "sha256": "fc3a2bde24a71264b14a6badd09ddadba176a93d57c2095a42140fc85ddd8f12"
+      },
+      "bytes": 1728,
+      "sha256": "fc3a2bde24a71264b14a6badd09ddadba176a93d57c2095a42140fc85ddd8f12"
+    },
+    {
+      "export": "source/owner_compare.py",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/inputs/owner-replay-source/owner_compare.py",
+        "sha256": "fa7b1133cb29458fe7cb0d2e4b0d744d04396969f86423b0e8dcd1d74fccd5d9"
+      },
+      "bytes": 19936,
+      "sha256": "fa7b1133cb29458fe7cb0d2e4b0d744d04396969f86423b0e8dcd1d74fccd5d9"
+    },
+    {
+      "export": "inherited/comparator-delta-recovery.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/analysis/comparator-delta-recovery.json",
+        "sha256": "f2707df82053857416aa46ce3f8a186accd8907a64845587a5fdf06fc8566326"
+      },
+      "bytes": 1744,
+      "sha256": "f2707df82053857416aa46ce3f8a186accd8907a64845587a5fdf06fc8566326"
+    },
+    {
+      "export": "inherited/comparator-delta-recovery.patch",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/analysis/comparator-delta-recovery.patch",
+        "sha256": "36fb5b254f4583cc169c0445c16649c70db8762c77d66f4026096f13a1f5e6e7"
+      },
+      "bytes": 5296,
+      "sha256": "36fb5b254f4583cc169c0445c16649c70db8762c77d66f4026096f13a1f5e6e7"
+    },
+    {
+      "export": "runner-source.tar.gz",
+      "bytes": 104951,
+      "sha256": "a2cb976e759376d7ae591ad2feea56791c934275ff90b19d48b36be6767c9ff3"
+    },
+    {
+      "export": "runner-source-members.json",
+      "bytes": 8710,
+      "sha256": "d43bf0d3a616109b7b763311871c05db4c4c2ab651e6b7baa5f0a328aa6f0b17"
+    },
+    {
+      "export": "comparator-fixtures.tar.gz",
+      "bytes": 679717,
+      "sha256": "095123b47200191d34591539be78e435ce6831ca953638e8fe2b8728c8914ff4"
+    },
+    {
+      "export": "comparator-fixtures-members.json",
+      "bytes": 167310,
+      "sha256": "f0ce20a87ef37a116632bc5acf084e0254713bd5dc158789ae3518de22e41ffd"
+    }
+  ],
+  "claim": "Portable records and small qualification fixtures. Full retained Elasticsearch outputs and pinned runtimes remain at their original local paths; this export alone cannot rerun those six comparisons."
+}

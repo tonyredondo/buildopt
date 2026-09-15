@@ -1,0 +1,14 @@
+{
+  "name": "missing-adoption",
+  "manifest": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/missing-adoption-manifest.json",
+    "sha256": "fa7572ff269fae8e9b2753824900f477044cea962c1623d782149d818f15dd10"
+  },
+  "expected": "explicit evidenced external adoption cost",
+  "exitCode": 1,
+  "stdout": "",
+  "stderr": "confirmation needs explicit evidenced external adoption cost for each replication, including measured zero\n",
+  "durationNS": 3825147386,
+  "runRootAbsent": true,
+  "syntheticTrialData": true
+}

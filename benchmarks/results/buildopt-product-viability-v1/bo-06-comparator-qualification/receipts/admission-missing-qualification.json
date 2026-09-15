@@ -1,0 +1,14 @@
+{
+  "name": "missing-qualification",
+  "manifest": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/missing-qualification-manifest.json",
+    "sha256": "a70becdcc27e6f489aad956079c04a25189d61ec147fc9a169507b56c14001c7"
+  },
+  "expected": "lstat",
+  "exitCode": 1,
+  "stdout": "",
+  "stderr": "lstat : no such file or directory\n",
+  "durationNS": 3756441625,
+  "runRootAbsent": true,
+  "syntheticTrialData": true
+}

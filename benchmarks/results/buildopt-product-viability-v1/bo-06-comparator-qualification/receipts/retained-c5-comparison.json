@@ -1,0 +1,50 @@
+{
+  "name": "retained-c5",
+  "status": "verified",
+  "request": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/retained-c5-request.json",
+    "sha256": "6cd7d5aea4439f82d1d746a16017b1fdd1fbdea6a16092af65c78cac684a757a"
+  },
+  "report": {
+    "status": "equivalent",
+    "policySHA256": "028d31d8be73de2debda8a337c39782952b9a15f42b44d1e57413062b03c0114",
+    "captures": [
+      {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-retained-fixture-02/attempts/r1-000-N/capture.json",
+        "sha256": "6fd83289b8886ebd035b25603042a5971358f935e045594eab39a7ae004daf89"
+      },
+      {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/owner-retained-fixture-02/attempts/r1-000-I/capture.json",
+        "sha256": "cb652510fde2383ee40da2d8c1de6cb6b69b59838d1d8524eedcac19b608aa60"
+      }
+    ],
+    "counts": {
+      "exact": 50020,
+      "compilationMetadata": 137,
+      "date": 64,
+      "checkstyle": 3,
+      "rat": 1,
+      "causalOrigins": 0,
+      "candidateOnly": 1
+    },
+    "metadataJVMStarts": 1
+  },
+  "durationNS": 193509966557,
+  "subprocesses": [
+    {
+      "executable": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-prototype/output-tools/project-output",
+      "java": false,
+      "startNS": 322836893812438,
+      "endNS": 322838401587836,
+      "exitCode": 0
+    },
+    {
+      "executable": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/bin/java",
+      "java": true,
+      "startNS": 322838402897279,
+      "endNS": 322876121176891,
+      "exitCode": 0
+    }
+  ],
+  "newBuilds": 0
+}

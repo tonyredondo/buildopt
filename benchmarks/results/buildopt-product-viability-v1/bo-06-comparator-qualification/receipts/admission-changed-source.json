@@ -1,0 +1,14 @@
+{
+  "name": "changed-source",
+  "manifest": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/changed-source-manifest.json",
+    "sha256": "481d856bce5411d14e3ff3078a41908cd9e0aea34c4877ce6d1e9c72ebb323e3"
+  },
+  "expected": "does not bind this implementation",
+  "exitCode": 1,
+  "stdout": "",
+  "stderr": "lean research readiness does not bind this implementation and workflow\n",
+  "durationNS": 3421906,
+  "runRootAbsent": true,
+  "syntheticTrialData": true
+}

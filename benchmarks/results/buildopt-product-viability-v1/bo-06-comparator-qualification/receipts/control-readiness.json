@@ -1,0 +1,9 @@
+{
+  "schema": "buildopt.lean-research/readiness/v1",
+  "mode": "P_LEAN_RESEARCH_V1",
+  "identity": "d45f0d316344b46b96d7dbe4376421a33198070d88f54afe41de20d463469ed8",
+  "localProof": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/local-proof.json",
+    "sha256": "75fae0c554b53c6f89425ce3b613a198092f08b0e8ce2861106ffdadd72d5533"
+  }
+}

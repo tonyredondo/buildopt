@@ -1,0 +1,45 @@
+{
+  "schema": "buildopt.lean-research/local-proof/v1",
+  "exitCode": 0,
+  "executable": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/history-replay-lean",
+    "sha256": "95506d9e7269e1c935a0b461d3cd4dae2cb27a129997fc85d96887c6b36a8d32"
+  },
+  "package": [
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/source",
+      "sha256": "76b3e240855c7bf6c643d755269fffbb815e5648773df756abfc746a742ae26b"
+    }
+  ],
+  "ownerStarts": 0,
+  "checks": {
+    "invocation-output": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/logs/TestOwnedReplayAndIndependentChecker.log",
+      "sha256": "4c41989922375a338a0c8a051179d8508c4f9baa0015c22d1b231b606cc441b9"
+    },
+    "cancellation-closure": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/logs/TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost.log",
+      "sha256": "48ad3c8a54c3109d3ba238bcbca3ce3e96581901ba31c7457a3ee123930c9a41"
+    },
+    "source-drift": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/logs/TestDriftStopsBeforeNextChild.log",
+      "sha256": "a7205efbb0becdfe5d00b0245250bdc3bafa3f85231df8c891ec957b6655b421"
+    },
+    "missing-result": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/logs/cli-route-and-affinity.log",
+      "sha256": "6ce46562c5025527e77d47c61d29cfb47ee7d32d54817fa2cb43c0de633b9324"
+    },
+    "readiness-admission": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/analysis/admission-matrix.json",
+      "sha256": "90e539e9a14d696cc75819cfc519c4b2df65e9e3e82ba977e7b76624b1e8c30c"
+    },
+    "affinity": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/logs/cli-route-and-affinity.log",
+      "sha256": "6ce46562c5025527e77d47c61d29cfb47ee7d32d54817fa2cb43c0de633b9324"
+    },
+    "failure-fallback": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/receipts/failure-fallback-qualification.json",
+      "sha256": "84a3be487893dd03177665a55d791288a0f1e07193a8b2ffe57694282658e653"
+    }
+  }
+}

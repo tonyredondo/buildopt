@@ -1,0 +1,21 @@
+{
+  "status": "closed verified",
+  "startedUTC": "2026-09-15T04:18:59.659181+00:00",
+  "deadlineUTC": "2026-09-15T05:48:59.659181+00:00",
+  "maxElapsedSeconds": 5400,
+  "maxBytes": 4294967296,
+  "minimumFreeBytes": 42949672960,
+  "maxOwnerBuilds": 0,
+  "maxComparatorJVMs": 12,
+  "maxComparatorCalls": 60,
+  "maxGoCommands": 8,
+  "maxFixtureWorkflows": 0,
+  "actualOwnerBuilds": 0,
+  "actualComparatorJVMs": 8,
+  "comparatorReservations": 43,
+  "jvmReservations": 8,
+  "goCommands": 1,
+  "retries": 0,
+  "closedUTC": "2026-09-15T04:35:29.495634+00:00",
+  "allocatedBytes": 10874880
+}

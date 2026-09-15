@@ -1,0 +1,14 @@
+{
+  "name": "old-qualification",
+  "manifest": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/old-qualification-manifest.json",
+    "sha256": "ccbec9ba3fa01311d66c78a5233ae5abc30ba8828100aebd543512ea4e48364b"
+  },
+  "expected": "qualification is incomplete",
+  "exitCode": 1,
+  "stdout": "",
+  "stderr": "owner comparison/reuse qualification is incomplete\n",
+  "durationNS": 3741990789,
+  "runRootAbsent": true,
+  "syntheticTrialData": true
+}

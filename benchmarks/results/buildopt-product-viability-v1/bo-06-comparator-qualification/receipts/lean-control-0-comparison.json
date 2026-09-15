@@ -1,0 +1,50 @@
+{
+  "name": "lean-control-0",
+  "status": "verified",
+  "request": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/lean-control-0-request.json",
+    "sha256": "9ea8b3439a5ddadcc4718fbd78f20b6721e0583344417ba16974bd77d486f79a"
+  },
+  "report": {
+    "status": "equivalent",
+    "policySHA256": "028d31d8be73de2debda8a337c39782952b9a15f42b44d1e57413062b03c0114",
+    "captures": [
+      {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/profiles/control/run/attempts/r1-000-g0-N/capture.json",
+        "sha256": "c955ad8d0a56f24f0d7adc4febd8d28b0ec175db22ff2940a3eba39350375539"
+      },
+      {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/profiles/control/run/attempts/r1-000-g0-I/capture.json",
+        "sha256": "9c9db206844116988184cb9e005164c8c8961bdc1ebca8d9e1656581ba31d3f2"
+      }
+    ],
+    "counts": {
+      "exact": 50155,
+      "date": 64,
+      "checkstyle": 3,
+      "rat": 1,
+      "compilationMetadata": 2,
+      "causalOrigins": 0,
+      "candidateOnly": 0
+    },
+    "metadataJVMStarts": 1
+  },
+  "durationNS": 9635733661,
+  "subprocesses": [
+    {
+      "executable": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/checkstyle-prototype/output-tools/project-output",
+      "java": false,
+      "startNS": 323136479735624,
+      "endNS": 323137959419689,
+      "exitCode": 0
+    },
+    {
+      "executable": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/bin/java",
+      "java": true,
+      "startNS": 323137960446801,
+      "endNS": 323140223284487,
+      "exitCode": 0
+    }
+  ],
+  "newBuilds": 0
+}

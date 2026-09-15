@@ -1,0 +1,14 @@
+{
+  "name": "missing-prefix",
+  "manifest": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/missing-prefix-manifest.json",
+    "sha256": "e77116ad35b01e0bf379aa65ddf481155b7f67d7f1b34ddb819a62c16a76f32b"
+  },
+  "expected": "missing required control or prefix proof",
+  "exitCode": 1,
+  "stdout": "",
+  "stderr": "lean research missing required control or prefix proof\n",
+  "durationNS": 4358679,
+  "runRootAbsent": true,
+  "syntheticTrialData": true
+}

@@ -1,0 +1,14 @@
+{
+  "name": "missing-control",
+  "manifest": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/missing-control-manifest.json",
+    "sha256": "80d22d85fa63fe7a85eb6aa1c9cc97afeb6228f7356ebc93eb1c87e51c54fd85"
+  },
+  "expected": "missing required control or prefix proof",
+  "exitCode": 1,
+  "stdout": "",
+  "stderr": "lean research missing required control or prefix proof\n",
+  "durationNS": 3541537,
+  "runRootAbsent": true,
+  "syntheticTrialData": true
+}

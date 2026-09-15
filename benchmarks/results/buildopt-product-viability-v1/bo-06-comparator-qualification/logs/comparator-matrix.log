@@ -1,0 +1,71 @@
+test_adapted_control_complete_reports_and_config (retained_cases.OwnerTests.test_adapted_control_complete_reports_and_config) ... retained owner fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/comparator-matrix/test_adapted_control_complete_reports_and_config-7bejb99e
+ok
+test_adapted_control_config_corruption_is_rejected (retained_cases.OwnerTests.test_adapted_control_config_corruption_is_rejected) ... retained owner fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/comparator-matrix/test_adapted_control_config_corruption_is_rejected-q4styk2u
+ok
+test_adapted_control_keeps_full_finding_checks (retained_cases.OwnerTests.test_adapted_control_keeps_full_finding_checks) ... retained owner fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/comparator-matrix/test_adapted_control_keeps_full_finding_checks-v_btzxbv
+ok
+test_adapted_control_missing_config_is_rejected (retained_cases.OwnerTests.test_adapted_control_missing_config_is_rejected) ... retained owner fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/comparator-matrix/test_adapted_control_missing_config_is_rejected-j_tycyto
+ok
+test_adapted_control_requires_explicit_declaration (retained_cases.OwnerTests.test_adapted_control_requires_explicit_declaration) ... retained owner fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/comparator-matrix/test_adapted_control_requires_explicit_declaration-hn_qdv0s
+ok
+test_causal_up_to_date_and_cache_restore (retained_cases.OwnerTests.test_causal_up_to_date_and_cache_restore) ... retained owner fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/comparator-matrix/test_causal_up_to_date_and_cache_restore-uhn31ax2
+ok
+test_changed_config_is_rejected (retained_cases.OwnerTests.test_changed_config_is_rejected) ... retained owner fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/comparator-matrix/test_changed_config_is_rejected-ly5m88j2
+ok
+test_changed_origin_raw_is_rejected (retained_cases.OwnerTests.test_changed_origin_raw_is_rejected) ... retained owner fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/comparator-matrix/test_changed_origin_raw_is_rejected-g0fj9zps
+ok
+test_changed_reused_output_is_rejected (retained_cases.OwnerTests.test_changed_reused_output_is_rejected) ... retained owner fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/comparator-matrix/test_changed_reused_output_is_rejected-iltw9hba
+ok
+test_duplicate_file_is_rejected (retained_cases.OwnerTests.test_duplicate_file_is_rejected) ... retained owner fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/comparator-matrix/test_duplicate_file_is_rejected-oe0fuh5g
+ok
+test_equivalent_complete_reports_and_exact_config (retained_cases.OwnerTests.test_equivalent_complete_reports_and_exact_config) ... retained owner fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/comparator-matrix/test_equivalent_complete_reports_and_exact_config-74jz1t53
+ok
+test_finding_is_not_normalized_away (retained_cases.OwnerTests.test_finding_is_not_normalized_away) ... retained owner fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/comparator-matrix/test_finding_is_not_normalized_away-nfqbv4j_
+ok
+test_future_origin_is_rejected (retained_cases.OwnerTests.test_future_origin_is_rejected) ... retained owner fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/comparator-matrix/test_future_origin_is_rejected-tmayh2k0
+ok
+test_malformed_report_is_rejected (retained_cases.OwnerTests.test_malformed_report_is_rejected) ... retained owner fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/comparator-matrix/test_malformed_report_is_rejected-az8o53te
+ok
+test_metadata_requires_java_compile_producer (retained_cases.OwnerTests.test_metadata_requires_java_compile_producer) ... retained owner fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/comparator-matrix/test_metadata_requires_java_compile_producer-vayphrdx
+ok
+test_missing_config_is_rejected (retained_cases.OwnerTests.test_missing_config_is_rejected) ... retained owner fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/comparator-matrix/test_missing_config_is_rejected-pvpcnocn
+ok
+test_missing_origin_is_rejected (retained_cases.OwnerTests.test_missing_origin_is_rejected) ... retained owner fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/comparator-matrix/test_missing_origin_is_rejected-y2j4obbj
+ok
+test_mode_difference_is_rejected (retained_cases.OwnerTests.test_mode_difference_is_rejected) ... retained owner fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/comparator-matrix/test_mode_difference_is_rejected-9ekx4wzd
+ok
+test_other_arm_origin_is_rejected (retained_cases.OwnerTests.test_other_arm_origin_is_rejected) ... retained owner fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/comparator-matrix/test_other_arm_origin_is_rejected-d1mmzko_
+ok
+test_other_manifest_origin_is_rejected (retained_cases.OwnerTests.test_other_manifest_origin_is_rejected) ... retained owner fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/comparator-matrix/test_other_manifest_origin_is_rejected-0g41s0vx
+ok
+test_raw_hash_drift_is_rejected (retained_cases.OwnerTests.test_raw_hash_drift_is_rejected) ... retained owner fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/comparator-matrix/test_raw_hash_drift_is_rejected-fv6fbqf7
+ok
+test_real_metadata_order_difference_is_equivalent (retained_cases.OwnerTests.test_real_metadata_order_difference_is_equivalent) ... retained owner fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/comparator-matrix/test_real_metadata_order_difference_is_equivalent-xj9fxgr5
+ok
+test_real_metadata_trailing_bytes_are_rejected (retained_cases.OwnerTests.test_real_metadata_trailing_bytes_are_rejected) ... retained owner fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/comparator-matrix/test_real_metadata_trailing_bytes_are_rejected-28nzkqz4
+ok
+test_unlisted_exact_difference_is_rejected (retained_cases.OwnerTests.test_unlisted_exact_difference_is_rejected) ... retained owner fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/comparator-matrix/test_unlisted_exact_difference_is_rejected-0w7yy6px
+ok
+test_unqualified_skip_is_rejected (retained_cases.OwnerTests.test_unqualified_skip_is_rejected) ... retained owner fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/comparator-matrix/test_unqualified_skip_is_rejected-4619yajg
+ok
+test_control_exit_difference (__main__.ControlCases.test_control_exit_difference) ... retained owner fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/comparator-matrix/test_control_exit_difference-wwfwethr
+ok
+test_control_generated_config_mode (__main__.ControlCases.test_control_generated_config_mode) ... retained owner fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/comparator-matrix/test_control_generated_config_mode-mtwtrl0l
+ok
+test_control_generated_config_producer (__main__.ControlCases.test_control_generated_config_producer) ... retained owner fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/comparator-matrix/test_control_generated_config_producer-_ih1yj96
+ok
+test_control_marker_is_boolean (__main__.ControlCases.test_control_marker_is_boolean) ... retained owner fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/comparator-matrix/test_control_marker_is_boolean-kvuclg0u
+ok
+test_control_missing_report (__main__.ControlCases.test_control_missing_report) ... retained owner fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/comparator-matrix/test_control_missing_report-rxszf_pz
+ok
+test_control_reuses_same_arm_only (__main__.ControlCases.test_control_reuses_same_arm_only) ... retained owner fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/comparator-matrix/test_control_reuses_same_arm_only-s3n3kkj1
+ok
+test_control_task_dependencies (__main__.ControlCases.test_control_task_dependencies) ... retained owner fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/comparator-matrix/test_control_task_dependencies-umga6bw0
+ok
+test_failed_controls_still_compare_reports (__main__.ControlCases.test_failed_controls_still_compare_reports) ... retained owner fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/comparator-matrix/test_failed_controls_still_compare_reports-u2cpva6t
+ok
+
+----------------------------------------------------------------------
+Ran 33 tests in 8.287s
+
+OK

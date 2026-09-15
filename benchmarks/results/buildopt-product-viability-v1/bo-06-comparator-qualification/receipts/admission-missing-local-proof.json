@@ -1,0 +1,14 @@
+{
+  "name": "missing-local-proof",
+  "manifest": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/scratch/admission-only/missing-local-proof-manifest.json",
+    "sha256": "a26fabe272bc542e85d3df2abbecc9cbe1f88ec051df1ece491a75e4ba3279ba"
+  },
+  "expected": "own readiness",
+  "exitCode": 1,
+  "stdout": "",
+  "stderr": "lean research missing its own readiness receipt\n",
+  "durationNS": 2855685,
+  "runRootAbsent": true,
+  "syntheticTrialData": true
+}

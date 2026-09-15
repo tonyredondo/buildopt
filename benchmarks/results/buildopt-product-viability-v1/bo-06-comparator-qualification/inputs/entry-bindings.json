@@ -1,0 +1,22 @@
+[
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/source",
+    "sha256": "76b3e240855c7bf6c643d755269fffbb815e5648773df756abfc746a742ae26b"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/history-replay-lean",
+    "sha256": "95506d9e7269e1c935a0b461d3cd4dae2cb27a129997fc85d96887c6b36a8d32"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/inputs/owner-policy-corrected.json",
+    "sha256": "028d31d8be73de2debda8a337c39782952b9a15f42b44d1e57413062b03c0114"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/analysis/comparator-delta-recovery.json",
+    "sha256": "f2707df82053857416aa46ce3f8a186accd8907a64845587a5fdf06fc8566326"
+  },
+  {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/tests/runner-source",
+    "sha256": "76b3e240855c7bf6c643d755269fffbb815e5648773df756abfc746a742ae26b"
+  }
+]
