@@ -1,0 +1,21 @@
+{
+  "status": "closed verified",
+  "startedUTC": "2026-09-15T05:25:20.225585+00:00",
+  "startedBootNS": 326391238453878,
+  "deadlineUTC": "2026-09-15T15:25:20.225585+00:00",
+  "maxElapsedSeconds": 36000,
+  "maxNewBytes": 85899345920,
+  "minimumFreeBytes": 42949672960,
+  "maxDiagnosticBytes": 268435456,
+  "maxOwnerStarts": 50,
+  "maxHelpers": 50,
+  "ownerReserved": 8,
+  "helpersReserved": 8,
+  "actualOwnerStarts": 8,
+  "actualHelpers": 8,
+  "retriesAllowed": 0,
+  "allocatedBytes": 13979717632,
+  "closedUTC": "2026-09-15T06:27:46.541896+00:00",
+  "diagnosticBytes": 56016188,
+  "decision": "CONTROL_MATERIAL_DIFFERENCE"
+}

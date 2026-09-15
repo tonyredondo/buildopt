@@ -1,0 +1,797 @@
+{
+  "schema": "buildopt.history-replay/record/v2",
+  "attempt": "r1-000-g0-I",
+  "unit": "buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+  "invocationID": "9b9f53786f884d8b83d6c8c506bdedc3",
+  "supervisor": {
+    "pid": 1086316,
+    "startTicks": 32849311,
+    "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+    "command": [
+      "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/history-replay-lean",
+      "worker",
+      "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/sessions/r1-000-g0-I/worker-config.json",
+      "4a6df0e0dd93fb6f2e62e4fc6fab44c73c747ac8753e29061e6f7a406e8d1762"
+    ]
+  },
+  "process": {
+    "pid": 1086359,
+    "startTicks": 32849365,
+    "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+    "command": [
+      "/bin/sh",
+      "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/gradlew",
+      "--offline",
+      "--no-scan",
+      "--max-workers=8",
+      ":server:precommit",
+      "--continue",
+      "--no-configuration-cache",
+      "--build-cache",
+      "--console=plain",
+      "--init-script",
+      "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/versions/owner-readiness-v5/source/capture.init.gradle",
+      "--daemon"
+    ]
+  },
+  "observed": [
+    {
+      "pid": 1086316,
+      "startTicks": 32849311,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/history-replay-lean",
+        "worker",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/sessions/r1-000-g0-I/worker-config.json",
+        "4a6df0e0dd93fb6f2e62e4fc6fab44c73c747ac8753e29061e6f7a406e8d1762"
+      ]
+    },
+    {
+      "pid": 1086359,
+      "startTicks": 32849365,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/bin/java",
+        "-Xmx64m",
+        "-Xms64m",
+        "-Dorg.gradle.appname=gradlew",
+        "-jar",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/gradle/wrapper/gradle-wrapper.jar",
+        "--offline",
+        "--no-scan",
+        "--max-workers=8",
+        ":server:precommit",
+        "--continue",
+        "--no-configuration-cache",
+        "--build-cache",
+        "--console=plain",
+        "--init-script",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/versions/owner-readiness-v5/source/capture.init.gradle",
+        "--daemon"
+      ]
+    },
+    {
+      "pid": 1086424,
+      "startTicks": 32849415,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/jdks/eclipse_adoptium-22-amd64-linux.2/bin/java",
+        "-Xmx32m",
+        "-Xms32m",
+        "-cp",
+        ".",
+        "JavaProbe"
+      ]
+    },
+    {
+      "pid": 1086486,
+      "startTicks": 32849421,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/bin/java",
+        "--add-opens=java.base/java.lang=ALL-UNNAMED",
+        "--add-opens=java.base/java.lang.invoke=ALL-UNNAMED",
+        "--add-opens=java.base/java.util=ALL-UNNAMED",
+        "--add-opens=java.prefs/java.util.prefs=ALL-UNNAMED",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
+        "--add-opens=java.base/java.nio.charset=ALL-UNNAMED",
+        "--add-opens=java.base/java.net=ALL-UNNAMED",
+        "--add-opens=java.base/java.util.concurrent=ALL-UNNAMED",
+        "--add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED",
+        "--add-opens=java.xml/javax.xml.namespace=ALL-UNNAMED",
+        "--add-opens=java.base/java.time=ALL-UNNAMED",
+        "-XX:+HeapDumpOnOutOfMemoryError",
+        "-Xss2m",
+        "--add-exports",
+        "jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
+        "--add-exports",
+        "jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED",
+        "--add-exports",
+        "jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED",
+        "--add-exports",
+        "jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED",
+        "--add-exports",
+        "jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+        "--add-opens",
+        "java.base/java.time=ALL-UNNAMED",
+        "-Dfile.encoding=UTF-8",
+        "-Duser.country",
+        "-Duser.language=en",
+        "-Duser.variant",
+        "-cp",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/wrapper/dists/gradle-9.7.1-bin/1w1c7tv4s851m17nbqdsro2tv/gradle-9.7.1/lib/gradle-daemon-main-9.7.1.jar",
+        "-javaagent:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/wrapper/dists/gradle-9.7.1-bin/1w1c7tv4s851m17nbqdsro2tv/gradle-9.7.1/lib/agents/gradle-instrumentation-agent-9.7.1.jar",
+        "org.gradle.launcher.daemon.bootstrap.GradleDaemon",
+        "9.7.1"
+      ]
+    },
+    {
+      "pid": 1086904,
+      "startTicks": 32851955,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/lib/jspawnhelper",
+        "21.0.12+8-LTS",
+        "538:539:541"
+      ]
+    },
+    {
+      "pid": 1086915,
+      "startTicks": 32852045,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/jdks/oracle_corporation-26-amd64-linux.2/bin/java",
+        "-Xmx32m",
+        "-Xms32m",
+        "-cp",
+        ".",
+        "JavaProbe"
+      ]
+    },
+    {
+      "pid": 1087508,
+      "startTicks": 32855782,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/jdks/eclipse_adoptium-22-amd64-linux.2/bin/java",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
+        "@/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/.tmp/gradle-worker-classpath8139001005466666278txt",
+        "-Xmx512m",
+        "-Dfile.encoding=UTF-8",
+        "-Duser.country",
+        "-Duser.language=en",
+        "-Duser.variant",
+        "worker.org.gradle.process.internal.worker.GradleWorkerMain",
+        "'Gradle Worker Daemon 1'"
+      ]
+    },
+    {
+      "pid": 1087547,
+      "startTicks": 32855842,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/bin/java",
+        "-Dcheckstyle.enableExternalDtdLoad=false",
+        "--add-opens",
+        "java.prefs/java.util.prefs=ALL-UNNAMED",
+        "@/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/.tmp/gradle-worker-classpath14272698507441461038txt",
+        "-Xmx2g",
+        "-Dfile.encoding=UTF-8",
+        "-Duser.country",
+        "-Duser.language=en",
+        "-Duser.variant",
+        "worker.org.gradle.process.internal.worker.GradleWorkerMain",
+        "'Gradle Worker Daemon 2'"
+      ]
+    },
+    {
+      "pid": 1087582,
+      "startTicks": 32855892,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/jdks/eclipse_adoptium-22-amd64-linux.2/bin/java",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
+        "@/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/.tmp/gradle-worker-classpath12695525003103099062txt",
+        "-Xmx512m",
+        "-Dfile.encoding=UTF-8",
+        "-Duser.country",
+        "-Duser.language=en",
+        "-Duser.variant",
+        "worker.org.gradle.process.internal.worker.GradleWorkerMain",
+        "'Gradle Worker Daemon 3'"
+      ]
+    },
+    {
+      "pid": 1087612,
+      "startTicks": 32855928,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/jdks/eclipse_adoptium-25-amd64-linux.2/bin/java",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
+        "@/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/.tmp/gradle-worker-classpath5076537905980266803txt",
+        "--enable-native-access=ALL-UNNAMED",
+        "-Xmx512m",
+        "-Dfile.encoding=UTF-8",
+        "-Duser.country",
+        "-Duser.language=en",
+        "-Duser.variant",
+        "worker.org.gradle.process.internal.worker.GradleWorkerMain",
+        "'Gradle Worker Daemon 4'"
+      ]
+    },
+    {
+      "pid": 1087686,
+      "startTicks": 32856073,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/bin/java",
+        "-Dcheckstyle.enableExternalDtdLoad=false",
+        "--add-opens",
+        "java.prefs/java.util.prefs=ALL-UNNAMED",
+        "@/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/.tmp/gradle-worker-classpath11740896879682225889txt",
+        "-Xmx2g",
+        "-Dfile.encoding=UTF-8",
+        "-Duser.country",
+        "-Duser.language=en",
+        "-Duser.variant",
+        "worker.org.gradle.process.internal.worker.GradleWorkerMain",
+        "'Gradle Worker Daemon 5'"
+      ]
+    },
+    {
+      "pid": 1087758,
+      "startTicks": 32856157,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/bin/java",
+        "-Dcheckstyle.enableExternalDtdLoad=false",
+        "--add-opens",
+        "java.prefs/java.util.prefs=ALL-UNNAMED",
+        "@/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/.tmp/gradle-worker-classpath11381658253292096453txt",
+        "-Xmx2g",
+        "-Dfile.encoding=UTF-8",
+        "-Duser.country",
+        "-Duser.language=en",
+        "-Duser.variant",
+        "worker.org.gradle.process.internal.worker.GradleWorkerMain",
+        "'Gradle Worker Daemon 6'"
+      ]
+    },
+    {
+      "pid": 1087792,
+      "startTicks": 32856192,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/jdks/eclipse_adoptium-25-amd64-linux.2/bin/java",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
+        "@/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/.tmp/gradle-worker-classpath10920881882192837908txt",
+        "--enable-native-access=ALL-UNNAMED",
+        "-Xmx512m",
+        "-Dfile.encoding=UTF-8",
+        "-Duser.country",
+        "-Duser.language=en",
+        "-Duser.variant",
+        "worker.org.gradle.process.internal.worker.GradleWorkerMain",
+        "'Gradle Worker Daemon 7'"
+      ]
+    },
+    {
+      "pid": 1087860,
+      "startTicks": 32856407,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/jdks/eclipse_adoptium-25-amd64-linux.2/bin/java",
+        "-cp",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/libs/foreign-library/processor/build/distributions/elasticsearch-foreign-library-processor-9.6.0-SNAPSHOT.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/libs/foreign-library/build/distributions/elasticsearch-foreign-library-9.6.0-SNAPSHOT.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/libs/foreign-adapter/build/distributions/elasticsearch-foreign-adapter-9.6.0-SNAPSHOT.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/libs/core/build/distributions/elasticsearch-core-9.6.0-SNAPSHOT.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/libs/logging/build/distributions/elasticsearch-logging-9.6.0-SNAPSHOT.jar",
+        "org.elasticsearch.foreign.processor.ModuleInfoAugmenter",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/libs/native/build/classes/java/main/module-info.class",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/libs/native/build/generated-foreign-library-classes/META-INF/services/org.elasticsearch.foreign.LibraryProvider",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/libs/native/build/augmented-foreign-module-info/module-info.class"
+      ]
+    },
+    {
+      "pid": 1087889,
+      "startTicks": 32856503,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/jdks/oracle_corporation-26-amd64-linux.2/bin/java",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
+        "@/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/.tmp/gradle-worker-classpath14208018584032808067txt",
+        "--enable-native-access=ALL-UNNAMED",
+        "-Xmx512m",
+        "-Dfile.encoding=UTF-8",
+        "-Duser.country",
+        "-Duser.language=en",
+        "-Duser.variant",
+        "worker.org.gradle.process.internal.worker.GradleWorkerMain",
+        "'Gradle Worker Daemon 8'"
+      ]
+    },
+    {
+      "pid": 1087902,
+      "startTicks": 32856536,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/jdks/eclipse_adoptium-25-amd64-linux.2/bin/java",
+        "-cp",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/libs/foreign-library/processor/build/distributions/elasticsearch-foreign-library-processor-9.6.0-SNAPSHOT.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/libs/foreign-library/build/distributions/elasticsearch-foreign-library-9.6.0-SNAPSHOT.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/libs/foreign-adapter/build/distributions/elasticsearch-foreign-adapter-9.6.0-SNAPSHOT.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/libs/core/build/distributions/elasticsearch-core-9.6.0-SNAPSHOT.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/libs/logging/build/distributions/elasticsearch-logging-9.6.0-SNAPSHOT.jar",
+        "org.elasticsearch.foreign.processor.ModuleInfoAugmenter",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/libs/simdvec/build/classes/java/main/module-info.class",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/libs/simdvec/build/generated-foreign-library-classes/META-INF/services/org.elasticsearch.foreign.LibraryProvider",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/libs/simdvec/build/augmented-foreign-module-info/module-info.class"
+      ]
+    },
+    {
+      "pid": 1088007,
+      "startTicks": 32856813,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/jdks/oracle_corporation-27-amd64-linux.2/bin/java",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
+        "@/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/.tmp/gradle-worker-classpath11414214921336436114txt",
+        "--enable-native-access=ALL-UNNAMED",
+        "-Xmx512m",
+        "-Dfile.encoding=UTF-8",
+        "-Duser.country",
+        "-Duser.language=en",
+        "-Duser.variant",
+        "worker.org.gradle.process.internal.worker.GradleWorkerMain",
+        "'Gradle Worker Daemon 9'"
+      ]
+    },
+    {
+      "pid": 1089073,
+      "startTicks": 32863693,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/com.google.protobuf/protoc/4.32.0/fd2d5a73839a170550ec6cc7ae218599af1b0249/protoc-4.32.0-linux-x86_64.exe",
+        "-I/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/x-pack/plugin/otel-data/src/main/proto",
+        "-I/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/x-pack/plugin/otel-data/build/extracted-protos/main",
+        "-I/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/x-pack/plugin/otel-data/build/protos/otel",
+        "-I/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/x-pack/plugin/otel-data/build/extracted-include-protos/main",
+        "--java_out=/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/x-pack/plugin/otel-data/build/generated/sources/proto/main/java",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/x-pack/plugin/otel-data/build/protos/otel/opentelemetry/proto/collector/logs/v1/logs_service.proto",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/x-pack/plugin/otel-data/build/protos/otel/opentelemetry/proto/collector/metrics/v1/metrics_service.proto",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/x-pack/plugin/otel-data/build/protos/otel/opentelemetry/proto/collector/profiles/v1development/profiles_service.proto",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/x-pack/plugin/otel-data/build/protos/otel/opentelemetry/proto/collector/trace/v1/trace_service.proto",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/x-pack/plugin/otel-data/build/protos/otel/opentelemetry/proto/common/v1/common.proto",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/x-pack/plugin/otel-data/build/protos/otel/opentelemetry/proto/logs/v1/logs.proto",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/x-pack/plugin/otel-data/build/protos/otel/opentelemetry/proto/metrics/v1/metrics.proto",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/x-pack/plugin/otel-data/build/protos/otel/opentelemetry/proto/profiles/v1development/profiles.proto",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/x-pack/plugin/otel-data/build/protos/otel/opentelemetry/proto/resource/v1/resource.proto",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/x-pack/plugin/otel-data/build/protos/otel/opentelemetry/proto/trace/v1/trace.proto",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/x-pack/plugin/otel-data/src/main/proto/google/rpc/status.proto"
+      ]
+    },
+    {
+      "pid": 1089647,
+      "startTicks": 32868154,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/bin/java",
+        "-Dfile.encoding=UTF-8",
+        "-Duser.country",
+        "-Duser.language=en",
+        "-Duser.variant",
+        "org.elasticsearch.jdk.JarHell"
+      ]
+    },
+    {
+      "pid": 1089710,
+      "startTicks": 32868250,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/bin/java",
+        "-Dfile.encoding=UTF-8",
+        "-Duser.country",
+        "-Duser.language=en",
+        "-Duser.variant",
+        "-cp",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/test/logger-usage/build/distributions/logger-usage-9.6.0-SNAPSHOT.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.ow2.asm/asm/9.10.1/ada2141c0cc52ee8f5c48cd5fa4ce0e794f22236/asm-9.10.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.ow2.asm/asm-tree/9.10.1/e244332a17564c1d1572449399a842de35881be2/asm-tree-9.10.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.ow2.asm/asm-analysis/9.10.1/8d49f14d51f632cb1d87c88d1ceaf50db0d8af1b/asm-analysis-9.10.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-api/2.26.1/b9864ed8d0c01f65f3b0bf70f1447e5cc1b49c24/log4j-api-2.26.1.jar",
+        "org.elasticsearch.test.loggerusage.ESLoggerUsageChecker",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/server/build/classes/java/main",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/server/build/classes/java/test"
+      ]
+    },
+    {
+      "pid": 1089745,
+      "startTicks": 32868567,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/bin/java",
+        "--add-modules",
+        "jdk.incubator.vector",
+        "-Xmx1g",
+        "-Dfile.encoding=UTF-8",
+        "-Duser.country",
+        "-Duser.language=en",
+        "-Duser.variant",
+        "-cp",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/de.thetaphi/forbiddenapis/3.10/a0d5375ee637c90ba20b6fad6eaa63d2f2cbfa3/forbiddenapis-3.10.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-suggest/10.5.1/6e3bffd0618d6846d59856c0222ad7b2f5556654/lucene-suggest-10.5.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-analysis-common/10.5.1/461fbd2772df41469b8a158a6ebe0ed6819d49a1/lucene-analysis-common-10.5.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-backward-codecs/10.5.1/c11b462b4ad72cf85fd6f8d3777cc52995d83638/lucene-backward-codecs-10.5.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-queryparser/10.5.1/2d53a97c255537177b7c24d9c54bba32ff3f90d/lucene-queryparser-10.5.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-sandbox/10.5.1/2b799275b67e01257a2c18e4a2078e6eec04cda7/lucene-sandbox-10.5.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-facet/10.5.1/87a170ae7ba56d7c6ce090507c7968d872c5de15/lucene-facet-10.5.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-grouping/10.5.1/3fe2dd3835ac243f4505d30fcc374ca548ff2fda/lucene-grouping-10.5.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-highlighter/10.5.1/a0653daee57e6ac601f0c793207f78a9a6e90092/lucene-highlighter-10.5.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-join/10.5.1/ccbea503066ab703ee6428232b7ef86a33af90f7/lucene-join-10.5.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-memory/10.5.1/fb80c9c74920fe84e365f4f3b28c79d0d35b261/lucene-memory-10.5.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-misc/10.5.1/c8a9c62c39fc34a4ede6c44575cd8a847c078673/lucene-misc-10.5.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-queries/10.5.1/171318c12d7560fb1e6f82562f2089a742df98f7/lucene-queries-10.5.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-core/10.5.1/9cf36fb7aaa63a1c994b653f317499ae7d87efbe/lucene-core-10.5.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.hdrhistogram/HdrHistogram/2.1.9/e4631ce165eb400edecfa32e03d3f1be53dee754/HdrHistogram-2.1.9.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-api/2.26.1/b9864ed8d0c01f65f3b0bf70f1447e5cc1b49c24/log4j-api-2.26.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-core/2.26.1/1941359537713285d224714f63ca4e5cf004d575/log4j-core-2.26.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/co.elastic.logging/log4j2-ecs-layout/1.7.0/8326e6fa5aa2a1090b22e6a4f1a1c114c84d85a3/log4j2-ecs-layout-1.7.0.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/co.elastic.logging/ecs-logging-core/1.7.0/46791b93c3acaa3bcc584b795252edd8d2054cc4/ecs-logging-core-1.7.0.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/com.carrotsearch/hppc/0.8.1/ffc7ba8f289428b9508ab484b8001dea944ae603/hppc-0.8.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/at.yawk.lz4/lz4-java/1.11.1/140124bf632168cef73cf9ce80477dced52b2443/lz4-java-1.11.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.jruby.joni/joni/2.2.6/864217ab7dcece78ad7bf3c045a602d871ff309a/joni-2.2.6.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.jruby.jcodings/jcodings/1.0.63/b8c386790e72f0bad666c8f1a8af12d0528992e0/jcodings-1.0.63.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/net.sf.jopt-simple/jopt-simple/5.0.2/98cafc6081d5632b61be2c9e60650b64ddbc637c/jopt-simple-5.0.2.jar",
+        "de.thetaphi.forbiddenapis.cli.CliMain",
+        "-f",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/server/build/third-party-audit-config/forbidden/third-party-audit.txt",
+        "-d",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/server/build/precommit/thirdPartyAudit/thirdPartyAudit",
+        "--debug",
+        "--allowmissingclasses"
+      ]
+    },
+    {
+      "pid": 1089878,
+      "startTicks": 32868893,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/bin/java",
+        "-Dfile.encoding=UTF-8",
+        "-Duser.country",
+        "-Duser.language=en",
+        "-Duser.variant",
+        "-cp",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/libs/core/build/distributions/elasticsearch-core-9.6.0-SNAPSHOT.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-suggest/10.5.1/6e3bffd0618d6846d59856c0222ad7b2f5556654/lucene-suggest-10.5.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-analysis-common/10.5.1/461fbd2772df41469b8a158a6ebe0ed6819d49a1/lucene-analysis-common-10.5.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-backward-codecs/10.5.1/c11b462b4ad72cf85fd6f8d3777cc52995d83638/lucene-backward-codecs-10.5.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-queryparser/10.5.1/2d53a97c255537177b7c24d9c54bba32ff3f90d/lucene-queryparser-10.5.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-sandbox/10.5.1/2b799275b67e01257a2c18e4a2078e6eec04cda7/lucene-sandbox-10.5.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-facet/10.5.1/87a170ae7ba56d7c6ce090507c7968d872c5de15/lucene-facet-10.5.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-grouping/10.5.1/3fe2dd3835ac243f4505d30fcc374ca548ff2fda/lucene-grouping-10.5.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-highlighter/10.5.1/a0653daee57e6ac601f0c793207f78a9a6e90092/lucene-highlighter-10.5.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-join/10.5.1/ccbea503066ab703ee6428232b7ef86a33af90f7/lucene-join-10.5.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-memory/10.5.1/fb80c9c74920fe84e365f4f3b28c79d0d35b261/lucene-memory-10.5.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-misc/10.5.1/c8a9c62c39fc34a4ede6c44575cd8a847c078673/lucene-misc-10.5.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-queries/10.5.1/171318c12d7560fb1e6f82562f2089a742df98f7/lucene-queries-10.5.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-core/10.5.1/9cf36fb7aaa63a1c994b653f317499ae7d87efbe/lucene-core-10.5.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.hdrhistogram/HdrHistogram/2.1.9/e4631ce165eb400edecfa32e03d3f1be53dee754/HdrHistogram-2.1.9.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-api/2.26.1/b9864ed8d0c01f65f3b0bf70f1447e5cc1b49c24/log4j-api-2.26.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-core/2.26.1/1941359537713285d224714f63ca4e5cf004d575/log4j-core-2.26.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/co.elastic.logging/log4j2-ecs-layout/1.7.0/8326e6fa5aa2a1090b22e6a4f1a1c114c84d85a3/log4j2-ecs-layout-1.7.0.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/co.elastic.logging/ecs-logging-core/1.7.0/46791b93c3acaa3bcc584b795252edd8d2054cc4/ecs-logging-core-1.7.0.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/com.carrotsearch/hppc/0.8.1/ffc7ba8f289428b9508ab484b8001dea944ae603/hppc-0.8.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/at.yawk.lz4/lz4-java/1.11.1/140124bf632168cef73cf9ce80477dced52b2443/lz4-java-1.11.1.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.jruby.joni/joni/2.2.6/864217ab7dcece78ad7bf3c045a602d871ff309a/joni-2.2.6.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/org.jruby.jcodings/jcodings/1.0.63/b8c386790e72f0bad666c8f1a8af12d0528992e0/jcodings-1.0.63.jar:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/gradle/caches/modules-2/files-2.1/net.sf.jopt-simple/jopt-simple/5.0.2/98cafc6081d5632b61be2c9e60650b64ddbc637c/jopt-simple-5.0.2.jar",
+        "org.elasticsearch.jdk.JdkJarHellCheck",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/server/build/precommit/thirdPartyAudit/thirdPartyAudit"
+      ]
+    },
+    {
+      "pid": 1090174,
+      "startTicks": 32871297,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": []
+    },
+    {
+      "pid": 1090228,
+      "startTicks": 32871590,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "git",
+        "-C",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/server/src/main/resources/transport",
+        "fetch",
+        "origin",
+        "main"
+      ]
+    },
+    {
+      "pid": 1090229,
+      "startTicks": 32871621,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/usr/lib/git-core/git",
+        "remote-https",
+        "origin",
+        "https://github.com/elastic/elasticsearch.git"
+      ]
+    },
+    {
+      "pid": 1090230,
+      "startTicks": 32871621,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/usr/lib/git-core/git-remote-https",
+        "origin",
+        "https://github.com/elastic/elasticsearch.git"
+      ]
+    },
+    {
+      "pid": 1090233,
+      "startTicks": 32871713,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/usr/lib/git-core/git",
+        "rev-list",
+        "--objects",
+        "--stdin",
+        "--not",
+        "--exclude-hidden=fetch",
+        "--all",
+        "--quiet",
+        "--alternate-refs"
+      ]
+    },
+    {
+      "pid": 1090273,
+      "startTicks": 32871736,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "git",
+        "-C",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/server/src/main/resources/transport",
+        "show",
+        "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe:./definitions/referable/esql_lucene_operator_bytes_read.csv"
+      ]
+    },
+    {
+      "pid": 1090298,
+      "startTicks": 32871747,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/lib/jspawnhelper",
+        "21.0.12+8-LTS",
+        "746:763:866"
+      ]
+    },
+    {
+      "pid": 1090321,
+      "startTicks": 32871757,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "git",
+        "-C",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/server/src/main/resources/transport",
+        "show",
+        "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe:./definitions/referable/esql_external_scan_profile.csv"
+      ]
+    },
+    {
+      "pid": 1090343,
+      "startTicks": 32871766,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": []
+    },
+    {
+      "pid": 1090365,
+      "startTicks": 32871776,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/lib/jspawnhelper",
+        "21.0.12+8-LTS",
+        "746:763:866"
+      ]
+    },
+    {
+      "pid": 1090389,
+      "startTicks": 32871786,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/lib/jspawnhelper",
+        "21.0.12+8-LTS",
+        "746:763:866"
+      ]
+    },
+    {
+      "pid": 1090410,
+      "startTicks": 32871795,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": []
+    },
+    {
+      "pid": 1090436,
+      "startTicks": 32871807,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "git",
+        "-C",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/server/src/main/resources/transport",
+        "show",
+        "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe:./definitions/referable/esql_timestamps_info.csv"
+      ]
+    },
+    {
+      "pid": 1090457,
+      "startTicks": 32871816,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "git",
+        "-C",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/server/src/main/resources/transport",
+        "show",
+        "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe:./definitions/referable/idp_custom_saml_attributes.csv"
+      ]
+    },
+    {
+      "pid": 1090539,
+      "startTicks": 32871836,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/lib/jspawnhelper",
+        "21.0.12+8-LTS",
+        "746:763:866"
+      ]
+    },
+    {
+      "pid": 1090564,
+      "startTicks": 32871847,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/lib/jspawnhelper",
+        "21.0.12+8-LTS",
+        "746:763:866"
+      ]
+    },
+    {
+      "pid": 1090585,
+      "startTicks": 32871856,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "git",
+        "-C",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/server/src/main/resources/transport",
+        "show",
+        "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe:./definitions/referable/plan_profile_version.csv"
+      ]
+    },
+    {
+      "pid": 1090607,
+      "startTicks": 32871865,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "git",
+        "-C",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/server/src/main/resources/transport",
+        "show",
+        "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe:./definitions/referable/explain_slice_routing_state.csv"
+      ]
+    },
+    {
+      "pid": 1090631,
+      "startTicks": 32871876,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "git",
+        "-C",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/server/src/main/resources/transport",
+        "show",
+        "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe:./definitions/referable/repo_analysis_copy_blob.csv"
+      ]
+    },
+    {
+      "pid": 1090677,
+      "startTicks": 32871896,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "git",
+        "-C",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/server/src/main/resources/transport",
+        "show",
+        "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe:./definitions/referable/datafeed_cloud_internal_credential.csv"
+      ]
+    },
+    {
+      "pid": 1090694,
+      "startTicks": 32871906,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/lib/jspawnhelper",
+        "21.0.12+8-LTS",
+        "701:702:704"
+      ]
+    },
+    {
+      "pid": 1090743,
+      "startTicks": 32871926,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/lib/jspawnhelper",
+        "21.0.12+8-LTS",
+        "700:701:703"
+      ]
+    },
+    {
+      "pid": 1090769,
+      "startTicks": 32871937,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/lib/jspawnhelper",
+        "21.0.12+8-LTS",
+        "700:701:703"
+      ]
+    },
+    {
+      "pid": 1090794,
+      "startTicks": 32871947,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "git",
+        "-C",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/server/src/main/resources/transport",
+        "show",
+        "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe:./definitions/unreferable/initial_9.4.5.csv"
+      ]
+    },
+    {
+      "pid": 1090817,
+      "startTicks": 32871956,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "git",
+        "-C",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/server/src/main/resources/transport",
+        "show",
+        "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe:./definitions/unreferable/initial_elasticsearch_9_0_4.csv"
+      ]
+    },
+    {
+      "pid": 1090840,
+      "startTicks": 32871966,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "git",
+        "-C",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/I/repo/server/src/main/resources/transport",
+        "show",
+        "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe:./definitions/unreferable/initial_9.5.1.csv"
+      ]
+    },
+    {
+      "pid": 1090867,
+      "startTicks": 32871977,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/lib/jspawnhelper",
+        "21.0.12+8-LTS",
+        "700:701:703"
+      ]
+    },
+    {
+      "pid": 1090884,
+      "startTicks": 32871986,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/lib/jspawnhelper",
+        "21.0.12+8-LTS",
+        "700:701:703"
+      ]
+    }
+  ],
+  "start": {
+    "ns": 328493658841741,
+    "utc": "2026-09-15T06:00:22.645995112Z",
+    "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5"
+  },
+  "end": {
+    "ns": 328723240049432,
+    "utc": "2026-09-15T06:04:12.227209953Z",
+    "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5"
+  },
+  "exitCode": 0,
+  "signal": 0,
+  "outcome": "EXITED",
+  "stdoutSHA256": "1512ccb5177a13d08f2a29350f97a8e883e9670967333a38b5addd2578dc1b6d",
+  "stderrSHA256": "cd79cb0f5f38b44cd613368b8f793723c855f72b6b802293d30c1736e60da565",
+  "userNS": 1738511000,
+  "systemNS": 256714000,
+  "maxRSSBytes": 136642560,
+  "error": "",
+  "resourcesBefore": {
+    "at": {
+      "ns": 328493658673191,
+      "utc": "2026-09-15T06:00:22.645829822Z",
+      "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5"
+    },
+    "hostLoadAverage": "2.15 5.39 6.94 2/2029 1086357",
+    "hostMemoryAvailable": "47063504 kB",
+    "cpuAffinity": "8",
+    "cgroupFiles": {
+      "cpu.stat": "usage_usec 12011\nuser_usec 6233\nsystem_usec 5777\nnice_usec 0\ncore_sched.force_idle_usec 0\n",
+      "io.stat": "UNAVAILABLE: io controller is not delegated to this user service",
+      "memory.current": "4608000\n",
+      "memory.peak": "4874240\n",
+      "pids.current": "5\n"
+    }
+  },
+  "resourcesAfter": {
+    "at": {
+      "ns": 328723665785913,
+      "utc": "2026-09-15T06:04:12.653008044Z",
+      "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5"
+    },
+    "hostLoadAverage": "6.28 6.46 7.06 3/2360 1090962",
+    "hostMemoryAvailable": "39186776 kB",
+    "cpuAffinity": "8",
+    "cgroupFiles": {
+      "cpu.stat": "usage_usec 1127495686\nuser_usec 903015750\nsystem_usec 224479935\nnice_usec 0\ncore_sched.force_idle_usec 0\n",
+      "io.stat": "UNAVAILABLE: io controller is not delegated to this user service",
+      "memory.current": "11075379200\n",
+      "memory.peak": "18287607808\n",
+      "pids.current": "318\n"
+    }
+  }
+}

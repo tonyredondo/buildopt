@@ -1,0 +1,28 @@
+{
+  "profile": "control",
+  "command": [
+    "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/history-replay-lean",
+    "run",
+    "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/manifest.json"
+  ],
+  "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+  "startUTC": "2026-09-15T05:26:50.983612+00:00",
+  "startBootNS": 326481996482312,
+  "gradleReserved": 8,
+  "helperJVMReserved": 8,
+  "pid": 1024822,
+  "procStartTicks": 32648199,
+  "exitCode": 0,
+  "endUTC": "2026-09-15T06:26:37.815338+00:00",
+  "endBootNS": 330068828204982,
+  "observationFailure": null,
+  "processSamples": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/process-samples.jsonl",
+    "sha256": "256182916b9eca8035c98a184c989e585d16e708e2c8704a672c1ae4f3dcaf58"
+  },
+  "finishedNativeRequests": 8,
+  "log": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/logs/control-runner.log",
+    "sha256": "6edc20419196d80abe1be6e247bf6a8aa114ef1a29be5d0fb18adff7b6c2e203"
+  }
+}

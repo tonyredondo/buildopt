@@ -1,0 +1,59 @@
+{
+  "status": "verified",
+  "decision": "CONTROL_MATERIAL_DIFFERENCE",
+  "ownerStarts": 8,
+  "comparisonJVMs": 8,
+  "ownerReservations": 8,
+  "helperReservations": 8,
+  "retries": 0,
+  "protectedStarts": 0,
+  "allocatedBytes": 13979717632,
+  "freeBytes": 761272008704,
+  "diagnosticBytes": 56016188,
+  "allocation": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/inputs/closed-allocation.json",
+    "sha256": "47bea123cc4be09e346c1bcf57f0ce93b20c09f7c935937858d00de074e1f80d"
+  },
+  "measurementIdentity": "d45f0d316344b46b96d7dbe4376421a33198070d88f54afe41de20d463469ed8",
+  "trials": [
+    {
+      "label": "control",
+      "summary": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/analysis/control-summary-v4.json",
+        "sha256": "75d2a28c004dea956a535696113fea7a3213c8b048990d8a56505d5e47721c69"
+      },
+      "decision": "CONTROL_MATERIAL_DIFFERENCE",
+      "requests": 8,
+      "livePairs": 4,
+      "independentPairs": 4
+    }
+  ],
+  "units": [
+    {
+      "unit": "buildopt-replay-0b6652d6bf1af9e5-r1-I-2.service",
+      "status": "inactive",
+      "closure": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/sessions/r1-000-g0-I/closed.json",
+        "sha256": "3289cd3b74cab98fd957522819f276eab4daa2c81ae03df4b7e3b074e727752e"
+      }
+    },
+    {
+      "unit": "buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "status": "inactive",
+      "closure": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/sessions/r1-000-g0-N/closed.json",
+        "sha256": "77fbfbba0faffa73da5e8afa4026656f2fb75ead0de28168a9b3a5d79918ac05"
+      }
+    }
+  ],
+  "controllers": [
+    {
+      "pid": 1024822,
+      "startTicks": 32648199,
+      "originalProcessAbsent": true
+    }
+  ],
+  "sourcesUnchanged": true,
+  "recordedWorkflowOnly": true,
+  "ordinaryGradleClaim": false
+}

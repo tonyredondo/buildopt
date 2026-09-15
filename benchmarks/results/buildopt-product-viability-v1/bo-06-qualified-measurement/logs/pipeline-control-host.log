@@ -1,0 +1,8 @@
+r1-000-g0-I FLAGGED flag fraction 0.608 external cores upper 0.32 gap 1.579
+r1-000-g0-N FLAGGED flag fraction 0.441 external cores upper 0.3 gap 6.207
+r1-001-g0-I BELOW_REGISTERED_FLAG flag fraction 0.078 external cores upper 0.25 gap 1.012
+r1-001-g0-N BELOW_REGISTERED_FLAG flag fraction 0.143 external cores upper 0.24 gap 1.012
+r1-002-g0-I BELOW_REGISTERED_FLAG flag fraction 0.154 external cores upper 0.22 gap 1.015
+r1-002-g0-N BELOW_REGISTERED_FLAG flag fraction 0.162 external cores upper 0.22 gap 1.011
+r1-003-g0-I FLAGGED flag fraction 0.387 external cores upper 0.32 gap 1.769
+r1-003-g0-N FLAGGED flag fraction 0.991 external cores upper 0.24 gap 11.834

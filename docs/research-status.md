@@ -95,11 +95,24 @@ and development inputs now share one identity. Development still needs a
 fresh passing control under that identity; synthetic admission test records
 cannot qualify it. Follow the [next measurement plan](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-comparator-qualification/next-measurement.md):
 eight control builds, then the complete 42-build development sequence only if
-the control passes. This proposal has not started.
+the control passes. The user authorized this proposal on 2026-09-15. The
+[new control completed with a material timing difference](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-qualified-measurement/README.md):
+177.233 versus 133.974 seconds across three measured changes, a 43.259-second
+difference or 32.29% of the faster side. All eight builds and four live plus
+four independent output comparisons passed. The stopping rule prevented the
+42-build development sequence from starting. The allocation and both owned
+sessions are closed, with eight owner and eight comparator JVM starts and no
+retries. Nearly all the difference appeared at change 20, alongside higher
+disk-wait pressure and slower compilation tasks; task outcomes matched and
+Checkstyle itself was slightly faster in the slower build. The exact cause
+remains unproven. No timing was excluded and no candidate saving is claimed.
+Address the observed measurement conditions before another control; a fresh
+passing control and the complete development sequence remain prerequisites
+for the final BO-06 freeze.
 The earlier precision and process-observation failures remain unchanged.
 Any future result in this mode describes the recorded workflow; BO-09 still
 needs the ordinary-workflow comparison. Current task record:
-`.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/task-state.json`.
+`.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/task-state.json`.
 BO-07 and protected changes 21–100 remain deferred. Generic plan selection/reuse,
 adaptive fragments, runtime sweeps and another general cache remain retired.
 The user has authorized commit and push after each work block. Product viability

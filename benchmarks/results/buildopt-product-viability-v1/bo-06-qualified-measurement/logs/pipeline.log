@@ -1,0 +1,6 @@
+control-preparation exit 0
+control-run exit 0
+control-analysis exit 0
+control-host exit 0
+control CONTROL_MATERIAL_DIFFERENCE 24.402896041071703 14.416636782666666
+Control stopped the allocation; development will not start

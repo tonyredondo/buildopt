@@ -1,0 +1,8 @@
+{
+  "atUTC": "2026-09-15T06:02:02.305202+00:00",
+  "stage": "control-run",
+  "finding": "First native build exited 0; its capture/after/end records are complete. Second request start receipt exists and stdout/graph are populated. No stuck-process finding or intervention.",
+  "firstAttempt": "r1-000-g0-N",
+  "nextAttempt": "r1-000-g0-I",
+  "interpretation": "Native start/finish files are emitted at request completion; their live counts do not enumerate a running request."
+}

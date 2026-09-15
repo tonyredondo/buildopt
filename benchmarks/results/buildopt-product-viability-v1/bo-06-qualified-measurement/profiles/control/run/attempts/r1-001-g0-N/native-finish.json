@@ -1,0 +1,588 @@
+{
+  "schema": "buildopt.history-replay/record/v2",
+  "attempt": "r1-001-g0-N",
+  "unit": "buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+  "invocationID": "13a526a5af2e4049a71bbe098dc70163",
+  "supervisor": {
+    "pid": 1071305,
+    "startTicks": 32747397,
+    "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+    "command": [
+      "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/history-replay-lean",
+      "worker",
+      "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/sessions/r1-000-g0-N/worker-config.json",
+      "bf700d12bdf4123f00dad71378d3b40cbbf1dc2e1ff0500575626006c4edaaad"
+    ]
+  },
+  "process": {
+    "pid": 1096952,
+    "startTicks": 32912518,
+    "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+    "command": [
+      "/bin/sh",
+      "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/N/repo/gradlew",
+      "--offline",
+      "--no-scan",
+      "--max-workers=8",
+      ":server:precommit",
+      "--continue",
+      "--no-configuration-cache",
+      "--build-cache",
+      "--console=plain",
+      "--init-script",
+      "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/versions/owner-readiness-v5/source/capture.init.gradle",
+      "--daemon"
+    ]
+  },
+  "observed": [
+    {
+      "pid": 1071305,
+      "startTicks": 32747397,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-lean-measurement-2026-09-14/history-replay-lean",
+        "worker",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/sessions/r1-000-g0-N/worker-config.json",
+        "bf700d12bdf4123f00dad71378d3b40cbbf1dc2e1ff0500575626006c4edaaad"
+      ]
+    },
+    {
+      "pid": 1071446,
+      "startTicks": 32747489,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/bin/java",
+        "--add-opens=java.base/java.lang=ALL-UNNAMED",
+        "--add-opens=java.base/java.lang.invoke=ALL-UNNAMED",
+        "--add-opens=java.base/java.util=ALL-UNNAMED",
+        "--add-opens=java.prefs/java.util.prefs=ALL-UNNAMED",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
+        "--add-opens=java.base/java.nio.charset=ALL-UNNAMED",
+        "--add-opens=java.base/java.net=ALL-UNNAMED",
+        "--add-opens=java.base/java.util.concurrent=ALL-UNNAMED",
+        "--add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED",
+        "--add-opens=java.xml/javax.xml.namespace=ALL-UNNAMED",
+        "--add-opens=java.base/java.time=ALL-UNNAMED",
+        "-XX:+HeapDumpOnOutOfMemoryError",
+        "-Xss2m",
+        "--add-exports",
+        "jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
+        "--add-exports",
+        "jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED",
+        "--add-exports",
+        "jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED",
+        "--add-exports",
+        "jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED",
+        "--add-exports",
+        "jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+        "--add-opens",
+        "java.base/java.time=ALL-UNNAMED",
+        "-Dfile.encoding=UTF-8",
+        "-Duser.country",
+        "-Duser.language=en",
+        "-Duser.variant",
+        "-cp",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/N/gradle/wrapper/dists/gradle-9.7.1-bin/1w1c7tv4s851m17nbqdsro2tv/gradle-9.7.1/lib/gradle-daemon-main-9.7.1.jar",
+        "-javaagent:/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/N/gradle/wrapper/dists/gradle-9.7.1-bin/1w1c7tv4s851m17nbqdsro2tv/gradle-9.7.1/lib/agents/gradle-instrumentation-agent-9.7.1.jar",
+        "org.gradle.launcher.daemon.bootstrap.GradleDaemon",
+        "9.7.1"
+      ]
+    },
+    {
+      "pid": 1072476,
+      "startTicks": 32754069,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/N/gradle/jdks/eclipse_adoptium-22-amd64-linux.2/bin/java",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
+        "@/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/N/gradle/.tmp/gradle-worker-classpath3045512070173498249txt",
+        "-Xmx512m",
+        "-Dfile.encoding=UTF-8",
+        "-Duser.country",
+        "-Duser.language=en",
+        "-Duser.variant",
+        "worker.org.gradle.process.internal.worker.GradleWorkerMain",
+        "'Gradle Worker Daemon 1'"
+      ]
+    },
+    {
+      "pid": 1072619,
+      "startTicks": 32754216,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/N/gradle/jdks/eclipse_adoptium-25-amd64-linux.2/bin/java",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
+        "@/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/N/gradle/.tmp/gradle-worker-classpath5332164701235164715txt",
+        "--enable-native-access=ALL-UNNAMED",
+        "-Xmx512m",
+        "-Dfile.encoding=UTF-8",
+        "-Duser.country",
+        "-Duser.language=en",
+        "-Duser.variant",
+        "worker.org.gradle.process.internal.worker.GradleWorkerMain",
+        "'Gradle Worker Daemon 3'"
+      ]
+    },
+    {
+      "pid": 1072743,
+      "startTicks": 32754450,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/N/gradle/jdks/eclipse_adoptium-25-amd64-linux.2/bin/java",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
+        "@/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/N/gradle/.tmp/gradle-worker-classpath9457750397466879129txt",
+        "--enable-native-access=ALL-UNNAMED",
+        "-Xmx512m",
+        "-Dfile.encoding=UTF-8",
+        "-Duser.country",
+        "-Duser.language=en",
+        "-Duser.variant",
+        "worker.org.gradle.process.internal.worker.GradleWorkerMain",
+        "'Gradle Worker Daemon 6'"
+      ]
+    },
+    {
+      "pid": 1072852,
+      "startTicks": 32754625,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/N/gradle/jdks/eclipse_adoptium-25-amd64-linux.2/bin/java",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
+        "@/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/N/gradle/.tmp/gradle-worker-classpath14619161486498611103txt",
+        "--enable-native-access=ALL-UNNAMED",
+        "-Xmx512m",
+        "-Dfile.encoding=UTF-8",
+        "-Duser.country",
+        "-Duser.language=en",
+        "-Duser.variant",
+        "worker.org.gradle.process.internal.worker.GradleWorkerMain",
+        "'Gradle Worker Daemon 7'"
+      ]
+    },
+    {
+      "pid": 1072912,
+      "startTicks": 32754716,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/N/gradle/jdks/oracle_corporation-26-amd64-linux.2/bin/java",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
+        "@/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/N/gradle/.tmp/gradle-worker-classpath1933979741232931536txt",
+        "--enable-native-access=ALL-UNNAMED",
+        "-Xmx512m",
+        "-Dfile.encoding=UTF-8",
+        "-Duser.country",
+        "-Duser.language=en",
+        "-Duser.variant",
+        "worker.org.gradle.process.internal.worker.GradleWorkerMain",
+        "'Gradle Worker Daemon 8'"
+      ]
+    },
+    {
+      "pid": 1072980,
+      "startTicks": 32754975,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/N/gradle/jdks/oracle_corporation-27-amd64-linux.2/bin/java",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
+        "@/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/N/gradle/.tmp/gradle-worker-classpath16832313363872734616txt",
+        "--enable-native-access=ALL-UNNAMED",
+        "-Xmx512m",
+        "-Dfile.encoding=UTF-8",
+        "-Duser.country",
+        "-Duser.language=en",
+        "-Duser.variant",
+        "worker.org.gradle.process.internal.worker.GradleWorkerMain",
+        "'Gradle Worker Daemon 9'"
+      ]
+    },
+    {
+      "pid": 1096952,
+      "startTicks": 32912518,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/bin/java",
+        "-Xmx64m",
+        "-Xms64m",
+        "-Dorg.gradle.appname=gradlew",
+        "-jar",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/N/repo/gradle/wrapper/gradle-wrapper.jar",
+        "--offline",
+        "--no-scan",
+        "--max-workers=8",
+        ":server:precommit",
+        "--continue",
+        "--no-configuration-cache",
+        "--build-cache",
+        "--console=plain",
+        "--init-script",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/versions/owner-readiness-v5/source/capture.init.gradle",
+        "--daemon"
+      ]
+    },
+    {
+      "pid": 1097308,
+      "startTicks": 32914998,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "git",
+        "-C",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/N/repo/server/src/main/resources/transport",
+        "fetch",
+        "origin",
+        "main"
+      ]
+    },
+    {
+      "pid": 1097309,
+      "startTicks": 32914999,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "/usr/lib/git-core/git",
+        "remote-https",
+        "origin",
+        "https://github.com/elastic/elasticsearch.git"
+      ]
+    },
+    {
+      "pid": 1097310,
+      "startTicks": 32914999,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "/usr/lib/git-core/git-remote-https",
+        "origin",
+        "https://github.com/elastic/elasticsearch.git"
+      ]
+    },
+    {
+      "pid": 1097327,
+      "startTicks": 32915058,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/lib/jspawnhelper",
+        "21.0.12+8-LTS",
+        "1242:1244:1472"
+      ]
+    },
+    {
+      "pid": 1097433,
+      "startTicks": 32915099,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "git",
+        "-C",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/N/repo/server/src/main/resources/transport",
+        "show",
+        "d47f43f5ff06883d3f0a04f3d40af627ecf5142e:./definitions/referable/idp_custom_saml_attributes_allow_list.csv"
+      ]
+    },
+    {
+      "pid": 1097450,
+      "startTicks": 32915108,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "git",
+        "-C",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/N/repo/server/src/main/resources/transport",
+        "show",
+        "d47f43f5ff06883d3f0a04f3d40af627ecf5142e:./definitions/referable/disk_usage_stats_bloom_filter.csv"
+      ]
+    },
+    {
+      "pid": 1097467,
+      "startTicks": 32915118,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/lib/jspawnhelper",
+        "21.0.12+8-LTS",
+        "1242:1244:1472"
+      ]
+    },
+    {
+      "pid": 1097503,
+      "startTicks": 32915139,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/lib/jspawnhelper",
+        "21.0.12+8-LTS",
+        "1242:1244:1472"
+      ]
+    },
+    {
+      "pid": 1097521,
+      "startTicks": 32915149,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "git",
+        "-C",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/N/repo/server/src/main/resources/transport",
+        "show",
+        "d47f43f5ff06883d3f0a04f3d40af627ecf5142e:./definitions/referable/streams_endpoint_param_restrictions.csv"
+      ]
+    },
+    {
+      "pid": 1097573,
+      "startTicks": 32915178,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/lib/jspawnhelper",
+        "21.0.12+8-LTS",
+        "1242:1244:1472"
+      ]
+    },
+    {
+      "pid": 1097593,
+      "startTicks": 32915189,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/lib/jspawnhelper",
+        "21.0.12+8-LTS",
+        "1242:1244:1472"
+      ]
+    },
+    {
+      "pid": 1097610,
+      "startTicks": 32915199,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/lib/jspawnhelper",
+        "21.0.12+8-LTS",
+        "1242:1244:1472"
+      ]
+    },
+    {
+      "pid": 1097628,
+      "startTicks": 32915209,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/lib/jspawnhelper",
+        "21.0.12+8-LTS",
+        "1242:1244:1472"
+      ]
+    },
+    {
+      "pid": 1097646,
+      "startTicks": 32915219,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/lib/jspawnhelper",
+        "21.0.12+8-LTS",
+        "1242:1244:1472"
+      ]
+    },
+    {
+      "pid": 1097662,
+      "startTicks": 32915228,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/lib/jspawnhelper",
+        "21.0.12+8-LTS",
+        "1242:1244:1472"
+      ]
+    },
+    {
+      "pid": 1097681,
+      "startTicks": 32915239,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/lib/jspawnhelper",
+        "21.0.12+8-LTS",
+        "1242:1244:1472"
+      ]
+    },
+    {
+      "pid": 1097698,
+      "startTicks": 32915249,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/lib/jspawnhelper",
+        "21.0.12+8-LTS",
+        "1242:1244:1472"
+      ]
+    },
+    {
+      "pid": 1097717,
+      "startTicks": 32915259,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/lib/jspawnhelper",
+        "21.0.12+8-LTS",
+        "1242:1244:1472"
+      ]
+    },
+    {
+      "pid": 1097732,
+      "startTicks": 32915268,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "git",
+        "-C",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/N/repo/server/src/main/resources/transport",
+        "show",
+        "d47f43f5ff06883d3f0a04f3d40af627ecf5142e:./definitions/referable/esql_separate_dependency_resolution.csv"
+      ]
+    },
+    {
+      "pid": 1097768,
+      "startTicks": 32915288,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "git",
+        "-C",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/N/repo/server/src/main/resources/transport",
+        "show",
+        "d47f43f5ff06883d3f0a04f3d40af627ecf5142e:./definitions/referable/reranker_failures_allowed.csv"
+      ]
+    },
+    {
+      "pid": 1097822,
+      "startTicks": 32915319,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "git",
+        "-C",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/N/repo/server/src/main/resources/transport",
+        "show",
+        "d47f43f5ff06883d3f0a04f3d40af627ecf5142e:./definitions/referable/ml_inference_cohere_api_version.csv"
+      ]
+    },
+    {
+      "pid": 1097857,
+      "startTicks": 32915339,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/lib/jspawnhelper",
+        "21.0.12+8-LTS",
+        "1242:1244:1472"
+      ]
+    },
+    {
+      "pid": 1097875,
+      "startTicks": 32915349,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/lib/jspawnhelper",
+        "21.0.12+8-LTS",
+        "1242:1244:1472"
+      ]
+    },
+    {
+      "pid": 1097893,
+      "startTicks": 32915360,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "git",
+        "-C",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/N/repo/server/src/main/resources/transport",
+        "show",
+        "d47f43f5ff06883d3f0a04f3d40af627ecf5142e:./definitions/unreferable/initial_elasticsearch_8_19_2.csv"
+      ]
+    },
+    {
+      "pid": 1097909,
+      "startTicks": 32915369,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "git",
+        "-C",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/N/repo/server/src/main/resources/transport",
+        "show",
+        "d47f43f5ff06883d3f0a04f3d40af627ecf5142e:./definitions/unreferable/initial_8.19.19.csv"
+      ]
+    },
+    {
+      "pid": 1097926,
+      "startTicks": 32915378,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/lib/jspawnhelper",
+        "21.0.12+8-LTS",
+        "1242:1244:1472"
+      ]
+    },
+    {
+      "pid": 1097944,
+      "startTicks": 32915389,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155/lib/jspawnhelper",
+        "21.0.12+8-LTS",
+        "1242:1244:1472"
+      ]
+    },
+    {
+      "pid": 1097962,
+      "startTicks": 32915399,
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-0b6652d6bf1af9e5-r1-N-1.service",
+      "command": [
+        "git",
+        "-C",
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/r1/N/repo/server/src/main/resources/transport",
+        "diff",
+        "--name-only",
+        "--relative",
+        "d47f43f5ff06883d3f0a04f3d40af627ecf5142e",
+        "."
+      ]
+    }
+  ],
+  "start": {
+    "ns": 329125186075375,
+    "utc": "2026-09-15T06:10:54.173229566Z",
+    "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5"
+  },
+  "end": {
+    "ns": 329154424042172,
+    "utc": "2026-09-15T06:11:23.411214763Z",
+    "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5"
+  },
+  "exitCode": 0,
+  "signal": 0,
+  "outcome": "EXITED",
+  "stdoutSHA256": "8e51d629cc0770023a3d97995d75bd10c59ac0fb66326a310198f0701c4fba8b",
+  "stderrSHA256": "7fec3cd8bc5dcefbc6e4f8359017f8a270d0bb2cfc8bbde2c85f5298c46d428a",
+  "userNS": 1239527000,
+  "systemNS": 71902000,
+  "maxRSSBytes": 121937920,
+  "error": "",
+  "resourcesBefore": {
+    "at": {
+      "ns": 329125185874094,
+      "utc": "2026-09-15T06:10:54.173031845Z",
+      "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5"
+    },
+    "hostLoadAverage": "1.90 3.00 5.21 2/2338 1096951",
+    "hostMemoryAvailable": "38868568 kB",
+    "cpuAffinity": "8",
+    "cgroupFiles": {
+      "cpu.stat": "usage_usec 1113318955\nuser_usec 901642200\nsystem_usec 211676754\nnice_usec 0\ncore_sched.force_idle_usec 0\n",
+      "io.stat": "UNAVAILABLE: io controller is not delegated to this user service",
+      "memory.current": "10031697920\n",
+      "memory.peak": "18106630144\n",
+      "pids.current": "289\n"
+    }
+  },
+  "resourcesAfter": {
+    "at": {
+      "ns": 329154507793165,
+      "utc": "2026-09-15T06:11:23.494984806Z",
+      "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5"
+    },
+    "hostLoadAverage": "3.20 3.24 5.22 3/2345 1097992",
+    "hostMemoryAvailable": "38615308 kB",
+    "cpuAffinity": "8",
+    "cgroupFiles": {
+      "cpu.stat": "usage_usec 1210857386\nuser_usec 971483575\nsystem_usec 239373810\nnice_usec 0\ncore_sched.force_idle_usec 0\n",
+      "io.stat": "UNAVAILABLE: io controller is not delegated to this user service",
+      "memory.current": "10305323008\n",
+      "memory.peak": "18106630144\n",
+      "pids.current": "302\n"
+    }
+  }
+}

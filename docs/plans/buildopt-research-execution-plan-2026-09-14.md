@@ -1,7 +1,7 @@
 # Build Optimization research execution plan
 
 Date: 2026-09-14. Program: `BUILDOPT-VIABILITY-V1`.
-Status: governing plan in execution; BO-01 through BO-05 verified; BO-06 partial; current comparator qualified and next control/development measurement proposed.
+Status: governing plan in execution; BO-01 through BO-05 verified; BO-06 partial; qualified control completed with a material timing difference; development did not start.
 
 This plan records the direction agreed after the research review and its
 discussion. It owns research priorities, sequencing and the
@@ -139,7 +139,7 @@ the outcome may be negative. Advance only on the outcome required below.
 | BO-03 | Estimate realistic whole-build opportunity per candidate | BO-01; measurement readiness before fresh timing | verified; [five candidate assessments](../../benchmarks/results/buildopt-product-viability-v1/bo-03-opportunity-assessment/README.md); only Checkstyle warrants the planned short screen after readiness checks; missing workflow evidence remains unqualified |
 | BO-04 | Admit or reject a focused Build Impact hypothesis | BO-01 and existing evidence review | verified; [no new trial admitted](../../benchmarks/results/buildopt-product-viability-v1/bo-04-build-impact-review/README.md); original savings retained |
 | BO-05 | Select a candidate through short comparisons | BO-02 as applicable, BO-03, early BO-06 correctness, and BO-04 for Build Impact | verified; [both fresh sequences passed](../../benchmarks/results/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay/README.md), saving 34.14% and 28.17%; the interrupted attempt remains separate |
-| BO-06 | Qualify correctness and freeze the implementation and protocol | Admitted opportunity; screen integration proof before BO-05, final freeze afterward | partial; [comparator and admission qualification passed](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-comparator-qualification/README.md); new policy and shared inputs fixed; fresh control and complete development replay remain proposed |
+| BO-06 | Qualify correctness and freeze the implementation and protocol | Admitted opportunity; screen integration proof before BO-05, final freeze afterward | partial; [qualified control completed](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-qualified-measurement/README.md) with a 43.259-second difference between identical-code runs; all outputs match, but the timing rule stops development; allocation closed |
 | BO-07 | Establish sustained saving in the first repository | BO-05 and complete BO-06 | deferred |
 | BO-08 | Test the same mechanism on two other repositories | BO-07 positive | deferred |
 | BO-09 | Deliver and measure an MVP with manual controls | BO-08 positive | deferred |
@@ -435,6 +435,30 @@ within one proposed ten-hour allocation. No retries or additional profiles.
 The candidate and savings criteria are unchanged. Confirmation will also
 need evidenced preparation costs for each repetition. BO-06 remains partial;
 BO-07 and protected changes 21–100 remain deferred.
+
+The user authorized this measurement on 2026-09-15. The new allocation allows
+50 owner builds and 50 comparator JVMs within ten hours and 80 GiB, with no
+retries. Control admission passed with the frozen qualified policy.
+
+**Measurement completed, 2026-09-15:** the three measured control pairs totaled
+177.233 seconds in N and 133.974 seconds in I. The 43.259-second difference,
+32.29% of the faster side, exceeds the unchanged stopping rule. The result is
+`CONTROL_MATERIAL_DIFFERENCE`. All eight builds, four live comparisons and
+four independent reconstructions passed. The 42-build development sequence
+did not start, and the allocation and both owned sessions are closed. Eight
+owner and eight comparator JVM starts were used; there were no retries or
+protected builds.
+
+Change 20 accounts for nearly all the timing difference. Its recorded task
+outcomes match on both sides, but several compilation tasks slowed down during
+higher disk-wait pressure. Checkstyle's own checks were slightly faster in the
+slower build. These observations do not establish the exact cause. The
+[complete control result](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-qualified-measurement/README.md)
+retains every pair and the diagnostic limitations. Address the measurement
+conditions before another control; no result is discarded and the correction
+and stopping rule remain unchanged. A fresh passing control, complete
+development replay and final freeze are still required before BO-07.
+Current state: `.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/task-state.json`.
 
 ### BO-07: Measure sustained saving on the first repository
 

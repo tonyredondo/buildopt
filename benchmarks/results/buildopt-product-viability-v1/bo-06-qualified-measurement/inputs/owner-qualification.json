@@ -1,0 +1,50 @@
+{
+  "schema": "buildopt.history-replay/owner-qualification/v1",
+  "decision": "OWNER_OUTPUT_POLICY_QUALIFIED",
+  "comparatorSHA256": "fa7b1133cb29458fe7cb0d2e4b0d744d04396969f86423b0e8dcd1d74fccd5d9",
+  "readersSHA256": "c5c67df91b458bbab8386ad74c6fe31fd99a49d426e0cf56adbe2c055a3c7ac2",
+  "cases": [
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/comparator-matrix.json",
+      "sha256": "61f5c47ccdd9c3b8eb3f1dc9b5347073dcfe6632abbae5cd1cd0399ffc104cce"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/logs/comparator-matrix.log",
+      "sha256": "fea70debdd86c4c420777278678948f815a52d7dd59478ec42f366a89bf3bd6b"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/reader-binding.json",
+      "sha256": "485e86ad0a106c289423d441a128de154d5e18a47b7f362caf80eb118f71f425"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/logs/reader-binding.log",
+      "sha256": "5bff0c65cd504a6fa4f148f24e1cd97e8bde1a8034b5916f0d0cd01a55064fc2"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/retained-c5-comparison.json",
+      "sha256": "f7187d469a7aadcd022f82b3e657f8e53e14f863753e4e4d0c5dff21cdb2e660"
+    }
+  ],
+  "nativeReuse": [
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/native-reuse-000-comparison.json",
+      "sha256": "535f41ff6985fff070b64dbc95d85afc16011a16e267db3f32da551fbe21b0dc"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/native-reuse-001-comparison.json",
+      "sha256": "46641c0f52b79077b9c9d4ee682de48a8e64abfee43104cf0e618b06816713f9"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/lean-control-0-comparison.json",
+      "sha256": "32a4dee0281f705155cd8fc141a19d5da2e421256d827247e4500843cc2533b9"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/lean-control-3-comparison.json",
+      "sha256": "f71f458b463521a1b0a24939dd8e7bcec70a3d3102fd1c1a02a562afd60d792a"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/receipts/screen-native-corrected-comparison.json",
+      "sha256": "1a01b27791dc7c2d00aad97f24ff87e1802c2e956ec865aff70c082461a21537"
+    }
+  ]
+}

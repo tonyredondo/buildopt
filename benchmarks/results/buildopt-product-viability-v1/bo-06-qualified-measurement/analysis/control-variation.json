@@ -1,0 +1,717 @@
+{
+  "status": "verified descriptive analysis",
+  "decisionUnchanged": "CONTROL_MATERIAL_DIFFERENCE",
+  "graphSources": [
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/attempts/r1-000-g0-N/graph.jsonl",
+      "sha256": "c50ff6a22e300d8119b99a13c5908edaa26b37e609a264a3aff35b31048a6326"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/attempts/r1-000-g0-I/graph.jsonl",
+      "sha256": "76441dbf0268c839bfdd1dd195582429f5dd97b7ba2f5bd7e34eea3f78090f05"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/attempts/r1-001-g0-N/graph.jsonl",
+      "sha256": "7b33b72e939508042390c090e0a1603a8fe5d87c9eb1b6abea6b79614cc23a79"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/attempts/r1-001-g0-I/graph.jsonl",
+      "sha256": "5c47f62674c9977291df0f04a0cb3b838139d1d4949c8551d6e05bb2a72539ff"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/attempts/r1-002-g0-N/graph.jsonl",
+      "sha256": "3d4d5fed32f07b620f0ead40235db3a37a612c94ebf998def612471bbe8df934"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/attempts/r1-002-g0-I/graph.jsonl",
+      "sha256": "b4cb96bffd11e99742393ae3e537c93eba549bba6160b3a6c5533ade7c9a6937"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/attempts/r1-003-g0-N/graph.jsonl",
+      "sha256": "218837884544c0a95224646d6bacd4bba3844c7a7d39a645469ad882d616461c"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-qualified-measurement-2026-09-15/profiles/control/run/attempts/r1-003-g0-I/graph.jsonl",
+      "sha256": "d9bd342a269b3ed98324b55e54e99933cea5b037bf1ff702eef9dc6c6ff30b8f"
+    }
+  ],
+  "rows": [
+    {
+      "originalOrdinal": 17,
+      "sameTaskOutcomes": true,
+      "taskCount": {
+        "N": 1326,
+        "I": 1326
+      },
+      "outcomes": {
+        "N": {
+          "EXECUTED": 1271,
+          "NO-SOURCE": 47,
+          "FROM-CACHE": 5,
+          "UP-TO-DATE": 3
+        },
+        "I": {
+          "EXECUTED": 1271,
+          "NO-SOURCE": 47,
+          "FROM-CACHE": 5,
+          "UP-TO-DATE": 3
+        }
+      },
+      "largestTaskDifferences": [
+        {
+          "identity": ":x-pack:plugin:esql:compileJava",
+          "N": 13.501578,
+          "I": 47.119073,
+          "differenceSeconds": -33.617495
+        },
+        {
+          "identity": ":server:checkstyleMain",
+          "N": 86.175533,
+          "I": 69.37909,
+          "differenceSeconds": 16.796442999999996
+        },
+        {
+          "identity": ":x-pack:plugin:write-load-forecaster:generateTestBuildInfo",
+          "N": 0.023275,
+          "I": 12.331503,
+          "differenceSeconds": -12.308228
+        },
+        {
+          "identity": ":x-pack:plugin:vector-tile:compileJava",
+          "N": 1.501342,
+          "I": 13.045066,
+          "differenceSeconds": -11.543724000000001
+        },
+        {
+          "identity": ":x-pack:plugin:security:qa:rcs-extension:compileJava",
+          "N": 0.539415,
+          "I": 11.665127,
+          "differenceSeconds": -11.125712
+        },
+        {
+          "identity": ":x-pack:plugin:security:compileJava",
+          "N": 14.120007,
+          "I": 3.382037,
+          "differenceSeconds": 10.737969999999999
+        },
+        {
+          "identity": ":x-pack:plugin:sql:compileJava",
+          "N": 11.994469,
+          "I": 1.690584,
+          "differenceSeconds": 10.303885000000001
+        },
+        {
+          "identity": ":x-pack:plugin:inference:qa:test-service-plugin:generateTestBuildInfo",
+          "N": 0.041842,
+          "I": 10.110272,
+          "differenceSeconds": -10.06843
+        },
+        {
+          "identity": ":x-pack:extras:plugins:microsoft-graph-authz:compileJava",
+          "N": 10.142701,
+          "I": 19.423081,
+          "differenceSeconds": -9.28038
+        },
+        {
+          "identity": ":x-pack:plugin:stateless:compileJava",
+          "N": 11.686297,
+          "I": 2.703367,
+          "differenceSeconds": 8.98293
+        },
+        {
+          "identity": ":x-pack:plugin:transform:compileJava",
+          "N": 9.978466,
+          "I": 1.379084,
+          "differenceSeconds": 8.599381999999999
+        },
+        {
+          "identity": ":x-pack:plugin:blob-cache:compileJava",
+          "N": 0.461296,
+          "I": 8.521336,
+          "differenceSeconds": -8.060039999999999
+        }
+      ],
+      "checkstyle": [
+        {
+          "identity": ":server:checkstyle",
+          "N": 4.6e-05,
+          "I": 6e-05,
+          "differenceSeconds": -1.4000000000000001e-05
+        },
+        {
+          "identity": ":server:checkstyleInternalClusterTest",
+          "N": 19.646156,
+          "I": 20.084459,
+          "differenceSeconds": -0.43830299999999767
+        },
+        {
+          "identity": ":server:checkstyleMain",
+          "N": 86.175533,
+          "I": 69.37909,
+          "differenceSeconds": 16.796442999999996
+        },
+        {
+          "identity": ":server:checkstyleTest",
+          "N": 56.172106,
+          "I": 55.157707,
+          "differenceSeconds": 1.0143989999999974
+        }
+      ]
+    },
+    {
+      "originalOrdinal": 18,
+      "sameTaskOutcomes": true,
+      "taskCount": {
+        "N": 1326,
+        "I": 1326
+      },
+      "outcomes": {
+        "N": {
+          "UP-TO-DATE": 1228,
+          "NO-SOURCE": 47,
+          "EXECUTED": 51
+        },
+        "I": {
+          "UP-TO-DATE": 1228,
+          "NO-SOURCE": 47,
+          "EXECUTED": 51
+        }
+      },
+      "largestTaskDifferences": [
+        {
+          "identity": ":server:validateTransportVersionResources",
+          "N": 4.068208,
+          "I": 3.304455,
+          "differenceSeconds": 0.7637530000000003
+        },
+        {
+          "identity": ":x-pack:plugin:esql:compileJava",
+          "N": 11.506205,
+          "I": 11.831391,
+          "differenceSeconds": -0.3251860000000004
+        },
+        {
+          "identity": ":x-pack:plugin:esql-datasource-parquet:compileJava",
+          "N": 0.645985,
+          "I": 0.859614,
+          "differenceSeconds": -0.21362899999999996
+        },
+        {
+          "identity": ":x-pack:plugin:esql-datasource-ndjson:compileJava",
+          "N": 0.384291,
+          "I": 0.592866,
+          "differenceSeconds": -0.208575
+        },
+        {
+          "identity": ":x-pack:plugin:esql-datasource-orc:compileJava",
+          "N": 0.448317,
+          "I": 0.65096,
+          "differenceSeconds": -0.20264299999999996
+        },
+        {
+          "identity": ":x-pack:plugin:esql-datasource-azure:generateTestBuildInfo",
+          "N": 0.206217,
+          "I": 0.014534,
+          "differenceSeconds": 0.19168300000000002
+        },
+        {
+          "identity": ":x-pack:plugin:esql-datasource-gcs:generateTestBuildInfo",
+          "N": 0.215916,
+          "I": 0.02975,
+          "differenceSeconds": 0.186166
+        },
+        {
+          "identity": ":x-pack:plugin:esql-datasource-bzip2:generateTestBuildInfo",
+          "N": 0.185253,
+          "I": 0.002433,
+          "differenceSeconds": 0.18282
+        },
+        {
+          "identity": ":x-pack:plugin:esql-datasource-grpc:generateTestBuildInfo",
+          "N": 0.162388,
+          "I": 0.013329,
+          "differenceSeconds": 0.149059
+        },
+        {
+          "identity": ":x-pack:plugin:esql:collectTransportVersionReferences",
+          "N": 0.408814,
+          "I": 0.260521,
+          "differenceSeconds": 0.148293
+        },
+        {
+          "identity": ":x-pack:plugin:esql:compute:collectTransportVersionReferences",
+          "N": 0.216037,
+          "I": 0.070241,
+          "differenceSeconds": 0.145796
+        },
+        {
+          "identity": ":x-pack:plugin:esql-datasource-compression-libs:generateTestBuildInfo",
+          "N": 0.220527,
+          "I": 0.079104,
+          "differenceSeconds": 0.14142300000000002
+        }
+      ],
+      "checkstyle": [
+        {
+          "identity": ":server:checkstyle",
+          "N": 6.4e-05,
+          "I": 6.2e-05,
+          "differenceSeconds": 1.9999999999999944e-06
+        },
+        {
+          "identity": ":server:checkstyleInternalClusterTest",
+          "N": 0.004359,
+          "I": 0.003256,
+          "differenceSeconds": 0.0011029999999999998
+        },
+        {
+          "identity": ":server:checkstyleMain",
+          "N": 0.00777,
+          "I": 0.010153,
+          "differenceSeconds": -0.0023830000000000006
+        },
+        {
+          "identity": ":server:checkstyleTest",
+          "N": 0.005436,
+          "I": 0.008908,
+          "differenceSeconds": -0.0034719999999999994
+        }
+      ]
+    },
+    {
+      "originalOrdinal": 19,
+      "sameTaskOutcomes": true,
+      "taskCount": {
+        "N": 1326,
+        "I": 1326
+      },
+      "outcomes": {
+        "N": {
+          "UP-TO-DATE": 1257,
+          "NO-SOURCE": 47,
+          "EXECUTED": 22
+        },
+        "I": {
+          "UP-TO-DATE": 1257,
+          "NO-SOURCE": 47,
+          "EXECUTED": 22
+        }
+      },
+      "largestTaskDifferences": [
+        {
+          "identity": ":server:forbiddenApisMain",
+          "N": 2.410955,
+          "I": 3.177427,
+          "differenceSeconds": -0.7664719999999998
+        },
+        {
+          "identity": ":server:checkstyleMain",
+          "N": 7.44674,
+          "I": 8.152599,
+          "differenceSeconds": -0.7058590000000002
+        },
+        {
+          "identity": ":server:compileJava",
+          "N": 20.93568,
+          "I": 21.414531,
+          "differenceSeconds": -0.4788509999999988
+        },
+        {
+          "identity": ":x-pack:plugin:searchable-snapshots:compileJava",
+          "N": 0.026466,
+          "I": 0.1701,
+          "differenceSeconds": -0.143634
+        },
+        {
+          "identity": ":x-pack:plugin:shutdown:compileJava",
+          "N": 0.031303,
+          "I": 0.161704,
+          "differenceSeconds": -0.130401
+        },
+        {
+          "identity": ":x-pack:plugin:secure-settings:compileJava",
+          "N": 0.02721,
+          "I": 0.156365,
+          "differenceSeconds": -0.129155
+        },
+        {
+          "identity": ":modules:ingest-attachment:compileJava",
+          "N": 0.020248,
+          "I": 0.148781,
+          "differenceSeconds": -0.128533
+        },
+        {
+          "identity": ":x-pack:plugin:security:compileJava",
+          "N": 0.036169,
+          "I": 0.160757,
+          "differenceSeconds": -0.124588
+        },
+        {
+          "identity": ":server:compileInternalClusterTestJava",
+          "N": 0.047711,
+          "I": 0.168851,
+          "differenceSeconds": -0.12114
+        },
+        {
+          "identity": ":server:internalClusterTestTestingConventions",
+          "N": 0.397728,
+          "I": 0.518209,
+          "differenceSeconds": -0.120481
+        },
+        {
+          "identity": ":x-pack:plugin:repositories-metering-api:generateTestBuildInfo",
+          "N": 0.001972,
+          "I": 0.122362,
+          "differenceSeconds": -0.12039
+        },
+        {
+          "identity": ":server:forbiddenPatterns",
+          "N": 4.026594,
+          "I": 4.146868,
+          "differenceSeconds": -0.12027400000000021
+        }
+      ],
+      "checkstyle": [
+        {
+          "identity": ":server:checkstyle",
+          "N": 0.000107,
+          "I": 7.1e-05,
+          "differenceSeconds": 3.5999999999999994e-05
+        },
+        {
+          "identity": ":server:checkstyleInternalClusterTest",
+          "N": 0.001741,
+          "I": 0.001689,
+          "differenceSeconds": 5.199999999999996e-05
+        },
+        {
+          "identity": ":server:checkstyleMain",
+          "N": 7.44674,
+          "I": 8.152599,
+          "differenceSeconds": -0.7058590000000002
+        },
+        {
+          "identity": ":server:checkstyleTest",
+          "N": 0.007733,
+          "I": 0.004632,
+          "differenceSeconds": 0.0031010000000000005
+        }
+      ]
+    },
+    {
+      "originalOrdinal": 20,
+      "sameTaskOutcomes": true,
+      "taskCount": {
+        "N": 1326,
+        "I": 1326
+      },
+      "outcomes": {
+        "N": {
+          "UP-TO-DATE": 895,
+          "NO-SOURCE": 47,
+          "EXECUTED": 384
+        },
+        "I": {
+          "UP-TO-DATE": 895,
+          "NO-SOURCE": 47,
+          "EXECUTED": 384
+        }
+      },
+      "largestTaskDifferences": [
+        {
+          "identity": ":x-pack:plugin:security:compileJava",
+          "N": 29.988707,
+          "I": 4.205997,
+          "differenceSeconds": 25.78271
+        },
+        {
+          "identity": ":x-pack:plugin:stateless:compileJava",
+          "N": 28.281881,
+          "I": 2.542098,
+          "differenceSeconds": 25.739783
+        },
+        {
+          "identity": ":x-pack:plugin:sql:compileJava",
+          "N": 28.48305,
+          "I": 2.802622,
+          "differenceSeconds": 25.680428
+        },
+        {
+          "identity": ":x-pack:plugin:inference:compileJava",
+          "N": 27.669844,
+          "I": 5.453139,
+          "differenceSeconds": 22.216705
+        },
+        {
+          "identity": ":x-pack:plugin:ml:compileJava",
+          "N": 27.513752,
+          "I": 5.964069,
+          "differenceSeconds": 21.549683
+        },
+        {
+          "identity": ":x-pack:plugin:stateless-sigterm:compileJava",
+          "N": 15.69729,
+          "I": 0.988751,
+          "differenceSeconds": 14.708539
+        },
+        {
+          "identity": ":x-pack:plugin:text-structure:compileJava",
+          "N": 15.860304,
+          "I": 1.199751,
+          "differenceSeconds": 14.660553
+        },
+        {
+          "identity": ":x-pack:plugin:esql:compileJava",
+          "N": 22.393285,
+          "I": 12.05688,
+          "differenceSeconds": 10.336405
+        },
+        {
+          "identity": ":x-pack:plugin:watcher:compileJava",
+          "N": 8.495161,
+          "I": 1.428785,
+          "differenceSeconds": 7.066376
+        },
+        {
+          "identity": ":x-pack:plugin:snapshot-repo-test-kit:compileJava",
+          "N": 6.517367,
+          "I": 0.863101,
+          "differenceSeconds": 5.654266
+        },
+        {
+          "identity": ":x-pack:plugin:esql:compute:compileJava",
+          "N": 11.445085,
+          "I": 6.386507,
+          "differenceSeconds": 5.058578000000001
+        },
+        {
+          "identity": ":x-pack:plugin:otel-data:compileJava",
+          "N": 6.868164,
+          "I": 2.20146,
+          "differenceSeconds": 4.666704
+        }
+      ],
+      "checkstyle": [
+        {
+          "identity": ":server:checkstyle",
+          "N": 8.1e-05,
+          "I": 7.4e-05,
+          "differenceSeconds": 7.0000000000000075e-06
+        },
+        {
+          "identity": ":server:checkstyleInternalClusterTest",
+          "N": 4.086733,
+          "I": 4.889369,
+          "differenceSeconds": -0.8026360000000006
+        },
+        {
+          "identity": ":server:checkstyleMain",
+          "N": 10.010291,
+          "I": 10.734088,
+          "differenceSeconds": -0.7237969999999994
+        },
+        {
+          "identity": ":server:checkstyleTest",
+          "N": 6.503769,
+          "I": 7.562047,
+          "differenceSeconds": -1.0582779999999996
+        }
+      ]
+    }
+  ],
+  "hostRequests": [
+    {
+      "attempt": "r1-000-g0-I",
+      "replication": 1,
+      "originalOrdinal": 17,
+      "arm": "I",
+      "nativeSeconds": 229.581207691,
+      "coverageSeconds": 229.581207691,
+      "missingBoundarySeconds": 0,
+      "maximumSampleGapSeconds": 1.578858347,
+      "samplingQualified": true,
+      "incompleteOwnershipSeconds": 0,
+      "externalCPUAttributionQualified": true,
+      "contendedFractionUpperBound": 0.6080683664748952,
+      "contendedFractionLowerBound": 0.6080683664748952,
+      "contention": "FLAGGED",
+      "averageExternalCoreEquivalentsUpperBound": 0.3177014964129188,
+      "averageHostBusyCoreEquivalents": 5.230125706408553,
+      "averageOwnedCoreEquivalentsLowerBound": 4.912424209995634,
+      "averagePressure": {
+        "cpu": 0.10489085908577367,
+        "io": 0.11789132196170726,
+        "memory": 0.0012871088316501785
+      }
+    },
+    {
+      "attempt": "r1-000-g0-N",
+      "replication": 1,
+      "originalOrdinal": 17,
+      "arm": "N",
+      "nativeSeconds": 217.285534523,
+      "coverageSeconds": 217.285534523,
+      "missingBoundarySeconds": 0,
+      "maximumSampleGapSeconds": 6.206532437,
+      "samplingQualified": false,
+      "incompleteOwnershipSeconds": 0.157439605,
+      "externalCPUAttributionQualified": false,
+      "contendedFractionUpperBound": 0.4405878108920614,
+      "contendedFractionLowerBound": 0.4405878108920614,
+      "contention": "FLAGGED",
+      "averageExternalCoreEquivalentsUpperBound": 0.29569141954506284,
+      "averageHostBusyCoreEquivalents": 5.39094740276246,
+      "averageOwnedCoreEquivalentsLowerBound": 5.095255983217398,
+      "averagePressure": {
+        "cpu": 0.13804771932173,
+        "io": 0.04857773284314773,
+        "memory": 0.001162249391775108
+      }
+    },
+    {
+      "attempt": "r1-001-g0-I",
+      "replication": 1,
+      "originalOrdinal": 18,
+      "arm": "I",
+      "nativeSeconds": 28.880899295,
+      "coverageSeconds": 28.880899295,
+      "missingBoundarySeconds": 0,
+      "maximumSampleGapSeconds": 1.01244819,
+      "samplingQualified": true,
+      "incompleteOwnershipSeconds": 0,
+      "externalCPUAttributionQualified": true,
+      "contendedFractionUpperBound": 0.07779148183896606,
+      "contendedFractionLowerBound": 0.07779148183896606,
+      "contention": "BELOW_REGISTERED_FLAG",
+      "averageExternalCoreEquivalentsUpperBound": 0.25473811318585354,
+      "averageHostBusyCoreEquivalents": 3.725897545914009,
+      "averageOwnedCoreEquivalentsLowerBound": 3.471159432728155,
+      "averagePressure": {
+        "cpu": 0.034606807853740394,
+        "io": 0.008691450563349294,
+        "memory": 0.0
+      }
+    },
+    {
+      "attempt": "r1-001-g0-N",
+      "replication": 1,
+      "originalOrdinal": 18,
+      "arm": "N",
+      "nativeSeconds": 29.237966797,
+      "coverageSeconds": 29.237966797,
+      "missingBoundarySeconds": 0,
+      "maximumSampleGapSeconds": 1.011641496,
+      "samplingQualified": true,
+      "incompleteOwnershipSeconds": 0,
+      "externalCPUAttributionQualified": true,
+      "contendedFractionUpperBound": 0.14326939626423713,
+      "contendedFractionLowerBound": 0.14326939626423713,
+      "contention": "BELOW_REGISTERED_FLAG",
+      "averageExternalCoreEquivalentsUpperBound": 0.2394630506747408,
+      "averageHostBusyCoreEquivalents": 3.5469495015760137,
+      "averageOwnedCoreEquivalentsLowerBound": 3.307486450901273,
+      "averagePressure": {
+        "cpu": 0.02891014020762676,
+        "io": 0.031677011509827886,
+        "memory": 7.832281963720434e-06
+      }
+    },
+    {
+      "attempt": "r1-002-g0-I",
+      "replication": 1,
+      "originalOrdinal": 19,
+      "arm": "I",
+      "nativeSeconds": 35.729995916,
+      "coverageSeconds": 35.729995916,
+      "missingBoundarySeconds": 0,
+      "maximumSampleGapSeconds": 1.015404715,
+      "samplingQualified": true,
+      "incompleteOwnershipSeconds": 0,
+      "externalCPUAttributionQualified": true,
+      "contendedFractionUpperBound": 0.15418952316568743,
+      "contendedFractionLowerBound": 0.15418952316568743,
+      "contention": "BELOW_REGISTERED_FLAG",
+      "averageExternalCoreEquivalentsUpperBound": 0.22274739643725106,
+      "averageHostBusyCoreEquivalents": 3.9041488387133083,
+      "averageOwnedCoreEquivalentsLowerBound": 3.6814014422760573,
+      "averagePressure": {
+        "cpu": 0.06190972614994364,
+        "io": 0.007914121128564582,
+        "memory": 1.7268403876970653e-05
+      }
+    },
+    {
+      "attempt": "r1-002-g0-N",
+      "replication": 1,
+      "originalOrdinal": 19,
+      "arm": "N",
+      "nativeSeconds": 34.848343231,
+      "coverageSeconds": 34.848343231,
+      "missingBoundarySeconds": 0,
+      "maximumSampleGapSeconds": 1.010503593,
+      "samplingQualified": true,
+      "incompleteOwnershipSeconds": 0,
+      "externalCPUAttributionQualified": true,
+      "contendedFractionUpperBound": 0.16180608827291426,
+      "contendedFractionLowerBound": 0.16180608827291426,
+      "contention": "BELOW_REGISTERED_FLAG",
+      "averageExternalCoreEquivalentsUpperBound": 0.2168611260074767,
+      "averageHostBusyCoreEquivalents": 3.681035301576791,
+      "averageOwnedCoreEquivalentsLowerBound": 3.4641741755693145,
+      "averagePressure": {
+        "cpu": 0.04469882228921727,
+        "io": 0.015096137697947305,
+        "memory": 1.721746127277175e-07
+      }
+    },
+    {
+      "attempt": "r1-003-g0-I",
+      "replication": 1,
+      "originalOrdinal": 20,
+      "arm": "I",
+      "nativeSeconds": 67.330360838,
+      "coverageSeconds": 67.330360838,
+      "missingBoundarySeconds": 0,
+      "maximumSampleGapSeconds": 1.769315232,
+      "samplingQualified": true,
+      "incompleteOwnershipSeconds": 0,
+      "externalCPUAttributionQualified": true,
+      "contendedFractionUpperBound": 0.38652678075819813,
+      "contendedFractionLowerBound": 0.38652678075819813,
+      "contention": "FLAGGED",
+      "averageExternalCoreEquivalentsUpperBound": 0.32153134065133887,
+      "averageHostBusyCoreEquivalents": 4.736724835062192,
+      "averageOwnedCoreEquivalentsLowerBound": 4.415193494410853,
+      "averagePressure": {
+        "cpu": 0.1127394863183104,
+        "io": 0.04251503686908069,
+        "memory": 0.00014195676186849786
+      }
+    },
+    {
+      "attempt": "r1-003-g0-N",
+      "replication": 1,
+      "originalOrdinal": 20,
+      "arm": "N",
+      "nativeSeconds": 112.083489274,
+      "coverageSeconds": 112.083489274,
+      "missingBoundarySeconds": 0,
+      "maximumSampleGapSeconds": 11.834269657,
+      "samplingQualified": false,
+      "incompleteOwnershipSeconds": 0,
+      "externalCPUAttributionQualified": false,
+      "contendedFractionUpperBound": 0.9910210047124804,
+      "contendedFractionLowerBound": 0.9910210047124804,
+      "contention": "FLAGGED",
+      "averageExternalCoreEquivalentsUpperBound": 0.23574714477015118,
+      "averageHostBusyCoreEquivalents": 3.098576644401419,
+      "averageOwnedCoreEquivalentsLowerBound": 2.8628294996312675,
+      "averagePressure": {
+        "cpu": 0.03774772275047169,
+        "io": 0.3880181891640344,
+        "memory": 0.04032747925803702
+      }
+    }
+  ],
+  "limits": "Task durations overlap and cannot be added to explain wall time. Host pressure is a correlation, not attribution to a specific process. No build or comparator was rerun; no observation was excluded."
+}
