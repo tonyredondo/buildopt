@@ -1,0 +1,110 @@
+{
+  "schema": "buildopt.history-replay/result/v2",
+  "manifestSHA256": "ca0cdc551e42d0c736a6fcdde8202bd2d68126443755705bbce7155d67dffc20",
+  "replications": [
+    {
+      "replication": 1,
+      "scheduled": 3,
+      "comparable": 0,
+      "adoptionNS": 0,
+      "maintenanceNS": 0,
+      "unpairedCandidateNS": 0,
+      "nativeNS": 0,
+      "netSavedNS": 0,
+      "netFraction": 0,
+      "netPerScheduledNS": 0,
+      "nativeP50NS": 0,
+      "nativeP95NS": 0,
+      "candidateP50NS": 0,
+      "candidateP95NS": 0,
+      "worstRegressionNS": 0,
+      "noActionSlots": 0,
+      "noActionDeltaNS": 0,
+      "noActionAttributedSavingNS": 0,
+      "paybackOrdinal": -1,
+      "temporaryCrossings": [],
+      "curveNS": [
+        0,
+        0,
+        0
+      ],
+      "intervals": [],
+      "customerHumanNS": 0,
+      "researchNS": 1465746741039,
+      "researchRecordingAndOtherNS": 4193714706,
+      "studyMachineNS": 1465746741039,
+      "wholeStudySensitivityNetNS": -1465746741039,
+      "fullyLoadedNetNS": -1465746741039,
+      "complete": false,
+      "gate": "INCOMPLETE_EVIDENCE",
+      "reasons": [
+        "qualification/engineering is not confirmation",
+        "HARNESS_INVALID: NOT_RUN_QUIET: NOT_QUIET_TIMEOUT: quiet-start deadline"
+      ]
+    }
+  ],
+  "slots": [
+    [
+      {
+        "ownerMetadataJVMStarts": 0,
+        "ordinal": 0,
+        "class": "HARNESS_INVALID",
+        "reason": "partial pair retained without saving",
+        "nativeNS": 0,
+        "candidateNS": 0,
+        "extraCandidateNS": 0,
+        "nativeActions": 0,
+        "candidateActions": 0,
+        "attempts": [
+          "r1-000-g0-N"
+        ]
+      },
+      {
+        "ownerMetadataJVMStarts": 0,
+        "ordinal": 1,
+        "class": "NOT_RUN_DEPENDENCY",
+        "reason": "scheduled request depends on incomplete preceding work",
+        "nativeNS": 0,
+        "candidateNS": 0,
+        "extraCandidateNS": 0,
+        "nativeActions": 0,
+        "candidateActions": 0,
+        "attempts": []
+      },
+      {
+        "ownerMetadataJVMStarts": 0,
+        "ordinal": 2,
+        "class": "NOT_RUN_DEPENDENCY",
+        "reason": "scheduled request depends on incomplete preceding work",
+        "nativeNS": 0,
+        "candidateNS": 0,
+        "extraCandidateNS": 0,
+        "nativeActions": 0,
+        "candidateActions": 0,
+        "attempts": []
+      },
+      {
+        "ownerMetadataJVMStarts": 0,
+        "ordinal": 3,
+        "class": "NOT_RUN_DEPENDENCY",
+        "reason": "scheduled request depends on incomplete preceding work",
+        "nativeNS": 0,
+        "candidateNS": 0,
+        "extraCandidateNS": 0,
+        "nativeActions": 0,
+        "candidateActions": 0,
+        "attempts": []
+      }
+    ]
+  ],
+  "workflowStarts": 0,
+  "gradleReservations": 1,
+  "actualGradleStarts": 0,
+  "nestedStarts": 0,
+  "unknownGradleReservations": 1,
+  "decision": "INCOMPLETE_EVIDENCE",
+  "reasons": [
+    "incomplete native invocation accounting",
+    "incomplete or unsafe scheduled horizon"
+  ]
+}

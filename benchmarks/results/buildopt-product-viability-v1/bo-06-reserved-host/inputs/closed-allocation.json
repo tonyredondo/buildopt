@@ -1,0 +1,23 @@
+{
+  "status": "closed verified",
+  "startedUTC": "2026-09-15T22:14:00+00:00",
+  "activatedUTC": "2026-09-15T22:16:57.250637+00:00",
+  "startedBootNS": 386911012908400,
+  "deadlineUTC": "2026-09-16T08:14:00+00:00",
+  "preparationBoundary": "Conservative boundary before current-turn recovery. Includes preparation, waiting and verification.",
+  "maxElapsedSeconds": 36000,
+  "maxNewBytes": 85899345920,
+  "minimumFreeBytes": 42949672960,
+  "maxDiagnosticBytes": 268435456,
+  "maxOwnerStarts": 50,
+  "maxHelpers": 50,
+  "ownerReserved": 8,
+  "helpersReserved": 8,
+  "actualOwnerStarts": 0,
+  "actualHelpers": 0,
+  "retriesAllowed": 0,
+  "decision": "INCOMPLETE_CONTROL_QUIET_TIMEOUT",
+  "closedUTC": "2026-09-15T22:43:32.269187+00:00",
+  "allocatedBytes": 7394541568,
+  "diagnosticBytes": 9394416
+}

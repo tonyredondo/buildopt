@@ -1,0 +1,19 @@
+{
+  "taskState": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/task-state.json",
+    "sha256": "53a30c29a3110354bb3031be628d78aed0fa2bc5bfa647adc1acc09469964093",
+    "bytes": 2239
+  },
+  "allocation": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/inputs/allocation-frozen.json",
+    "sha256": "b3a51ba25d987b8478b12f257f572d5ad48a56f6b48a872bab313ef00ab6bacf",
+    "bytes": 628
+  },
+  "environmentDecision": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/inputs/environment-decision.json",
+    "sha256": "de2784bfd0531354ea5a15251427281f6a4d6d878741667e0fa897eca8141d4f",
+    "bytes": 1239
+  },
+  "freeBytes": 750868185088,
+  "verified": true
+}

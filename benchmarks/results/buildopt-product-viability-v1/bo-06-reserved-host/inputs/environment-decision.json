@@ -1,0 +1,26 @@
+{
+  "atUTC": "2026-09-15T22:16:57.250637+00:00",
+  "decision": "Repeat once on the workstation the owner has reserved for the experiment.",
+  "changedCondition": "Owner reports competing work is finished and workstation available for the entire run.",
+  "unchanged": [
+    "runner",
+    "sampler",
+    "comparator",
+    "candidate",
+    "output recorder",
+    "quiet-start threshold and timeout",
+    "control threshold",
+    "request order",
+    "resource limits",
+    "no retry",
+    "protected-history boundary"
+  ],
+  "limits": [
+    "Owner availability report does not prove OS or storage inactivity.",
+    "Host observations and existing quiet-start rule remain authoritative.",
+    "The existing recorder and full-scan fallback remain possible sources of pressure.",
+    "No quiet-control retry if this allocation fails; inspect retained measurements first."
+  ],
+  "predecessor": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-measurement-2026-09-15",
+  "scope": "Eight identical-code control builds; all 42 development builds only if control passes. Close and publish. Zero retries, no BO-07, protected changes 21-100, policy changes or system configuration changes."
+}

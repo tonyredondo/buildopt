@@ -1,0 +1,20 @@
+[
+  {
+    "case": "false_completion",
+    "exitCode": 1,
+    "reason": "Semantic refusal after adjusted file hashes",
+    "stderr": "Traceback (most recent call last):\n  File \"/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/validation/false_completion/verify-evidence.py\", line 47, in <module>\n    assert summary['complete'] is False and summary['netSaving'] is None\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+  },
+  {
+    "case": "invented_comparator",
+    "exitCode": 1,
+    "reason": "Semantic refusal after adjusted file hashes",
+    "stderr": "Traceback (most recent call last):\n  File \"/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/validation/invented_comparator/verify-evidence.py\", line 49, in <module>\n    assert close['comparisonJVMs'] == allocation['actualHelpers'] == summary['livePairs'] == summary['independentPairs'] == 0\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+  },
+  {
+    "case": "invented_zero_saving",
+    "exitCode": 1,
+    "reason": "Semantic refusal after adjusted file hashes",
+    "stderr": "Traceback (most recent call last):\n  File \"/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/validation/invented_zero_saving/verify-evidence.py\", line 47, in <module>\n    assert summary['complete'] is False and summary['netSaving'] is None\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+  }
+]

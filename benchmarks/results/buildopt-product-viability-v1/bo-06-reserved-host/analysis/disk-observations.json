@@ -1,0 +1,16 @@
+{
+  "requests": [],
+  "sampler": [
+    {
+      "profile": "control",
+      "samples": 1455,
+      "storageCollectionCPUSeconds": 0.412161279,
+      "storageCollectionElapsedSeconds": 0.548544351,
+      "wholeSamplerCPUSeconds": 1.810002917,
+      "unavailableHostSamples": 0,
+      "groupObservations": 188,
+      "unavailableGroupObservations": 188
+    }
+  ],
+  "interpretation": "Supervisor CPU includes initial observer setup and all other supervision. Setup is not separately timed. Host counters do not identify an external cause. These observations do not establish the effect of supervision on build wall time."
+}

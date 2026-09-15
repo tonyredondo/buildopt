@@ -1,0 +1,9 @@
+{
+  "pid": 2696576,
+  "startedUTC": "2026-09-15T22:16:57.466126+00:00",
+  "source": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/pipeline.py",
+    "sha256": "3f08128f14ea2bb46adf859899ead8914436dbc6e891023f4a9e95c7ab79509a"
+  },
+  "scope": "8 control builds and, after a passing control, all 42 development builds. No retry or confirmation."
+}

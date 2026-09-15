@@ -1,0 +1,335 @@
+{
+  "schema": "buildopt.history-replay/manifest/v2",
+  "phase": "QUALIFICATION",
+  "experiment": "FIXED_NI",
+  "mode": "P_LEAN_RESEARCH_V1",
+  "frozenUTC": "2026-09-15T16:56:15.534353+00:00",
+  "protocol": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/versions/owner-readiness-v5/protocol.json",
+    "sha256": "616e2e0cfbc276450cba000fe9afd1132a7c41bf772e5e070bf4547e5feeef41"
+  },
+  "executable": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/history-replay-disk",
+    "sha256": "43c0cd8a8325c6b7abf9b4f217fd27683548c30bb4dffefe98472d878362f989"
+  },
+  "package": [
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/source",
+      "sha256": "bf662df07f00aa4fcde00012a7bf73ee07612d190502afcb5a3634b5f4fa3ce1"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/tools/common.py",
+      "sha256": "680f5401187f06ab002098e1fb27c608c75c88d92d6a234cd81b88b844869b4c"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/tools/run_trial.py",
+      "sha256": "3cff479bc01317e1ebe610a852f68d11e5ab73033a2a96f7925457913cc46817"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/tools/storage_observation.py",
+      "sha256": "9af5afe18cfdd97867370a653568c54e32feb93bfa51bfa2a8ccf3b015a37fc2"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/tools/storage_observation_test.py",
+      "sha256": "400aec58fbd8316a2b4f64a82efe787acd49571165f736f8af3678685b6bac6b"
+    }
+  ],
+  "subject": "elasticsearch-checkstyle-disk-control",
+  "commonGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/eic-native-v1/repos/elasticsearch.git",
+  "history": [
+    {
+      "ordinal": 0,
+      "commit": "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe",
+      "parent": "54f83a8180be3a1b6e339e0b2b81ee4c79480ce3",
+      "tree": "95f4aa97b7917c7cd68ab4074c192e3234247955",
+      "committedUTC": "2026-08-31T20:09:53Z",
+      "changedPathsSHA256": "96d627ff7e5a772b49dcd5332a31f7ad674dec743981cef70488dec78a31fadf"
+    },
+    {
+      "ordinal": 1,
+      "commit": "d47f43f5ff06883d3f0a04f3d40af627ecf5142e",
+      "parent": "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe",
+      "tree": "1b7988976308af220086bf2a8901b7d2083668b9",
+      "committedUTC": "2026-08-31T21:08:35Z",
+      "changedPathsSHA256": "e180f469d66f86a9b509a0c5e43abebe78819bf1255e40cf8ef088e5b0ab59ad"
+    },
+    {
+      "ordinal": 2,
+      "commit": "72aa4d4120d09157106325096f0e7b2cc1852f59",
+      "parent": "d47f43f5ff06883d3f0a04f3d40af627ecf5142e",
+      "tree": "10c55a6aec66b4bea130a47f6c8cdaa4e4f0de7f",
+      "committedUTC": "2026-08-31T22:51:24Z",
+      "changedPathsSHA256": "a4171b177f4ff72c1b99c9b5ab7896d130d40c9e900d209868aa19390f94b807"
+    },
+    {
+      "ordinal": 3,
+      "commit": "22d6425e9a44ec9e1aedc2785f4478b8019c851a",
+      "parent": "72aa4d4120d09157106325096f0e7b2cc1852f59",
+      "tree": "e69c43982d6e2fa4c2562be06cd2a6ab484c57ad",
+      "committedUTC": "2026-08-31T23:16:21Z",
+      "changedPathsSHA256": "810ab957ef6aa8c0410dc18da521d69c4f45eb5419d74d2e64810e8230c5f082"
+    }
+  ],
+  "runRoot": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run",
+  "replications": 1,
+  "prefixEnd": 0,
+  "executionEnd": 3,
+  "daemonPolicy": "REPLICATION",
+  "driver": "GRADLE",
+  "command": [
+    "{repo}/gradlew",
+    "--offline",
+    "--no-scan",
+    "--max-workers=8",
+    ":server:precommit",
+    "--continue"
+  ],
+  "environment": {
+    "PATH": "/usr/bin:/bin",
+    "CI": "false",
+    "LANG": "C.UTF-8",
+    "LC_ALL": "C.UTF-8",
+    "TZ": "UTC",
+    "JAVA_HOME": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155",
+    "RUNTIME_JAVA_HOME": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155",
+    "JAVA_TOOL_OPTIONS": "-Dfile.encoding=UTF-8"
+  },
+  "runtime": [
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-21-e4446ff06a276155",
+      "sha256": "c69ab0352c502f5b8fc4a55a2bbcd9a6b8161a16f17badcecea8d00f0e1e47f2"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/toolchains/temurin-jdk-25-69264a7a211bf502",
+      "sha256": "e73f1d9f2124c013382dce6754cf3c8f0216ffd8536e78f7e4483e8e3cc628ad"
+    }
+  ],
+  "generatedPaths": [
+    "**/build/**",
+    "**/.gradle/**",
+    "build/**",
+    ".gradle/**"
+  ],
+  "acquisition": [
+    {
+      "kind": "dependencies",
+      "source": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/inputs/layers/dependencies",
+        "sha256": "3d274c28c7664604b7bbb1a5c4cf5daf358dfa34ef8b742f0d1699227eb47ee6"
+      },
+      "destination": "gradle/caches/modules-2"
+    },
+    {
+      "kind": "wrapper",
+      "source": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/inputs/layers/wrapper",
+        "sha256": "4d7ccd09b72a62f9f79fc7fe65c65ff3079072c74b6558d2fa51238480da0d7b"
+      },
+      "destination": "gradle/wrapper/dists"
+    },
+    {
+      "kind": "jdks",
+      "source": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/inputs/layers/jdks",
+        "sha256": "e5b06733551b07c70299a2893b3e3b24f264cc9a02da22b8119a9b382ff3a878"
+      },
+      "destination": "gradle/jdks"
+    }
+  ],
+  "baseline": {
+    "identity": "retained-native-forbidden-patterns-baseline",
+    "files": [
+      {
+        "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/ForbiddenPatternsTask.java",
+        "beforeSHA256": "61fe2eaa06ff463c2a49cea656b147889060855acfa094288ebb8b31567e11b6",
+        "beforeMode": 420,
+        "after": {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/inputs/postimages/ForbiddenPatternsTask.java",
+          "sha256": "d6858f5ac43ad671496cf1e54e7af309cb98ebda4a9be53e61578df8baefa2d0"
+        },
+        "afterMode": 420
+      }
+    ],
+    "prerequisites": {}
+  },
+  "candidate": {
+    "identity": "checkstyle-shared-service-finalization-v2",
+    "files": [
+      {
+        "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstylePrecommitPlugin.java",
+        "beforeSHA256": "4bcb596e7d09d08cdcf8ea1c94472421c223769c5e139c200f16dddc3e301015",
+        "beforeMode": 420,
+        "after": {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/candidate-v2/build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstylePrecommitPlugin.java",
+          "sha256": "b68ff283db91915c84a0792343971843798305aee5374a7dfc6a896e501dcd8d"
+        },
+        "afterMode": 420
+      },
+      {
+        "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/CheckstyleSuccessState.java",
+        "beforeSHA256": "",
+        "beforeMode": 0,
+        "after": {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/candidate-v2/build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/CheckstyleSuccessState.java",
+          "sha256": "d8a314167c7bc933463ccdb6e33e78045f807b6a104c66a0f26fe0d2c8ed1ae5"
+        },
+        "afterMode": 420
+      },
+      {
+        "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareChecker.java",
+        "beforeSHA256": "",
+        "beforeMode": 0,
+        "after": {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/candidate-v2/build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareChecker.java",
+          "sha256": "631f0710963324ae493fdecb4f35dc94fce5934ad94a7c1ff90586c6b402b73b"
+        },
+        "afterMode": 420
+      },
+      {
+        "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstyleSuccessHistory.java",
+        "beforeSHA256": "",
+        "beforeMode": 0,
+        "after": {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/candidate-v2/build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstyleSuccessHistory.java",
+          "sha256": "19ddb089b59efc7b90e6b5e0fa87ee790d03779813c306992d2e21ab34ae21e1"
+        },
+        "afterMode": 420
+      },
+      {
+        "path": "build-tools-internal/src/test/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareCheckerTests.java",
+        "beforeSHA256": "",
+        "beforeMode": 0,
+        "after": {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/candidate-v2/build-tools-internal/src/test/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareCheckerTests.java",
+          "sha256": "7a3ea710afdc2b22a9d38955092eb37afb9f1f4705e8cfd8ae72a4dd1d0bf9d9"
+        },
+        "afterMode": 420
+      }
+    ],
+    "prerequisites": {
+      "gradle/wrapper/gradle-wrapper.properties": "d0bebe8133babb74ab29a31ee6616c56ef8985fc801e1fd16c61b5ed2189e907",
+      "build-tools-internal/src/main/resources/checkstyle.xml": "51d4149c0e631af64016e63f14d5467a7d4f0022d2b4c6a6c5cc2398ad62a81f",
+      "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/SnippetLengthCheck.java": "e921f57b903c4c9cbe3fe45ccbcb242e9ed8ae50f50938447ad3e3a90356abd4",
+      "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/StringFormattingCheck.java": "2db1debd76815b776f935a542839274ed52381aaa73b00e4488f000a4d74f28f",
+      "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/SwitchBetweenCheck.java": "b2fb9c6e49d5b92c4936175875256169fe96d67b780590bcc58a6a473470af40"
+    }
+  },
+  "outputs": {
+    "rules": [],
+    "graphCapture": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/versions/owner-readiness-v5/source/capture.init.gradle",
+      "sha256": "cac81f720c86919c57b6a8478007c075db41b4365630f16b99c2b50b41d2c240"
+    },
+    "projectors": [],
+    "diagnostics": [],
+    "owner": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/qualified-owner-policy.json",
+      "sha256": "2e60df8b397fa85a947ff85bca0c3efb8d40815a7f8089315cb68315db176924"
+    }
+  },
+  "affinity": "0-7",
+  "limits": {
+    "deadlineUTC": "2026-09-16T08:14:00+00:00",
+    "maxRequestNS": 900000000000,
+    "maxRunNS": 35822509698000,
+    "maxBytes": 84821762048,
+    "minimumFreeBytes": 42949672960,
+    "maxWorkflowStarts": 8,
+    "maxGradleStarts": 8,
+    "nestedReservePerRequest": 0,
+    "retryPairs": 0
+  },
+  "correctness": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/analysis/correctness-v2.json",
+    "sha256": "fe3e21b1ae327fb40ea97ac2ea305120d54a554e68a46014d854731100894747"
+  },
+  "overhead": {
+    "path": "",
+    "sha256": ""
+  },
+  "subjects": {
+    "path": "",
+    "sha256": ""
+  },
+  "externalCosts": [],
+  "controlBaseline": {
+    "identity": "identical-supported-v2",
+    "files": [
+      {
+        "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/ForbiddenPatternsTask.java",
+        "beforeSHA256": "61fe2eaa06ff463c2a49cea656b147889060855acfa094288ebb8b31567e11b6",
+        "beforeMode": 420,
+        "after": {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006/inputs/postimages/ForbiddenPatternsTask.java",
+          "sha256": "d6858f5ac43ad671496cf1e54e7af309cb98ebda4a9be53e61578df8baefa2d0"
+        },
+        "afterMode": 420
+      },
+      {
+        "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstylePrecommitPlugin.java",
+        "beforeSHA256": "4bcb596e7d09d08cdcf8ea1c94472421c223769c5e139c200f16dddc3e301015",
+        "beforeMode": 420,
+        "after": {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/candidate-v2/build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstylePrecommitPlugin.java",
+          "sha256": "b68ff283db91915c84a0792343971843798305aee5374a7dfc6a896e501dcd8d"
+        },
+        "afterMode": 420
+      },
+      {
+        "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/CheckstyleSuccessState.java",
+        "beforeSHA256": "",
+        "beforeMode": 0,
+        "after": {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/candidate-v2/build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/CheckstyleSuccessState.java",
+          "sha256": "d8a314167c7bc933463ccdb6e33e78045f807b6a104c66a0f26fe0d2c8ed1ae5"
+        },
+        "afterMode": 420
+      },
+      {
+        "path": "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareChecker.java",
+        "beforeSHA256": "",
+        "beforeMode": 0,
+        "after": {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/candidate-v2/build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareChecker.java",
+          "sha256": "631f0710963324ae493fdecb4f35dc94fce5934ad94a7c1ff90586c6b402b73b"
+        },
+        "afterMode": 420
+      },
+      {
+        "path": "build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstyleSuccessHistory.java",
+        "beforeSHA256": "",
+        "beforeMode": 0,
+        "after": {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/candidate-v2/build-tools-internal/src/main/java/org/elasticsearch/gradle/internal/precommit/CheckstyleSuccessHistory.java",
+          "sha256": "19ddb089b59efc7b90e6b5e0fa87ee790d03779813c306992d2e21ab34ae21e1"
+        },
+        "afterMode": 420
+      },
+      {
+        "path": "build-tools-internal/src/test/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareCheckerTests.java",
+        "beforeSHA256": "",
+        "beforeMode": 0,
+        "after": {
+          "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/candidate-v2/build-tools-internal/src/test/java/org/elasticsearch/gradle/internal/checkstyle/ContentAwareCheckerTests.java",
+          "sha256": "7a3ea710afdc2b22a9d38955092eb37afb9f1f4705e8cfd8ae72a4dd1d0bf9d9"
+        },
+        "afterMode": 420
+      }
+    ],
+    "prerequisites": {
+      "gradle/wrapper/gradle-wrapper.properties": "d0bebe8133babb74ab29a31ee6616c56ef8985fc801e1fd16c61b5ed2189e907",
+      "build-tools-internal/src/main/resources/checkstyle.xml": "51d4149c0e631af64016e63f14d5467a7d4f0022d2b4c6a6c5cc2398ad62a81f",
+      "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/SnippetLengthCheck.java": "e921f57b903c4c9cbe3fe45ccbcb242e9ed8ae50f50938447ad3e3a90356abd4",
+      "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/StringFormattingCheck.java": "2db1debd76815b776f935a542839274ed52381aaa73b00e4488f000a4d74f28f",
+      "build-conventions/src/main/java/org/elasticsearch/gradle/internal/checkstyle/SwitchBetweenCheck.java": "b2fb9c6e49d5b92c4936175875256169fe96d67b780590bcc58a6a473470af40"
+    }
+  },
+  "quietStart": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/inputs/quiet-start-policy.json",
+    "sha256": "1c1d2080051f44929de62b0e0447fa1ccd63e490f8762c5c6619b33c5e2d22bb"
+  },
+  "measurementReadiness": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/receipts/control-readiness.json",
+    "sha256": "f61f398f2eac23f411cade335662a1a14ee15be9c170c85a71364d5a2b1d6b5c"
+  }
+}

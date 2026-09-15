@@ -1,0 +1,380 @@
+[
+  {
+    "path": "README.md",
+    "sha256": "51dc884a1ddec34998914fcce6102df01bf86056af4e1d2303386567395bd89d",
+    "bytes": 10124,
+    "mode": 420
+  },
+  {
+    "path": "acquisition_test.go",
+    "sha256": "8d4bdfaf2ee4d85d7d63505714d1620674024d9d094df54b8469a70cdbe68df5",
+    "bytes": 3197,
+    "mode": 420
+  },
+  {
+    "path": "adversarial_integration_test.go",
+    "sha256": "a7d5f6b82dc7be74e2c9fe2c01f9c0094bd5f5f5fc0cda45605e470829c19138",
+    "bytes": 10181,
+    "mode": 420
+  },
+  {
+    "path": "affinity_linux.go",
+    "sha256": "4ff627e20fb162ff3496a92cd00a7159ee9a672fbb78a7a53cf34d12967d2c0e",
+    "bytes": 3748,
+    "mode": 420
+  },
+  {
+    "path": "affinity_test.go",
+    "sha256": "f5a0c2eae73a02a87cc2c58075a7710be9681a33ed506a08fef3f3426a854dff",
+    "bytes": 5398,
+    "mode": 420
+  },
+  {
+    "path": "capture.go",
+    "sha256": "c611b4c1694e481a2057c3cf7acc39e67e502ac340cf6d56806247fb54f4ba7f",
+    "bytes": 21567,
+    "mode": 420
+  },
+  {
+    "path": "capture.init.gradle",
+    "sha256": "cac81f720c86919c57b6a8478007c075db41b4365630f16b99c2b50b41d2c240",
+    "bytes": 3235,
+    "mode": 420
+  },
+  {
+    "path": "checker.go",
+    "sha256": "efdce153188be533a67e65a0ce2bd45ba3b73663ffafe739e425e573668950fb",
+    "bytes": 21095,
+    "mode": 420
+  },
+  {
+    "path": "contract.go",
+    "sha256": "2826a3bdc76121669cbfa36693a45dfe86044add7039b9847866f5df906b6c20",
+    "bytes": 18568,
+    "mode": 420
+  },
+  {
+    "path": "contract_test.go",
+    "sha256": "33f6d4830b6d096172e07b710089ae6966cf0452bf93c3b3da1dcf031d48c257",
+    "bytes": 8014,
+    "mode": 420
+  },
+  {
+    "path": "control_baseline_test.go",
+    "sha256": "8a42cb3e083333bfe5005fc44f105b0309e4966638ae5b2397d59b1789734df8",
+    "bytes": 3212,
+    "mode": 420
+  },
+  {
+    "path": "diagnostic_linux.go",
+    "sha256": "e9b73ee6984712e46636eb727efde22eec1ce9241f83c984d0eed2f5e872b212",
+    "bytes": 372,
+    "mode": 420
+  },
+  {
+    "path": "disk_observation_test.go",
+    "sha256": "99c0bdd6997179087b9a572cf4adaad8d5e71ed1b1e90724c1d575bfdee7d3eb",
+    "bytes": 2688,
+    "mode": 420
+  },
+  {
+    "path": "disk_receipt.go",
+    "sha256": "27233f38974edf221a165fb15fc5dc9554be8c415432c89108685011cdfe18d9",
+    "bytes": 1890,
+    "mode": 420
+  },
+  {
+    "path": "driver_death_integration_test.go",
+    "sha256": "e9eb9c89236ec6882c3827d7ef15246c97034bfc867a32dc26d8d20e9e2c59b2",
+    "bytes": 3880,
+    "mode": 420
+  },
+  {
+    "path": "evidence_check.go",
+    "sha256": "f6aeb3fc38514ffadaad6958d646afcd79d5b9adcd0ce207ffdc7bc5b016b17c",
+    "bytes": 5758,
+    "mode": 420
+  },
+  {
+    "path": "evidence_copy_sizing_test.go",
+    "sha256": "c3380d36c8bd1587abf3b3ab5123f9b6dbf50d986f7d491415f0b1fa656474ad",
+    "bytes": 2775,
+    "mode": 420
+  },
+  {
+    "path": "evidence_copy_test.go",
+    "sha256": "2f1ce318d589a54f2a7cfe1e1a604055ece78e24499d73c30d5b0ac9fbb6b44c",
+    "bytes": 2289,
+    "mode": 420
+  },
+  {
+    "path": "export.go",
+    "sha256": "285f227f602e121bd829af1aca79bd88af9a7d95c383f20b1a428a5b2609f133",
+    "bytes": 5349,
+    "mode": 420
+  },
+  {
+    "path": "external_costs.go",
+    "sha256": "59d00cd55ef10048ceb13335d95ddafef3a54e58fa0ca532491b210cf7a27f4c",
+    "bytes": 2808,
+    "mode": 420
+  },
+  {
+    "path": "external_costs_integration_test.go",
+    "sha256": "1901fca78732fa3ed5a67179e54fc3c65f7a22c602abfe889ab172f812804dc8",
+    "bytes": 1570,
+    "mode": 420
+  },
+  {
+    "path": "files.go",
+    "sha256": "97dac0ad3b6200c0544501e607819a17d03a00df3bf4d4e7950b49724baaadb6",
+    "bytes": 11757,
+    "mode": 420
+  },
+  {
+    "path": "gradle_integration_test.go",
+    "sha256": "9103def1a888bf7b2bc21f0b32f25107277b08b0d4a0bc69dc96691a10ca70b5",
+    "bytes": 9090,
+    "mode": 420
+  },
+  {
+    "path": "gradle_logs.go",
+    "sha256": "1c5c1de096d5e0141779b4507cb5f28a885d38d82c3d5bcbb8c99fb95e23e9d8",
+    "bytes": 5837,
+    "mode": 420
+  },
+  {
+    "path": "history.go",
+    "sha256": "e161100317470779c5d12b643f0ce3aa4ef45f0541bc2bfcfdd89b24c3b7ce2e",
+    "bytes": 14130,
+    "mode": 420
+  },
+  {
+    "path": "interrupted_costs.go",
+    "sha256": "ce957dab263e08150866463822e66df6329aabe771ab29e35e31f42da7d22196",
+    "bytes": 1470,
+    "mode": 420
+  },
+  {
+    "path": "isolation_control_test.go",
+    "sha256": "425e60af9651cd1daae45dab98ab4988d6d813fcc96b8e26198ba4a08a2bca6d",
+    "bytes": 10417,
+    "mode": 420
+  },
+  {
+    "path": "lifecycle.go",
+    "sha256": "c35ae22f0a306247e9de4267e3f0531ee228f79582ad94ed3add10be893bdd5b",
+    "bytes": 3994,
+    "mode": 420
+  },
+  {
+    "path": "live_disk_integration_test.go",
+    "sha256": "fa2f5f6fa32c2ae9b4e6f0876c6cb5573c14c761945cf29af4d671f6c599a078",
+    "bytes": 4091,
+    "mode": 420
+  },
+  {
+    "path": "live_disk_linux.go",
+    "sha256": "1e249e42980cb4dad0b52a3842acd74e51f545be7a85f695fc6d176d80026bed",
+    "bytes": 11927,
+    "mode": 420
+  },
+  {
+    "path": "live_disk_performance_test.go",
+    "sha256": "81913a49991921b659407a480194472a1176b655cc47d4d9d490d56cfe259c19",
+    "bytes": 3373,
+    "mode": 420
+  },
+  {
+    "path": "live_disk_test.go",
+    "sha256": "a341d66b0faf2df49c6aadc5c56003cd98eb7ac56e07648a68ed9ef88f13d45d",
+    "bytes": 9242,
+    "mode": 420
+  },
+  {
+    "path": "main.go",
+    "sha256": "e2a2f1901639ce254c0acf99c378919f32bb79c477cf53cb74a10f7ffeeb459f",
+    "bytes": 2678,
+    "mode": 420
+  },
+  {
+    "path": "metrics.go",
+    "sha256": "8626126ba39716c878ac841c4916a43a2e41aaad4c527e8beb02af19e001ee9b",
+    "bytes": 11439,
+    "mode": 420
+  },
+  {
+    "path": "metrics_test.go",
+    "sha256": "e258fc8a39e97eb2d0d245a8d5255acd7f300a02955e29940b2ddc1eaad9039c",
+    "bytes": 4056,
+    "mode": 420
+  },
+  {
+    "path": "output_retention_test.go",
+    "sha256": "f71bba21f0c254f81b1843765423bc9cc168d369f171de44b05f2b9345ec6618",
+    "bytes": 3223,
+    "mode": 420
+  },
+  {
+    "path": "overhead_integration_test.go",
+    "sha256": "dc2bd0b98653dc3634a056a5d607132acdf39964f81f3052e3b7ffc184ace1d6",
+    "bytes": 11477,
+    "mode": 420
+  },
+  {
+    "path": "owner_compare.py",
+    "sha256": "fa7b1133cb29458fe7cb0d2e4b0d744d04396969f86423b0e8dcd1d74fccd5d9",
+    "bytes": 19936,
+    "mode": 420
+  },
+  {
+    "path": "owner_compare_test.py",
+    "sha256": "e3fedb8f85f0c74861cce8ca45ff5e5bd96160f451b3df4848dc3dba2149c4d2",
+    "bytes": 16758,
+    "mode": 420
+  },
+  {
+    "path": "owner_overhead_integration_test.go",
+    "sha256": "ba68341d68bb61af5885f745318b890ce04c7b9ccb4c6d99688024490a8ee7f0",
+    "bytes": 2186,
+    "mode": 420
+  },
+  {
+    "path": "owner_policy.go",
+    "sha256": "0305bfe1c795901a65589743704cf1e9d69e23a2c53a73e2d49a331f2beda736",
+    "bytes": 5448,
+    "mode": 420
+  },
+  {
+    "path": "owner_policy_integration_test.go",
+    "sha256": "b6b22f8360b6003299ff6c01eab428451c82689961866e58be9120ce2f29f101",
+    "bytes": 2185,
+    "mode": 420
+  },
+  {
+    "path": "precision_statistics.py",
+    "sha256": "6cf1a8641ea861d9568404b92313c40378d912485fbeb125cad2452c8433ec56",
+    "bytes": 4006,
+    "mode": 420
+  },
+  {
+    "path": "precision_statistics_test.py",
+    "sha256": "6d01d25e57c989f7816196533c422fc4b0b30cebcf5cedb7b1ecd460945e11f5",
+    "bytes": 3514,
+    "mode": 420
+  },
+  {
+    "path": "process_departure_test.go",
+    "sha256": "1070f08c1cc8adf5acf6c4aa4d7ee58afcee3ee5c9974acc6007c9faf222c523",
+    "bytes": 1429,
+    "mode": 420
+  },
+  {
+    "path": "process_linux.go",
+    "sha256": "8ae6925ec420f96d8376851f90125c1e7251f77a6e7b1ff3776536cc5e087b09",
+    "bytes": 21373,
+    "mode": 420
+  },
+  {
+    "path": "projector_integration_test.go",
+    "sha256": "c68e43e6c7f8941bf7fc9e19cb47b40ccd2d8baf2a186fc869e6d375da6dc830",
+    "bytes": 2709,
+    "mode": 420
+  },
+  {
+    "path": "projector_proof.go",
+    "sha256": "4e14a4f5a7a83bdfc2edf6554c50147062aa7c1bab50fccd9943ccae20d35633",
+    "bytes": 3526,
+    "mode": 420
+  },
+  {
+    "path": "quiet_start.go",
+    "sha256": "f213029a8835e859a5c38504b1b64138a2dca23da032428f4803274dd7b6b0f0",
+    "bytes": 12347,
+    "mode": 420
+  },
+  {
+    "path": "quiet_start_integration_test.go",
+    "sha256": "e0f1fbfc51190668797138353c46c4d2d750f36352c551e69e01da66c4d0f584",
+    "bytes": 5789,
+    "mode": 420
+  },
+  {
+    "path": "quiet_start_test.go",
+    "sha256": "b6ac959bec3f078d7a603dfbe74f598b911ba3710c5ccc544e3def4cd4321036",
+    "bytes": 12481,
+    "mode": 420
+  },
+  {
+    "path": "recorder_resources.go",
+    "sha256": "1b2437732771adbc235744d64f372846468d403047bb9e3e2994e9d0aa58d284",
+    "bytes": 3461,
+    "mode": 420
+  },
+  {
+    "path": "records.go",
+    "sha256": "6f0fef7a28de3a093d47e8b0b9ec040aed394a61c4bac255e543a773ec5cb6b9",
+    "bytes": 14306,
+    "mode": 420
+  },
+  {
+    "path": "recovery.go",
+    "sha256": "32d496291c12ff46451f2902ba197cf10b8407f6f4262961ad87a4f08b4da83f",
+    "bytes": 13400,
+    "mode": 420
+  },
+  {
+    "path": "research_cli_test.go",
+    "sha256": "94d9e4fabd386ae4eb4da17e10ca19c5eaf5f49482c8e4db81e79730870a5ccb",
+    "bytes": 1511,
+    "mode": 420
+  },
+  {
+    "path": "research_measurement.go",
+    "sha256": "ac2ef4bf690a213973baf2c1ed05970db18df2f8f3a9f6d67048a6c4c4b64f8c",
+    "bytes": 8715,
+    "mode": 420
+  },
+  {
+    "path": "research_measurement_test.go",
+    "sha256": "8e7bc0e7d1336041601c4835f48ccbd73230ef8b3ffa11e7e9135fb98872e335",
+    "bytes": 5473,
+    "mode": 420
+  },
+  {
+    "path": "resources_linux.go",
+    "sha256": "15afaceedb3a426989146b1c70198f6c62464c90b4e00ffb970da42314148df0",
+    "bytes": 1838,
+    "mode": 420
+  },
+  {
+    "path": "retention_sizing_test.go",
+    "sha256": "99a8b7dcab34e0ab28a85bbd1d04ba36696aafbe799f1d511143d4d5c66f5393",
+    "bytes": 1415,
+    "mode": 420
+  },
+  {
+    "path": "runner.go",
+    "sha256": "080d8b23f09f850f8a24a5537c7e9f5154e2769e3e14ed24a21e04b9df9b473a",
+    "bytes": 24494,
+    "mode": 420
+  },
+  {
+    "path": "runner_test.go",
+    "sha256": "721ec4a5c70d7b5ffdfe84606f28729678b07506ccbe6743707a8c9b1a18ffa5",
+    "bytes": 10031,
+    "mode": 420
+  },
+  {
+    "path": "watch_linux.go",
+    "sha256": "3987e803cf1a1b32ec0e6281355779a19766c4a25bbe87bc1d0f2e2e9fef1030",
+    "bytes": 1319,
+    "mode": 420
+  },
+  {
+    "path": "watch_test.go",
+    "sha256": "fc28040141f79e027755d1df70e34b0cb5a389448f4965727a7ffa9e8811515e",
+    "bytes": 4534,
+    "mode": 420
+  }
+]

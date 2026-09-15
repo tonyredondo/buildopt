@@ -1,0 +1,110 @@
+[
+  {
+    "source": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-measurement-2026-09-15/common.py",
+      "sha256": "a4019a1a2cfb170f7e2161f538586293c1be912722e49dab67b8b4be5142cab3",
+      "bytes": 816
+    },
+    "copy": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/common.py",
+      "sha256": "a4019a1a2cfb170f7e2161f538586293c1be912722e49dab67b8b4be5142cab3",
+      "bytes": 816
+    }
+  },
+  {
+    "source": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-measurement-2026-09-15/pipeline.py",
+      "sha256": "3f08128f14ea2bb46adf859899ead8914436dbc6e891023f4a9e95c7ab79509a",
+      "bytes": 2730
+    },
+    "copy": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/pipeline.py",
+      "sha256": "3f08128f14ea2bb46adf859899ead8914436dbc6e891023f4a9e95c7ab79509a",
+      "bytes": 2730
+    }
+  },
+  {
+    "source": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-measurement-2026-09-15/prepare_trial.py",
+      "sha256": "653dbe6649473ba9690c46b97a5e43605000ccf2f250da9bc3b50bde6e7e44d9",
+      "bytes": 4164
+    },
+    "copy": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/prepare_trial.py",
+      "sha256": "653dbe6649473ba9690c46b97a5e43605000ccf2f250da9bc3b50bde6e7e44d9",
+      "bytes": 4164
+    }
+  },
+  {
+    "source": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-measurement-2026-09-15/analyze_trial_v4.py",
+      "sha256": "0a7e66ed73fde99489fca6bc5dad9777e1eb3612795c60c942549fdc3e220022",
+      "bytes": 8007
+    },
+    "copy": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/analyze_trial_v4.py",
+      "sha256": "0a7e66ed73fde99489fca6bc5dad9777e1eb3612795c60c942549fdc3e220022",
+      "bytes": 8007
+    }
+  },
+  {
+    "source": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-measurement-2026-09-15/analyze_host.py",
+      "sha256": "435ce356e0233d4d2b2afd0219e037c1d2e9596bc3b5fbfbca8c8996f552c0f7",
+      "bytes": 6589
+    },
+    "copy": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/analyze_host.py",
+      "sha256": "435ce356e0233d4d2b2afd0219e037c1d2e9596bc3b5fbfbca8c8996f552c0f7",
+      "bytes": 6589
+    }
+  },
+  {
+    "source": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-measurement-2026-09-15/tools/common.py",
+      "sha256": "680f5401187f06ab002098e1fb27c608c75c88d92d6a234cd81b88b844869b4c",
+      "bytes": 823
+    },
+    "copy": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/tools/common.py",
+      "sha256": "680f5401187f06ab002098e1fb27c608c75c88d92d6a234cd81b88b844869b4c",
+      "bytes": 823
+    }
+  },
+  {
+    "source": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-measurement-2026-09-15/tools/run_trial.py",
+      "sha256": "3cff479bc01317e1ebe610a852f68d11e5ab73033a2a96f7925457913cc46817",
+      "bytes": 10667
+    },
+    "copy": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/tools/run_trial.py",
+      "sha256": "3cff479bc01317e1ebe610a852f68d11e5ab73033a2a96f7925457913cc46817",
+      "bytes": 10667
+    }
+  },
+  {
+    "source": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-measurement-2026-09-15/tools/storage_observation.py",
+      "sha256": "9af5afe18cfdd97867370a653568c54e32feb93bfa51bfa2a8ccf3b015a37fc2",
+      "bytes": 3828
+    },
+    "copy": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/tools/storage_observation.py",
+      "sha256": "9af5afe18cfdd97867370a653568c54e32feb93bfa51bfa2a8ccf3b015a37fc2",
+      "bytes": 3828
+    }
+  },
+  {
+    "source": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-measurement-2026-09-15/tools/storage_observation_test.py",
+      "sha256": "400aec58fbd8316a2b4f64a82efe787acd49571165f736f8af3678685b6bac6b",
+      "bytes": 3220
+    },
+    "copy": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/tools/storage_observation_test.py",
+      "sha256": "400aec58fbd8316a2b4f64a82efe787acd49571165f736f8af3678685b6bac6b",
+      "bytes": 3220
+    }
+  }
+]

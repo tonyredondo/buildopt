@@ -1,0 +1,18 @@
+{
+  "schema": "buildopt.history-replay/record/v2",
+  "manifest": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/manifest.json",
+    "sha256": "ca0cdc551e42d0c736a6fcdde8202bd2d68126443755705bbce7155d67dffc20"
+  },
+  "commonGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/eic-native-v1/repos/elasticsearch.git",
+  "driver": {
+    "pid": 2696684,
+    "startTicks": 38709349,
+    "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/paseo.service",
+    "command": [
+      "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/history-replay-disk",
+      "run",
+      "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/manifest.json"
+    ]
+  }
+}

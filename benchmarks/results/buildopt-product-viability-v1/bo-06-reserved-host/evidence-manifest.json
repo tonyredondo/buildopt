@@ -1,0 +1,774 @@
+{
+  "schema": "buildopt.reserved-host/evidence/v1",
+  "decision": "INCOMPLETE_CONTROL_QUIET_TIMEOUT",
+  "originalRoot": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16",
+  "files": [
+    {
+      "export": "inputs/allocation-frozen.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/inputs/allocation-frozen.json",
+        "sha256": "b3a51ba25d987b8478b12f257f572d5ad48a56f6b48a872bab313ef00ab6bacf"
+      },
+      "sha256": "b3a51ba25d987b8478b12f257f572d5ad48a56f6b48a872bab313ef00ab6bacf",
+      "bytes": 628
+    },
+    {
+      "export": "inputs/closed-allocation.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/inputs/closed-allocation.json",
+        "sha256": "ebac8ad2ff5d7b9e34c0bd2a94593b0479818ee86bcf495c932cb7e3f24f4069"
+      },
+      "sha256": "ebac8ad2ff5d7b9e34c0bd2a94593b0479818ee86bcf495c932cb7e3f24f4069",
+      "bytes": 797
+    },
+    {
+      "export": "inputs/control-freeze.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/inputs/control-freeze.json",
+        "sha256": "8eb6bf24d67dafc134f3c577f82c0fd44b39e18e8892a7bd4eeef230909debd5"
+      },
+      "sha256": "8eb6bf24d67dafc134f3c577f82c0fd44b39e18e8892a7bd4eeef230909debd5",
+      "bytes": 5113
+    },
+    {
+      "export": "inputs/copied-scripts.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/inputs/copied-scripts.json",
+        "sha256": "d9ea86d019a499850749d9a3af5311cf8fe2d12fa2f5ea2a3620b331facec58a"
+      },
+      "sha256": "d9ea86d019a499850749d9a3af5311cf8fe2d12fa2f5ea2a3620b331facec58a",
+      "bytes": 5288
+    },
+    {
+      "export": "inputs/environment-decision.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/inputs/environment-decision.json",
+        "sha256": "de2784bfd0531354ea5a15251427281f6a4d6d878741667e0fa897eca8141d4f"
+      },
+      "sha256": "de2784bfd0531354ea5a15251427281f6a4d6d878741667e0fa897eca8141d4f",
+      "bytes": 1239
+    },
+    {
+      "export": "inputs/sampler-copy-proof.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/inputs/sampler-copy-proof.json",
+        "sha256": "c5a8faa1f2fdd29b84b8b36d1635d1fcec79952f7702531d35ba132e7091e923"
+      },
+      "sha256": "c5a8faa1f2fdd29b84b8b36d1635d1fcec79952f7702531d35ba132e7091e923",
+      "bytes": 1655
+    },
+    {
+      "export": "receipts/allocation-closeout.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/receipts/allocation-closeout.json",
+        "sha256": "bdc38cea325abea3f1cc87a03a3391034f23dd7abdecacf828cc8d73063b673f"
+      },
+      "sha256": "bdc38cea325abea3f1cc87a03a3391034f23dd7abdecacf828cc8d73063b673f",
+      "bytes": 1902
+    },
+    {
+      "export": "receipts/control-end.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/receipts/control-end.json",
+        "sha256": "eada092d805271554ec1cf6cfd8fdc0faf8018425717f272fc2ca8d74d01c084"
+      },
+      "sha256": "eada092d805271554ec1cf6cfd8fdc0faf8018425717f272fc2ca8d74d01c084",
+      "bytes": 2244
+    },
+    {
+      "export": "receipts/control-readiness.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/receipts/control-readiness.json",
+        "sha256": "f61f398f2eac23f411cade335662a1a14ee15be9c170c85a71364d5a2b1d6b5c"
+      },
+      "sha256": "f61f398f2eac23f411cade335662a1a14ee15be9c170c85a71364d5a2b1d6b5c",
+      "bytes": 441
+    },
+    {
+      "export": "receipts/control-start.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/receipts/control-start.json",
+        "sha256": "88946bfe77ce75374acb1fad509fbc4fefc14c16eb6beffda8a6685b014a1de3"
+      },
+      "sha256": "88946bfe77ce75374acb1fad509fbc4fefc14c16eb6beffda8a6685b014a1de3",
+      "bytes": 621
+    },
+    {
+      "export": "receipts/control-validation.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/receipts/control-validation.json",
+        "sha256": "1c9940e38dbf4246b794ab1cd5031ba40fb798df7b191c77791f3d67dc6640da"
+      },
+      "sha256": "1c9940e38dbf4246b794ab1cd5031ba40fb798df7b191c77791f3d67dc6640da",
+      "bytes": 745
+    },
+    {
+      "export": "receipts/pipeline-control-preparation.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/receipts/pipeline-control-preparation.json",
+        "sha256": "f8215455b63fc7881a4eec70e9dd9d6cb9fdf3ae62112bd96f8df738bcae5a88"
+      },
+      "sha256": "f8215455b63fc7881a4eec70e9dd9d6cb9fdf3ae62112bd96f8df738bcae5a88",
+      "bytes": 461
+    },
+    {
+      "export": "receipts/pipeline-control-run.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/receipts/pipeline-control-run.json",
+        "sha256": "92dae9697d35f83ace21fb027966d685525e43209f0d1bd4ce6ec281d7045465"
+      },
+      "sha256": "92dae9697d35f83ace21fb027966d685525e43209f0d1bd4ce6ec281d7045465",
+      "bytes": 455
+    },
+    {
+      "export": "receipts/pipeline-failure.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/receipts/pipeline-failure.json",
+        "sha256": "91bf1956c167ea05ac9668ab6c926a0fefbd02c341faa134a335ca8f09935b8a"
+      },
+      "sha256": "91bf1956c167ea05ac9668ab6c926a0fefbd02c341faa134a335ca8f09935b8a",
+      "bytes": 1113
+    },
+    {
+      "export": "receipts/pipeline-start.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/receipts/pipeline-start.json",
+        "sha256": "7089f22ca5d0d9a4474b7309bc6966ebce0a502270c8c5dca628cdf757dc1e4d"
+      },
+      "sha256": "7089f22ca5d0d9a4474b7309bc6966ebce0a502270c8c5dca628cdf757dc1e4d",
+      "bytes": 440
+    },
+    {
+      "export": "receipts/state-saved.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/receipts/state-saved.json",
+        "sha256": "40c52667d904966c9d9e1ebb3c3ec5317bb734a98bd4041e8de638d269fa0f24"
+      },
+      "sha256": "40c52667d904966c9d9e1ebb3c3ec5317bb734a98bd4041e8de638d269fa0f24",
+      "bytes": 930
+    },
+    {
+      "export": "receipts/system-indexer-observation.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/receipts/system-indexer-observation.json",
+        "sha256": "2bcc609d1fe9e933d29739eb7464992c51cd2169898972799543abb18a59f858"
+      },
+      "sha256": "2bcc609d1fe9e933d29739eb7464992c51cd2169898972799543abb18a59f858",
+      "bytes": 973
+    },
+    {
+      "export": "analysis/control-retained-summary.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/analysis/control-retained-summary.json",
+        "sha256": "6baa91c6577efedd88dd58344ab1a7732ae26a8e27b2de2f8488b29bc6dff649"
+      },
+      "sha256": "6baa91c6577efedd88dd58344ab1a7732ae26a8e27b2de2f8488b29bc6dff649",
+      "bytes": 46628
+    },
+    {
+      "export": "analysis/disk-observations.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/analysis/disk-observations.json",
+        "sha256": "33e7a6d9b989dbbb0b2fc36b17134602a253c86635eba37f97cb0973f81c49e9"
+      },
+      "sha256": "33e7a6d9b989dbbb0b2fc36b17134602a253c86635eba37f97cb0973f81c49e9",
+      "bytes": 621
+    },
+    {
+      "export": "analysis/refused-wait-observers.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/analysis/refused-wait-observers.json",
+        "sha256": "107c28276398547c61ce60f6f244d8c1ce093d93758b8c4214ecb7ff9b0896fc"
+      },
+      "sha256": "107c28276398547c61ce60f6f244d8c1ce093d93758b8c4214ecb7ff9b0896fc",
+      "bytes": 540
+    },
+    {
+      "export": "logs/control-runner.log",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/logs/control-runner.log",
+        "sha256": "9993a1745a973dd362a530034a3290351997708355c0826edc903362b44a58bc"
+      },
+      "sha256": "9993a1745a973dd362a530034a3290351997708355c0826edc903362b44a58bc",
+      "bytes": 2188
+    },
+    {
+      "export": "logs/pipeline-control-preparation.log",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/logs/pipeline-control-preparation.log",
+        "sha256": "24845495cd97edcaee98de810ecd63b3c66a1f9b558d750702485e33234f9b0e"
+      },
+      "sha256": "24845495cd97edcaee98de810ecd63b3c66a1f9b558d750702485e33234f9b0e",
+      "bytes": 82
+    },
+    {
+      "export": "logs/pipeline-control-run.log",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/logs/pipeline-control-run.log",
+        "sha256": "79505a3dbb00e9cbac1987ab209aac5a5b2ad90dd444179ded7c16d4d3654525"
+      },
+      "sha256": "79505a3dbb00e9cbac1987ab209aac5a5b2ad90dd444179ded7c16d4d3654525",
+      "bytes": 2022
+    },
+    {
+      "export": "tools/analyze_host.py",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/analyze_host.py",
+        "sha256": "435ce356e0233d4d2b2afd0219e037c1d2e9596bc3b5fbfbca8c8996f552c0f7"
+      },
+      "sha256": "435ce356e0233d4d2b2afd0219e037c1d2e9596bc3b5fbfbca8c8996f552c0f7",
+      "bytes": 6589
+    },
+    {
+      "export": "tools/analyze_trial_v4.py",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/analyze_trial_v4.py",
+        "sha256": "0a7e66ed73fde99489fca6bc5dad9777e1eb3612795c60c942549fdc3e220022"
+      },
+      "sha256": "0a7e66ed73fde99489fca6bc5dad9777e1eb3612795c60c942549fdc3e220022",
+      "bytes": 8007
+    },
+    {
+      "export": "tools/common.py",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/common.py",
+        "sha256": "a4019a1a2cfb170f7e2161f538586293c1be912722e49dab67b8b4be5142cab3"
+      },
+      "sha256": "a4019a1a2cfb170f7e2161f538586293c1be912722e49dab67b8b4be5142cab3",
+      "bytes": 816
+    },
+    {
+      "export": "tools/pipeline.py",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/pipeline.py",
+        "sha256": "3f08128f14ea2bb46adf859899ead8914436dbc6e891023f4a9e95c7ab79509a"
+      },
+      "sha256": "3f08128f14ea2bb46adf859899ead8914436dbc6e891023f4a9e95c7ab79509a",
+      "bytes": 2730
+    },
+    {
+      "export": "tools/prepare_trial.py",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/prepare_trial.py",
+        "sha256": "653dbe6649473ba9690c46b97a5e43605000ccf2f250da9bc3b50bde6e7e44d9"
+      },
+      "sha256": "653dbe6649473ba9690c46b97a5e43605000ccf2f250da9bc3b50bde6e7e44d9",
+      "bytes": 4164
+    },
+    {
+      "export": "tools/frozen-sampler/common.py",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/tools/common.py",
+        "sha256": "680f5401187f06ab002098e1fb27c608c75c88d92d6a234cd81b88b844869b4c"
+      },
+      "sha256": "680f5401187f06ab002098e1fb27c608c75c88d92d6a234cd81b88b844869b4c",
+      "bytes": 823
+    },
+    {
+      "export": "tools/frozen-sampler/run_trial.py",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/tools/run_trial.py",
+        "sha256": "3cff479bc01317e1ebe610a852f68d11e5ab73033a2a96f7925457913cc46817"
+      },
+      "sha256": "3cff479bc01317e1ebe610a852f68d11e5ab73033a2a96f7925457913cc46817",
+      "bytes": 10667
+    },
+    {
+      "export": "tools/frozen-sampler/storage_observation.py",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/tools/storage_observation.py",
+        "sha256": "9af5afe18cfdd97867370a653568c54e32feb93bfa51bfa2a8ccf3b015a37fc2"
+      },
+      "sha256": "9af5afe18cfdd97867370a653568c54e32feb93bfa51bfa2a8ccf3b015a37fc2",
+      "bytes": 3828
+    },
+    {
+      "export": "tools/frozen-sampler/storage_observation_test.py",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/tools/storage_observation_test.py",
+        "sha256": "400aec58fbd8316a2b4f64a82efe787acd49571165f736f8af3678685b6bac6b"
+      },
+      "sha256": "400aec58fbd8316a2b4f64a82efe787acd49571165f736f8af3678685b6bac6b",
+      "bytes": 3220
+    },
+    {
+      "export": "tools/reporting/closeout.py",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/reporting/closeout.py",
+        "sha256": "1d3f021c2aa5fd228d30bb0e833be3e8956b42a8ce70ee3cb24740b7a29da87d"
+      },
+      "sha256": "1d3f021c2aa5fd228d30bb0e833be3e8956b42a8ce70ee3cb24740b7a29da87d",
+      "bytes": 8876
+    },
+    {
+      "export": "tools/reporting/disk-observations.py",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/reporting/disk-observations.py",
+        "sha256": "4d305374c736e61fa0ef12cbc156f117285c92e1918461cac6c64e970d8057ba"
+      },
+      "sha256": "4d305374c736e61fa0ef12cbc156f117285c92e1918461cac6c64e970d8057ba",
+      "bytes": 2971
+    },
+    {
+      "export": "tools/reporting/export.py",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/reporting/export.py",
+        "sha256": "cc391a5e202a5d652473610c1a91317f0e2f1508c368fed9359c42964eda59b8"
+      },
+      "sha256": "cc391a5e202a5d652473610c1a91317f0e2f1508c368fed9359c42964eda59b8",
+      "bytes": 4768
+    },
+    {
+      "export": "profiles/control/manifest.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/manifest.json",
+        "sha256": "3089f190f946190fb14c3ac088a50b5a12d81805501f152dd17c447cff591642"
+      },
+      "sha256": "3089f190f946190fb14c3ac088a50b5a12d81805501f152dd17c447cff591642",
+      "bytes": 17314
+    },
+    {
+      "export": "profiles/control/worktree-identities.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/worktree-identities.json",
+        "sha256": "af924b989f0d85c4248ca104e348768b5423651be2f4709342f585175018cbcc"
+      },
+      "sha256": "af924b989f0d85c4248ca104e348768b5423651be2f4709342f585175018cbcc",
+      "bytes": 1393
+    },
+    {
+      "export": "profiles/control/run/manifest.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/manifest.json",
+        "sha256": "ca0cdc551e42d0c736a6fcdde8202bd2d68126443755705bbce7155d67dffc20"
+      },
+      "sha256": "ca0cdc551e42d0c736a6fcdde8202bd2d68126443755705bbce7155d67dffc20",
+      "bytes": 17314
+    },
+    {
+      "export": "profiles/control/run/result.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/result.json",
+        "sha256": "2ca65ff47dd9afa66936610910509f69b2812d184d221c21526a600ed2f21b20"
+      },
+      "sha256": "2ca65ff47dd9afa66936610910509f69b2812d184d221c21526a600ed2f21b20",
+      "bytes": 3000
+    },
+    {
+      "export": "profiles/control/run/run-start.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/run-start.json",
+        "sha256": "3c9c916857125250c31b285646d63e605ce8cf6a8c8a2d0c50364dd9a2ca1647"
+      },
+      "sha256": "3c9c916857125250c31b285646d63e605ce8cf6a8c8a2d0c50364dd9a2ca1647",
+      "bytes": 121
+    },
+    {
+      "export": "profiles/control/run/ownership.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/ownership.json",
+        "sha256": "4761b4e6edce84358ba2acb8458788f0d3d87560c74db8913dbb3118d46574ac"
+      },
+      "sha256": "4761b4e6edce84358ba2acb8458788f0d3d87560c74db8913dbb3118d46574ac",
+      "bytes": 963
+    },
+    {
+      "export": "profiles/control/run/costs/r1-000-g0-N-containment.end.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/costs/r1-000-g0-N-containment.end.json",
+        "sha256": "9b53aed11bc2100055de000927e90b18ca45fec30f38b90b727169ba4f0c61d6"
+      },
+      "sha256": "9b53aed11bc2100055de000927e90b18ca45fec30f38b90b727169ba4f0c61d6",
+      "bytes": 121
+    },
+    {
+      "export": "profiles/control/run/costs/r1-000-g0-N-containment.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/costs/r1-000-g0-N-containment.json",
+        "sha256": "f9f924bce4c298f29c8d462e885938f1b006a24debb90ac641ff00d6b1fc7ade"
+      },
+      "sha256": "f9f924bce4c298f29c8d462e885938f1b006a24debb90ac641ff00d6b1fc7ade",
+      "bytes": 372
+    },
+    {
+      "export": "profiles/control/run/costs/r1-000-g0-N-containment.start.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/costs/r1-000-g0-N-containment.start.json",
+        "sha256": "54f36a74c441803d6cfdc8caaf7125eeb595d3e9a726510f77623a8c0e584084"
+      },
+      "sha256": "54f36a74c441803d6cfdc8caaf7125eeb595d3e9a726510f77623a8c0e584084",
+      "bytes": 583
+    },
+    {
+      "export": "profiles/control/run/costs/r1-000-g0-N-containment.work-start.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/costs/r1-000-g0-N-containment.work-start.json",
+        "sha256": "2f2af1d95c2ec8b145bfdb5f0e4683d297c17d5cb94eb642fbaf9010802c71bf"
+      },
+      "sha256": "2f2af1d95c2ec8b145bfdb5f0e4683d297c17d5cb94eb642fbaf9010802c71bf",
+      "bytes": 121
+    },
+    {
+      "export": "profiles/control/run/costs/r1-000-g0-N-preflight.end.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/costs/r1-000-g0-N-preflight.end.json",
+        "sha256": "821fa5d21c756b5ae378e2ea76322689126f85f82794bfb56a0086ec153b107d"
+      },
+      "sha256": "821fa5d21c756b5ae378e2ea76322689126f85f82794bfb56a0086ec153b107d",
+      "bytes": 121
+    },
+    {
+      "export": "profiles/control/run/costs/r1-000-g0-N-preflight.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/costs/r1-000-g0-N-preflight.json",
+        "sha256": "4061668463525ac3d86a2192af3a62f6e4a5502c113d3e38ec366982fbe0335e"
+      },
+      "sha256": "4061668463525ac3d86a2192af3a62f6e4a5502c113d3e38ec366982fbe0335e",
+      "bytes": 372
+    },
+    {
+      "export": "profiles/control/run/costs/r1-000-g0-N-preflight.start.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/costs/r1-000-g0-N-preflight.start.json",
+        "sha256": "7c63289e16d04e839a499dcd0607de038a1267262c4ca78605827c74fe610840"
+      },
+      "sha256": "7c63289e16d04e839a499dcd0607de038a1267262c4ca78605827c74fe610840",
+      "bytes": 580
+    },
+    {
+      "export": "profiles/control/run/costs/r1-000-g0-N-preflight.work-start.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/costs/r1-000-g0-N-preflight.work-start.json",
+        "sha256": "2ed9f5397de6155d3921a3d8c3550e2389f7ffde2be40dd2729efe196f1d74f5"
+      },
+      "sha256": "2ed9f5397de6155d3921a3d8c3550e2389f7ffde2be40dd2729efe196f1d74f5",
+      "bytes": 121
+    },
+    {
+      "export": "profiles/control/run/costs/r1-000-g0-N-quiet-start.end.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/costs/r1-000-g0-N-quiet-start.end.json",
+        "sha256": "ab9a64753170db83ecf9e8fbe88e4d2e94f205d690fb2449541cd2a463bf19d0"
+      },
+      "sha256": "ab9a64753170db83ecf9e8fbe88e4d2e94f205d690fb2449541cd2a463bf19d0",
+      "bytes": 121
+    },
+    {
+      "export": "profiles/control/run/costs/r1-000-g0-N-quiet-start.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/costs/r1-000-g0-N-quiet-start.json",
+        "sha256": "32bbc373826fa6f8e238f582c5a6134f555ab4f3e8ddc4295ea7fe01f6fad325"
+      },
+      "sha256": "32bbc373826fa6f8e238f582c5a6134f555ab4f3e8ddc4295ea7fe01f6fad325",
+      "bytes": 361
+    },
+    {
+      "export": "profiles/control/run/costs/r1-000-g0-N-quiet-start.start.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/costs/r1-000-g0-N-quiet-start.start.json",
+        "sha256": "32374162a142ef4608f4b7ace4c3b17336b8692659d6d4e60d842a98b9ca6e1b"
+      },
+      "sha256": "32374162a142ef4608f4b7ace4c3b17336b8692659d6d4e60d842a98b9ca6e1b",
+      "bytes": 569
+    },
+    {
+      "export": "profiles/control/run/costs/r1-000-g0-N-quiet-start.work-start.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/costs/r1-000-g0-N-quiet-start.work-start.json",
+        "sha256": "c8bdb9979b37141cc1df120aa4f7807ca6ba1bf1431ba4ad3f014428a0f0eb22"
+      },
+      "sha256": "c8bdb9979b37141cc1df120aa4f7807ca6ba1bf1431ba4ad3f014428a0f0eb22",
+      "bytes": 121
+    },
+    {
+      "export": "profiles/control/run/costs/r1-I-acquisition.end.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/costs/r1-I-acquisition.end.json",
+        "sha256": "22b00cb582d92bcdc898feee92d43aab6347aa376bf1ad48027a5677ba0251a7"
+      },
+      "sha256": "22b00cb582d92bcdc898feee92d43aab6347aa376bf1ad48027a5677ba0251a7",
+      "bytes": 121
+    },
+    {
+      "export": "profiles/control/run/costs/r1-I-acquisition.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/costs/r1-I-acquisition.json",
+        "sha256": "611214db21c6332eca3a358085435de21f986562272748e883e4803e4f2e79fc"
+      },
+      "sha256": "611214db21c6332eca3a358085435de21f986562272748e883e4803e4f2e79fc",
+      "bytes": 356
+    },
+    {
+      "export": "profiles/control/run/costs/r1-I-acquisition.start.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/costs/r1-I-acquisition.start.json",
+        "sha256": "29b26b4108b1ed651984353e3c811f59fecec8c0cdb37d1c8bf00baab174c45f"
+      },
+      "sha256": "29b26b4108b1ed651984353e3c811f59fecec8c0cdb37d1c8bf00baab174c45f",
+      "bytes": 564
+    },
+    {
+      "export": "profiles/control/run/costs/r1-I-acquisition.work-start.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/costs/r1-I-acquisition.work-start.json",
+        "sha256": "46690467bc72251e3cf72e84d4425844a02d51fe6988bc939cdadfb096edb44b"
+      },
+      "sha256": "46690467bc72251e3cf72e84d4425844a02d51fe6988bc939cdadfb096edb44b",
+      "bytes": 121
+    },
+    {
+      "export": "profiles/control/run/costs/r1-N-acquisition.end.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/costs/r1-N-acquisition.end.json",
+        "sha256": "cc00d9c4aa2314dad446b806851c9369cc5a8781aebce8a5b6a348848c4274eb"
+      },
+      "sha256": "cc00d9c4aa2314dad446b806851c9369cc5a8781aebce8a5b6a348848c4274eb",
+      "bytes": 121
+    },
+    {
+      "export": "profiles/control/run/costs/r1-N-acquisition.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/costs/r1-N-acquisition.json",
+        "sha256": "265500f864d5b3e1c7bcf4d6ccd55892a80c883da24ed9ac67cc1cb6ece260a0"
+      },
+      "sha256": "265500f864d5b3e1c7bcf4d6ccd55892a80c883da24ed9ac67cc1cb6ece260a0",
+      "bytes": 356
+    },
+    {
+      "export": "profiles/control/run/costs/r1-N-acquisition.start.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/costs/r1-N-acquisition.start.json",
+        "sha256": "b6b92f2e5b6984dbb42698ec6e5d0fb640bc64255726fdab37ac02a0f9a1bb7e"
+      },
+      "sha256": "b6b92f2e5b6984dbb42698ec6e5d0fb640bc64255726fdab37ac02a0f9a1bb7e",
+      "bytes": 564
+    },
+    {
+      "export": "profiles/control/run/costs/r1-N-acquisition.work-start.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/costs/r1-N-acquisition.work-start.json",
+        "sha256": "5232b2fa269a48d627bc734e8a64fe99970217055a3f1e50a25b29be7cf669da"
+      },
+      "sha256": "5232b2fa269a48d627bc734e8a64fe99970217055a3f1e50a25b29be7cf669da",
+      "bytes": 121
+    },
+    {
+      "export": "profiles/control/run/results/0001.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/results/0001.json",
+        "sha256": "2ca65ff47dd9afa66936610910509f69b2812d184d221c21526a600ed2f21b20"
+      },
+      "sha256": "2ca65ff47dd9afa66936610910509f69b2812d184d221c21526a600ed2f21b20",
+      "bytes": 3000
+    },
+    {
+      "export": "profiles/control/run/recorder-resources/r1-000-g0-N-containment.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/recorder-resources/r1-000-g0-N-containment.json",
+        "sha256": "4242a7175a17fbda1ee7ea614d7ad2d3ce7edafc997798af1a7929da61e24379"
+      },
+      "sha256": "4242a7175a17fbda1ee7ea614d7ad2d3ce7edafc997798af1a7929da61e24379",
+      "bytes": 1412
+    },
+    {
+      "export": "profiles/control/run/recorder-resources/r1-000-g0-N-preflight.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/recorder-resources/r1-000-g0-N-preflight.json",
+        "sha256": "3dd3aed8967a5f1877d9c047586391f1204586ed24b1df77b9f70ddc4084d371"
+      },
+      "sha256": "3dd3aed8967a5f1877d9c047586391f1204586ed24b1df77b9f70ddc4084d371",
+      "bytes": 1410
+    },
+    {
+      "export": "profiles/control/run/recorder-resources/r1-000-g0-N-quiet-start.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/recorder-resources/r1-000-g0-N-quiet-start.json",
+        "sha256": "9d7a6d2f85047a304ea91de6aad82513998d9c641997dae1fd41b9e5cfb1aa20"
+      },
+      "sha256": "9d7a6d2f85047a304ea91de6aad82513998d9c641997dae1fd41b9e5cfb1aa20",
+      "bytes": 1411
+    },
+    {
+      "export": "profiles/control/run/recorder-resources/r1-I-acquisition.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/recorder-resources/r1-I-acquisition.json",
+        "sha256": "8f182af61f2ca80c1bcebcc5737335cf11437358ee76e70d5ac0ea3be249ed5a"
+      },
+      "sha256": "8f182af61f2ca80c1bcebcc5737335cf11437358ee76e70d5ac0ea3be249ed5a",
+      "bytes": 1399
+    },
+    {
+      "export": "profiles/control/run/recorder-resources/r1-N-acquisition.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/recorder-resources/r1-N-acquisition.json",
+        "sha256": "a0e7fe8dc5c5f9a1a1ff6d7ee78bd1e0957d52b479694ddc30c69a8d8cd925ab"
+      },
+      "sha256": "a0e7fe8dc5c5f9a1a1ff6d7ee78bd1e0957d52b479694ddc30c69a8d8cd925ab",
+      "bytes": 1374
+    },
+    {
+      "export": "profiles/control/run/lifecycle/r1-end-0001.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/lifecycle/r1-end-0001.json",
+        "sha256": "678826bbe3c497f64f8cdca25e713703f763c2515b466762550d4a0aa540195c"
+      },
+      "sha256": "678826bbe3c497f64f8cdca25e713703f763c2515b466762550d4a0aa540195c",
+      "bytes": 331
+    },
+    {
+      "export": "profiles/control/run/lifecycle/r1-start.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/lifecycle/r1-start.json",
+        "sha256": "d5bdb03713b36b2cf62b1f6a237f89e7fe971d330dd02071228f044ac17c46cb"
+      },
+      "sha256": "d5bdb03713b36b2cf62b1f6a237f89e7fe971d330dd02071228f044ac17c46cb",
+      "bytes": 121
+    },
+    {
+      "export": "profiles/control/run/sessions/r1-000-g0-N/worker-config.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/sessions/r1-000-g0-N/worker-config.json",
+        "sha256": "b149074a409b0dc7c1617d6cdf9daae62c116081b932c4c56f52cdee74702171"
+      },
+      "sha256": "b149074a409b0dc7c1617d6cdf9daae62c116081b932c4c56f52cdee74702171",
+      "bytes": 2122
+    },
+    {
+      "export": "profiles/control/run/sessions/r1-000-g0-N/closed.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/sessions/r1-000-g0-N/closed.json",
+        "sha256": "28b58c20fb8eb8198aa4f04a66acdb61af42e05cddf323f9a74349965a8f3d8d"
+      },
+      "sha256": "28b58c20fb8eb8198aa4f04a66acdb61af42e05cddf323f9a74349965a8f3d8d",
+      "bytes": 389
+    },
+    {
+      "export": "profiles/control/run/attempts/r1-000-g0-N/start.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/attempts/r1-000-g0-N/start.json",
+        "sha256": "c822f8e7985509caf5f1a6c72e133763b5bc57030c8898af9df25b3bf0ec521d"
+      },
+      "sha256": "c822f8e7985509caf5f1a6c72e133763b5bc57030c8898af9df25b3bf0ec521d",
+      "bytes": 3073
+    },
+    {
+      "export": "profiles/control/run/attempts/r1-000-g0-N/quiet-start.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/attempts/r1-000-g0-N/quiet-start.json",
+        "sha256": "cfed20266f4814d1edd841a900e9b38aaa6fe91b11929a8867dba0d0541bba30"
+      },
+      "sha256": "cfed20266f4814d1edd841a900e9b38aaa6fe91b11929a8867dba0d0541bba30",
+      "bytes": 80713
+    },
+    {
+      "export": "profiles/control/process-samples.jsonl.gz",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/process-samples.jsonl",
+        "sha256": "9570964fe14f5de0a373417585a401fa648423352d55aa5c6def6a9e36e1b109"
+      },
+      "sha256": "c38acbd34b17d54a63cd4bd50a49383a400e9b4fb6f0fb55bb6d69877c2f3b11",
+      "bytes": 876644,
+      "compression": "gzip"
+    },
+    {
+      "export": "inputs/quiet-start-policy.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/inputs/quiet-start-policy.json",
+        "sha256": "1c1d2080051f44929de62b0e0447fa1ccd63e490f8762c5c6619b33c5e2d22bb"
+      },
+      "sha256": "1c1d2080051f44929de62b0e0447fa1ccd63e490f8762c5c6619b33c5e2d22bb",
+      "bytes": 263
+    },
+    {
+      "export": "inputs/measured-owner-policy.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/qualified-owner-policy.json",
+        "sha256": "2e60df8b397fa85a947ff85bca0c3efb8d40815a7f8089315cb68315db176924"
+      },
+      "sha256": "2e60df8b397fa85a947ff85bca0c3efb8d40815a7f8089315cb68315db176924",
+      "bytes": 125634
+    },
+    {
+      "export": "inputs/measured-owner-compare.py",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bv006-checkstyle-finalization/inputs/owner-replay-source/owner_compare.py",
+        "sha256": "fa7b1133cb29458fe7cb0d2e4b0d744d04396969f86423b0e8dcd1d74fccd5d9"
+      },
+      "sha256": "fa7b1133cb29458fe7cb0d2e4b0d744d04396969f86423b0e8dcd1d74fccd5d9",
+      "bytes": 19936
+    },
+    {
+      "export": "inputs/owner-qualification.json",
+      "original": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/owner-qualification.json",
+        "sha256": "faf1f33d618b99ac47b3e585e0b30460c176895e0acacb7b50d0e20bbf967add"
+      },
+      "sha256": "faf1f33d618b99ac47b3e585e0b30460c176895e0acacb7b50d0e20bbf967add",
+      "bytes": 3191
+    },
+    {
+      "export": "runner-source.tar.gz",
+      "sha256": "0774e668fc6ebb1dc42c4f3cde6bf21cc8dfc03ea5d03c31949adf0b21d2da10",
+      "bytes": 122668
+    },
+    {
+      "export": "source-archive-members.json",
+      "sha256": "8375b75b54e541fad47654801fb60dd5b0cd5a6a72f7a164a5eb534ac78a806a",
+      "bytes": 10184
+    },
+    {
+      "export": "README.md",
+      "sha256": "41bcdc575200e183d39e94a91b5a6d322f9ab4d68f576befdffadffdaeaeaa13",
+      "bytes": 5092
+    },
+    {
+      "export": "validation/audit-cases.json",
+      "sha256": "d804e7a4916fc54963811141b656ac4c33502fd0b101e616c50f8f1292f85411",
+      "bytes": 1758
+    },
+    {
+      "export": "verify-evidence.py",
+      "sha256": "bbc4deb542a5084d17c19cb853a294d74ac70db852541fe765b3d6a5a25155d5",
+      "bytes": 9401
+    }
+  ],
+  "missingAttemptFiles": [
+    {
+      "path": "profiles/control/run/attempts/r1-000-g0-N/end.json",
+      "reason": "Quiet-start refusal before native launch"
+    },
+    {
+      "path": "profiles/control/run/attempts/r1-000-g0-N/native-start.json",
+      "reason": "Quiet-start refusal before native launch"
+    },
+    {
+      "path": "profiles/control/run/attempts/r1-000-g0-N/native-pid.json",
+      "reason": "Quiet-start refusal before native launch"
+    },
+    {
+      "path": "profiles/control/run/attempts/r1-000-g0-N/native-finish.json",
+      "reason": "Quiet-start refusal before native launch"
+    },
+    {
+      "path": "profiles/control/run/attempts/r1-000-g0-N/stdout.log",
+      "reason": "Quiet-start refusal before native launch"
+    },
+    {
+      "path": "profiles/control/run/attempts/r1-000-g0-N/stderr.log",
+      "reason": "Quiet-start refusal before native launch"
+    },
+    {
+      "path": "profiles/control/run/attempts/r1-000-g0-N/supervisor-cpu.json",
+      "reason": "Quiet-start refusal before native launch"
+    },
+    {
+      "path": "profiles/control/run/attempts/r1-000-g0-N/disk-observer.json",
+      "reason": "Quiet-start refusal before native launch"
+    },
+    {
+      "path": "profiles/control/run/attempts/r1-000-g0-N/graph.jsonl",
+      "reason": "Quiet-start refusal before native launch"
+    }
+  ],
+  "omitted": "Complete output trees, inventories, caches and candidate state remain local. The portable audit checks exported records, bindings and arithmetic; replaying all output comparisons needs those retained inputs and consumes additional comparator starts."
+}

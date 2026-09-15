@@ -1,0 +1,6 @@
+{
+  "type": "RuntimeError",
+  "message": "control-run failed; retained /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/logs/pipeline-control-run.log",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/pipeline.py\", line 23, in <module>\n    stage(label+'-run','tools/run_trial.py',label)\n    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/pipeline.py\", line 16, in stage\n    if code:raise RuntimeError(name+' failed; retained '+str(log))\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: control-run failed; retained /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/logs/pipeline-control-run.log\n",
+  "atUTC": "2026-09-15T22:41:39.024158+00:00"
+}

@@ -139,7 +139,7 @@ the outcome may be negative. Advance only on the outcome required below.
 | BO-03 | Estimate realistic whole-build opportunity per candidate | BO-01; measurement readiness before fresh timing | verified; [five candidate assessments](../../benchmarks/results/buildopt-product-viability-v1/bo-03-opportunity-assessment/README.md); only Checkstyle warrants the planned short screen after readiness checks; missing workflow evidence remains unqualified |
 | BO-04 | Admit or reject a focused Build Impact hypothesis | BO-01 and existing evidence review | verified; [no new trial admitted](../../benchmarks/results/buildopt-product-viability-v1/bo-04-build-impact-review/README.md); original savings retained |
 | BO-05 | Select a candidate through short comparisons | BO-02 as applicable, BO-03, early BO-06 correctness, and BO-04 for Build Impact | verified; [both fresh sequences passed](../../benchmarks/results/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay/README.md), saving 34.14% and 28.17%; the interrupted attempt remains separate |
-| BO-06 | Qualify correctness and freeze the implementation and protocol | Admitted opportunity; screen integration proof before BO-05, final freeze afterward | partial; [new control stopped before its second build](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-disk-measurement/README.md); one build passed, seven unrun, no pairs or comparisons; the 42-build sequence did not start; allocation closed; next is a separate measurement-method decision |
+| BO-06 | Qualify correctness and freeze the implementation and protocol | Admitted opportunity; screen integration proof before BO-05, final freeze afterward | partial; the [reserved-workstation repeat](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-reserved-host/README.md) stopped before its first build; persistent disk pressure, zero comparisons, development unrun; allocation closed; establish quiet measurement conditions before another timing decision |
 | BO-07 | Establish sustained saving in the first repository | BO-05 and complete BO-06 | deferred |
 | BO-08 | Test the same mechanism on two other repositories | BO-07 positive | deferred |
 | BO-09 | Deliver and measure an MVP with manual controls | BO-08 positive | deferred |
@@ -583,6 +583,38 @@ environment or observation policy, using the retained data and accounting for
 recording costs. Do not resume this allocation, weaken its criteria, alter the
 candidate or start BO-07. BO-06 remains partial. Current task record:
 `.tools/state/buildopt-product-viability-v1/bo-06-disk-measurement-2026-09-15/task-state.json`.
+
+**Reserved-workstation repeat authorized, 2026-09-16:** the owner offered to
+reserve the workstation, then confirmed it was free. This supplies the separate
+environment decision required by the previous stop. It does not establish the
+cause of the earlier disk-pressure bursts or remove work done by the recorder.
+
+One fresh allocation repeats the eight-build control with the same frozen
+runner, sampler, comparator, candidate, output capture and admission rules.
+Only a passing control admits the complete 42-build development sequence.
+The 50-build, 50-comparator, ten-hour and 80-GiB limits include preparation and
+waiting; there are no retries or protected changes. Ordinary system activity
+remains possible, so the existing quiet-start rule still applies. Another
+interruption closes this allocation and must be investigated from its retained
+evidence before another timing decision. Previous results remain unchanged.
+Task record:
+`.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/task-state.json`.
+
+**Reserved-workstation result, 2026-09-16:** the
+[separate attempt](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-reserved-host/README.md)
+refused its first launch after the unchanged three-minute wait. Disk pressure
+exceeded the threshold in all 179 intervals, averaging 62.38%; CPU pressure
+averaged 0.19%. No project build or comparator JVM ran. All eight control builds
+and the conditional 42-build sequence remain unrun, with no saving claimed.
+
+A system file indexer remained active during preparation, but its contribution
+is unproven. The runner did little work during the refused wait; pending writes
+from preparation and other host storage activity remain possible. Native
+supervision and post-build capture never ran. The worker session and controllers
+closed, and the raw unknown reservation remains preserved. The next step is a
+separate host-only observation with the recorder stopped and indexer finished,
+then a measurement decision. No automatic control retry, weaker threshold,
+BO-07 or protected replay follows. BO-06 remains partial.
 
 ### BO-07: Measure sustained saving on the first repository
 

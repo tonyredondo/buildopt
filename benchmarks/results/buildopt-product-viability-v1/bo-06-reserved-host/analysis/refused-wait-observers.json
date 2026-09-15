@@ -1,0 +1,17 @@
+{
+  "scope": "Observed runner and sampler counters within the refused wait; excludes boundary fractions and does not identify host disk ownership.",
+  "samples": 180,
+  "coveredSeconds": 179.450368816,
+  "runnerCPUSeconds": 0.05,
+  "runnerIOBytes": {
+    "read_bytes": 0,
+    "write_bytes": 0,
+    "rchar": 105968,
+    "wchar": 0
+  },
+  "samplerCPUSeconds": 0.300887188,
+  "firstObservationBootNS": 388382846018241,
+  "lastObservationBootNS": 388562296387057,
+  "preparationCanLeavePendingWrites": true,
+  "causalAttribution": "unproven"
+}

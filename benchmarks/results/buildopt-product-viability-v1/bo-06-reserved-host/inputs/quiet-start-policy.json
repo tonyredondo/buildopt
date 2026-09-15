@@ -1,0 +1,10 @@
+{
+  "schema": "buildopt.quiet-start/policy/v1",
+  "windowNS": 30000000000,
+  "sampleNS": 1000000000,
+  "maximumGapNS": 3000000000,
+  "maximumReadNS": 100000000,
+  "maximumPressurePPM": 100000,
+  "maximumWaitNS": 180000000000,
+  "maximumLaunchAgeNS": 1000000000
+}

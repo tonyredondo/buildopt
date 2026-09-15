@@ -1,0 +1,40 @@
+{
+  "schema": "buildopt.history-replay/record/v2",
+  "manifest": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/manifest.json",
+    "sha256": "ca0cdc551e42d0c736a6fcdde8202bd2d68126443755705bbce7155d67dffc20"
+  },
+  "executable": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/history-replay-disk",
+    "sha256": "43c0cd8a8325c6b7abf9b4f217fd27683548c30bb4dffefe98472d878362f989"
+  },
+  "parent": {
+    "pid": 2696684,
+    "startTicks": 38709349,
+    "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/paseo.service",
+    "command": [
+      "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/history-replay-disk",
+      "run",
+      "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/manifest.json"
+    ]
+  },
+  "unit": "buildopt-replay-5dc9f073af206d2d-r1-N-1.service",
+  "socket": "@buildopt-replay-5dc9f073af206d2d-r1-N-1",
+  "armRoot": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/r1/N",
+  "evidenceRoot": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run/attempts",
+  "runRoot": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/run",
+  "policy": "REPLICATION",
+  "limits": {
+    "deadlineUTC": "2026-09-16T08:14:00+00:00",
+    "maxRequestNS": 900000000000,
+    "maxRunNS": 35822509698000,
+    "maxBytes": 84821762048,
+    "minimumFreeBytes": 42949672960,
+    "maxWorkflowStarts": 8,
+    "maxGradleStarts": 8,
+    "nestedReservePerRequest": 0,
+    "retryPairs": 0
+  },
+  "nativeAffinity": "0-7",
+  "observerAffinity": "8"
+}

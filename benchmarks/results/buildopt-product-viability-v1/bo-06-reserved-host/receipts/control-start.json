@@ -1,0 +1,15 @@
+{
+  "profile": "control",
+  "command": [
+    "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/history-replay-disk",
+    "run",
+    "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/profiles/control/manifest.json"
+  ],
+  "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+  "startUTC": "2026-09-15T22:17:02.485626+00:00",
+  "startBootNS": 387093498493146,
+  "gradleReserved": 8,
+  "helperJVMReserved": 8,
+  "pid": 2696684,
+  "procStartTicks": 38709349
+}

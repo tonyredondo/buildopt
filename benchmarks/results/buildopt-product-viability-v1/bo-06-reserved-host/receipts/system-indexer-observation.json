@@ -1,0 +1,21 @@
+{
+  "atUTC": "2026-09-15T22:37:58.091038+00:00",
+  "process": {
+    "pid": 2695349,
+    "comm": "updatedb",
+    "startTicks": 38698413,
+    "state": "D",
+    "cpuTicks": 746,
+    "io": {
+      "available": false,
+      "reason": "permission_denied"
+    }
+  },
+  "reason": "Follow-up of the indexer process already observed during entry readiness.",
+  "interpretation": "System indexer remains active despite owner reporting other work finished. A blocked process and host pressure do not establish its contribution or causality. No process or service was changed.",
+  "pressure": {
+    "cpu": "some avg10=0.13 avg60=0.09 avg300=0.21 total=1648224127\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+    "io": "some avg10=87.01 avg60=90.72 avg300=87.14 total=23334924426\nfull avg10=86.37 avg60=89.73 avg300=86.22 total=22824428251\n",
+    "memory": "some avg10=0.06 avg60=0.04 avg300=3.35 total=928118035\nfull avg10=0.06 avg60=0.04 avg300=3.35 total=916839867\n"
+  }
+}

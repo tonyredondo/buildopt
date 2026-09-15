@@ -186,13 +186,20 @@ comparison JVMs. The cold build triggered full-scan fallback and its supervisor
 used almost one core. The fixture saving did not persist through that build;
 incremental behavior remains unmeasured.
 
-A further timing attempt requires a separate environment or observation-policy
-decision under the existing stopping conditions. Prepare that proposal from
-retained evidence; do not repeat this allocation, relax its rule or start BO-07.
-BO-06 remains partial.
+The [reserved-workstation repeat](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-reserved-host/README.md)
+closed before its first build on 2026-09-16. All 179 observed intervals exceeded
+the disk-pressure threshold during the unchanged three-minute wait. No project
+build or comparator JVM ran; the development sequence remains unrun. A system
+file indexer was still active during preparation, but its contribution is
+unproven. The previous result remains unchanged and BO-06 remains partial.
+
+Before another timing decision, establish quiet host conditions with the
+recorder stopped and indexer finished, then assess whether preparation itself
+prevents a usable measurement window. No automatic retry or threshold change
+is admitted. BO-07 and protected validation remain deferred.
 
 Current task record:
-`.tools/state/buildopt-product-viability-v1/bo-06-disk-measurement-2026-09-15/task-state.json`.
+`.tools/state/buildopt-product-viability-v1/bo-06-reserved-host-2026-09-16/task-state.json`.
 Protected changes 21–100 remain deferred. Generic plan selection/reuse,
 adaptive fragments, runtime sweeps and another general cache remain retired.
 The user has authorized commit and push after each work block. Product viability
