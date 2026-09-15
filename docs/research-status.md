@@ -110,17 +110,30 @@ The [recording-pressure diagnosis](https://github.com/tonyredondo/buildopt/blob/
 found high disk and memory pressure before the slow build and roughly one core
 of supervisor CPU use during most builds. Bulk result copying follows native
 execution. Its possible effects on the next build remain unproven, as does the
-cause of the complete timing difference. A standalone quiet-start observer passed
-nine tests and one live observation; it is not integrated into the runner.
-Next, integrate and verify the pre-build condition, retain waiting costs, and
-measure the outer recorder separately before freezing inputs for another
-control. This diagnosis started no owner build or comparator JVM. A fresh
-passing control and complete development sequence remain prerequisites for
-the final BO-06 freeze.
-The earlier precision and process-observation failures remain unchanged.
-Any future result in this mode describes the recorded workflow; BO-09 still
+cause of the complete timing difference. That diagnosis launched no owner build
+or comparator JVM and left the utility separate from the runner.
+
+The [quiet-start integration](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-quiet-start-integration/README.md)
+is now verified. The final actual fixture pair, four refusal paths, independent
+missing-evidence checks, 34 unit tests and five compatibility groups passed.
+Waiting consumes the research allocation outside the measured request; the
+worker rejects stale or mismatched observations before launch. The outer
+recorder's CPU and I/O are now recorded separately. All 30 owned worker sessions
+closed. The block used 23 native fixture starts, including retained earlier
+attempts, with no Elasticsearch build, comparator JVM or protected source read.
+
+The new sources and policy are frozen with the qualified comparator. The control
+proposal passes full admission; development remains refused until a genuine
+passing control exists for this new identity. Next, activate a separate
+allocation for the eight-build control, followed by the complete 42-build
+development sequence only if it passes. Existing ceilings and stopping rules
+remain unchanged. No owner allocation was activated here. The disk guard's
+contribution to supervisor cost remains unproven and its checks are unchanged.
+A fresh passing control and complete development sequence remain prerequisites
+for the final BO-06 freeze. Earlier negative and incomplete results remain as
+recorded. Any result in this mode describes the recorded workflow; BO-09 still
 needs the ordinary-workflow comparison. Current task record:
-`.tools/state/buildopt-product-viability-v1/bo-06-recording-pressure-2026-09-15/task-state.json`.
+`.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/task-state.json`.
 BO-07 and protected changes 21–100 remain deferred. Generic plan selection/reuse,
 adaptive fragments, runtime sweeps and another general cache remain retired.
 The user has authorized commit and push after each work block. Product viability

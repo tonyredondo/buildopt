@@ -1,0 +1,30 @@
+=== RUN   TestQuietRunnerActualPair
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestQuietRunnerActualPair-1977807673
+    quiet_start_integration_test.go:76: N: 91.034s wait, 92 retained pressure samples
+    quiet_start_integration_test.go:76: I: 30.014s wait, 31 retained pressure samples
+=== RUN   TestQuietRunnerActualPair/missing-quiet-start.json
+=== RUN   TestQuietRunnerActualPair/missing-r1-000-g0-N-quiet-start.json
+=== RUN   TestQuietRunnerActualPair/missing-r1-000-g0-N-capture.json
+--- PASS: TestQuietRunnerActualPair (135.32s)
+    --- PASS: TestQuietRunnerActualPair/missing-quiet-start.json (0.02s)
+    --- PASS: TestQuietRunnerActualPair/missing-r1-000-g0-N-quiet-start.json (0.01s)
+    --- PASS: TestQuietRunnerActualPair/missing-r1-000-g0-N-capture.json (0.01s)
+=== RUN   TestQuietRunnerStopsWithoutNativeLaunch
+=== RUN   TestQuietRunnerStopsWithoutNativeLaunch/read-error
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestQuietRunnerStopsWithoutNativeLaunch-read-error-2674500332
+    quiet_start_integration_test.go:178: read-error retained: OBSERVATION_FAILED; zero native starts
+=== RUN   TestQuietRunnerStopsWithoutNativeLaunch/cancelled
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestQuietRunnerStopsWithoutNativeLaunch-cancelled-477171382
+    quiet_start_integration_test.go:178: cancelled retained: INTERRUPTED; zero native starts
+=== RUN   TestQuietRunnerStopsWithoutNativeLaunch/deadline
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestQuietRunnerStopsWithoutNativeLaunch-deadline-4234906163
+    quiet_start_integration_test.go:178: deadline retained: NOT_QUIET_TIMEOUT; zero native starts
+=== RUN   TestQuietRunnerStopsWithoutNativeLaunch/stale-at-launch
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestQuietRunnerStopsWithoutNativeLaunch-stale-at-launch-2500774057
+    quiet_start_integration_test.go:178: stale-at-launch retained: QUIET_START; zero native starts
+--- PASS: TestQuietRunnerStopsWithoutNativeLaunch (54.75s)
+    --- PASS: TestQuietRunnerStopsWithoutNativeLaunch/read-error (4.74s)
+    --- PASS: TestQuietRunnerStopsWithoutNativeLaunch/cancelled (4.49s)
+    --- PASS: TestQuietRunnerStopsWithoutNativeLaunch/deadline (9.11s)
+    --- PASS: TestQuietRunnerStopsWithoutNativeLaunch/stale-at-launch (36.40s)
+PASS

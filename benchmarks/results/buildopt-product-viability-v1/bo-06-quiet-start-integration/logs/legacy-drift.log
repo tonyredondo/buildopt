@@ -1,0 +1,7 @@
+=== RUN   TestDriftStopsBeforeNextChild
+=== RUN   TestDriftStopsBeforeNextChild/source
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestDriftStopsBeforeNextChild-source-2664170161
+    adversarial_integration_test.go:97: expected pre-child refusal: state changed outside its recorded request lineage
+--- PASS: TestDriftStopsBeforeNextChild (10.18s)
+    --- PASS: TestDriftStopsBeforeNextChild/source (10.18s)
+PASS

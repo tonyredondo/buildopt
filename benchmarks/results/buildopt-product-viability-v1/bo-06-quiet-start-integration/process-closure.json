@@ -1,0 +1,336 @@
+{
+  "atUTC": "2026-09-15T09:34:21.157741+00:00",
+  "status": "verified",
+  "sessions": [
+    {
+      "config": ".tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestDriftStopsBeforeNextChild-source-2664170161/run/sessions/r1-000-g0-I/worker-config.json",
+      "unit": "buildopt-replay-415d8a2d5c54bc61-r1-I-2.service",
+      "state": {
+        "ActiveState": "inactive",
+        "ControlGroup": ""
+      },
+      "exitCode": 0,
+      "stderr": "",
+      "closedReceipt": true
+    },
+    {
+      "config": ".tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestDriftStopsBeforeNextChild-source-2664170161/run/sessions/r1-000-g0-N/worker-config.json",
+      "unit": "buildopt-replay-415d8a2d5c54bc61-r1-N-1.service",
+      "state": {
+        "ActiveState": "inactive",
+        "ControlGroup": ""
+      },
+      "exitCode": 0,
+      "stderr": "",
+      "closedReceipt": true
+    },
+    {
+      "config": ".tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost-2063787299/run/sessions/r1-000-g0-I/worker-config.json",
+      "unit": "buildopt-replay-f4b0a149f788f997-r1-I-2.service",
+      "state": {
+        "ActiveState": "inactive",
+        "ControlGroup": ""
+      },
+      "exitCode": 0,
+      "stderr": "",
+      "closedReceipt": true
+    },
+    {
+      "config": ".tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost-2063787299/run/sessions/r1-000-g0-N/worker-config.json",
+      "unit": "buildopt-replay-f4b0a149f788f997-r1-N-1.service",
+      "state": {
+        "ActiveState": "inactive",
+        "ControlGroup": ""
+      },
+      "exitCode": 0,
+      "stderr": "",
+      "closedReceipt": true
+    },
+    {
+      "config": ".tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestQuietRunnerActualPair-1977807673/run/sessions/r1-000-g0-I/worker-config.json",
+      "unit": "buildopt-replay-f2acf153bf2eba86-r1-I-2.service",
+      "state": {
+        "ActiveState": "inactive",
+        "ControlGroup": ""
+      },
+      "exitCode": 0,
+      "stderr": "",
+      "closedReceipt": true
+    },
+    {
+      "config": ".tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestQuietRunnerActualPair-1977807673/run/sessions/r1-000-g0-N/worker-config.json",
+      "unit": "buildopt-replay-f2acf153bf2eba86-r1-N-1.service",
+      "state": {
+        "ActiveState": "inactive",
+        "ControlGroup": ""
+      },
+      "exitCode": 0,
+      "stderr": "",
+      "closedReceipt": true
+    },
+    {
+      "config": ".tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestQuietRunnerActualPair-2650546102/run/sessions/r1-000-g0-I/worker-config.json",
+      "unit": "buildopt-replay-387c845375b91f8e-r1-I-2.service",
+      "state": {
+        "ActiveState": "inactive",
+        "ControlGroup": ""
+      },
+      "exitCode": 0,
+      "stderr": "",
+      "closedReceipt": true
+    },
+    {
+      "config": ".tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestQuietRunnerActualPair-2650546102/run/sessions/r1-000-g0-N/worker-config.json",
+      "unit": "buildopt-replay-387c845375b91f8e-r1-N-1.service",
+      "state": {
+        "ActiveState": "inactive",
+        "ControlGroup": ""
+      },
+      "exitCode": 0,
+      "stderr": "",
+      "closedReceipt": true
+    },
+    {
+      "config": ".tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestQuietRunnerActualPair-999418534/run/sessions/r1-000-g0-I/worker-config.json",
+      "unit": "buildopt-replay-152beb67814d1e50-r1-I-2.service",
+      "state": {
+        "ActiveState": "inactive",
+        "ControlGroup": ""
+      },
+      "exitCode": 0,
+      "stderr": "",
+      "closedReceipt": true
+    },
+    {
+      "config": ".tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestQuietRunnerActualPair-999418534/run/sessions/r1-000-g0-N/worker-config.json",
+      "unit": "buildopt-replay-152beb67814d1e50-r1-N-1.service",
+      "state": {
+        "ActiveState": "inactive",
+        "ControlGroup": ""
+      },
+      "exitCode": 0,
+      "stderr": "",
+      "closedReceipt": true
+    },
+    {
+      "config": ".tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestQuietRunnerStopsWithoutNativeLaunch-cancelled-1483270880/run/sessions/r1-000-g0-N/worker-config.json",
+      "unit": "buildopt-replay-72c9f8e41de9133b-r1-N-1.service",
+      "state": {
+        "ActiveState": "inactive",
+        "ControlGroup": ""
+      },
+      "exitCode": 0,
+      "stderr": "",
+      "closedReceipt": true
+    },
+    {
+      "config": ".tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestQuietRunnerStopsWithoutNativeLaunch-cancelled-477171382/run/sessions/r1-000-g0-N/worker-config.json",
+      "unit": "buildopt-replay-87100396add7c398-r1-N-1.service",
+      "state": {
+        "ActiveState": "inactive",
+        "ControlGroup": ""
+      },
+      "exitCode": 0,
+      "stderr": "",
+      "closedReceipt": true
+    },
+    {
+      "config": ".tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestQuietRunnerStopsWithoutNativeLaunch-deadline-4234906163/run/sessions/r1-000-g0-N/worker-config.json",
+      "unit": "buildopt-replay-f1c87f00d11bfde8-r1-N-1.service",
+      "state": {
+        "ActiveState": "inactive",
+        "ControlGroup": ""
+      },
+      "exitCode": 0,
+      "stderr": "",
+      "closedReceipt": true
+    },
+    {
+      "config": ".tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestQuietRunnerStopsWithoutNativeLaunch-deadline-814297051/run/sessions/r1-000-g0-N/worker-config.json",
+      "unit": "buildopt-replay-27f0d61e4d5fd43c-r1-N-1.service",
+      "state": {
+        "ActiveState": "inactive",
+        "ControlGroup": ""
+      },
+      "exitCode": 0,
+      "stderr": "",
+      "closedReceipt": true
+    },
+    {
+      "config": ".tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestQuietRunnerStopsWithoutNativeLaunch-read-error-1714450726/run/sessions/r1-000-g0-N/worker-config.json",
+      "unit": "buildopt-replay-157a8cc9df8e2fd2-r1-N-1.service",
+      "state": {
+        "ActiveState": "inactive",
+        "ControlGroup": ""
+      },
+      "exitCode": 0,
+      "stderr": "",
+      "closedReceipt": true
+    },
+    {
+      "config": ".tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestQuietRunnerStopsWithoutNativeLaunch-read-error-2674500332/run/sessions/r1-000-g0-N/worker-config.json",
+      "unit": "buildopt-replay-0fb827380463c514-r1-N-1.service",
+      "state": {
+        "ActiveState": "inactive",
+        "ControlGroup": ""
+      },
+      "exitCode": 0,
+      "stderr": "",
+      "closedReceipt": true
+    },
+    {
+      "config": ".tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestQuietRunnerStopsWithoutNativeLaunch-stale-at-launch-1134830849/run/sessions/r1-000-g0-N/worker-config.json",
+      "unit": "buildopt-replay-febc6281b2a4901f-r1-N-1.service",
+      "state": {
+        "ActiveState": "inactive",
+        "ControlGroup": ""
+      },
+      "exitCode": 0,
+      "stderr": "",
+      "closedReceipt": true
+    },
+    {
+      "config": ".tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestQuietRunnerStopsWithoutNativeLaunch-stale-at-launch-2500774057/run/sessions/r1-000-g0-N/worker-config.json",
+      "unit": "buildopt-replay-f3ea4237943bd719-r1-N-1.service",
+      "state": {
+        "ActiveState": "inactive",
+        "ControlGroup": ""
+      },
+      "exitCode": 0,
+      "stderr": "",
+      "closedReceipt": true
+    },
+    {
+      "config": ".tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestResearchCLIAndMissingResults-1177293134/run/sessions/r1-000-g0-I/worker-config.json",
+      "unit": "buildopt-replay-e244e3141727a230-r1-I-2.service",
+      "state": {
+        "ActiveState": "inactive",
+        "ControlGroup": ""
+      },
+      "exitCode": 0,
+      "stderr": "",
+      "closedReceipt": true
+    },
+    {
+      "config": ".tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestResearchCLIAndMissingResults-1177293134/run/sessions/r1-000-g0-N/worker-config.json",
+      "unit": "buildopt-replay-e244e3141727a230-r1-N-1.service",
+      "state": {
+        "ActiveState": "inactive",
+        "ControlGroup": ""
+      },
+      "exitCode": 0,
+      "stderr": "",
+      "closedReceipt": true
+    },
+    {
+      "config": ".tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestResearchCLIAndMissingResults-1177293134/run/sessions/r1-001-g0-I/worker-config.json",
+      "unit": "buildopt-replay-e244e3141727a230-r1-I-3.service",
+      "state": {
+        "ActiveState": "inactive",
+        "ControlGroup": ""
+      },
+      "exitCode": 0,
+      "stderr": "",
+      "closedReceipt": true
+    },
+    {
+      "config": ".tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestResearchCLIAndMissingResults-1177293134/run/sessions/r1-001-g0-N/worker-config.json",
+      "unit": "buildopt-replay-e244e3141727a230-r1-N-4.service",
+      "state": {
+        "ActiveState": "inactive",
+        "ControlGroup": ""
+      },
+      "exitCode": 0,
+      "stderr": "",
+      "closedReceipt": true
+    },
+    {
+      "config": ".tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestTypedFailuresAndNativeFallback-fallback-2481383994/run/sessions/r1-000-g0-I/worker-config.json",
+      "unit": "buildopt-replay-e8a6cdead1b6ba54-r1-I-2.service",
+      "state": {
+        "ActiveState": "inactive",
+        "ControlGroup": ""
+      },
+      "exitCode": 0,
+      "stderr": "",
+      "closedReceipt": true
+    },
+    {
+      "config": ".tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestTypedFailuresAndNativeFallback-fallback-2481383994/run/sessions/r1-000-g0-N/worker-config.json",
+      "unit": "buildopt-replay-e8a6cdead1b6ba54-r1-N-1.service",
+      "state": {
+        "ActiveState": "inactive",
+        "ControlGroup": ""
+      },
+      "exitCode": 0,
+      "stderr": "",
+      "closedReceipt": true
+    },
+    {
+      "config": ".tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestTypedFailuresAndNativeFallback-fallback-2481383994/run/sessions/r1-001-g0-I/worker-config.json",
+      "unit": "buildopt-replay-e8a6cdead1b6ba54-r1-I-3.service",
+      "state": {
+        "ActiveState": "inactive",
+        "ControlGroup": ""
+      },
+      "exitCode": 0,
+      "stderr": "",
+      "closedReceipt": true
+    },
+    {
+      "config": ".tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestTypedFailuresAndNativeFallback-fallback-2481383994/run/sessions/r1-001-g0-N/worker-config.json",
+      "unit": "buildopt-replay-e8a6cdead1b6ba54-r1-N-4.service",
+      "state": {
+        "ActiveState": "inactive",
+        "ControlGroup": ""
+      },
+      "exitCode": 0,
+      "stderr": "",
+      "closedReceipt": true
+    },
+    {
+      "config": ".tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestTypedFailuresAndNativeFallback-fallback-2481383994/run/sessions/r1-002-g0-I/worker-config.json",
+      "unit": "buildopt-replay-e8a6cdead1b6ba54-r1-I-6.service",
+      "state": {
+        "ActiveState": "inactive",
+        "ControlGroup": ""
+      },
+      "exitCode": 0,
+      "stderr": "",
+      "closedReceipt": true
+    },
+    {
+      "config": ".tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestTypedFailuresAndNativeFallback-fallback-2481383994/run/sessions/r1-002-g0-N/worker-config.json",
+      "unit": "buildopt-replay-e8a6cdead1b6ba54-r1-N-5.service",
+      "state": {
+        "ActiveState": "inactive",
+        "ControlGroup": ""
+      },
+      "exitCode": 0,
+      "stderr": "",
+      "closedReceipt": true
+    },
+    {
+      "config": ".tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestTypedFailuresAndNativeFallback-mismatch-2841052981/run/sessions/r1-000-g0-I/worker-config.json",
+      "unit": "buildopt-replay-97f519e113cd30d5-r1-I-2.service",
+      "state": {
+        "ActiveState": "inactive",
+        "ControlGroup": ""
+      },
+      "exitCode": 0,
+      "stderr": "",
+      "closedReceipt": true
+    },
+    {
+      "config": ".tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestTypedFailuresAndNativeFallback-mismatch-2841052981/run/sessions/r1-000-g0-N/worker-config.json",
+      "unit": "buildopt-replay-97f519e113cd30d5-r1-N-1.service",
+      "state": {
+        "ActiveState": "inactive",
+        "ControlGroup": ""
+      },
+      "exitCode": 0,
+      "stderr": "",
+      "closedReceipt": true
+    }
+  ]
+}

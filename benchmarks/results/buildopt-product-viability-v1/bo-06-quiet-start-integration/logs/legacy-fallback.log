@@ -1,0 +1,9 @@
+=== RUN   TestTypedFailuresAndNativeFallback
+=== RUN   TestTypedFailuresAndNativeFallback/mismatch
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestTypedFailuresAndNativeFallback-mismatch-2841052981
+=== RUN   TestTypedFailuresAndNativeFallback/fallback
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestTypedFailuresAndNativeFallback-fallback-2481383994
+--- PASS: TestTypedFailuresAndNativeFallback (39.99s)
+    --- PASS: TestTypedFailuresAndNativeFallback/mismatch (10.67s)
+    --- PASS: TestTypedFailuresAndNativeFallback/fallback (29.33s)
+PASS

@@ -208,6 +208,7 @@ case "${buildopt_lane}" in
         "${buildopt_script_dir}/check-documentation"
         timeout --signal=TERM --kill-after=5s 60s \
             python3 -B -I "${buildopt_script_dir}/history-replay/quiet_start_test.py"
+        "${buildopt_script_dir}/check-quiet-start-integration" --unit
         "${buildopt_script_dir}/check-tracker-consistency"
 		"${buildopt_script_dir}/check-fresh-generic-optimization-plan"
 		"${buildopt_script_dir}/check-change-aware-producer-closure-plan"

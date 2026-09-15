@@ -1,0 +1,4 @@
+=== RUN   TestResearchCLIAndMissingResults
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestResearchCLIAndMissingResults-1177293134
+--- PASS: TestResearchCLIAndMissingResults (20.42s)
+PASS

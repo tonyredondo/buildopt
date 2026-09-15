@@ -1,0 +1,23 @@
+=== RUN   TestQuietRunnerActualPair
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestQuietRunnerActualPair-3031113410
+    runner_test.go:224: lstat /home/tonyredondo/repos/github/tonyredondo/specs/poc-product-viability-v1.json: no such file or directory
+--- FAIL: TestQuietRunnerActualPair (0.06s)
+=== RUN   TestQuietRunnerStopsWithoutNativeLaunch
+=== RUN   TestQuietRunnerStopsWithoutNativeLaunch/read-error
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestQuietRunnerStopsWithoutNativeLaunch-read-error-2824422343
+    runner_test.go:224: lstat /home/tonyredondo/repos/github/tonyredondo/specs/poc-product-viability-v1.json: no such file or directory
+=== RUN   TestQuietRunnerStopsWithoutNativeLaunch/cancelled
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestQuietRunnerStopsWithoutNativeLaunch-cancelled-3010703884
+    runner_test.go:224: lstat /home/tonyredondo/repos/github/tonyredondo/specs/poc-product-viability-v1.json: no such file or directory
+=== RUN   TestQuietRunnerStopsWithoutNativeLaunch/deadline
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestQuietRunnerStopsWithoutNativeLaunch-deadline-1713290441
+    runner_test.go:224: lstat /home/tonyredondo/repos/github/tonyredondo/specs/poc-product-viability-v1.json: no such file or directory
+=== RUN   TestQuietRunnerStopsWithoutNativeLaunch/stale-at-launch
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestQuietRunnerStopsWithoutNativeLaunch-stale-at-launch-2877490171
+    runner_test.go:224: lstat /home/tonyredondo/repos/github/tonyredondo/specs/poc-product-viability-v1.json: no such file or directory
+--- FAIL: TestQuietRunnerStopsWithoutNativeLaunch (0.29s)
+    --- FAIL: TestQuietRunnerStopsWithoutNativeLaunch/read-error (0.08s)
+    --- FAIL: TestQuietRunnerStopsWithoutNativeLaunch/cancelled (0.08s)
+    --- FAIL: TestQuietRunnerStopsWithoutNativeLaunch/deadline (0.07s)
+    --- FAIL: TestQuietRunnerStopsWithoutNativeLaunch/stale-at-launch (0.07s)
+FAIL

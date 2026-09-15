@@ -1,0 +1,61 @@
+{
+  "schema": "buildopt.lean-research/local-proof/v1",
+  "exitCode": 0,
+  "executable": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/history-replay-quiet",
+    "sha256": "fce62470e2b27d141d9f8ae17a1254e2adea4e0bb1db83be27fcd3b5db2f704c"
+  },
+  "package": [
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/source",
+      "sha256": "d90d2577fe313d23827b6e47fc3a6f49b1dfc3a49ec7b33120f6ce8642d1ddd6"
+    }
+  ],
+  "ownerStarts": 0,
+  "checks": {
+    "invocation-output": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/logs/runner-final.log",
+      "sha256": "5e40ec1c39377d68f48d2f94a97f964debf6b7f6cebfd023d4cf4718e69d5f1f"
+    },
+    "failure-fallback": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/logs/legacy-fallback.log",
+      "sha256": "6c93b7a2128fe5dc666e19a979da6fb22fdf5f746859e9c21d7347ef5a37dc3b"
+    },
+    "cancellation-closure": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/logs/legacy-driver-death.log",
+      "sha256": "b8df021f19e204a61d5b79ff0941882c674e4b02cdcd9a915c73c7999216cb12"
+    },
+    "source-drift": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/logs/legacy-drift.log",
+      "sha256": "616768c3dd6bd1f00198be080415b9bb6ccbe64b91117d0e1e14a77f970c4f83"
+    },
+    "missing-result": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/logs/legacy-cli.log",
+      "sha256": "6ca5eb128ab70abce8619b8eadb6a86794abf7da007eb21ed76e5d3a8c9b07c6"
+    },
+    "readiness-admission": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/logs/unit-final.jsonl",
+      "sha256": "ce5da09924b36913f0103c9b6eadd0183c5bd730d8ae8ecb0caff36dc914ac43"
+    },
+    "affinity": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/logs/legacy-affinity.log",
+      "sha256": "fe28ee456b1b5248a684d93f7cc0064f5239311d0f4da9262a40e18b67307647"
+    },
+    "quiet-start-window": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/logs/runner-final.log",
+      "sha256": "5e40ec1c39377d68f48d2f94a97f964debf6b7f6cebfd023d4cf4718e69d5f1f"
+    },
+    "quiet-start-launch": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/logs/runner-final.log",
+      "sha256": "5e40ec1c39377d68f48d2f94a97f964debf6b7f6cebfd023d4cf4718e69d5f1f"
+    },
+    "quiet-start-failures": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/logs/runner-final.log",
+      "sha256": "5e40ec1c39377d68f48d2f94a97f964debf6b7f6cebfd023d4cf4718e69d5f1f"
+    },
+    "recorder-resources": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/logs/runner-final.log",
+      "sha256": "5e40ec1c39377d68f48d2f94a97f964debf6b7f6cebfd023d4cf4718e69d5f1f"
+    }
+  }
+}

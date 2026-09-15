@@ -1,0 +1,1162 @@
+--- qualified/checker.go
++++ quiet/checker.go
+@@ -151,0 +152,3 @@
++	if err := checkQuietAttempt(m, start, end, rawStart.Request, native.Start, costs); err != nil {
++		return start, end, err
++	}
+@@ -219,0 +223,3 @@
++		return result, err
++	}
++	if err := checkRecorderResources(m, costList); err != nil {
+--- qualified/contract.go
++++ quiet/contract.go
+@@ -111,0 +112 @@
++	QuietStart           *Binding          `json:"quietStart,omitempty"`
+@@ -226 +227,4 @@
+-				if (t == reflect.TypeOf(Manifest{}) && (n == "controlBaseline" || n == "measurementReadiness")) || (t == reflect.TypeOf(ResearchReadiness{}) && (n == "controlProof" || n == "prefixProof")) {
++				if (t == reflect.TypeOf(Manifest{}) && (n == "controlBaseline" || n == "measurementReadiness" || n == "quietStart")) || (t == reflect.TypeOf(ResearchReadiness{}) && (n == "controlProof" || n == "prefixProof")) {
++					continue
++				}
++				if t == reflect.TypeOf(ProcessRequest{}) && n == "quietStart" {
+--- qualified/isolation_control_test.go
++++ quiet/isolation_control_test.go
+@@ -220 +220 @@
+-			q := ProcessRequest{recordSchema, id, filepath.Join(m.RunRoot, "r1", arm, "repo"), plain, env, dir, m.Limits.MaxRequestNS}
++			q := ProcessRequest{Schema: recordSchema, Attempt: id, Directory: filepath.Join(m.RunRoot, "r1", arm, "repo"), Command: plain, Environment: env, Evidence: dir, TimeoutNS: m.Limits.MaxRequestNS}
+--- qualified/overhead_integration_test.go
++++ quiet/overhead_integration_test.go
+@@ -142 +142 @@
+-		q := ProcessRequest{recordSchema, id, filepath.Join(m.RunRoot, "r1", arm, "repo"), args, env, dir, m.Limits.MaxRequestNS}
++		q := ProcessRequest{Schema: recordSchema, Attempt: id, Directory: filepath.Join(m.RunRoot, "r1", arm, "repo"), Command: args, Environment: env, Evidence: dir, TimeoutNS: m.Limits.MaxRequestNS}
+--- qualified/process_linux.go
++++ quiet/process_linux.go
+@@ -163,0 +164 @@
++	QuietStart  *Binding          `json:"quietStart,omitempty"`
+@@ -229,0 +231,7 @@
++	var manifest Manifest
++	if err = validateBinding(cfg.Manifest); err != nil {
++		return r, err
++	}
++	if err = readJSON(cfg.Manifest.Path, &manifest); err != nil {
++		return r, err
++	}
+@@ -271,0 +280,4 @@
++	if err = checkQuietLaunch(manifest, cfg.Manifest.SHA256, q, Stamp{}); err != nil {
++		_, saveErr := saveBound(filepath.Join(q.Evidence, "quiet-launch-rejected.json"), QuietRejection{"buildopt.quiet-start/rejection/v1", q.Attempt, cfg.Manifest.SHA256, stamp(), err.Error()})
++		return r, errors.Join(err, saveErr)
++	}
+--- qualified/quiet_start.go
++++ quiet/quiet_start.go
+@@ -0,0 +1,395 @@
++//go:build linux && amd64
++
++package main
++
++import (
++	"context"
++	"errors"
++	"fmt"
++	"os"
++	"os/signal"
++	"path/filepath"
++	"strconv"
++	"strings"
++	"syscall"
++	"time"
++)
++
++// Quiet admission is experiment preparation. It neither drops completed
++// builds nor changes the native command or its request-time boundary.
++type QuietPolicy struct {
++	Schema             string `json:"schema"`
++	WindowNS           int64  `json:"windowNS"`
++	SampleNS           int64  `json:"sampleNS"`
++	MaximumGapNS       int64  `json:"maximumGapNS"`
++	MaximumReadNS      int64  `json:"maximumReadNS"`
++	MaximumPressurePPM int64  `json:"maximumPressurePPM"`
++	MaximumWaitNS      int64  `json:"maximumWaitNS"`
++	MaximumLaunchAgeNS int64  `json:"maximumLaunchAgeNS"`
++}
++
++func fixedQuietPolicy() QuietPolicy {
++	return QuietPolicy{"buildopt.quiet-start/policy/v1", 30e9, 1e9, 3e9, 100e6, 100000, 180e9, 1e9}
++}
++
++func readQuietPolicy(m Manifest) (QuietPolicy, error) {
++	var p QuietPolicy
++	if m.QuietStart == nil {
++		return p, nil
++	}
++	if m.Mode != leanResearchMode {
++		return p, errors.New("quiet start is only supported in lean research")
++	}
++	if err := validateBinding(*m.QuietStart); err != nil {
++		return p, err
++	}
++	if err := readJSON(m.QuietStart.Path, &p); err != nil {
++		return p, err
++	}
++	if p != fixedQuietPolicy() {
++		return p, errors.New("quiet-start policy differs from the fixed v1 conditions")
++	}
++	return p, nil
++}
++
++type PressureSample struct {
++	Begin    Stamp            `json:"begin"`
++	End      Stamp            `json:"end"`
++	TotalsUS map[string]int64 `json:"totalsUS"`
++}
++
++type QuietReceipt struct {
++	Schema         string            `json:"schema"`
++	Attempt        string            `json:"attempt"`
++	ManifestSHA256 string            `json:"manifestSHA256"`
++	Policy         Binding           `json:"policy"`
++	Begin          Stamp             `json:"begin"`
++	End            Stamp             `json:"end"`
++	DeadlineNS     int64             `json:"deadlineNS"`
++	Decision       string            `json:"decision"`
++	Reason         string            `json:"reason"`
++	Samples        []PressureSample  `json:"samples"`
++	CPUStart       diagnosticCPUTime `json:"cpuStart"`
++	CPUEnd         diagnosticCPUTime `json:"cpuEnd"`
++}
++
++type QuietRejection struct {
++	Schema         string `json:"schema"`
++	Attempt        string `json:"attempt"`
++	ManifestSHA256 string `json:"manifestSHA256"`
++	At             Stamp  `json:"at"`
++	Reason         string `json:"reason"`
++}
++
++func pressureTotal(raw string) (int64, error) {
++	for _, line := range strings.Split(raw, "\n") {
++		fields := strings.Fields(line)
++		if len(fields) == 0 || fields[0] != "some" {
++			continue
++		}
++		var value int64
++		found := false
++		for _, field := range fields[1:] {
++			if strings.HasPrefix(field, "total=") {
++				if found {
++					return 0, errors.New("duplicate pressure total")
++				}
++				n, err := strconv.ParseInt(strings.TrimPrefix(field, "total="), 10, 64)
++				if err != nil || n < 0 {
++					return 0, errors.New("invalid pressure total")
++				}
++				value, found = n, true
++			}
++		}
++		if found {
++			return value, nil
++		}
++	}
++	return 0, errors.New("missing pressure some total")
++}
++
++func readPressure() (PressureSample, error) {
++	s := PressureSample{Begin: stamp(), TotalsUS: map[string]int64{}}
++	for _, resource := range []string{"cpu", "io", "memory"} {
++		raw, err := os.ReadFile("/proc/pressure/" + resource)
++		if err != nil {
++			return s, err
++		}
++		n, err := pressureTotal(string(raw))
++		if err != nil {
++			return s, err
++		}
++		s.TotalsUS[resource] = n
++	}
++	s.End = stamp()
++	return s, nil
++}
++
++// Use complete observed intervals, including the interval crossing the window
++// boundary. A delayed read cannot become a fresh quiet observation.
++func quietWindow(samples []PressureSample, p QuietPolicy) (bool, string) {
++	if len(samples) == 0 {
++		return false, "no observations"
++	}
++	last := samples[len(samples)-1]
++	first := -1
++	for i := len(samples) - 1; i >= 0; i-- {
++		if samples[i].End.NS <= last.End.NS-p.WindowNS {
++			first = i
++			break
++		}
++	}
++	if first < 0 {
++		return false, "window incomplete"
++	}
++	for i := first; i < len(samples); i++ {
++		s := samples[i]
++		if checkStampInterval(s.Begin, s.End) != nil || s.End.Boot != last.End.Boot || s.End.NS-s.Begin.NS > p.MaximumReadNS {
++			return false, "pressure read delayed or clock changed"
++		}
++		if len(s.TotalsUS) != 3 {
++			return false, "missing pressure counters"
++		}
++		for _, resource := range []string{"cpu", "io", "memory"} {
++			n, ok := s.TotalsUS[resource]
++			if !ok || n < 0 {
++				return false, "invalid pressure counters"
++			}
++			if i == first {
++				continue
++			}
++			prev := samples[i-1]
++			gap := s.End.NS - prev.End.NS
++			if gap <= 0 || gap > p.MaximumGapNS || s.Begin.NS < prev.End.NS {
++				return false, "sample gap or clock discontinuity"
++			}
++			delta := n - prev.TotalsUS[resource]
++			if delta < 0 {
++				return false, "pressure counter reset"
++			}
++			// Fixed 10% threshold: microseconds * 1000 / nanoseconds <= 1/10.
++			// Division avoids overflow if a malformed counter jumps very far.
++			if delta > gap/10000 {
++				return false, "pressure in window"
++			}
++		}
++	}
++	return true, "quiet window"
++}
++
++type quietClock struct {
++	now  func() Stamp
++	read func() (PressureSample, error)
++	wait func(context.Context, time.Duration) error
++}
++
++func waitQuiet(ctx context.Context, d time.Duration) error {
++	t := time.NewTimer(d)
++	defer t.Stop()
++	select {
++	case <-ctx.Done():
++		return ctx.Err()
++	case <-t.C:
++		return nil
++	}
++}
++
++func observeQuiet(ctx context.Context, receipt QuietReceipt, p QuietPolicy, clock quietClock, guard func() error) QuietReceipt {
++	receipt.Decision = "NOT_QUIET_TIMEOUT"
++	receipt.Samples = []PressureSample{}
++	receipt.CPUStart = diagnosticCPU()
++	for {
++		now := clock.now()
++		if now.Boot != receipt.Begin.Boot || now.NS < receipt.Begin.NS {
++			receipt.Decision, receipt.Reason = "OBSERVATION_FAILED", "clock changed"
++			break
++		}
++		if now.NS >= receipt.DeadlineNS {
++			receipt.Reason = "quiet-start deadline"
++			break
++		}
++		if err := ctx.Err(); err != nil {
++			receipt.Decision, receipt.Reason = "INTERRUPTED", err.Error()
++			break
++		}
++		if err := guard(); err != nil {
++			receipt.Decision, receipt.Reason = "NOT_RUN_LIMIT", err.Error()
++			break
++		}
++		sample, err := clock.read()
++		if err != nil {
++			receipt.Decision, receipt.Reason = "OBSERVATION_FAILED", err.Error()
++			break
++		}
++		receipt.Samples = append(receipt.Samples, sample)
++		if len(receipt.Samples) > 181 {
++			receipt.Decision, receipt.Reason = "OBSERVATION_FAILED", "observation count exceeded"
++			break
++		}
++		ready, reason := quietWindow(receipt.Samples, p)
++		receipt.Reason = reason
++		if clock.now().NS >= receipt.DeadlineNS {
++			receipt.Reason = "quiet-start deadline"
++			break
++		}
++		if err := ctx.Err(); err != nil {
++			receipt.Decision, receipt.Reason = "INTERRUPTED", err.Error()
++			break
++		}
++		if ready {
++			receipt.Decision = "QUIET_START"
++			break
++		}
++		remaining := receipt.DeadlineNS - clock.now().NS
++		if remaining <= 0 {
++			break
++		}
++		if remaining > p.SampleNS {
++			remaining = p.SampleNS
++		}
++		if err := clock.wait(ctx, time.Duration(remaining)); err != nil {
++			receipt.Decision, receipt.Reason = "INTERRUPTED", err.Error()
++			break
++		}
++	}
++	receipt.End, receipt.CPUEnd = clock.now(), diagnosticCPU()
++	return receipt
++}
++
++func (r *runner) quietGuard() error {
++	if stamp().Boot != r.start.Boot || stamp().NS-r.start.NS >= r.manifest.Limits.MaxRunNS {
++		return errors.New("elapsed allocation")
++	}
++	deadline, err := time.Parse(time.RFC3339Nano, r.manifest.Limits.DeadlineUTC)
++	if err != nil {
++		return err
++	}
++	if !time.Now().Before(deadline) {
++		return errors.New("allocation deadline")
++	}
++	return freeDiskGuard(r.manifest.RunRoot, r.manifest.Limits.MinimumFreeBytes)
++}
++
++func (r *runner) prepareQuiet(rep, ordinal int, arm, id, evidence string) (*Binding, error) {
++	if r.manifest.QuietStart == nil {
++		return nil, nil
++	}
++	policy, err := readQuietPolicy(r.manifest)
++	if err != nil {
++		return nil, err
++	}
++	var binding Binding
++	err = r.phase(Cost{ID: id + "-quiet-start", Class: "research", Purpose: "quiet-start", Replication: rep, Ordinal: ordinal, Arm: arm, Attempt: id}, func() error {
++		begin := stamp()
++		deadline := begin.NS + policy.MaximumWaitNS
++		if limit := r.start.NS + r.manifest.Limits.MaxRunNS; deadline > limit {
++			deadline = limit
++		}
++		utcDeadline, e := time.Parse(time.RFC3339Nano, r.manifest.Limits.DeadlineUTC)
++		if e != nil {
++			return e
++		}
++		if limit := begin.NS + time.Until(utcDeadline).Nanoseconds(); deadline > limit {
++			deadline = limit
++		}
++		receipt := QuietReceipt{Schema: "buildopt.quiet-start/receipt/v1", Attempt: id, ManifestSHA256: r.binding.SHA256, Policy: *r.manifest.QuietStart, Begin: begin, DeadlineNS: deadline}
++		ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
++		defer stop()
++		clock := quietClock{stamp, readPressure, waitQuiet}
++		if r.quietClock != nil {
++			clock = *r.quietClock
++		}
++		if r.quietContext != nil {
++			ctx = r.quietContext
++		}
++		receipt = observeQuiet(ctx, receipt, policy, clock, r.quietGuard)
++		var saveErr error
++		binding, saveErr = saveBound(filepath.Join(evidence, "quiet-start.json"), receipt)
++		if saveErr != nil {
++			return saveErr
++		}
++		if receipt.Decision != "QUIET_START" {
++			return fmt.Errorf("NOT_RUN_QUIET: %s: %s", receipt.Decision, receipt.Reason)
++		}
++		return nil
++	})
++	if err != nil {
++		return nil, err
++	}
++	return &binding, nil
++}
++
++func checkQuietLaunch(m Manifest, manifestHash string, q ProcessRequest, at Stamp) error {
++	if m.QuietStart == nil {
++		if q.QuietStart != nil {
++			return errors.New("unexpected quiet-start receipt")
++		}
++		return nil
++	}
++	if q.QuietStart == nil || q.QuietStart.Path != filepath.Join(q.Evidence, "quiet-start.json") {
++		return errors.New("missing quiet-start receipt for request")
++	}
++	policy, err := readQuietPolicy(m)
++	if err != nil {
++		return err
++	}
++	if err = validateBinding(*q.QuietStart); err != nil {
++		return err
++	}
++	var receipt QuietReceipt
++	if err = readJSON(q.QuietStart.Path, &receipt); err != nil {
++		return err
++	}
++	if at.NS == 0 {
++		at = stamp()
++	}
++	if receipt.Schema != "buildopt.quiet-start/receipt/v1" || receipt.Attempt != q.Attempt || receipt.ManifestSHA256 != manifestHash || receipt.Policy != *m.QuietStart || receipt.Decision != "QUIET_START" || len(receipt.Samples) > 181 {
++		return errors.New("quiet-start receipt belongs to another request or did not pass")
++	}
++	if checkStampInterval(receipt.Begin, receipt.End) != nil || at.NS >= receipt.DeadlineNS || receipt.DeadlineNS-receipt.Begin.NS > policy.MaximumWaitNS || receipt.End.NS > at.NS || at.Boot != receipt.End.Boot {
++		return errors.New("quiet-start receipt has invalid boundaries")
++	}
++	previousEnd := receipt.Begin.NS
++	for _, sample := range receipt.Samples {
++		if checkStampInterval(sample.Begin, sample.End) != nil || sample.Begin.Boot != receipt.Begin.Boot || sample.Begin.NS < previousEnd || sample.End.NS > receipt.End.NS {
++			return errors.New("quiet-start sample lies outside its observation")
++		}
++		previousEnd = sample.End.NS
++	}
++	ready, _ := quietWindow(receipt.Samples, policy)
++	if !ready {
++		return errors.New("quiet-start samples do not establish a quiet window")
++	}
++	last := receipt.Samples[len(receipt.Samples)-1].End
++	if receipt.Samples[0].Begin.NS < receipt.Begin.NS || last.NS > receipt.End.NS || at.NS-last.NS > policy.MaximumLaunchAgeNS {
++		return errors.New("NOT_RUN_QUIET: stale observation at launch")
++	}
++	return nil
++}
++
++func checkQuietAttempt(m Manifest, start AttemptStart, end AttemptEnd, q ProcessRequest, nativeStart Stamp, costs map[string]Cost) error {
++	if err := checkQuietLaunch(m, start.ManifestSHA256, q, nativeStart); err != nil {
++		return err
++	}
++	if m.QuietStart == nil {
++		return nil
++	}
++	id := start.ID + "-quiet-start"
++	if err := requirePhase(costs, id, "quiet-start", start.Replication, start.Ordinal, start.Arm); err != nil {
++		return err
++	}
++	cost := costs[id]
++	var receipt QuietReceipt
++	if err := readJSON(q.QuietStart.Path, &receipt); err != nil {
++		return err
++	}
++	if cost.Attempt != start.ID || receipt.Begin.NS < cost.StartNS || receipt.End.NS > cost.EndNS || cost.EndNS > end.Begin.NS || cost.StartNS < start.At.NS {
++		return errors.New("quiet-start wait is missing or inside the request timing")
++	}
++	for _, suffix := range []string{"-preflight", "-containment"} {
++		if phase, ok := costs[start.ID+suffix]; ok && phase.EndNS > cost.StartNS {
++			return errors.New("quiet start preceded expensive preparation")
++		}
++	}
++	return nil
++}
+--- qualified/quiet_start_integration_test.go
++++ quiet/quiet_start_integration_test.go
+@@ -0,0 +1,181 @@
++//go:build linux && amd64 && replay_integration
++
++package main
++
++import (
++	"context"
++	"errors"
++	"os"
++	"path/filepath"
++	"strings"
++	"testing"
++	"time"
++)
++
++func quietFixture(t *testing.T) Manifest {
++	t.Helper()
++	m := runnableFixture(t, 1, "success")
++	enableQuiet(t, &m)
++	m.Limits.MaxWorkflowStarts = 2
++	m.Limits.RetryPairs = 0
++	m.Limits.MaxRunNS = int64(7 * time.Minute)
++	return m
++}
++
++func assertQuietClosure(t *testing.T, m Manifest, launches int) {
++	t.Helper()
++	files, err := filepath.Glob(filepath.Join(m.RunRoot, "attempts", "*", "native-pid.json"))
++	if err != nil || len(files) != launches {
++		t.Fatalf("native starts: %v %v; want %d", files, err, launches)
++	}
++	configs, err := filepath.Glob(filepath.Join(m.RunRoot, "sessions", "*", "worker-config.json"))
++	if err != nil || len(configs) == 0 {
++		t.Fatalf("missing real owned session: %v", err)
++	}
++	for _, path := range configs {
++		var closure SessionClosure
++		if err := readJSON(filepath.Join(filepath.Dir(path), "closed.json"), &closure); err != nil {
++			t.Fatal(err)
++		}
++		processes, err := cgroupProcesses(closure.Cgroup)
++		if !os.IsNotExist(err) && (err != nil || len(processes) != 0) {
++			t.Fatalf("session not closed: %s %v %v", closure.Unit, processes, err)
++		}
++	}
++}
++
++// This uses real pressure reads, real elapsed time, the actual worker socket,
++// user systemd and native fixture processes. No clock or pressure is replaced.
++func TestQuietRunnerActualPair(t *testing.T) {
++	m := quietFixture(t)
++	r := runFixture(t, m)
++	if err := r.execute(1, 0, -1); err != nil {
++		t.Fatal(err)
++	}
++	result, err := writeResult(m.RunRoot)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if result.Decision != "FIXTURE_VERIFIED" || result.WorkflowStarts != 2 || len(result.Slots[0]) != 1 {
++		t.Fatalf("incomplete actual quiet pair: %+v", result)
++	}
++	if err := checkResult(m.RunRoot, filepath.Join(m.RunRoot, "result.json")); err != nil {
++		t.Fatal(err)
++	}
++	assertQuietClosure(t, m, 2)
++	for _, arm := range []string{"N", "I"} {
++		id := "r1-000-g0-" + arm
++		path := filepath.Join(m.RunRoot, "attempts", id, "quiet-start.json")
++		var receipt QuietReceipt
++		if err := readJSON(path, &receipt); err != nil {
++			t.Fatal(err)
++		}
++		if receipt.End.NS-receipt.Begin.NS < fixedQuietPolicy().WindowNS {
++			t.Fatal("actual wait was shorter than the full window")
++		}
++		t.Logf("%s: %.3fs wait, %d retained pressure samples", arm, float64(receipt.End.NS-receipt.Begin.NS)/1e9, len(receipt.Samples))
++	}
++	// Reuse the completed pair to exercise independent reconstruction failures.
++	// Each test restores its own bytes; there are no additional workflow starts.
++	for _, relative := range []string{
++		"attempts/r1-000-g0-N/quiet-start.json",
++		"costs/r1-000-g0-N-quiet-start.json",
++		"recorder-resources/r1-000-g0-N-capture.json",
++	} {
++		t.Run("missing-"+filepath.Base(relative), func(t *testing.T) {
++			path := filepath.Join(m.RunRoot, relative)
++			raw, err := os.ReadFile(path)
++			if err != nil {
++				t.Fatal(err)
++			}
++			info, err := os.Stat(path)
++			if err != nil {
++				t.Fatal(err)
++			}
++			if err := os.Remove(path); err != nil {
++				t.Fatal(err)
++			}
++			defer func() {
++				if err := os.WriteFile(path, raw, info.Mode().Perm()); err != nil {
++					t.Fatal(err)
++				}
++			}()
++			if err := checkResult(m.RunRoot, filepath.Join(m.RunRoot, "result.json")); err == nil {
++				t.Fatal("independent checker accepted missing quiet evidence")
++			}
++		})
++	}
++	if err := checkResult(m.RunRoot, filepath.Join(m.RunRoot, "result.json")); err != nil {
++		t.Fatal(err)
++	}
++}
++
++func TestQuietRunnerStopsWithoutNativeLaunch(t *testing.T) {
++	for _, kind := range []string{"read-error", "cancelled", "deadline", "stale-at-launch"} {
++		t.Run(kind, func(t *testing.T) {
++			m := quietFixture(t)
++			if kind == "deadline" {
++				m.Limits.MaxRunNS = int64(8 * time.Second)
++			}
++			r := runFixture(t, m)
++			want := "OBSERVATION_FAILED"
++			switch kind {
++			case "read-error":
++				r.quietClock = &quietClock{stamp, func() (PressureSample, error) { return PressureSample{}, errors.New("fixture pressure read failed") }, waitQuiet}
++			case "cancelled":
++				ctx, cancel := context.WithCancel(context.Background())
++				cancel()
++				r.quietContext = ctx
++				want = "INTERRUPTED"
++			case "deadline":
++				want = "NOT_QUIET_TIMEOUT"
++			case "stale-at-launch":
++				want = "QUIET_START"
++				r.fault = func(point, _ string) {
++					if point == "quiet-ready" {
++						time.Sleep(1100 * time.Millisecond)
++					}
++				}
++			}
++			err := r.execute(1, 0, -1)
++			if err == nil || !strings.Contains(err.Error(), "NOT_RUN_QUIET") {
++				t.Fatalf("quiet refusal missing: %v", err)
++			}
++			var receipt QuietReceipt
++			base := filepath.Join(m.RunRoot, "attempts", "r1-000-g0-N")
++			if err := readJSON(filepath.Join(base, "quiet-start.json"), &receipt); err != nil {
++				t.Fatal(err)
++			}
++			if receipt.Decision != want {
++				t.Fatalf("decision %s; want %s", receipt.Decision, want)
++			}
++			if kind == "stale-at-launch" {
++				var rejected QuietRejection
++				if err := readJSON(filepath.Join(base, "quiet-launch-rejected.json"), &rejected); err != nil || !strings.Contains(rejected.Reason, "stale") {
++					t.Fatalf("worker did not retain stale rejection: %+v %v", rejected, err)
++				}
++			}
++			costs, err := loadCosts(m.RunRoot)
++			if err != nil {
++				t.Fatal(err)
++			}
++			found := false
++			for _, cost := range costs {
++				if cost.Purpose == "quiet-start" {
++					found = cost.Class == "research" && !cost.InsideEnvelope && cost.DurationNS > 0
++				}
++			}
++			if !found {
++				t.Fatal("failed wait was not charged to research")
++			}
++			if err := checkRecorderResources(m, costs); err != nil {
++				t.Fatal(err)
++			}
++			assertQuietClosure(t, m, 0)
++			if _, _, _, err := resumeRunner(m.RunRoot); err == nil {
++				t.Fatal("quiet refusal became an automatic retry")
++			}
++			t.Logf("%s retained: %s; zero native starts", kind, receipt.Decision)
++		})
++	}
++}
+--- qualified/quiet_start_test.go
++++ quiet/quiet_start_test.go
+@@ -0,0 +1,342 @@
++//go:build linux && amd64
++
++package main
++
++import (
++	"context"
++	"errors"
++	"os"
++	"path/filepath"
++	"strings"
++	"testing"
++	"time"
++)
++
++func quietStamp(ns int64) Stamp { return Stamp{ns, "2026-09-15T00:00:00Z", "test-boot"} }
++
++func pressureSamples(start int64, count int, perSecondUS int64) []PressureSample {
++	rows := []PressureSample{}
++	for i := 0; i < count; i++ {
++		at := quietStamp(start + int64(i)*1e9)
++		rows = append(rows, PressureSample{at, at, map[string]int64{"cpu": int64(i) * perSecondUS, "io": int64(i) * perSecondUS, "memory": int64(i) * perSecondUS}})
++	}
++	return rows
++}
++
++func enableQuiet(t *testing.T, m *Manifest) {
++	t.Helper()
++	m.Mode = leanResearchMode
++	path := filepath.Join(filepath.Dir(m.RunRoot), "quiet-policy.json")
++	mustWrite(t, path, jsonBytes(fixedQuietPolicy()))
++	b := bound(t, path)
++	m.QuietStart = &b
++}
++
++func TestQuietPressureParsing(t *testing.T) {
++	for _, raw := range []string{"", "full total=2", "some total=-1", "some total=x", "some total=2 total=3"} {
++		if _, err := pressureTotal(raw); err == nil {
++			t.Fatalf("accepted %q", raw)
++		}
++	}
++	n, err := pressureTotal("some avg10=1.0 total=123\nfull total=50\n")
++	if err != nil || n != 123 {
++		t.Fatalf("counter: %d %v", n, err)
++	}
++}
++
++func TestQuietWindowConditions(t *testing.T) {
++	for _, tc := range []struct {
++		name     string
++		count    int
++		pressure int64
++		want     bool
++	}{{"empty", 0, 0, false}, {"short", 30, 0, false}, {"quiet", 31, 0, true}, {"boundary", 31, 100000, true}, {"above", 31, 100001, false}} {
++		t.Run(tc.name, func(t *testing.T) {
++			got, _ := quietWindow(pressureSamples(1e12, tc.count, tc.pressure), fixedQuietPolicy())
++			if got != tc.want {
++				t.Fatalf("ready %v", got)
++			}
++		})
++	}
++}
++
++func TestQuietWindowRejectsRecentFaults(t *testing.T) {
++	changes := map[string]func([]PressureSample){
++		"burst":      func(s []PressureSample) { s[30].TotalsUS["io"] = 900000 },
++		"missing":    func(s []PressureSample) { delete(s[20].TotalsUS, "memory") },
++		"reset":      func(s []PressureSample) { s[20].TotalsUS["cpu"] = 1 },
++		"read-delay": func(s []PressureSample) { s[20].Begin.NS -= 100e6 + 1 },
++		"clock":      func(s []PressureSample) { s[20].Begin.Boot = "other" },
++		"overlap":    func(s []PressureSample) { s[20].Begin.NS = s[19].End.NS - 1 },
++		"reversed":   func(s []PressureSample) { s[20], s[21] = s[21], s[20] },
++	}
++	for name, change := range changes {
++		t.Run(name, func(t *testing.T) {
++			s := pressureSamples(1e12, 31, 0)
++			change(s)
++			if ok, why := quietWindow(s, fixedQuietPolicy()); ok {
++				t.Fatal("accepted", why)
++			}
++		})
++	}
++	s := pressureSamples(1e12, 31, 0)
++	s = append(s[:10], s[14:]...)
++	if ok, _ := quietWindow(s, fixedQuietPolicy()); ok {
++		t.Fatal("gap accepted")
++	}
++}
++
++func TestQuietWaitRetainsBusyObservations(t *testing.T) {
++	start := int64(1e12)
++	now := start
++	reads := 0
++	clock := quietClock{now: func() Stamp { return quietStamp(now) }, wait: func(_ context.Context, d time.Duration) error { now += int64(d); return nil }}
++	clock.read = func() (PressureSample, error) {
++		reads++
++		n := int64(0)
++		if reads > 1 {
++			n = 900000
++		}
++		at := quietStamp(now)
++		return PressureSample{at, at, map[string]int64{"cpu": 0, "io": n, "memory": 0}}, nil
++	}
++	receipt := observeQuiet(context.Background(), QuietReceipt{Begin: quietStamp(start), DeadlineNS: start + 40e9}, fixedQuietPolicy(), clock, func() error { return nil })
++	if receipt.Decision != "QUIET_START" || len(receipt.Samples) != 32 || receipt.End.NS-start != 31e9 {
++		t.Fatalf("lost busy interval: %+v", receipt)
++	}
++}
++
++func TestQuietWaitStopsBeforeLaunch(t *testing.T) {
++	for _, name := range []string{"busy", "read-error", "cancel", "limit", "late-read"} {
++		t.Run(name, func(t *testing.T) {
++			start := int64(1e12)
++			now := start
++			ctx, cancel := context.WithCancel(context.Background())
++			defer cancel()
++			clock := quietClock{now: func() Stamp { return quietStamp(now) }, wait: func(_ context.Context, d time.Duration) error { now += int64(d); return nil }}
++			clock.read = func() (PressureSample, error) {
++				if name == "read-error" {
++					return PressureSample{}, os.ErrPermission
++				}
++				if name == "late-read" {
++					now += 40e9
++				}
++				if name == "cancel" {
++					cancel()
++				}
++				at := quietStamp(now)
++				n := (now - start) / 1000
++				return PressureSample{at, at, map[string]int64{"cpu": n, "io": n, "memory": n}}, nil
++			}
++			guard := func() error {
++				if name == "limit" {
++					return errors.New("disk floor")
++				}
++				return nil
++			}
++			r := observeQuiet(ctx, QuietReceipt{Begin: quietStamp(start), DeadlineNS: start + 35e9}, fixedQuietPolicy(), clock, guard)
++			want := map[string]string{"busy": "NOT_QUIET_TIMEOUT", "read-error": "OBSERVATION_FAILED", "cancel": "INTERRUPTED", "limit": "NOT_RUN_LIMIT", "late-read": "NOT_QUIET_TIMEOUT"}[name]
++			if r.Decision != want {
++				t.Fatalf("got %s, want %s", r.Decision, want)
++			}
++			if name == "busy" && len(r.Samples) != 35 {
++				t.Fatal("lost timeout observations")
++			}
++		})
++	}
++}
++
++func TestQuietPolicyBindingAndCompatibility(t *testing.T) {
++	m := fixtureManifest(t, 1)
++	m.Mode = leanResearchMode
++	legacy := jsonBytes(m)
++	identity := researchIdentity(m)
++	if _, err := readQuietPolicy(m); err != nil {
++		t.Fatal(err)
++	}
++	if strings.Contains(string(legacy), "quietStart") {
++		t.Fatal("legacy JSON changed")
++	}
++	enableQuiet(t, &m)
++	if _, err := readQuietPolicy(m); err != nil {
++		t.Fatal(err)
++	}
++	if researchIdentity(m) == identity {
++		t.Fatal("quiet policy omitted from measurement identity")
++	}
++	m.Mode = "P"
++	if _, err := readQuietPolicy(m); err == nil {
++		t.Fatal("another mode admitted")
++	}
++	m.Mode = leanResearchMode
++	p := fixedQuietPolicy()
++	p.WindowNS = 1
++	mustWrite(t, m.QuietStart.Path, jsonBytes(p))
++	b := bound(t, m.QuietStart.Path)
++	m.QuietStart = &b
++	if _, err := readQuietPolicy(m); err == nil {
++		t.Fatal("weaker window admitted")
++	}
++	var decoded Manifest
++	if err := decodeStrict([]byte(strings.TrimSuffix(strings.TrimSpace(string(legacy)), "}")+`,"quietStart":null}`), &decoded); err == nil || !strings.Contains(err.Error(), "null") {
++		t.Fatalf("null policy did not reach strict decoding: %v", err)
++	}
++}
++
++func TestQuietLaunchUsesObservationTimeAndRequestIdentity(t *testing.T) {
++	m := fixtureManifest(t, 1)
++	enableQuiet(t, &m)
++	dir := filepath.Join(filepath.Dir(m.RunRoot), "attempt")
++	if err := os.Mkdir(dir, 0700); err != nil {
++		t.Fatal(err)
++	}
++	q := ProcessRequest{Attempt: "r1-000-g0-N", Evidence: dir}
++	hash := strings.Repeat("a", 64)
++	samples := pressureSamples(1e12, 31, 0)
++	base := QuietReceipt{Schema: "buildopt.quiet-start/receipt/v1", Attempt: q.Attempt, ManifestSHA256: hash, Policy: *m.QuietStart, Begin: samples[0].Begin, End: quietStamp(1e12 + 30e9 + 1e6), DeadlineNS: 1e12 + 180e9, Decision: "QUIET_START", Samples: samples}
++	at := quietStamp(base.End.NS + 10e6)
++	write := func(r QuietReceipt) {
++		mustWrite(t, filepath.Join(dir, "quiet-start.json"), jsonBytes(r))
++		b := bound(t, filepath.Join(dir, "quiet-start.json"))
++		q.QuietStart = &b
++	}
++	write(base)
++	if err := checkQuietLaunch(m, hash, q, at); err != nil {
++		t.Fatal(err)
++	}
++	start := AttemptStart{ID: q.Attempt, Replication: 1, Arm: "N", ManifestSHA256: hash, At: base.Begin}
++	end := AttemptEnd{Begin: at}
++	phase := Cost{ID: q.Attempt + "-quiet-start", Attempt: q.Attempt, Purpose: "quiet-start", Replication: 1, Arm: "N", StartNS: base.Begin.NS, EndNS: base.End.NS}
++	if err := checkQuietAttempt(m, start, end, q, at, map[string]Cost{phase.ID: phase}); err != nil {
++		t.Fatal(err)
++	}
++	for name, phases := range map[string]map[string]Cost{
++		"missing-phase":  {},
++		"late-preflight": {phase.ID: phase, q.Attempt + "-preflight": {EndNS: phase.StartNS + 1}},
++		"late-worker":    {phase.ID: phase, q.Attempt + "-containment": {EndNS: phase.StartNS + 1}},
++	} {
++		t.Run(name, func(t *testing.T) {
++			if checkQuietAttempt(m, start, end, q, at, phases) == nil {
++				t.Fatal("invalid preparation order accepted")
++			}
++		})
++	}
++	inside := phase
++	inside.EndNS = at.NS + 1
++	if checkQuietAttempt(m, start, end, q, at, map[string]Cost{phase.ID: inside}) == nil {
++		t.Fatal("wait hidden inside request accepted")
++	}
++	for name, change := range map[string]func(*QuietReceipt){"attempt": func(r *QuietReceipt) { r.Attempt = "r1-001-g0-N" }, "manifest": func(r *QuietReceipt) { r.ManifestSHA256 = strings.Repeat("b", 64) }, "timeout": func(r *QuietReceipt) { r.Decision = "NOT_QUIET_TIMEOUT" }, "deadline": func(r *QuietReceipt) { r.DeadlineNS = r.End.NS }, "future": func(r *QuietReceipt) { r.End.NS = at.NS + 1 }} {
++		t.Run(name, func(t *testing.T) {
++			r := base
++			change(&r)
++			write(r)
++			if checkQuietLaunch(m, hash, q, at) == nil {
++				t.Fatal("forged permit accepted")
++			}
++		})
++	}
++	write(base)
++	if checkQuietLaunch(m, hash, q, quietStamp(base.End.NS+1e9)) == nil {
++		t.Fatal("stale last sample refreshed by receipt end")
++	}
++	expired := base
++	expired.DeadlineNS = at.NS
++	write(expired)
++	if checkQuietLaunch(m, hash, q, at) == nil {
++		t.Fatal("allocation expired between observation and launch")
++	}
++	wrongBoot := base
++	wrongBoot.Samples = append([]PressureSample{}, base.Samples...)
++	for i := range wrongBoot.Samples {
++		wrongBoot.Samples[i].Begin.Boot = "earlier-boot"
++		wrongBoot.Samples[i].End.Boot = "earlier-boot"
++	}
++	write(wrongBoot)
++	if checkQuietLaunch(m, hash, q, at) == nil {
++		t.Fatal("another boot's samples admitted")
++	}
++	q.QuietStart = nil
++	if checkQuietLaunch(m, hash, q, at) == nil {
++		t.Fatal("missing permit accepted")
++	}
++}
++
++func TestQuietActualLinuxPressureRead(t *testing.T) {
++	s, err := readPressure()
++	if err != nil {
++		t.Fatal(err)
++	}
++	if checkStampInterval(s.Begin, s.End) != nil || len(s.TotalsUS) != 3 {
++		t.Fatal("incomplete real pressure snapshot")
++	}
++}
++
++func TestRecorderMeasuresParentWork(t *testing.T) {
++	m := fixtureManifest(t, 1)
++	enableQuiet(t, &m)
++	if err := os.MkdirAll(filepath.Join(m.RunRoot, "costs"), 0700); err != nil {
++		t.Fatal(err)
++	}
++	r := &runner{manifest: m}
++	if err := r.phase(Cost{ID: "r1-000-g0-N-capture", Class: "research", Purpose: "complete-output-state-and-invocation-capture", Replication: 1, Ordinal: 0, Arm: "N", Attempt: "r1-000-g0-N"}, func() error { return os.WriteFile(filepath.Join(m.RunRoot, "payload"), make([]byte, 1<<20), 0600) }); err != nil {
++		t.Fatal(err)
++	}
++	costs, err := loadCosts(m.RunRoot)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if err := checkRecorderResources(m, costs); err != nil {
++		t.Fatal(err)
++	}
++	path := filepath.Join(m.RunRoot, "recorder-resources", "r1-000-g0-N-capture.json")
++	var record RecorderResources
++	if err := readJSON(path, &record); err != nil {
++		t.Fatal(err)
++	}
++	if record.After.IO["wchar"]-record.Before.IO["wchar"] < 1<<20 {
++		t.Fatal("parent write missing")
++	}
++	record.After.IO["write_bytes"] = -1
++	mustWrite(t, path, jsonBytes(record))
++	if checkRecorderResources(m, costs) == nil {
++		t.Fatal("negative recorder delta accepted")
++	}
++}
++
++func TestQuietOwnerAdmissionRequiresNewProof(t *testing.T) {
++	m := fixtureManifest(t, 4)
++	enableQuiet(t, &m)
++	m.Driver = "GRADLE"
++	proof := filepath.Join(filepath.Dir(m.RunRoot), "synthetic-unit-proof.log")
++	mustWrite(t, proof, []byte("unit admission fixture, not owner qualification\n"))
++	checks := map[string]Binding{}
++	for _, name := range []string{"invocation-output", "failure-fallback", "cancellation-closure", "source-drift", "missing-result", "readiness-admission", "affinity"} {
++		checks[name] = bound(t, proof)
++	}
++	local := ResearchLocalProof{Schema: "buildopt.lean-research/local-proof/v1", Executable: m.Executable, Package: m.Package, Checks: checks}
++	localPath := filepath.Join(filepath.Dir(m.RunRoot), "local.json")
++	path := filepath.Join(filepath.Dir(m.RunRoot), "readiness.json")
++	set := func() {
++		mustWrite(t, localPath, jsonBytes(local))
++		r := ResearchReadiness{Schema: "buildopt.lean-research/readiness/v1", Mode: leanResearchMode, Identity: researchIdentity(m), LocalProof: bound(t, localPath)}
++		mustWrite(t, path, jsonBytes(r))
++		b := bound(t, path)
++		m.MeasurementReadiness = &b
++	}
++	for _, name := range []string{"quiet-start-window", "quiet-start-launch", "quiet-start-failures", "recorder-resources"} {
++		set()
++		if err := validateResearchMeasurement(m); err == nil || !strings.Contains(err.Error(), name) {
++			t.Fatalf("missing %s admitted: %v", name, err)
++		}
++		checks[name] = bound(t, proof)
++	}
++	set()
++	if err := validateResearchMeasurement(m); err != nil {
++		t.Fatal(err)
++	}
++	m.Phase = "ENGINEERING"
++	if err := validateResearchMeasurement(m); err == nil || !strings.Contains(err.Error(), "control") {
++		t.Fatalf("new local proof substituted for fresh control: %v", err)
++	}
++}
+--- qualified/recorder_resources.go
++++ quiet/recorder_resources.go
+@@ -0,0 +1,107 @@
++//go:build linux && amd64
++
++package main
++
++import (
++	"errors"
++	"os"
++	"path/filepath"
++	"strconv"
++	"strings"
++)
++
++// These counters belong only to the outer recorder process. Child processes
++// and worker services have their own observations; none is invented as zero.
++type RecorderSample struct {
++	Begin      Stamp             `json:"begin"`
++	End        Stamp             `json:"end"`
++	PID        int               `json:"pid"`
++	StartTicks uint64            `json:"startTicks"`
++	CPU        diagnosticCPUTime `json:"cpu"`
++	IO         map[string]int64  `json:"io"`
++}
++
++type RecorderResources struct {
++	Schema string         `json:"schema"`
++	Phase  string         `json:"phase"`
++	Before RecorderSample `json:"before"`
++	After  RecorderSample `json:"after"`
++}
++
++func observeRecorder() (RecorderSample, error) {
++	s := RecorderSample{Begin: stamp(), IO: map[string]int64{}, CPU: diagnosticCPU()}
++	identity, err := processIdentity(os.Getpid())
++	if err != nil {
++		return s, err
++	}
++	s.PID, s.StartTicks = identity.PID, identity.StartTicks
++	raw, err := os.ReadFile("/proc/self/io")
++	if err != nil {
++		return s, err
++	}
++	for _, line := range strings.Split(string(raw), "\n") {
++		fields := strings.Fields(line)
++		if len(fields) != 2 {
++			continue
++		}
++		key := strings.TrimSuffix(fields[0], ":")
++		if _, exists := s.IO[key]; exists {
++			return s, errors.New("duplicate recorder I/O counter")
++		}
++		n, err := strconv.ParseInt(fields[1], 10, 64)
++		if err != nil || n < 0 {
++			return s, errors.New("invalid recorder I/O counter")
++		}
++		s.IO[key] = n
++	}
++	s.End = stamp()
++	for _, name := range []string{"rchar", "wchar", "syscr", "syscw", "read_bytes", "write_bytes", "cancelled_write_bytes"} {
++		if _, ok := s.IO[name]; !ok {
++			return s, errors.New("missing recorder I/O counter")
++		}
++	}
++	return s, nil
++}
++
++func (r *runner) saveRecorderResources(id string, before RecorderSample) error {
++	after, err := observeRecorder()
++	if err != nil {
++		return err
++	}
++	path := filepath.Join(r.manifest.RunRoot, "recorder-resources")
++	if err := os.MkdirAll(path, 0700); err != nil {
++		return err
++	}
++	_, err = saveBound(filepath.Join(path, id+".json"), RecorderResources{"buildopt.recorder-resources/v1", id, before, after})
++	return err
++}
++
++func checkRecorderResources(m Manifest, costs []Cost) error {
++	if m.QuietStart == nil {
++		return nil
++	}
++	for _, cost := range costs {
++		if cost.Purpose == "complete-request" {
++			continue
++		}
++		var record RecorderResources
++		if err := readJSON(filepath.Join(m.RunRoot, "recorder-resources", cost.ID+".json"), &record); err != nil {
++			return err
++		}
++		a, b := record.Before, record.After
++		if record.Schema != "buildopt.recorder-resources/v1" || record.Phase != cost.ID || a.PID <= 0 || a.PID != b.PID || a.StartTicks == 0 || a.StartTicks != b.StartTicks || checkStampInterval(a.Begin, a.End) != nil || checkStampInterval(b.Begin, b.End) != nil || a.End.Boot != b.Begin.Boot || a.End.NS > cost.StartNS || b.Begin.NS < cost.EndNS || b.CPU.UserNS < a.CPU.UserNS || b.CPU.SystemNS < a.CPU.SystemNS {
++			return errors.New("recorder resource boundaries or identity differ")
++		}
++		if len(a.IO) != 7 || len(b.IO) != 7 {
++			return errors.New("incomplete recorder I/O counters")
++		}
++		for _, name := range []string{"rchar", "wchar", "syscr", "syscw", "read_bytes", "write_bytes", "cancelled_write_bytes"} {
++			x, xok := a.IO[name]
++			y, yok := b.IO[name]
++			if !xok || !yok || x < 0 || y < x {
++				return errors.New("invalid recorder I/O delta")
++			}
++		}
++	}
++	return nil
++}
+--- qualified/records.go
++++ quiet/records.go
+@@ -406 +406 @@
+-	case "owner-output-comparison", "native-state-preparation", "neutral-source-advancement", "source-input-state-proof", "owned-process-supervision", "complete-output-state-and-invocation-capture", "equal-state-recovery-checkpoint", "projector-qualification":
++	case "quiet-start", "owner-output-comparison", "native-state-preparation", "neutral-source-advancement", "source-input-state-proof", "owned-process-supervision", "complete-output-state-and-invocation-capture", "equal-state-recovery-checkpoint", "projector-qualification":
+--- qualified/research_measurement.go
++++ quiet/research_measurement.go
+@@ -50 +50 @@
+-	return objectDigest(map[string]any{"mode": m.Mode, "protocol": m.Protocol, "executable": m.Executable, "package": m.Package,
++	identity := map[string]any{"mode": m.Mode, "protocol": m.Protocol, "executable": m.Executable, "package": m.Package,
+@@ -53 +53,5 @@
+-		"generatedPaths": m.GeneratedPaths, "affinity": m.Affinity, "daemonPolicy": m.DaemonPolicy})
++		"generatedPaths": m.GeneratedPaths, "affinity": m.Affinity, "daemonPolicy": m.DaemonPolicy}
++	if m.QuietStart != nil {
++		identity["quietStart"] = *m.QuietStart
++	}
++	return objectDigest(identity)
+@@ -56,0 +61,3 @@
++	if _, err := readQuietPolicy(m); err != nil {
++		return err
++	}
+@@ -96 +103,5 @@
+-	for _, name := range []string{"invocation-output", "failure-fallback", "cancellation-closure", "source-drift", "missing-result", "readiness-admission", "affinity"} {
++	requiredChecks := []string{"invocation-output", "failure-fallback", "cancellation-closure", "source-drift", "missing-result", "readiness-admission", "affinity"}
++	if m.QuietStart != nil {
++		requiredChecks = append(requiredChecks, "quiet-start-window", "quiet-start-launch", "quiet-start-failures", "recorder-resources")
++	}
++	for _, name := range requiredChecks {
+--- qualified/runner.go
++++ quiet/runner.go
+@@ -5,0 +6 @@
++	"context"
+@@ -30,0 +32,3 @@
++	// Test-only observation inputs; never configurable through a manifest or CLI.
++	quietClock   *quietClock
++	quietContext context.Context
+@@ -33,0 +38,8 @@
++	var before RecorderSample
++	if r.manifest.QuietStart != nil {
++		var err error
++		before, err = observeRecorder()
++		if err != nil {
++			return err
++		}
++	}
+@@ -40,4 +52,11 @@
+-	if workErr != nil {
+-		return workErr
+-	}
+-	return finishErr
++	if r.manifest.QuietStart == nil {
++		if workErr != nil {
++			return workErr
++		}
++		return finishErr
++	}
++	var resourceErr error
++	if r.manifest.QuietStart != nil {
++		resourceErr = r.saveRecorderResources(c.ID, before)
++	}
++	return errors.Join(workErr, finishErr, resourceErr)
+@@ -427,0 +447,7 @@
++	quiet, err := r.prepareQuiet(rep, ordinal, arm, id, evidence)
++	if err != nil {
++		return end, Binding{}, err
++	}
++	if r.fault != nil {
++		r.fault("quiet-ready", id)
++	}
+@@ -446 +472,7 @@
+-			native, err = worker.invoke(ProcessRequest{recordSchema, id, repo, cmd, env, evidence, remaining}, func(ProcessReceipt) { end.End = stamp() })
++			native, err = worker.invoke(ProcessRequest{QuietStart: quiet, Schema: recordSchema, Attempt: id, Directory: repo, Command: cmd, Environment: env, Evidence: evidence, TimeoutNS: remaining}, func(ProcessReceipt) { end.End = stamp() })
++		}
++	}
++	if err != nil && quiet != nil {
++		var rejection QuietRejection
++		if e := readJSON(filepath.Join(evidence, "quiet-launch-rejected.json"), &rejection); e == nil && rejection.Schema == "buildopt.quiet-start/rejection/v1" && rejection.Attempt == id && rejection.ManifestSHA256 == r.binding.SHA256 {
++			err = fmt.Errorf("NOT_RUN_QUIET: %s", rejection.Reason)

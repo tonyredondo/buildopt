@@ -1,0 +1,195 @@
+{
+  "schema": "buildopt.quiet-start/verification/v1",
+  "status": "verified",
+  "atUTC": "2026-09-15T09:36:55.456253+00:00",
+  "sourceFreeze": "source-freeze.json",
+  "unit": {
+    "topLevel": 34,
+    "includingSubtests": 84,
+    "exitCode": 0,
+    "log": "logs/unit-final.jsonl"
+  },
+  "archivedSourceUnit": {
+    "exitCode": 0,
+    "command": "./dev/check-quiet-start-integration --unit",
+    "log": "logs/archive-validation-final.log",
+    "includesEvidenceHashChecks": true
+  },
+  "taggedCompile": {
+    "exitCode": 0,
+    "log": "logs/tagged-compile.log",
+    "nativeStarts": 0
+  },
+  "actualRunner": {
+    "command": "../fixture-tests-final -test.run=^TestQuietRunner -test.v -test.timeout=610s",
+    "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/source",
+    "exitCode": 0,
+    "log": "logs/runner-final.log",
+    "fixtures": [
+      {
+        "root": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestQuietRunnerActualPair-1977807673/run",
+        "manifestSHA256": "11982ccc5afc72a3288b10b2a98bda3a62c5a506a964849c533aa18f3c5399d6",
+        "nativeStarts": 2,
+        "observations": [
+          {
+            "attempt": "r1-000-g0-I",
+            "decision": "QUIET_START",
+            "reason": "quiet window",
+            "samples": 31,
+            "waitNS": 30014101572,
+            "outerCPUTimeNS": 15218000,
+            "launchAgeNS": 688736974
+          },
+          {
+            "attempt": "r1-000-g0-N",
+            "decision": "QUIET_START",
+            "reason": "quiet window",
+            "samples": 92,
+            "waitNS": 91034351711,
+            "outerCPUTimeNS": 36889000,
+            "launchAgeNS": 828532383
+          }
+        ],
+        "resultDecision": "FIXTURE_VERIFIED"
+      },
+      {
+        "root": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestQuietRunnerStopsWithoutNativeLaunch-read-error-2674500332/run",
+        "manifestSHA256": "728635ebc61d27ba12668d9e8bd50e03c6c6947f59791a06a23ebb3da56434dc",
+        "nativeStarts": 0,
+        "observations": [
+          {
+            "attempt": "r1-000-g0-N",
+            "decision": "OBSERVATION_FAILED",
+            "reason": "fixture pressure read failed",
+            "samples": 0,
+            "waitNS": 224610,
+            "outerCPUTimeNS": 4080000
+          }
+        ]
+      },
+      {
+        "root": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestQuietRunnerStopsWithoutNativeLaunch-cancelled-477171382/run",
+        "manifestSHA256": "859a6c3b007b80011ae28991216dc232f5808f914ea50ad473179c8ff0565d54",
+        "nativeStarts": 0,
+        "observations": [
+          {
+            "attempt": "r1-000-g0-N",
+            "decision": "INTERRUPTED",
+            "reason": "context canceled",
+            "samples": 0,
+            "waitNS": 85300,
+            "outerCPUTimeNS": 3696000
+          }
+        ]
+      },
+      {
+        "root": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestQuietRunnerStopsWithoutNativeLaunch-deadline-4234906163/run",
+        "manifestSHA256": "569dd2827cdc1f1992d25296a31dc2b48e71efe6598a3f4a3b22d2fc4e7de12d",
+        "nativeStarts": 0,
+        "observations": [
+          {
+            "attempt": "r1-000-g0-N",
+            "decision": "NOT_QUIET_TIMEOUT",
+            "reason": "quiet-start deadline",
+            "samples": 5,
+            "waitNS": 4643963535,
+            "outerCPUTimeNS": 6698000
+          }
+        ]
+      },
+      {
+        "root": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestQuietRunnerStopsWithoutNativeLaunch-stale-at-launch-2500774057/run",
+        "manifestSHA256": "73a9e8f3ccb563541fad5e03f237b43df18a84d29a87e41644729e440cb41422",
+        "nativeStarts": 0,
+        "observations": [
+          {
+            "attempt": "r1-000-g0-N",
+            "decision": "QUIET_START",
+            "reason": "quiet window",
+            "samples": 31,
+            "waitNS": 30013096449,
+            "outerCPUTimeNS": 16581000
+          }
+        ]
+      }
+    ]
+  },
+  "legacyChecks": "legacy-tests.json",
+  "closure": "process-closure.json",
+  "totalNativeFixtureStarts": 23,
+  "finalSourceNativeFixtureStarts": 19,
+  "ownerBuilds": 0,
+  "comparatorJVMs": 0,
+  "protectedSourceReads": 0,
+  "ownedWorkerSessions": 30,
+  "standaloneHelperProcesses": 8,
+  "helperDetails": "Three CLI helpers, one fixture-driver, three affinity-test children and one detached sleep child. Test controller commands, owned worker sessions and native workflow starts are recorded separately.",
+  "nativeStartReceipts": [
+    "fixtures/TestDriftStopsBeforeNextChild-source-2664170161/run/attempts/r1-000-g0-I/native-pid.json",
+    "fixtures/TestDriftStopsBeforeNextChild-source-2664170161/run/attempts/r1-000-g0-N/native-pid.json",
+    "fixtures/TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost-2063787299/run/attempts/r1-000-g0-I/native-pid.json",
+    "fixtures/TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost-2063787299/run/attempts/r1-000-g0-N/native-pid.json",
+    "fixtures/TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost-2063787299/run/attempts/r1-001-g0-I/native-pid.json",
+    "fixtures/TestQuietRunnerActualPair-1977807673/run/attempts/r1-000-g0-I/native-pid.json",
+    "fixtures/TestQuietRunnerActualPair-1977807673/run/attempts/r1-000-g0-N/native-pid.json",
+    "fixtures/TestQuietRunnerActualPair-2650546102/run/attempts/r1-000-g0-I/native-pid.json",
+    "fixtures/TestQuietRunnerActualPair-2650546102/run/attempts/r1-000-g0-N/native-pid.json",
+    "fixtures/TestQuietRunnerActualPair-999418534/run/attempts/r1-000-g0-I/native-pid.json",
+    "fixtures/TestQuietRunnerActualPair-999418534/run/attempts/r1-000-g0-N/native-pid.json",
+    "fixtures/TestResearchCLIAndMissingResults-1177293134/run/attempts/r1-000-g0-I/native-pid.json",
+    "fixtures/TestResearchCLIAndMissingResults-1177293134/run/attempts/r1-000-g0-N/native-pid.json",
+    "fixtures/TestResearchCLIAndMissingResults-1177293134/run/attempts/r1-001-g0-I/native-pid.json",
+    "fixtures/TestResearchCLIAndMissingResults-1177293134/run/attempts/r1-001-g0-N/native-pid.json",
+    "fixtures/TestTypedFailuresAndNativeFallback-fallback-2481383994/run/attempts/r1-000-g0-I/native-pid.json",
+    "fixtures/TestTypedFailuresAndNativeFallback-fallback-2481383994/run/attempts/r1-000-g0-N/native-pid.json",
+    "fixtures/TestTypedFailuresAndNativeFallback-fallback-2481383994/run/attempts/r1-001-g0-I/native-pid.json",
+    "fixtures/TestTypedFailuresAndNativeFallback-fallback-2481383994/run/attempts/r1-001-g0-N/native-pid.json",
+    "fixtures/TestTypedFailuresAndNativeFallback-fallback-2481383994/run/attempts/r1-002-g0-I/native-pid.json",
+    "fixtures/TestTypedFailuresAndNativeFallback-fallback-2481383994/run/attempts/r1-002-g0-N/native-pid.json",
+    "fixtures/TestTypedFailuresAndNativeFallback-mismatch-2841052981/run/attempts/r1-000-g0-I/native-pid.json",
+    "fixtures/TestTypedFailuresAndNativeFallback-mismatch-2841052981/run/attempts/r1-000-g0-N/native-pid.json"
+  ],
+  "retainedDevelopmentFailures": [
+    {
+      "log": "logs/initial-unit.log",
+      "reason": "Initial compile error, corrected before tests."
+    },
+    {
+      "log": "logs/unit-01.jsonl",
+      "reason": "Missing copied protocol; no native starts."
+    },
+    {
+      "log": "logs/runner-integration-01.log",
+      "reason": "Incorrect invocation working directory; no native or worker starts."
+    },
+    {
+      "log": "logs/runner-integration-02.log",
+      "reason": "Actual pair and failure paths worked; adversarial test restored different file permissions. Final check rejected it. Two native starts retained."
+    }
+  ],
+  "intermediatePassingPair": {
+    "log": "logs/runner-positive-03.log",
+    "nativeStarts": 2,
+    "qualification": "Before final sample-boot and launch-deadline checks; not used to qualify final source."
+  },
+  "limits": {
+    "workSeconds": 14400,
+    "taskBytes": 8589934592,
+    "ownerStarts": 0,
+    "comparatorJVMStarts": 0,
+    "fixtureWorkflowStarts": 32,
+    "fixtureHelperProcesses": 24,
+    "ciIdleSeconds": 2700
+  },
+  "nextControl": "next-control-admission.json",
+  "productValue": "NOT_ESTABLISHED",
+  "scope": "Runner integration, compatibility and next-control admission. Publication checks are recorded separately.",
+  "localDocumentationCheck": {
+    "command": "./dev/check-documentation",
+    "exitCode": 1,
+    "diagnostics": 1620,
+    "sourceFiles": 112,
+    "trackedOrChangedFailures": [],
+    "classification": "All reported failures belong to pre-existing untracked files. The intended files were included in the scan without diagnostics. A clean versioned checkout must still pass in CI."
+  }
+}

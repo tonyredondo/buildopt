@@ -1,0 +1,12 @@
+=== RUN   TestQuietRunnerActualPair
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixtures/TestQuietRunnerActualPair-2650546102
+    quiet_start_integration_test.go:76: N: 38.016s wait, 39 retained pressure samples
+    quiet_start_integration_test.go:76: I: 30.011s wait, 31 retained pressure samples
+=== RUN   TestQuietRunnerActualPair/missing-quiet-start.json
+=== RUN   TestQuietRunnerActualPair/missing-r1-000-g0-N-quiet-start.json
+=== RUN   TestQuietRunnerActualPair/missing-r1-000-g0-N-capture.json
+--- PASS: TestQuietRunnerActualPair (81.71s)
+    --- PASS: TestQuietRunnerActualPair/missing-quiet-start.json (0.02s)
+    --- PASS: TestQuietRunnerActualPair/missing-r1-000-g0-N-quiet-start.json (0.01s)
+    --- PASS: TestQuietRunnerActualPair/missing-r1-000-g0-N-capture.json (0.01s)
+PASS

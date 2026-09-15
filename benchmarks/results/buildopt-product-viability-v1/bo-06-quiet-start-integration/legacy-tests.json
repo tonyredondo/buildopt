@@ -1,0 +1,97 @@
+[
+  {
+    "name": "cli",
+    "command": [
+      "timeout",
+      "--signal=TERM",
+      "--kill-after=10s",
+      "180s",
+      "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixture-tests-final",
+      "-test.run=^TestResearchCLIAndMissingResults$",
+      "-test.v",
+      "-test.timeout=165s"
+    ],
+    "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/source",
+    "exitCode": 0,
+    "elapsedNS": 20419248583,
+    "log": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/logs/legacy-cli.log",
+    "logSHA256": "6ca5eb128ab70abce8619b8eadb6a86794abf7da007eb21ed76e5d3a8c9b07c6",
+    "fixtureExecutableSHA256": "0b51c12e26877325c824a63e87ebb4032ffdaab1b2fbab2d70d337d098cd62d7"
+  },
+  {
+    "name": "fallback",
+    "command": [
+      "timeout",
+      "--signal=TERM",
+      "--kill-after=10s",
+      "180s",
+      "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixture-tests-final",
+      "-test.run=^TestTypedFailuresAndNativeFallback$/^(mismatch|fallback)$",
+      "-test.v",
+      "-test.timeout=165s"
+    ],
+    "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/source",
+    "exitCode": 0,
+    "elapsedNS": 39997434061,
+    "log": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/logs/legacy-fallback.log",
+    "logSHA256": "6c93b7a2128fe5dc666e19a979da6fb22fdf5f746859e9c21d7347ef5a37dc3b",
+    "fixtureExecutableSHA256": "0b51c12e26877325c824a63e87ebb4032ffdaab1b2fbab2d70d337d098cd62d7"
+  },
+  {
+    "name": "drift",
+    "command": [
+      "timeout",
+      "--signal=TERM",
+      "--kill-after=10s",
+      "180s",
+      "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixture-tests-final",
+      "-test.run=^TestDriftStopsBeforeNextChild$/^source$",
+      "-test.v",
+      "-test.timeout=165s"
+    ],
+    "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/source",
+    "exitCode": 0,
+    "elapsedNS": 10186972924,
+    "log": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/logs/legacy-drift.log",
+    "logSHA256": "616768c3dd6bd1f00198be080415b9bb6ccbe64b91117d0e1e14a77f970c4f83",
+    "fixtureExecutableSHA256": "0b51c12e26877325c824a63e87ebb4032ffdaab1b2fbab2d70d337d098cd62d7"
+  },
+  {
+    "name": "driver-death",
+    "command": [
+      "timeout",
+      "--signal=TERM",
+      "--kill-after=10s",
+      "180s",
+      "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixture-tests-final",
+      "-test.run=^TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost$",
+      "-test.v",
+      "-test.timeout=165s"
+    ],
+    "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/source",
+    "exitCode": 0,
+    "elapsedNS": 13228807998,
+    "log": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/logs/legacy-driver-death.log",
+    "logSHA256": "b8df021f19e204a61d5b79ff0941882c674e4b02cdcd9a915c73c7999216cb12",
+    "fixtureExecutableSHA256": "0b51c12e26877325c824a63e87ebb4032ffdaab1b2fbab2d70d337d098cd62d7"
+  },
+  {
+    "name": "affinity",
+    "command": [
+      "timeout",
+      "--signal=TERM",
+      "--kill-after=10s",
+      "180s",
+      "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/fixture-tests-final",
+      "-test.run=^TestAffinityScope$",
+      "-test.v",
+      "-test.timeout=165s"
+    ],
+    "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/source",
+    "exitCode": 0,
+    "elapsedNS": 139881838,
+    "log": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-start-integration-2026-09-15/logs/legacy-affinity.log",
+    "logSHA256": "fe28ee456b1b5248a684d93f7cc0064f5239311d0f4da9262a40e18b67307647",
+    "fixtureExecutableSHA256": "0b51c12e26877325c824a63e87ebb4032ffdaab1b2fbab2d70d337d098cd62d7"
+  }
+]

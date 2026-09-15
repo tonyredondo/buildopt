@@ -1,0 +1,172 @@
+Frozen runner c341f826451fb367fef4c2309893027f157c4b841a20eb09499d16f7b9a701f6: --unit
+=== RUN   TestAcquisitionUsesContentsNotCheckoutName
+--- PASS: TestAcquisitionUsesContentsNotCheckoutName (0.04s)
+=== RUN   TestLiveDiskMeasurementToleratesNativeTempDeletion
+--- PASS: TestLiveDiskMeasurementToleratesNativeTempDeletion (0.01s)
+=== RUN   TestExactCopyPreservesModesAndIndependentBytes
+--- PASS: TestExactCopyPreservesModesAndIndependentBytes (0.00s)
+=== RUN   TestStrictContract
+=== RUN   TestStrictContract/unknown
+=== RUN   TestStrictContract/duplicate
+=== RUN   TestStrictContract/null
+=== RUN   TestStrictContract/trailing
+=== RUN   TestStrictContract/missing
+=== RUN   TestStrictContract/mode
+=== RUN   TestStrictContract/adaptive
+=== RUN   TestStrictContract/version
+=== RUN   TestStrictContract/unbound-launcher
+=== RUN   TestStrictContract/ordinal
+=== RUN   TestStrictContract/parent
+=== RUN   TestStrictContract/duplicate#01
+=== RUN   TestStrictContract/tree
+=== RUN   TestStrictContract/future
+=== RUN   TestStrictContract/shared-cache
+=== RUN   TestStrictContract/unqualified-normalizer
+=== RUN   TestStrictContract/warm-retry
+--- PASS: TestStrictContract (0.09s)
+    --- PASS: TestStrictContract/unknown (0.00s)
+    --- PASS: TestStrictContract/duplicate (0.00s)
+    --- PASS: TestStrictContract/null (0.00s)
+    --- PASS: TestStrictContract/trailing (0.00s)
+    --- PASS: TestStrictContract/missing (0.00s)
+    --- PASS: TestStrictContract/mode (0.00s)
+    --- PASS: TestStrictContract/adaptive (0.00s)
+    --- PASS: TestStrictContract/version (0.00s)
+    --- PASS: TestStrictContract/unbound-launcher (0.00s)
+    --- PASS: TestStrictContract/ordinal (0.01s)
+    --- PASS: TestStrictContract/parent (0.01s)
+    --- PASS: TestStrictContract/duplicate#01 (0.01s)
+    --- PASS: TestStrictContract/tree (0.02s)
+    --- PASS: TestStrictContract/future (0.00s)
+    --- PASS: TestStrictContract/shared-cache (0.00s)
+    --- PASS: TestStrictContract/unqualified-normalizer (0.00s)
+    --- PASS: TestStrictContract/warm-retry (0.00s)
+=== RUN   TestExactPatchAndSource
+--- PASS: TestExactPatchAndSource (0.05s)
+=== RUN   TestLiveDiskBytesCountFilesAndDoNotFollowSymlinks
+--- PASS: TestLiveDiskBytesCountFilesAndDoNotFollowSymlinks (0.00s)
+=== RUN   TestLiveDiskObservationCancelsWithinLargeDirectory
+--- PASS: TestLiveDiskObservationCancelsWithinLargeDirectory (0.12s)
+=== RUN   TestLiveDiskLogicalBytesAndExactCeiling
+--- PASS: TestLiveDiskLogicalBytesAndExactCeiling (0.00s)
+=== RUN   TestEvidenceCopiesPreserveCompleteIndependentFiles
+--- PASS: TestEvidenceCopiesPreserveCompleteIndependentFiles (0.01s)
+=== RUN   TestEvidenceCopyFailureNeverOverwritesExistingBytes
+--- PASS: TestEvidenceCopyFailureNeverOverwritesExistingBytes (0.00s)
+=== RUN   TestEconomicsGoldenAndForgeryInputs
+--- PASS: TestEconomicsGoldenAndForgeryInputs (0.00s)
+=== RUN   TestNoActionIncompleteAndNativeFailure
+--- PASS: TestNoActionIncompleteAndNativeFailure (0.00s)
+=== RUN   TestPaybackMustSurviveAndNegativeDoesNotStop
+--- PASS: TestPaybackMustSurviveAndNegativeDoesNotStop (0.00s)
+=== RUN   TestQuantileAndBootstrapDeterministic
+--- PASS: TestQuantileAndBootstrapDeterministic (0.00s)
+=== RUN   TestOutputRetentionReuseAndNativeIndependence
+--- PASS: TestOutputRetentionReuseAndNativeIndependence (0.00s)
+=== RUN   TestOutputRetentionRejectsTamperingAndOverwrite
+--- PASS: TestOutputRetentionRejectsTamperingAndOverwrite (0.00s)
+=== RUN   TestCgroupEnumerationProcessDeparture
+=== RUN   TestCgroupEnumerationProcessDeparture/no_such_file_or_directory
+=== RUN   TestCgroupEnumerationProcessDeparture/no_such_process
+--- PASS: TestCgroupEnumerationProcessDeparture (0.00s)
+    --- PASS: TestCgroupEnumerationProcessDeparture/no_such_file_or_directory (0.00s)
+    --- PASS: TestCgroupEnumerationProcessDeparture/no_such_process (0.00s)
+=== RUN   TestCgroupEnumerationRejectsUnknownOwnership
+--- PASS: TestCgroupEnumerationRejectsUnknownOwnership (0.00s)
+=== RUN   TestQuietPressureParsing
+--- PASS: TestQuietPressureParsing (0.00s)
+=== RUN   TestQuietWindowConditions
+=== RUN   TestQuietWindowConditions/empty
+=== RUN   TestQuietWindowConditions/short
+=== RUN   TestQuietWindowConditions/quiet
+=== RUN   TestQuietWindowConditions/boundary
+=== RUN   TestQuietWindowConditions/above
+--- PASS: TestQuietWindowConditions (0.00s)
+    --- PASS: TestQuietWindowConditions/empty (0.00s)
+    --- PASS: TestQuietWindowConditions/short (0.00s)
+    --- PASS: TestQuietWindowConditions/quiet (0.00s)
+    --- PASS: TestQuietWindowConditions/boundary (0.00s)
+    --- PASS: TestQuietWindowConditions/above (0.00s)
+=== RUN   TestQuietWindowRejectsRecentFaults
+=== RUN   TestQuietWindowRejectsRecentFaults/overlap
+=== RUN   TestQuietWindowRejectsRecentFaults/reversed
+=== RUN   TestQuietWindowRejectsRecentFaults/burst
+=== RUN   TestQuietWindowRejectsRecentFaults/missing
+=== RUN   TestQuietWindowRejectsRecentFaults/reset
+=== RUN   TestQuietWindowRejectsRecentFaults/read-delay
+=== RUN   TestQuietWindowRejectsRecentFaults/clock
+--- PASS: TestQuietWindowRejectsRecentFaults (0.00s)
+    --- PASS: TestQuietWindowRejectsRecentFaults/overlap (0.00s)
+    --- PASS: TestQuietWindowRejectsRecentFaults/reversed (0.00s)
+    --- PASS: TestQuietWindowRejectsRecentFaults/burst (0.00s)
+    --- PASS: TestQuietWindowRejectsRecentFaults/missing (0.00s)
+    --- PASS: TestQuietWindowRejectsRecentFaults/reset (0.00s)
+    --- PASS: TestQuietWindowRejectsRecentFaults/read-delay (0.00s)
+    --- PASS: TestQuietWindowRejectsRecentFaults/clock (0.00s)
+=== RUN   TestQuietWaitRetainsBusyObservations
+--- PASS: TestQuietWaitRetainsBusyObservations (0.00s)
+=== RUN   TestQuietWaitStopsBeforeLaunch
+=== RUN   TestQuietWaitStopsBeforeLaunch/busy
+=== RUN   TestQuietWaitStopsBeforeLaunch/read-error
+=== RUN   TestQuietWaitStopsBeforeLaunch/cancel
+=== RUN   TestQuietWaitStopsBeforeLaunch/limit
+=== RUN   TestQuietWaitStopsBeforeLaunch/late-read
+--- PASS: TestQuietWaitStopsBeforeLaunch (0.00s)
+    --- PASS: TestQuietWaitStopsBeforeLaunch/busy (0.00s)
+    --- PASS: TestQuietWaitStopsBeforeLaunch/read-error (0.00s)
+    --- PASS: TestQuietWaitStopsBeforeLaunch/cancel (0.00s)
+    --- PASS: TestQuietWaitStopsBeforeLaunch/limit (0.00s)
+    --- PASS: TestQuietWaitStopsBeforeLaunch/late-read (0.00s)
+=== RUN   TestQuietPolicyBindingAndCompatibility
+--- PASS: TestQuietPolicyBindingAndCompatibility (0.02s)
+=== RUN   TestQuietLaunchUsesObservationTimeAndRequestIdentity
+=== RUN   TestQuietLaunchUsesObservationTimeAndRequestIdentity/missing-phase
+=== RUN   TestQuietLaunchUsesObservationTimeAndRequestIdentity/late-preflight
+=== RUN   TestQuietLaunchUsesObservationTimeAndRequestIdentity/late-worker
+=== RUN   TestQuietLaunchUsesObservationTimeAndRequestIdentity/future
+=== RUN   TestQuietLaunchUsesObservationTimeAndRequestIdentity/attempt
+=== RUN   TestQuietLaunchUsesObservationTimeAndRequestIdentity/manifest
+=== RUN   TestQuietLaunchUsesObservationTimeAndRequestIdentity/timeout
+=== RUN   TestQuietLaunchUsesObservationTimeAndRequestIdentity/deadline
+--- PASS: TestQuietLaunchUsesObservationTimeAndRequestIdentity (0.03s)
+    --- PASS: TestQuietLaunchUsesObservationTimeAndRequestIdentity/missing-phase (0.00s)
+    --- PASS: TestQuietLaunchUsesObservationTimeAndRequestIdentity/late-preflight (0.00s)
+    --- PASS: TestQuietLaunchUsesObservationTimeAndRequestIdentity/late-worker (0.00s)
+    --- PASS: TestQuietLaunchUsesObservationTimeAndRequestIdentity/future (0.00s)
+    --- PASS: TestQuietLaunchUsesObservationTimeAndRequestIdentity/attempt (0.00s)
+    --- PASS: TestQuietLaunchUsesObservationTimeAndRequestIdentity/manifest (0.00s)
+    --- PASS: TestQuietLaunchUsesObservationTimeAndRequestIdentity/timeout (0.00s)
+    --- PASS: TestQuietLaunchUsesObservationTimeAndRequestIdentity/deadline (0.00s)
+=== RUN   TestQuietActualLinuxPressureRead
+--- PASS: TestQuietActualLinuxPressureRead (0.00s)
+=== RUN   TestRecorderMeasuresParentWork
+--- PASS: TestRecorderMeasuresParentWork (0.02s)
+=== RUN   TestQuietOwnerAdmissionRequiresNewProof
+--- PASS: TestQuietOwnerAdmissionRequiresNewProof (0.04s)
+=== RUN   TestResearchReadinessAdmission
+--- PASS: TestResearchReadinessAdmission (0.04s)
+=== RUN   TestResearchTrialAdmission
+=== RUN   TestResearchTrialAdmission/control
+=== RUN   TestResearchTrialAdmission/prefix
+--- PASS: TestResearchTrialAdmission (0.73s)
+    --- PASS: TestResearchTrialAdmission/control (0.00s)
+    --- PASS: TestResearchTrialAdmission/prefix (0.01s)
+=== RUN   TestOwnedWatchObservesProcessesDuringSlowDiskScan
+--- PASS: TestOwnedWatchObservesProcessesDuringSlowDiskScan (0.30s)
+=== RUN   TestOwnedWatchRetainsDiskFailureAtChildExit
+--- PASS: TestOwnedWatchRetainsDiskFailureAtChildExit (0.10s)
+=== RUN   TestOwnedWatchEnforcesLiveDiskLimits
+=== RUN   TestOwnedWatchEnforcesLiveDiskLimits/growth
+=== RUN   TestOwnedWatchEnforcesLiveDiskLimits/free-space
+=== RUN   TestOwnedWatchEnforcesLiveDiskLimits/missing-root
+=== RUN   TestOwnedWatchEnforcesLiveDiskLimits/process-error
+--- PASS: TestOwnedWatchEnforcesLiveDiskLimits (0.60s)
+    --- PASS: TestOwnedWatchEnforcesLiveDiskLimits/growth (0.20s)
+    --- PASS: TestOwnedWatchEnforcesLiveDiskLimits/free-space (0.10s)
+    --- PASS: TestOwnedWatchEnforcesLiveDiskLimits/missing-root (0.20s)
+    --- PASS: TestOwnedWatchEnforcesLiveDiskLimits/process-error (0.10s)
+=== RUN   TestOwnedWatchCancelsBlockedDiskAfterDriverLoss
+--- PASS: TestOwnedWatchCancelsBlockedDiskAfterDriverLoss (0.20s)
+PASS
+ok  	github.com/tonyredondo/buildopt/.tools/state/quiet-start-verification/check-_2w5vno8/source	2.452s
+BO-06 quiet-start checks passed; no owner timing was performed.
