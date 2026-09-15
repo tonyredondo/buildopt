@@ -165,6 +165,11 @@ if __name__ == "__main__":
         for row in bindings:
             path = HERE / row["path"]
             assert hashlib.sha256(path.read_bytes()).hexdigest() == row["sha256"], f"changed file: {path}"
+        sources = json.loads((HERE / "observer-source-files.json").read_text())
+        with tarfile.open(HERE / "observer-source.tar.gz") as archive:
+            assert sorted(archive.getnames()) == sorted(row["path"] for row in sources)
+            for row in sources:
+                assert hashlib.sha256(archive.extractfile(row["path"]).read()).hexdigest() == row["sha256"]
         print(f"Verified {len(result['requests'])} existing build records, source bindings and {len(bindings)} new files; no builds started")
     elif not sys.argv[1:]:
         print(json.dumps(result, indent=2))

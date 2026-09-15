@@ -129,3 +129,8 @@ pair's sampled process counters, retaining coverage gaps. Source checks use
 the measured runner archive and confirm the actual task-recorder binding.
 The [derived records](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-recording-pressure/analysis.json)
 contain those inputs and limits. Neither command starts a build.
+
+The tested quiet-start utility, tests and check scripts are also retained in
+`observer-source.tar.gz`, with individual file hashes. The diagnosis can still
+be verified after those files change in the working repository; it uses the
+archived source for its historical bindings.

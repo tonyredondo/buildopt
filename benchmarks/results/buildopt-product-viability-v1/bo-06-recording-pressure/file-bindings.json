@@ -1,8 +1,8 @@
 [
   {
     "path": "README.md",
-    "sha256": "f43a360aad4a2f79b3b700d1afe9493f2d80a973c80a59176b1fbfbbb06a7b09",
-    "bytes": 7488
+    "sha256": "f811cb153853b3e34156a25d5d5c6a2706e8fc01f505ecdf006b4c46429d4195",
+    "bytes": 7766
   },
   {
     "path": "analysis.json",
@@ -11,8 +11,8 @@
   },
   {
     "path": "analyze.py",
-    "sha256": "c5b73916a15352e4a594d1edb085aede56f7bb35a46f795df31378f39436c0a1",
-    "bytes": 9384
+    "sha256": "7dad23c5b87c0c2d2e08f9436bccfb3b9516f73b69ad2d3a9d3ca9d1c51cb9a4",
+    "bytes": 9763
   },
   {
     "path": "live-quiet-observation.json",
@@ -20,28 +20,18 @@
     "bytes": 6498
   },
   {
+    "path": "observer-source-files.json",
+    "sha256": "a74989b08e05fb1c5d9311c4c7fe329c9822ec911dea2d36157fda986aa8079d",
+    "bytes": 616
+  },
+  {
+    "path": "observer-source.tar.gz",
+    "sha256": "297bb2d1a9ce658f0acff1d0576725b4979d287cbe9e790919a68b636afa39bf",
+    "bytes": 8809
+  },
+  {
     "path": "quiet-start-tests.log",
     "sha256": "3e266d64613070e273bdd2ee3a7e7a28a9943405195ee9daff3a0cca92cf6b25",
     "bytes": 1112
-  },
-  {
-    "path": "../../../../dev/check-base-ci",
-    "sha256": "d816b7c53fc3f986adf56c604e891a566c3b48df63a64053d94ce5580852aaf7",
-    "bytes": 31613
-  },
-  {
-    "path": "../../../../dev/check-history-replay",
-    "sha256": "30ef9a41dd4007375a2090c7847e1a9bad94f02b6f3dcfc375a1d9832d4e4754",
-    "bytes": 3501
-  },
-  {
-    "path": "../../../../dev/history-replay/quiet_start.py",
-    "sha256": "4d182969ed764e1ee8b9f3e68bc83ea0e07a93cec67d878ca26b210450145e1d",
-    "bytes": 4539
-  },
-  {
-    "path": "../../../../dev/history-replay/quiet_start_test.py",
-    "sha256": "825e2d514873f3904f53ed1e305eebf531a8f1376810bd4c6fa0e4f7d2bf8d24",
-    "bytes": 3720
   }
 ]
