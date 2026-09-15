@@ -1,0 +1,1881 @@
+{
+  "status": "verified incomplete accounting",
+  "decision": "INCOMPLETE_CONTROL_QUIET_TIMEOUT",
+  "complete": false,
+  "netSaving": null,
+  "requests": 1,
+  "scheduledBuilds": 8,
+  "unstartedBuilds": 7,
+  "livePairs": 0,
+  "independentPairs": 0,
+  "developmentStarts": 0,
+  "protectedStarts": 0,
+  "coverage": [
+    {
+      "originalOrdinal": 17,
+      "arm": "N",
+      "outcome": "COMPLETED_UNPAIRED",
+      "wholeRequestSeconds": 206.015907332
+    },
+    {
+      "originalOrdinal": 17,
+      "arm": "I",
+      "outcome": "NOT_RUN_QUIET",
+      "wholeRequestSeconds": null
+    },
+    {
+      "originalOrdinal": 18,
+      "arm": "N",
+      "outcome": "NOT_RUN_DEPENDENCY",
+      "wholeRequestSeconds": null
+    },
+    {
+      "originalOrdinal": 18,
+      "arm": "I",
+      "outcome": "NOT_RUN_DEPENDENCY",
+      "wholeRequestSeconds": null
+    },
+    {
+      "originalOrdinal": 19,
+      "arm": "N",
+      "outcome": "NOT_RUN_DEPENDENCY",
+      "wholeRequestSeconds": null
+    },
+    {
+      "originalOrdinal": 19,
+      "arm": "I",
+      "outcome": "NOT_RUN_DEPENDENCY",
+      "wholeRequestSeconds": null
+    },
+    {
+      "originalOrdinal": 20,
+      "arm": "N",
+      "outcome": "NOT_RUN_DEPENDENCY",
+      "wholeRequestSeconds": null
+    },
+    {
+      "originalOrdinal": 20,
+      "arm": "I",
+      "outcome": "NOT_RUN_DEPENDENCY",
+      "wholeRequestSeconds": null
+    }
+  ],
+  "refusal": {
+    "seconds": 180.000206769,
+    "intervals": 179,
+    "pressure": {
+      "cpu": {
+        "intervalsAboveThreshold": 0,
+        "weightedFraction": 0.0011534905569137882,
+        "maximumFraction": 0.005681892841630217
+      },
+      "io": {
+        "intervalsAboveThreshold": 11,
+        "weightedFraction": 0.017756424604382016,
+        "maximumFraction": 0.5689045391470143
+      },
+      "memory": {
+        "intervalsAboveThreshold": 0,
+        "weightedFraction": 0.0013407047229415806,
+        "maximumFraction": 0.03872664736026777
+      }
+    },
+    "intervalsData": [
+      {
+        "endSeconds": 1.000458893,
+        "seconds": 1.000307913,
+        "pressure": {
+          "cpu": 0.0010826666328690735,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 2.000770385,
+        "seconds": 1.000311492,
+        "pressure": {
+          "cpu": 0.0006617938565080486,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 3.000975157,
+        "seconds": 1.000204772,
+        "pressure": {
+          "cpu": 0.0019396028236505953,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 4.001263179,
+        "seconds": 1.000288022,
+        "pressure": {
+          "cpu": 0.0009587238664345418,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 5.001564731,
+        "seconds": 1.000301552,
+        "pressure": {
+          "cpu": 0.0021783431162766004,
+          "io": 0.004453656990827102,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 6.001869033,
+        "seconds": 1.000304302,
+        "pressure": {
+          "cpu": 0.0009607076547392475,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 7.002167944,
+        "seconds": 1.000298911,
+        "pressure": {
+          "cpu": 0.0007997609426568695,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 8.002440906,
+        "seconds": 1.000272962,
+        "pressure": {
+          "cpu": 0.0007058073414164723,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 9.002679548,
+        "seconds": 1.000238642,
+        "pressure": {
+          "cpu": 0.0018295633893336426,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 10.00303242,
+        "seconds": 1.000352872,
+        "pressure": {
+          "cpu": 0.0022851936191572208,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 11.003244823,
+        "seconds": 1.000212403,
+        "pressure": {
+          "cpu": 0.0004928953075579888,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 12.003577444,
+        "seconds": 1.000332621,
+        "pressure": {
+          "cpu": 0.0008257253464095519,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 13.004196116,
+        "seconds": 1.000618672,
+        "pressure": {
+          "cpu": 0.0006076240799951812,
+          "io": 9.694002592028384e-05,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 14.004673349,
+        "seconds": 1.000477233,
+        "pressure": {
+          "cpu": 0.0010225120235194797,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 15.005371802,
+        "seconds": 1.000698453,
+        "pressure": {
+          "cpu": 0.002038576150372044,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 16.005727023,
+        "seconds": 1.000355221,
+        "pressure": {
+          "cpu": 0.0010136399338090724,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 17.006118765,
+        "seconds": 1.000391742,
+        "pressure": {
+          "cpu": 0.0007976875122985571,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 18.006453677,
+        "seconds": 1.000334912,
+        "pressure": {
+          "cpu": 0.0006677763536858343,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 19.006979099,
+        "seconds": 1.000525422,
+        "pressure": {
+          "cpu": 0.0015122054539859558,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 20.00732528,
+        "seconds": 1.000346181,
+        "pressure": {
+          "cpu": 0.0021442576987255975,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 21.007660361,
+        "seconds": 1.000335081,
+        "pressure": {
+          "cpu": 0.0007327544679001415,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 22.008187363,
+        "seconds": 1.000527002,
+        "pressure": {
+          "cpu": 0.0006186739575870038,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 23.008692196,
+        "seconds": 1.000504833,
+        "pressure": {
+          "cpu": 0.0007186372082222615,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 24.009057938,
+        "seconds": 1.000365742,
+        "pressure": {
+          "cpu": 0.0010376204986035998,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 25.009244889,
+        "seconds": 1.000186951,
+        "pressure": {
+          "cpu": 0.0017766678501687431,
+          "io": 0.11872780371836705,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 26.00956835,
+        "seconds": 1.000323461,
+        "pressure": {
+          "cpu": 0.00046484963927083183,
+          "io": 0.13109959439409768,
+          "memory": 0.019955545159407194
+        }
+      },
+      {
+        "endSeconds": 27.009941852,
+        "seconds": 1.000373502,
+        "pressure": {
+          "cpu": 0.0008826703208698144,
+          "io": 0.003912538658985791,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 28.010348383,
+        "seconds": 1.000406531,
+        "pressure": {
+          "cpu": 0.0006187484595699826,
+          "io": 2.498984085500737e-05,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 29.010543755,
+        "seconds": 1.000195372,
+        "pressure": {
+          "cpu": 0.0018276429297455297,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 30.011040696,
+        "seconds": 1.000496941,
+        "pressure": {
+          "cpu": 0.002474770185229382,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 31.011349448,
+        "seconds": 1.000308752,
+        "pressure": {
+          "cpu": 0.0009257141838942942,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 32.01157252,
+        "seconds": 1.000223072,
+        "pressure": {
+          "cpu": 0.0009417899130405183,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 33.011793551,
+        "seconds": 1.000221031,
+        "pressure": {
+          "cpu": 0.0008428137120424135,
+          "io": 0.00010197745982007851,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 34.012952914,
+        "seconds": 1.001159363,
+        "pressure": {
+          "cpu": 0.0008020701095915337,
+          "io": 0.00018878113413798239,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 35.013216646,
+        "seconds": 1.000263732,
+        "pressure": {
+          "cpu": 0.002860245661691151,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 36.013432197,
+        "seconds": 1.000215551,
+        "pressure": {
+          "cpu": 0.0005528808259850781,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 37.013639689,
+        "seconds": 1.000207492,
+        "pressure": {
+          "cpu": 0.00046090436603128345,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 38.01385789,
+        "seconds": 1.000218201,
+        "pressure": {
+          "cpu": 0.0007428379120247583,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 39.01416735,
+        "seconds": 1.00030946,
+        "pressure": {
+          "cpu": 0.0009237141474199394,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 40.014473802,
+        "seconds": 1.000306452,
+        "pressure": {
+          "cpu": 0.003221012914150433,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 41.014819523,
+        "seconds": 1.000345721,
+        "pressure": {
+          "cpu": 0.0005528088823603815,
+          "io": 0.0009486720241591356,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 42.015070854,
+        "seconds": 1.000251331,
+        "pressure": {
+          "cpu": 0.0008337904426142673,
+          "io": 3.9989949286055985e-06,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 43.015386006,
+        "seconds": 1.000315152,
+        "pressure": {
+          "cpu": 0.0008547306299325155,
+          "io": 0.00021293289377266177,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 44.015734998,
+        "seconds": 1.000348992,
+        "pressure": {
+          "cpu": 0.0007137509066435886,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 45.01604724,
+        "seconds": 1.000312242,
+        "pressure": {
+          "cpu": 0.0032359895881390204,
+          "io": 0.0010916591381673803,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 46.016378291,
+        "seconds": 1.000331051,
+        "pressure": {
+          "cpu": 0.0005588150037341988,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 47.016715143,
+        "seconds": 1.000336852,
+        "pressure": {
+          "cpu": 0.0008147255580663143,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 48.017148344,
+        "seconds": 1.000433201,
+        "pressure": {
+          "cpu": 0.0006337254694928902,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 49.017389655,
+        "seconds": 1.000241311,
+        "pressure": {
+          "cpu": 0.0005708622446608787,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 50.017595026,
+        "seconds": 1.000205371,
+        "pressure": {
+          "cpu": 0.0031863456170142883,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 51.017854387,
+        "seconds": 1.000259361,
+        "pressure": {
+          "cpu": 0.0008597770073755901,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 52.018377778,
+        "seconds": 1.000523391,
+        "pressure": {
+          "cpu": 0.001829042695514552,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 53.018719699,
+        "seconds": 1.000341921,
+        "pressure": {
+          "cpu": 0.0009266831475714992,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 54.019143881,
+        "seconds": 1.000424182,
+        "pressure": {
+          "cpu": 0.0012084873814055806,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 55.019344952,
+        "seconds": 1.000201071,
+        "pressure": {
+          "cpu": 0.004469101393313745,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 56.019544473,
+        "seconds": 1.000199521,
+        "pressure": {
+          "cpu": 0.0006158771195812241,
+          "io": 0.3624056924538359,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 57.020032294,
+        "seconds": 1.000487821,
+        "pressure": {
+          "cpu": 0.0010225012024409241,
+          "io": 0.1188560195376931,
+          "memory": 0.02203525074194781
+        }
+      },
+      {
+        "endSeconds": 58.020377705,
+        "seconds": 1.000345411,
+        "pressure": {
+          "cpu": 0.0007237500087857153,
+          "io": 0.0042275397612635225,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 59.020724456,
+        "seconds": 1.000346751,
+        "pressure": {
+          "cpu": 0.0006317809293309736,
+          "io": 2.998960107583735e-06,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 60.021960449,
+        "seconds": 1.001235993,
+        "pressure": {
+          "cpu": 0.0011525754248429222,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 61.022360201,
+        "seconds": 1.000399752,
+        "pressure": {
+          "cpu": 0.0013904441671632882,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 62.022736502,
+        "seconds": 1.000376301,
+        "pressure": {
+          "cpu": 0.0006207664049810392,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 63.023110893,
+        "seconds": 1.000374391,
+        "pressure": {
+          "cpu": 0.0007027369016286624,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 64.023320855,
+        "seconds": 1.000209962,
+        "pressure": {
+          "cpu": 0.0005488847550590583,
+          "io": 0.00735945479415251,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 65.024277567,
+        "seconds": 1.000956712,
+        "pressure": {
+          "cpu": 0.0036804788417263744,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 66.027445612,
+        "seconds": 1.003168045,
+        "pressure": {
+          "cpu": 0.0010646272130807356,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 67.027771543,
+        "seconds": 1.000325931,
+        "pressure": {
+          "cpu": 0.0008407259813401759,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 68.028061873,
+        "seconds": 1.00029033,
+        "pressure": {
+          "cpu": 0.0008787448740007314,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 69.028409006,
+        "seconds": 1.000347133,
+        "pressure": {
+          "cpu": 0.000945671726136691,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 70.028777216,
+        "seconds": 1.00036821,
+        "pressure": {
+          "cpu": 0.0008536856644015108,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 71.029249558,
+        "seconds": 1.000472342,
+        "pressure": {
+          "cpu": 0.0011364632006988554,
+          "io": 9.99527881001632e-07,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 72.029566229,
+        "seconds": 1.000316671,
+        "pressure": {
+          "cpu": 0.0010516669675697126,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 73.02993496,
+        "seconds": 1.000368731,
+        "pressure": {
+          "cpu": 0.0034527268725675513,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 74.03015697,
+        "seconds": 1.00022201,
+        "pressure": {
+          "cpu": 0.0007328373027904075,
+          "io": 0.0005198845804243,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 75.030486571,
+        "seconds": 1.000329601,
+        "pressure": {
+          "cpu": 0.000951686323236175,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 76.030841842,
+        "seconds": 1.000355271,
+        "pressure": {
+          "cpu": 0.0015214594695727853,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 77.031317614,
+        "seconds": 1.000475772,
+        "pressure": {
+          "cpu": 0.0007116614114269625,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 78.031800616,
+        "seconds": 1.000483002,
+        "pressure": {
+          "cpu": 0.0006576823381153256,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 79.032143807,
+        "seconds": 1.000343191,
+        "pressure": {
+          "cpu": 0.0009736658466444242,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 80.032499288,
+        "seconds": 1.000355481,
+        "pressure": {
+          "cpu": 0.0008397015020703425,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 81.032697768,
+        "seconds": 1.00019848,
+        "pressure": {
+          "cpu": 0.0017266572930604734,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 82.032933479,
+        "seconds": 1.000235711,
+        "pressure": {
+          "cpu": 0.000998764580202036,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 83.03324187,
+        "seconds": 1.000308391,
+        "pressure": {
+          "cpu": 0.0007227771020467227,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 84.033549901,
+        "seconds": 1.000308031,
+        "pressure": {
+          "cpu": 0.0006298060002279438,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 85.034078762,
+        "seconds": 1.000528861,
+        "pressure": {
+          "cpu": 0.0008575464771125678,
+          "io": 0.00017290855540847813,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 86.034286823,
+        "seconds": 1.000208061,
+        "pressure": {
+          "cpu": 0.001157759115480674,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 87.034493304,
+        "seconds": 1.000206481,
+        "pressure": {
+          "cpu": 0.0011487628023078168,
+          "io": 0.2110534214784797,
+          "memory": 0.020269814668397456
+        }
+      },
+      {
+        "endSeconds": 88.034767904,
+        "seconds": 1.0002746,
+        "pressure": {
+          "cpu": 0.0005498490114614527,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 89.034981205,
+        "seconds": 1.000213301,
+        "pressure": {
+          "cpu": 0.000468899983164691,
+          "io": 0.0030443506369647847,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 90.035294775,
+        "seconds": 1.00031357,
+        "pressure": {
+          "cpu": 0.00072877147912729,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 91.035592077,
+        "seconds": 1.000297302,
+        "pressure": {
+          "cpu": 0.0024332765820056167,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 92.035910378,
+        "seconds": 1.000318301,
+        "pressure": {
+          "cpu": 0.0007177715326034008,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 93.036192888,
+        "seconds": 1.00028251,
+        "pressure": {
+          "cpu": 0.0027012368735708477,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 94.036540246,
+        "seconds": 1.000347358,
+        "pressure": {
+          "cpu": 0.0007637347106383821,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 95.036988232,
+        "seconds": 1.000447986,
+        "pressure": {
+          "cpu": 0.0007606592353118097,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 96.03734365,
+        "seconds": 1.000355418,
+        "pressure": {
+          "cpu": 0.0031978634217783583,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 97.037681889,
+        "seconds": 1.000338239,
+        "pressure": {
+          "cpu": 0.0014405127624037572,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 98.03823762,
+        "seconds": 1.000555731,
+        "pressure": {
+          "cpu": 0.0005347028490509941,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 99.038717919,
+        "seconds": 1.000480299,
+        "pressure": {
+          "cpu": 0.0008585876212241137,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 100.039211038,
+        "seconds": 1.000493119,
+        "pressure": {
+          "cpu": 0.0007886111208726864,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 101.040463028,
+        "seconds": 1.00125199,
+        "pressure": {
+          "cpu": 0.0008399483930114336,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 102.040817614,
+        "seconds": 1.000354586,
+        "pressure": {
+          "cpu": 0.0008996809857179983,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 103.041283261,
+        "seconds": 1.000465647,
+        "pressure": {
+          "cpu": 0.0007476518581552056,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 104.041490008,
+        "seconds": 1.000206747,
+        "pressure": {
+          "cpu": 0.000554885279133195,
+          "io": 0.02483386567277375,
+          "memory": 0.006559643813320528
+        }
+      },
+      {
+        "endSeconds": 105.041832696,
+        "seconds": 1.000342688,
+        "pressure": {
+          "cpu": 0.0003908660548933807,
+          "io": 0.2078497723772036,
+          "memory": 0.014164146117095424
+        }
+      },
+      {
+        "endSeconds": 106.042048109,
+        "seconds": 1.000215413,
+        "pressure": {
+          "cpu": 0.0009597932480570563,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 107.043280554,
+        "seconds": 1.001232445,
+        "pressure": {
+          "cpu": 0.0018547141667986998,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 108.043629278,
+        "seconds": 1.000348724,
+        "pressure": {
+          "cpu": 0.0007057538866816209,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 109.044092151,
+        "seconds": 1.000462873,
+        "pressure": {
+          "cpu": 0.0006267099129024851,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 110.044328282,
+        "seconds": 1.000236131,
+        "pressure": {
+          "cpu": 0.0007298276650636209,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 111.044695124,
+        "seconds": 1.000366842,
+        "pressure": {
+          "cpu": 0.0019752753860268393,
+          "io": 3.998533170094816e-06,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 112.045109485,
+        "seconds": 1.000414361,
+        "pressure": {
+          "cpu": 0.0007007096532473708,
+          "io": 0.02051849793467729,
+          "memory": 0.00788373328839089
+        }
+      },
+      {
+        "endSeconds": 113.045442625,
+        "seconds": 1.00033314,
+        "pressure": {
+          "cpu": 0.0022832393616390636,
+          "io": 0.06150950872226427,
+          "memory": 0.01295968261133486
+        }
+      },
+      {
+        "endSeconds": 114.045796254,
+        "seconds": 1.000353629,
+        "pressure": {
+          "cpu": 0.00034987627360324195,
+          "io": 0.05503253889830193,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 115.046126523,
+        "seconds": 1.000330269,
+        "pressure": {
+          "cpu": 0.0006077992627452923,
+          "io": 0.06293021610045872,
+          "memory": 0.029642210096913504
+        }
+      },
+      {
+        "endSeconds": 116.046459531,
+        "seconds": 1.000333008,
+        "pressure": {
+          "cpu": 0.0010676444658517157,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 117.04667751,
+        "seconds": 1.000217979,
+        "pressure": {
+          "cpu": 0.0030053448979244952,
+          "io": 0.020092620230734725,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 118.047819109,
+        "seconds": 1.001141599,
+        "pressure": {
+          "cpu": 0.0010358175117643872,
+          "io": 0.5689045391470143,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 119.052267254,
+        "seconds": 1.004448145,
+        "pressure": {
+          "cpu": 0.0006501082243523881,
+          "io": 0.5006759209058025,
+          "memory": 0.021613858423721814
+        }
+      },
+      {
+        "endSeconds": 120.05253458,
+        "seconds": 1.000267326,
+        "pressure": {
+          "cpu": 0.0010307244605528582,
+          "io": 0.10221367562694934,
+          "memory": 0.03872664736026777
+        }
+      },
+      {
+        "endSeconds": 121.052809606,
+        "seconds": 1.000275026,
+        "pressure": {
+          "cpu": 0.0013106395400498583,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 122.053180461,
+        "seconds": 1.000370855,
+        "pressure": {
+          "cpu": 0.005681892841630217,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 123.054328448,
+        "seconds": 1.001147987,
+        "pressure": {
+          "cpu": 0.0019877181254323393,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 124.054571531,
+        "seconds": 1.000243083,
+        "pressure": {
+          "cpu": 0.0006528413053769651,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 125.054889645,
+        "seconds": 1.000318114,
+        "pressure": {
+          "cpu": 0.000727768486655636,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 126.055089898,
+        "seconds": 1.000200253,
+        "pressure": {
+          "cpu": 0.0008238350245648258,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 127.055386362,
+        "seconds": 1.000296464,
+        "pressure": {
+          "cpu": 0.0007977634918441539,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 128.055596353,
+        "seconds": 1.000209991,
+        "pressure": {
+          "cpu": 0.0010637766164845277,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 129.055910295,
+        "seconds": 1.000313942,
+        "pressure": {
+          "cpu": 0.0009217106363194126,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 130.056206195,
+        "seconds": 1.0002959,
+        "pressure": {
+          "cpu": 0.0009897071456556005,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 131.056428966,
+        "seconds": 1.000222771,
+        "pressure": {
+          "cpu": 0.0013806924217685103,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 132.056780136,
+        "seconds": 1.00035117,
+        "pressure": {
+          "cpu": 0.0012025776907923244,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 133.056969705,
+        "seconds": 1.000189569,
+        "pressure": {
+          "cpu": 0.0022995640739380675,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 134.057301514,
+        "seconds": 1.000331809,
+        "pressure": {
+          "cpu": 0.001144620204714494,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 135.057563792,
+        "seconds": 1.000262278,
+        "pressure": {
+          "cpu": 0.0009327553587900073,
+          "io": 8.39779744248238e-05,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 136.057899859,
+        "seconds": 1.000336067,
+        "pressure": {
+          "cpu": 0.0013925320159429982,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 137.058156644,
+        "seconds": 1.000256785,
+        "pressure": {
+          "cpu": 0.0007428092577247551,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 138.058469452,
+        "seconds": 1.000312808,
+        "pressure": {
+          "cpu": 0.0008937204370975123,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 139.058834416,
+        "seconds": 1.000364964,
+        "pressure": {
+          "cpu": 0.0008396935420861061,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 140.059424452,
+        "seconds": 1.000590036,
+        "pressure": {
+          "cpu": 0.0009634315407074472,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 141.059782246,
+        "seconds": 1.000357794,
+        "pressure": {
+          "cpu": 0.0013395207275208173,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 142.060109741,
+        "seconds": 1.000327495,
+        "pressure": {
+          "cpu": 0.0008277289229163895,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 143.060444736,
+        "seconds": 1.000334995,
+        "pressure": {
+          "cpu": 0.0009346868845671045,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 144.060791808,
+        "seconds": 1.000347072,
+        "pressure": {
+          "cpu": 0.0013855191251062112,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 145.061145321,
+        "seconds": 1.000353513,
+        "pressure": {
+          "cpu": 0.0008596960862574588,
+          "io": 0.0003948604117112747,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 146.061629643,
+        "seconds": 1.000484322,
+        "pressure": {
+          "cpu": 0.0015442520847418137,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 147.061978375,
+        "seconds": 1.000348732,
+        "pressure": {
+          "cpu": 0.0008686970575377307,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 148.062538385,
+        "seconds": 1.00056001,
+        "pressure": {
+          "cpu": 0.0009454705270501466,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 149.062742155,
+        "seconds": 1.00020377,
+        "pressure": {
+          "cpu": 0.0015966746456074646,
+          "io": 0.20133397417608215,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 150.063192737,
+        "seconds": 1.000450582,
+        "pressure": {
+          "cpu": 0.0007576586126669873,
+          "io": 0.2850445640502411,
+          "memory": 0.02130540017018052
+        }
+      },
+      {
+        "endSeconds": 151.063545026,
+        "seconds": 1.000352289,
+        "pressure": {
+          "cpu": 0.001042632691971578,
+          "io": 0.0016824073064124314,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 152.063916323,
+        "seconds": 1.000371297,
+        "pressure": {
+          "cpu": 0.0005647902950578159,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 153.064257242,
+        "seconds": 1.000340919,
+        "pressure": {
+          "cpu": 0.0010926275025244668,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 154.064466759,
+        "seconds": 1.000209517,
+        "pressure": {
+          "cpu": 0.001443697520826529,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 155.064844927,
+        "seconds": 1.000378168,
+        "pressure": {
+          "cpu": 0.000786702494291139,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 156.065114204,
+        "seconds": 1.000269277,
+        "pressure": {
+          "cpu": 0.0013196446500475692,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 157.065347359,
+        "seconds": 1.000233155,
+        "pressure": {
+          "cpu": 0.0014376648012632614,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 158.065800434,
+        "seconds": 1.000453075,
+        "pressure": {
+          "cpu": 0.0008456168721356571,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 159.066011698,
+        "seconds": 1.000211264,
+        "pressure": {
+          "cpu": 0.00136671126311171,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 160.066447922,
+        "seconds": 1.000436224,
+        "pressure": {
+          "cpu": 0.00036883910353090134,
+          "io": 0.042173602862265014,
+          "memory": 0.013005326764337554
+        }
+      },
+      {
+        "endSeconds": 161.066785286,
+        "seconds": 1.000337364,
+        "pressure": {
+          "cpu": 0.0012955629237098056,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 162.067123868,
+        "seconds": 1.000338582,
+        "pressure": {
+          "cpu": 0.0008067268568073684,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 163.067471159,
+        "seconds": 1.000347291,
+        "pressure": {
+          "cpu": 0.0007667337202795504,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 164.067693252,
+        "seconds": 1.000222093,
+        "pressure": {
+          "cpu": 0.0006708510086869277,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 165.067975364,
+        "seconds": 1.000282112,
+        "pressure": {
+          "cpu": 0.0017115171604708253,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 166.068311425,
+        "seconds": 1.000336061,
+        "pressure": {
+          "cpu": 0.001076638183895282,
+          "io": 0.0006237903683850101,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 167.068621677,
+        "seconds": 1.000310252,
+        "pressure": {
+          "cpu": 0.0007807577683408567,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 168.069062808,
+        "seconds": 1.000441131,
+        "pressure": {
+          "cpu": 0.0008106424005072219,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 169.069362707,
+        "seconds": 1.000299899,
+        "pressure": {
+          "cpu": 0.000632810220847578,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 170.069756166,
+        "seconds": 1.000393459,
+        "pressure": {
+          "cpu": 0.0012984890977780774,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 171.069959002,
+        "seconds": 1.000202836,
+        "pressure": {
+          "cpu": 0.0010677834150832181,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 172.070169699,
+        "seconds": 1.000210697,
+        "pressure": {
+          "cpu": 0.0011437590134071522,
+          "io": 8.098293713809382e-05,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 173.070476467,
+        "seconds": 1.000306768,
+        "pressure": {
+          "cpu": 0.0006478012752983793,
+          "io": 0.00010596749256424105,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 174.070673993,
+        "seconds": 1.000197526,
+        "pressure": {
+          "cpu": 0.000552890789693875,
+          "io": 0.05160080749889797,
+          "memory": 0.011793670443451986
+        }
+      },
+      {
+        "endSeconds": 175.070965948,
+        "seconds": 1.000291955,
+        "pressure": {
+          "cpu": 0.0008267586236860218,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 176.072200846,
+        "seconds": 1.001234898,
+        "pressure": {
+          "cpu": 0.0011535754519814989,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 177.072532712,
+        "seconds": 1.000331866,
+        "pressure": {
+          "cpu": 0.0005648125579156548,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 178.072873338,
+        "seconds": 1.000340626,
+        "pressure": {
+          "cpu": 0.0007817337211694929,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      },
+      {
+        "endSeconds": 179.073138411,
+        "seconds": 1.000265073,
+        "pressure": {
+          "cpu": 0.0007008142330687978,
+          "io": 0.0,
+          "memory": 0.0
+        }
+      }
+    ],
+    "windowDecisions": [
+      "incomplete",
+      "incomplete",
+      "incomplete",
+      "incomplete",
+      "incomplete",
+      "incomplete",
+      "incomplete",
+      "incomplete",
+      "incomplete",
+      "incomplete",
+      "incomplete",
+      "incomplete",
+      "incomplete",
+      "incomplete",
+      "incomplete",
+      "incomplete",
+      "incomplete",
+      "incomplete",
+      "incomplete",
+      "incomplete",
+      "incomplete",
+      "incomplete",
+      "incomplete",
+      "incomplete",
+      "incomplete",
+      "incomplete",
+      "incomplete",
+      "incomplete",
+      "incomplete",
+      "incomplete",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure",
+      "pressure"
+    ]
+  },
+  "measuredPairs": 0,
+  "accountingLimit": "One raw unknown reservation is preserved; the refusal precedes native launch."
+}

@@ -176,8 +176,23 @@ was activated in this implementation block. BO-06 remains partial and BO-07
 stays deferred. Savings in the recorded workflow still require the ordinary
 workflow comparison in BO-09.
 
+The [fresh control stopped before its second build](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-disk-measurement/README.md).
+One build passed; the other seven never started. Eleven brief disk-pressure
+intervals prevented the required continuous quiet window, despite average
+pressure of 1.78%. There are no completed pairs or output comparisons, and
+no saving is claimed. The 42-build development replay did not start. Both
+worker sessions and the allocation are closed, with one owner build and zero
+comparison JVMs. The cold build triggered full-scan fallback and its supervisor
+used almost one core. The fixture saving did not persist through that build;
+incremental behavior remains unmeasured.
+
+A further timing attempt requires a separate environment or observation-policy
+decision under the existing stopping conditions. Prepare that proposal from
+retained evidence; do not repeat this allocation, relax its rule or start BO-07.
+BO-06 remains partial.
+
 Current task record:
-`.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/task-state.json`.
+`.tools/state/buildopt-product-viability-v1/bo-06-disk-measurement-2026-09-15/task-state.json`.
 Protected changes 21–100 remain deferred. Generic plan selection/reuse,
 adaptive fragments, runtime sweeps and another general cache remain retired.
 The user has authorized commit and push after each work block. Product viability

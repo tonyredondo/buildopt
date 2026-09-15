@@ -1,0 +1,20 @@
+[
+  {
+    "case": "false-completion",
+    "expected": "rejected",
+    "exitCode": 1,
+    "stderr": "Traceback (most recent call last):\n  File \"/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-measurement-2026-09-15/audit-cases/false-completion/verify-evidence.py\", line 47, in <module>\n    assert summary['complete'] is False and summary['netSaving'] is None\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+  },
+  {
+    "case": "invented-comparison",
+    "expected": "rejected",
+    "exitCode": 1,
+    "stderr": "Traceback (most recent call last):\n  File \"/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-measurement-2026-09-15/audit-cases/invented-comparison/verify-evidence.py\", line 49, in <module>\n    assert close['comparisonJVMs'] == allocation['actualHelpers'] == summary['livePairs'] == summary['independentPairs'] == 0\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+  },
+  {
+    "case": "missing-build-as-zero",
+    "expected": "rejected",
+    "exitCode": 1,
+    "stderr": "Traceback (most recent call last):\n  File \"/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-measurement-2026-09-15/audit-cases/missing-build-as-zero/verify-evidence.py\", line 47, in <module>\n    assert summary['complete'] is False and summary['netSaving'] is None\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+  }
+]

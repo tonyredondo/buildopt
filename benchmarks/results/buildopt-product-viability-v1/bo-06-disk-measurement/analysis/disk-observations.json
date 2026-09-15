@@ -1,0 +1,31 @@
+{
+  "requests": [
+    {
+      "profile": "control",
+      "attempt": "r1-000-g0-N",
+      "nativeSeconds": 205.825623494,
+      "supervisorCPUSeconds": 201.760328,
+      "supervisorCoreEquivalent": 0.9802488367337873,
+      "disk": {
+        "cachedChecks": 7,
+        "checks": 214,
+        "fallbackReason": "directory topology changed",
+        "fullScans": 207,
+        "watchedInodes": 0
+      }
+    }
+  ],
+  "sampler": [
+    {
+      "profile": "control",
+      "samples": 1714,
+      "storageCollectionCPUSeconds": 0.503514743,
+      "storageCollectionElapsedSeconds": 0.6580748,
+      "wholeSamplerCPUSeconds": 4.954583852,
+      "unavailableHostSamples": 0,
+      "groupObservations": 1263,
+      "unavailableGroupObservations": 1263
+    }
+  ],
+  "interpretation": "Supervisor CPU includes initial observer setup and all other supervision. Setup is not separately timed. Host counters do not identify an external cause. These observations do not establish the effect of supervision on build wall time."
+}

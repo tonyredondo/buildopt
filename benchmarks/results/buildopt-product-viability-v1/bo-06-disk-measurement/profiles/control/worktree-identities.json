@@ -1,0 +1,24 @@
+[
+  {
+    "repository": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-measurement-2026-09-15/profiles/control/run/r1/N/repo",
+    "branch": "bv-replay-5961fbdfe25d-r1-N-000",
+    "head": "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe",
+    "commonGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/eic-native-v1/repos/elasticsearch.git",
+    "remoteTarget": "read-only subject history; no publication",
+    "locator": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-measurement-2026-09-15/task-state.json",
+    "arm": "N",
+    "replication": 1,
+    "profile": 8
+  },
+  {
+    "repository": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-measurement-2026-09-15/profiles/control/run/r1/I/repo",
+    "branch": "bv-replay-5961fbdfe25d-r1-I-000",
+    "head": "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe",
+    "commonGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/eic-native-v1/repos/elasticsearch.git",
+    "remoteTarget": "read-only subject history; no publication",
+    "locator": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-measurement-2026-09-15/task-state.json",
+    "arm": "I",
+    "replication": 1,
+    "profile": 8
+  }
+]

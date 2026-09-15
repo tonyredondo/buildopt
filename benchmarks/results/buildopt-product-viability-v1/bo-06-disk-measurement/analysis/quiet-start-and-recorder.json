@@ -1,0 +1,175 @@
+{
+  "scope": "Retained observations; no new builds, retries or output comparisons.",
+  "quietStarts": [
+    {
+      "profile": "control",
+      "attempt": "r1-000-g0-I",
+      "decision": "NOT_QUIET_TIMEOUT",
+      "reason": "quiet-start deadline",
+      "observationSeconds": 180.000206769,
+      "phaseSeconds": 180.293455159,
+      "samples": 180,
+      "nativeFinishRecorded": false,
+      "launchAgeMS": null
+    },
+    {
+      "profile": "control",
+      "attempt": "r1-000-g0-N",
+      "decision": "QUIET_START",
+      "reason": "quiet window",
+      "observationSeconds": 76.032427039,
+      "phaseSeconds": 76.135539253,
+      "samples": 77,
+      "nativeFinishRecorded": true,
+      "launchAgeMS": 494.700064
+    }
+  ],
+  "totalQuietPhaseSeconds": 256.428994412,
+  "recorderPhases": [
+    {
+      "profile": "control",
+      "phase": "r1-000-g0-I-containment",
+      "purpose": "owned-process-supervision",
+      "elapsedSeconds": 0.099280534,
+      "outerCPUSeconds": 0.002958,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 16906,
+        "read_bytes": 0,
+        "syscr": 56,
+        "syscw": 6,
+        "wchar": 3469,
+        "write_bytes": 348160
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-000-g0-I-preflight",
+      "purpose": "source-input-state-proof",
+      "elapsedSeconds": 36.611632772,
+      "outerCPUSeconds": 5.489299,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 4861206420,
+        "read_bytes": 1341906944,
+        "syscr": 333919,
+        "syscw": 1842,
+        "wchar": 7507536,
+        "write_bytes": 344064
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-000-g0-I-quiet-start",
+      "purpose": "quiet-start",
+      "elapsedSeconds": 180.293455159,
+      "outerCPUSeconds": 0.066958,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 188357,
+        "read_bytes": 0,
+        "syscr": 3628,
+        "syscw": 5,
+        "wchar": 81859,
+        "write_bytes": 540672
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-000-g0-N-capture",
+      "purpose": "complete-output-state-and-invocation-capture",
+      "elapsedSeconds": 565.114992911,
+      "outerCPUSeconds": 34.293983,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 9225306535,
+        "read_bytes": 1710465024,
+        "syscr": 1187868,
+        "syscw": 1848,
+        "wchar": 96468593,
+        "write_bytes": 943472640
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-000-g0-N-containment",
+      "purpose": "owned-process-supervision",
+      "elapsedSeconds": 0.10048972,
+      "outerCPUSeconds": 0.003666,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 16885,
+        "read_bytes": 0,
+        "syscr": 56,
+        "syscw": 6,
+        "wchar": 3470,
+        "write_bytes": 512000
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-000-g0-N-preflight",
+      "purpose": "source-input-state-proof",
+      "elapsedSeconds": 5.009477117,
+      "outerCPUSeconds": 4.918896,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 4861287983,
+        "read_bytes": 0,
+        "syscr": 334285,
+        "syscw": 1842,
+        "wchar": 7507535,
+        "write_bytes": 409600
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-000-g0-N-quiet-start",
+      "purpose": "quiet-start",
+      "elapsedSeconds": 76.135539253,
+      "outerCPUSeconds": 0.022372,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 81829,
+        "read_bytes": 0,
+        "syscr": 1563,
+        "syscw": 5,
+        "wchar": 36253,
+        "write_bytes": 462848
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-I-acquisition",
+      "purpose": "native-state-preparation",
+      "elapsedSeconds": 312.208307742,
+      "outerCPUSeconds": 9.652223,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 9741905251,
+        "read_bytes": 2529050624,
+        "syscr": 410827,
+        "syscw": 63193,
+        "wchar": 487632479,
+        "write_bytes": 898048000
+      }
+    },
+    {
+      "profile": "control",
+      "phase": "r1-N-acquisition",
+      "purpose": "native-state-preparation",
+      "elapsedSeconds": 318.989846862,
+      "outerCPUSeconds": 9.57127,
+      "ioCounterChanges": {
+        "cancelled_write_bytes": 0,
+        "rchar": 9742199218,
+        "read_bytes": 2535915520,
+        "syscr": 410888,
+        "syscw": 63203,
+        "wchar": 487681121,
+        "write_bytes": 898121728
+      }
+    }
+  ],
+  "interpretation": "Waiting is research preparation outside request timing and within the allocation. CPU and I/O counters cover only the outer recorder. They are not additional elapsed time and do not establish the cause of any build-time difference."
+}

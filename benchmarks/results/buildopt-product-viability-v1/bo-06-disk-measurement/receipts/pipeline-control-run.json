@@ -1,0 +1,13 @@
+{
+  "script": "tools/run_trial.py",
+  "args": [
+    "control"
+  ],
+  "exitCode": 1,
+  "startedUTC": "2026-09-15T19:34:20.773642+00:00",
+  "endedUTC": "2026-09-15T20:03:01.708371+00:00",
+  "log": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-measurement-2026-09-15/logs/pipeline-control-run.log",
+    "sha256": "3c97a9555e5a32c86f75c2092a4da32647aeef46fc6b3d86f3a011ebbb104958"
+  }
+}

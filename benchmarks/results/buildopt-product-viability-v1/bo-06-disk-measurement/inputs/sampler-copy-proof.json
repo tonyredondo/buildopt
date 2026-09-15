@@ -1,0 +1,18 @@
+{
+  "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-measurement-2026-09-15/tools/common.py": {
+    "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/tools/common.py",
+    "sha256": "680f5401187f06ab002098e1fb27c608c75c88d92d6a234cd81b88b844869b4c"
+  },
+  "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-measurement-2026-09-15/tools/run_trial.py": {
+    "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/tools/run_trial.py",
+    "sha256": "3cff479bc01317e1ebe610a852f68d11e5ab73033a2a96f7925457913cc46817"
+  },
+  "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-measurement-2026-09-15/tools/storage_observation.py": {
+    "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/tools/storage_observation.py",
+    "sha256": "9af5afe18cfdd97867370a653568c54e32feb93bfa51bfa2a8ccf3b015a37fc2"
+  },
+  "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-measurement-2026-09-15/tools/storage_observation_test.py": {
+    "source": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/tools/storage_observation_test.py",
+    "sha256": "400aec58fbd8316a2b4f64a82efe787acd49571165f736f8af3678685b6bac6b"
+  }
+}

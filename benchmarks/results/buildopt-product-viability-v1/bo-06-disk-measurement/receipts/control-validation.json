@@ -1,0 +1,15 @@
+{
+  "command": [
+    "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/history-replay-disk",
+    "validate",
+    "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-measurement-2026-09-15/profiles/control/manifest.json"
+  ],
+  "exitCode": 0,
+  "stdout": "manifest valid; no workflow started\n",
+  "stderr": "",
+  "durationNS": 3774028403,
+  "manifest": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-measurement-2026-09-15/profiles/control/manifest.json",
+    "sha256": "78e779cb97b99e6ca00ece24260907a438be3cd73be6dff33bb458c0ad9efcc2"
+  }
+}

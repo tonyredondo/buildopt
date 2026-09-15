@@ -1,0 +1,60 @@
+{
+  "profile": "control",
+  "command": [
+    "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/history-replay-disk",
+    "run",
+    "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-measurement-2026-09-15/profiles/control/manifest.json"
+  ],
+  "cwd": "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+  "startUTC": "2026-09-15T19:34:20.818129+00:00",
+  "startBootNS": 377331830998408,
+  "gradleReserved": 8,
+  "helperJVMReserved": 8,
+  "pid": 2372864,
+  "procStartTicks": 37733183,
+  "exitCode": 1,
+  "endUTC": "2026-09-15T20:03:01.413185+00:00",
+  "endBootNS": 379052426052179,
+  "observationFailure": null,
+  "processSamples": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-measurement-2026-09-15/profiles/control/process-samples.jsonl",
+    "sha256": "c9e97864ac1944160411aaf0a3203ba6ede2cd34953fc1102a8dfdda6505363c"
+  },
+  "finishedNativeRequests": 1,
+  "log": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-measurement-2026-09-15/logs/control-runner.log",
+    "sha256": "18f99587633cf9cd81493d5e2a50fc97cf1d820026c6c0a1ec29fce9b2178274"
+  },
+  "samplerBefore": {
+    "pid": 2372822,
+    "beginBootNS": 377331831016229,
+    "available": true,
+    "identity": {
+      "startTicks": 37733178,
+      "cpuTicks": 3
+    },
+    "io": {
+      "available": true,
+      "value": "rchar: 9562339\nwchar: 635\nsyscr: 473\nsyscw: 1\nread_bytes: 0\nwrite_bytes: 4096\ncancelled_write_bytes: 0\n"
+    },
+    "ticksPerSecond": 100,
+    "selfCPUNS": 44211616,
+    "endBootNS": 377331831175619
+  },
+  "samplerAfter": {
+    "pid": 2372822,
+    "beginBootNS": 379052713955518,
+    "available": true,
+    "identity": {
+      "startTicks": 37733178,
+      "cpuTicks": 499
+    },
+    "io": {
+      "available": true,
+      "value": "rchar: 53057265248\nwchar: 1114374930\nsyscr: 3483764\nsyscw: 134244\nread_bytes: 8117768192\nwrite_bytes: 2773692416\ncancelled_write_bytes: 0\n"
+    },
+    "ticksPerSecond": 100,
+    "selfCPUNS": 4998795468,
+    "endBootNS": 379052714127998
+  }
+}

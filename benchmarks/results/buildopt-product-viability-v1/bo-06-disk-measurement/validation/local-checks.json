@@ -1,0 +1,16 @@
+{
+  "evidenceAudit": "117 files verified before adding this validation record; three forged claims rejected",
+  "wholeLocalDocumentation": {
+    "command": "./dev/check-documentation",
+    "exitCode": 1,
+    "scope": "Included pre-existing untracked historical snapshots with broken local links; output truncated. Not a successful whole-tree check."
+  },
+  "scopedDocumentation": {
+    "command": "./dev/run --toolchain go -- go test -mod=readonly ./dev/documentation-validator -run '^TestBO06MeasurementDocuments$' -count=1 -v",
+    "exitCode": 0,
+    "scope": "The three changed Markdown documents and every exported JSON file; same existing validators; temporary test removed.",
+    "output": "=== RUN   TestBO06MeasurementDocuments\n--- PASS: TestBO06MeasurementDocuments (0.09s)\nPASS\nok  \tgithub.com/tonyredondo/buildopt/dev/documentation-validator\t0.087s\n"
+  },
+  "fullPublishedCheckout": "Pending exact-commit CI at publication",
+  "whitespace": "git diff --check passed"
+}
