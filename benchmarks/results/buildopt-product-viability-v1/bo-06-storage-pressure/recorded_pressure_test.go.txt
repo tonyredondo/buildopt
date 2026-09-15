@@ -1,0 +1,60 @@
+//go:build linux && amd64
+
+package main
+
+import (
+    "encoding/json"
+    "os"
+    "path/filepath"
+    "testing"
+)
+
+func recordedQuiet(t *testing.T, path string) QuietReceipt {
+    t.Helper()
+    data, err := os.ReadFile(path)
+    if err != nil { t.Fatal(err) }
+    var receipt QuietReceipt
+    if err = json.Unmarshal(data, &receipt); err != nil { t.Fatal(err) }
+    return receipt
+}
+
+// This diagnostic intentionally fails on the retained refusal. It would pass
+// only if the actual recorded observations admitted a complete quiet window.
+func TestRecordedWindowCanAdmit(t *testing.T) {
+    path := filepath.Join(os.Getenv("BUILDOPT_DIAG_EVIDENCE_ROOT"), "profiles/prefix/run/attempts/r1-008-g0-I/quiet-start.json")
+    receipt := recordedQuiet(t, path)
+    for i := range receipt.Samples {
+        if ready, _ := quietWindow(receipt.Samples[:i+1], fixedQuietPolicy()); ready { return }
+    }
+    t.Fatalf("recorded refusal reproduced: no quiet window in %d observations", len(receipt.Samples))
+}
+
+func TestRecordedAdmissionDecisions(t *testing.T) {
+    paths, err := filepath.Glob(filepath.Join(os.Getenv("BUILDOPT_DIAG_EVIDENCE_ROOT"), "profiles/*/run/attempts/*/quiet-start.json"))
+    if err != nil || len(paths) != 26 { t.Fatalf("trace count %d: %v", len(paths), err) }
+    admitted, refused := 0, 0
+    for _, path := range paths {
+        receipt := recordedQuiet(t, path)
+        firstReady := -1
+        for i := range receipt.Samples {
+            if ready, _ := quietWindow(receipt.Samples[:i+1], fixedQuietPolicy()); ready { firstReady = i; break }
+        }
+        switch receipt.Decision {
+        case "QUIET_START":
+            admitted++
+            if firstReady != len(receipt.Samples)-1 { t.Fatalf("wrong admission at %s: %d",path,firstReady) }
+        case "NOT_QUIET_TIMEOUT":
+            refused++
+            if firstReady != -1 { t.Fatalf("refused admissible trace: %s",path) }
+        default:
+            t.Fatalf("unexpected decision %s",receipt.Decision)
+        }
+    }
+    if admitted != 25 || refused != 1 { t.Fatalf("decisions %d / %d",admitted,refused) }
+    // A zero-pressure copy with identical timestamps demonstrates that this
+    // seam can admit the refused sequence. It is synthetic, never measurement.
+    receipt := recordedQuiet(t,filepath.Join(os.Getenv("BUILDOPT_DIAG_EVIDENCE_ROOT"), "profiles/prefix/run/attempts/r1-008-g0-I/quiet-start.json"))
+    for i := range receipt.Samples { receipt.Samples[i].TotalsUS = map[string]int64{"cpu":0,"io":0,"memory":0} }
+    if ready, reason := quietWindow(receipt.Samples, fixedQuietPolicy()); !ready { t.Fatal(reason) }
+    t.Log("25 admitted and one refused trace reproduced; synthetic quiet counterpart admitted")
+}

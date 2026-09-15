@@ -1,0 +1,114 @@
+{
+  "schema": "buildopt.storage-diagnosis/evidence/v1",
+  "decision": "SUPERVISOR_WORK_CONFIRMED_STORAGE_CAUSE_UNRESOLVED",
+  "ownerStarts": 0,
+  "comparatorStarts": 0,
+  "liveMetadataScans": 1,
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 9257,
+      "sha256": "089d785e09b9d9dad09b189c42098f56aacfd33f843b9056fc122cff9d0e4acc"
+    },
+    {
+      "path": "analysis.json",
+      "bytes": 114016,
+      "sha256": "f22dd3158b9566ae8e69d0745f34b1c32e36bedc7df2e60dbe49d89ac80cd210"
+    },
+    {
+      "path": "analyze.py",
+      "bytes": 10046,
+      "sha256": "a0710508bf3fb8d0f8fcb12daf97a8e3c784cf19931d5ff59dc52b5052eb9eae"
+    },
+    {
+      "path": "diagnostic/retained-scan-profile.txt",
+      "bytes": 1368,
+      "sha256": "b3263f6402b4338b2bb1e83a286fec21772c66f85118eaccfce78bc2c23ff02b"
+    },
+    {
+      "path": "diagnostic/retained-scan.json",
+      "bytes": 335,
+      "sha256": "b935a9ef087fae6f9a369c97b4ab99e242843e258452599fe091db9642918d8f"
+    },
+    {
+      "path": "diagnostic/retained-scan.pprof",
+      "bytes": 4897,
+      "sha256": "518368b7761e5c75ec0ab95dc636321889800ff04dcff9701f05e95032e3a580"
+    },
+    {
+      "path": "inputs/entry-bindings.json",
+      "bytes": 1316,
+      "sha256": "93e8fa1b4554a37b73be2322327f2675ea8a0a9c54af372b2dcb33b2626994ea"
+    },
+    {
+      "path": "next-step.md",
+      "bytes": 5374,
+      "sha256": "b79ec59ff52d4f1e0d1ac2a2d2be8f00856de4c5b3c98b6a3f80286f01f21e16"
+    },
+    {
+      "path": "receipts/kernel-window-v2.json",
+      "bytes": 376,
+      "sha256": "86d374480af15d178c6ec1f736c47b71c8d5737ce4fe5e004a897796349d08f7"
+    },
+    {
+      "path": "receipts/kernel-window.json",
+      "bytes": 423,
+      "sha256": "bbc1f1eab9546740a7871df5c8af50daef49681334b3a0409c093fad40baa72a"
+    },
+    {
+      "path": "receipts/published-replay.log",
+      "bytes": 634,
+      "sha256": "1826024ffdc6b86004842dce8e8a1951eef78015838cbce91e316bff9c3802dd"
+    },
+    {
+      "path": "receipts/scan.json",
+      "bytes": 288,
+      "sha256": "2e2d0925c31d2d38b6205d730d606fcdd9b8facfc5fcca0e5286bd65ae0479b2"
+    },
+    {
+      "path": "receipts/scan.log",
+      "bytes": 662,
+      "sha256": "03eace0662ce7aad30206715ce670a310159a4e7604eff8048cf9c6a56143917"
+    },
+    {
+      "path": "receipts/storage-mount.json",
+      "bytes": 485,
+      "sha256": "03cd7cf62b799a125740064357d10f8c5b22a5aca9796805f5966d35bd81f470"
+    },
+    {
+      "path": "receipts/trace-decisions.json",
+      "bytes": 365,
+      "sha256": "b339b62a7d5e4b315f7dc526d1407fc91a4ed49fcb4b133273ba6b125826bda0"
+    },
+    {
+      "path": "receipts/trace-decisions.log",
+      "bytes": 340,
+      "sha256": "19c62c1196bcbdc928c1e4f212e7cb0fb2a211f679e16fe8571826c5aafdf138"
+    },
+    {
+      "path": "receipts/trace-red.json",
+      "bytes": 387,
+      "sha256": "32a9579efbcd2d56df9bcaa71a1d4892cf87e4b9a14f42bf1ecca0f8ec615524"
+    },
+    {
+      "path": "receipts/trace-red.log",
+      "bytes": 319,
+      "sha256": "b17115be675ba10332714d8ecb738bd49c74ceb65285860d52ca293680d164da"
+    },
+    {
+      "path": "recorded_pressure_test.go.txt",
+      "bytes": 2711,
+      "sha256": "7e739ba0b5fb820b927538dac441db28be9b583197f56ceb47e9316e103118f0"
+    },
+    {
+      "path": "replay-traces.py",
+      "bytes": 2516,
+      "sha256": "a49d6cd9b1e14c19c7178b048e3d29c7cdcacaabccc426f039a9c86b7d009797"
+    },
+    {
+      "path": "storage_profile_test.go.txt",
+      "bytes": 1664,
+      "sha256": "fbf316b01c384f495359bdf68b19a8a0a6fa4cc80df2362fbbaf03f0e19d64d4"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "command": [
+    "journalctl",
+    "--kernel",
+    "--utc",
+    "--since",
+    "2026-09-15 12:40:00 UTC",
+    "--until",
+    "2026-09-15 13:02:00 UTC",
+    "--no-pager",
+    "--output=json"
+  ],
+  "exitCode": 1,
+  "stderr": "journalctl: unrecognized option '--kernel'\n",
+  "totalKernelEntries": 0,
+  "relevantEntries": [],
+  "interpretation": "Absence of logged errors does not prove the absence of storage stalls."
+}

@@ -1,0 +1,18 @@
+{
+  "command": [
+    "journalctl",
+    "-k",
+    "--utc",
+    "--since",
+    "2026-09-15 12:40:00 UTC",
+    "--until",
+    "2026-09-15 13:02:00 UTC",
+    "--no-pager",
+    "--output=json"
+  ],
+  "exitCode": 0,
+  "stderr": "",
+  "totalKernelEntries": 0,
+  "relevantEntries": [],
+  "interpretation": "Missing or empty logs do not establish why the storage pressure occurred."
+}

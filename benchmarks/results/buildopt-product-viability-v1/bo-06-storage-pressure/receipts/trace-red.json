@@ -1,0 +1,20 @@
+{
+  "command": [
+    "./dev/run",
+    "--toolchain",
+    "go",
+    "--",
+    "go",
+    "test",
+    "-count=1",
+    "-v",
+    "-run",
+    "^TestRecordedWindowCanAdmit$",
+    "./.tools/state/buildopt-product-viability-v1/bo-06-storage-pressure-2026-09-15/source"
+  ],
+  "exitCode": 1,
+  "seconds": 2.1927546220249496,
+  "expectedFailure": true,
+  "ownerBuilds": 0,
+  "comparatorJVMs": 0
+}

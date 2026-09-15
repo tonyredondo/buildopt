@@ -1,0 +1,12 @@
+=== RUN   TestRecordedWindowCanAdmit
+    recorded_pressure_test.go:29: recorded refusal reproduced: no quiet window in 180 observations
+--- FAIL: TestRecordedWindowCanAdmit (0.00s)
+FAIL
+FAIL	github.com/tonyredondo/buildopt/.tools/state/bo06-trace-1em0_6lt	0.003s
+FAIL
+=== RUN   TestRecordedAdmissionDecisions
+    recorded_pressure_test.go:59: 25 admitted and one refused trace reproduced; synthetic quiet counterpart admitted
+--- PASS: TestRecordedAdmissionDecisions (0.01s)
+PASS
+ok  	github.com/tonyredondo/buildopt/.tools/state/bo06-trace-1em0_6lt	0.010s
+Both trace checks behaved as expected; no owner build or comparator started.

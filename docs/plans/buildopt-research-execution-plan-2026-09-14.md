@@ -1,7 +1,7 @@
 # Build Optimization research execution plan
 
 Date: 2026-09-14. Program: `BUILDOPT-VIABILITY-V1`.
-Status: governing plan in execution; BO-01 through BO-05 verified; BO-06 partial; the fresh quiet-start control passed; development stopped after 17 of 42 builds because storage pressure prevented the next launch.
+Status: governing plan in execution; BO-01 through BO-05 verified; BO-06 partial; storage diagnosis complete. Reduce repeated disk-accounting work and qualify the changed runner before a fresh control and complete development replay.
 
 This plan records the direction agreed after the research review and its
 discussion. It owns research priorities, sequencing and the
@@ -139,7 +139,7 @@ the outcome may be negative. Advance only on the outcome required below.
 | BO-03 | Estimate realistic whole-build opportunity per candidate | BO-01; measurement readiness before fresh timing | verified; [five candidate assessments](../../benchmarks/results/buildopt-product-viability-v1/bo-03-opportunity-assessment/README.md); only Checkstyle warrants the planned short screen after readiness checks; missing workflow evidence remains unqualified |
 | BO-04 | Admit or reject a focused Build Impact hypothesis | BO-01 and existing evidence review | verified; [no new trial admitted](../../benchmarks/results/buildopt-product-viability-v1/bo-04-build-impact-review/README.md); original savings retained |
 | BO-05 | Select a candidate through short comparisons | BO-02 as applicable, BO-03, early BO-06 correctness, and BO-04 for Build Impact | verified; [both fresh sequences passed](../../benchmarks/results/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay/README.md), saving 34.14% and 28.17%; the interrupted attempt remains separate |
-| BO-06 | Qualify correctness and freeze the implementation and protocol | Admitted opportunity; screen integration proof before BO-05, final freeze afterward | partial; the fresh quiet-start control passed with a 0.132-second difference (0.103%); all eight builds and eight output comparisons passed; [development stopped after 17 of 42 builds](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-quiet-measurement/README.md) because the next launch could not obtain low storage pressure |
+| BO-06 | Qualify correctness and freeze the implementation and protocol | Admitted opportunity; screen integration proof before BO-05, final freeze afterward | partial; the fresh quiet-start control passed with a 0.132-second difference (0.103%); all eight builds and eight output comparisons passed; [development stopped after 17 of 42 builds](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-quiet-measurement/README.md) because the next launch could not obtain low storage pressure; [diagnosis complete](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-storage-pressure/README.md), repeated supervisor scans need correction before another measurement |
 | BO-07 | Establish sustained saving in the first repository | BO-05 and complete BO-06 | deferred |
 | BO-08 | Test the same mechanism on two other repositories | BO-07 positive | deferred |
 | BO-09 | Deliver and measure an MVP with manual controls | BO-08 positive | deferred |
@@ -515,14 +515,33 @@ explain that reservation without changing the raw result. No complete-sequence
 saving is claimed. The allocation and all four worker sessions are closed, with
 25 owner builds and 24 comparison JVMs, no retries and no protected builds.
 
-Next, use these retained observations to investigate sustained storage pressure
-and define the conditions for a complete development run. The exact cause is
-unproven. Do not raise thresholds, discard the interruption, resume this closed
-allocation or move to BO-07. Any changed measurement method needs its affected
-proof and inputs checked before another timing allocation. BO-06 and its final
-freeze remain partial; BO-07 and protected changes 21–100 remain deferred.
-Task record:
-`.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/task-state.json`.
+**Storage diagnosis complete, 2026-09-15:** the frozen code reproduces all
+26 quiet-start decisions, including the refusal. During the failed wait the
+same 17 sampled processes used 1.18 seconds of CPU and recorded little I/O.
+The available observations cannot distinguish delayed earlier writes from
+unrelated storage activity. The exact historical cause remains unproven.
+
+A separate measurement problem is confirmed. Across all 25 completed builds,
+supervisor CPU time was 95.82%–98.57% of native elapsed time. Its full-directory
+size scan, scheduled every 100 ms, took 2.500 seconds for one pass over the
+retained development tree. The profile places 98.81% of CPU samples beneath
+that scanner. This establishes substantial supervision work, not its effect
+on build wall time or the cause of the later storage wait. The
+[diagnosis and reproducible analysis](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-storage-pressure/README.md)
+retain all rows and their limits. No owner build or comparator JVM ran here.
+
+Next, follow the [measurement conditions](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-storage-pressure/next-step.md):
+reduce repeated disk-accounting work, preserve every resource and output
+contract, and qualify the change with bounded fixtures. Add inexpensive
+observations for the remaining attribution gaps. Freeze one final identity
+before a separate eight-build control and, only if it passes, a new complete
+42-build development sequence. The next implementation block stops at fixture
+proof and frozen inputs; it does not start Elasticsearch timing.
+
+Do not raise thresholds, discard the interruption, resume the closed allocation
+or move to BO-07. BO-06 and its final freeze remain partial; protected changes
+21–100 remain deferred. Current diagnosis record:
+`.tools/state/buildopt-product-viability-v1/bo-06-storage-pressure-2026-09-15/task-state.json`.
 
 ### BO-07: Measure sustained saving on the first repository
 

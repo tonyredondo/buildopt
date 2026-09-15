@@ -1,0 +1,39 @@
+//go:build linux && amd64
+
+package main
+
+import (
+    "encoding/json"
+    "errors"
+    "os"
+    "runtime/pprof"
+    "testing"
+    "time"
+)
+
+// One bounded call to the unmodified scanner, on retained development state.
+// No source contents are read, and no build or comparison is started.
+func TestBoundedRetainedStorageScan(t *testing.T) {
+    root := os.Getenv("BUILDOPT_DIAG_SCAN_ROOT")
+    destination := os.Getenv("BUILDOPT_DIAG_SCAN_OUTPUT")
+    if root == "" || destination == "" { t.Fatal("explicit diagnostic paths required") }
+    profile, err := os.OpenFile(destination+".pprof", os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0600)
+    if err != nil { t.Fatal(err) }
+    if err = pprof.StartCPUProfile(profile); err != nil { t.Fatal(err) }
+    stop := make(chan struct{})
+    timer := time.AfterFunc(3*time.Second,func(){close(stop)})
+    before := diagnosticCPU()
+    begin := time.Now()
+    counted, scanErr := treeBytesUntil(root, stop)
+    elapsed := time.Since(begin)
+    after := diagnosticCPU()
+    timer.Stop()
+    pprof.StopCPUProfile()
+    if err = profile.Close(); err != nil { t.Fatal(err) }
+    if scanErr != nil && !errors.Is(scanErr,errDiskObservationStopped) { t.Fatal(scanErr) }
+    row := map[string]interface{}{"root":root,"seconds":elapsed.Seconds(),"cpuSeconds":float64(after.UserNS-before.UserNS+after.SystemNS-before.SystemNS)/1e9,"countedBytes":counted,"complete":scanErr==nil,"ownerStarts":0,"comparatorStarts":0,"limitSeconds":3}
+    data, err := json.MarshalIndent(row,"","  ")
+    if err != nil { t.Fatal(err) }
+    if err=os.WriteFile(destination+".json", append(data,'\n'),0600); err != nil { t.Fatal(err) }
+    t.Log(string(data))
+}

@@ -1,0 +1,6 @@
+=== RUN   TestRecordedWindowCanAdmit
+    recorded_pressure_test.go:29: recorded refusal reproduced: no quiet window in 180 observations
+--- FAIL: TestRecordedWindowCanAdmit (0.00s)
+FAIL
+FAIL	github.com/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-storage-pressure-2026-09-15/source	0.003s
+FAIL

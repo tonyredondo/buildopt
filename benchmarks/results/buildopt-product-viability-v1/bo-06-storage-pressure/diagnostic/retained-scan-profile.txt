@@ -1,0 +1,21 @@
+File: source.test
+Build ID: bc2bafdbf79a44b826c25b3553a64df1055a00c6
+Type: cpu
+Time: 2026-09-15 16:34:24 CEST
+Duration: 2.50s, Total samples = 2.52s (100.78%)
+Showing nodes accounting for 2.39s, 94.84% of 2.52s total
+Dropped 47 nodes (cum <= 0.01s)
+Showing top 12 nodes out of 49
+      flat  flat%   sum%        cum   cum%
+     2.25s 89.29% 89.29%      2.25s 89.29%  internal/runtime/syscall/linux.Syscall6
+     0.03s  1.19% 90.48%      0.03s  1.19%  runtime.reentersyscall
+     0.02s  0.79% 91.27%      0.71s 28.17%  os.(*File).readdir
+     0.02s  0.79% 92.06%      0.02s  0.79%  runtime.exitsyscall
+     0.02s  0.79% 92.86%      0.02s  0.79%  runtime.nextFreeFast (inline)
+     0.01s   0.4% 93.25%      1.34s 53.17%  golang.org/x/sys/unix.Fstatat
+     0.01s   0.4% 93.65%      0.05s  1.98%  runtime.entersyscall
+     0.01s   0.4% 94.05%      0.04s  1.59%  runtime.makeslicecopy
+     0.01s   0.4% 94.44%      0.05s  1.98%  runtime.mallocgc
+     0.01s   0.4% 94.84%      1.53s 60.71%  syscall.Syscall6
+         0     0% 94.84%      2.49s 98.81%  github.com/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-storage-pressure-2026-09-15/source.TestBoundedRetainedStorageScan
+         0     0% 94.84%      2.49s 98.81%  github.com/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-storage-pressure-2026-09-15/source.treeBytesUntil

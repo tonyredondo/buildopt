@@ -1,0 +1,14 @@
+{
+  "command": [
+    "findmnt",
+    "--json",
+    "--target",
+    "/home/tonyredondo/repos/github/tonyredondo/buildopt",
+    "--output",
+    "TARGET,SOURCE,FSTYPE,MAJ:MIN"
+  ],
+  "exitCode": 0,
+  "stdout": "{\n   \"filesystems\": [\n      {\n         \"target\": \"/home\",\n         \"source\": \"/dev/mapper/omarchy_root[/@home]\",\n         \"fstype\": \"btrfs\",\n         \"maj:min\": \"0:29\"\n      }\n   ]\n}\n",
+  "stderr": "",
+  "atUTC": "2026-09-15T14:32:39.846411+00:00"
+}

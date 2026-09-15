@@ -1,0 +1,16 @@
+{
+  "command": [
+    "./dev/run",
+    "--toolchain",
+    "go",
+    "--",
+    "go",
+    "test",
+    "-count=1",
+    "-v",
+    "-run",
+    "^TestBoundedRetainedStorageScan$",
+    "./.tools/state/buildopt-product-viability-v1/bo-06-storage-pressure-2026-09-15/source"
+  ],
+  "exitCode": 0
+}

@@ -1,0 +1,14 @@
+=== RUN   TestBoundedRetainedStorageScan
+    storage_profile_test.go:38: {
+          "comparatorStarts": 0,
+          "complete": true,
+          "countedBytes": 19979202731,
+          "cpuSeconds": 2.540419,
+          "limitSeconds": 3,
+          "ownerStarts": 0,
+          "root": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/profiles/prefix/run",
+          "seconds": 2.500401889
+        }
+--- PASS: TestBoundedRetainedStorageScan (2.50s)
+PASS
+ok  	github.com/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-storage-pressure-2026-09-15/source	2.505s

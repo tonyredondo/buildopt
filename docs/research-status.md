@@ -146,13 +146,28 @@ A quiet start did not ensure quiet conditions throughout execution.
 
 The allocation and all four worker sessions are closed, with 25 owner builds,
 24 comparison JVMs, no retries and no protected builds. There is no complete
-sequence saving or final BO-06 freeze. Next, investigate sustained storage
-pressure from the retained evidence before specifying another development run;
-its cause remains unproven. Do not resume this allocation or weaken the stopping
-rule. Earlier results retain their recorded outcomes. Any saving in this mode
+sequence saving or final BO-06 freeze. Do not resume this allocation or weaken
+the stopping rule. Earlier results retain their recorded outcomes.
+
+The [storage diagnosis](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-storage-pressure/README.md)
+is verified. The frozen runner reproduces all 26 quiet-start decisions. During
+the failed wait, 17 observed processes used 1.18 seconds of CPU with little I/O;
+previous writes and unobserved activity cannot be separated by the retained
+counters. The exact storage cause remains unproven. The full-directory disk
+scan is a confirmed measurement cost: one pass took 2.500 seconds, while the
+supervisor recorded almost one core of CPU work during all 25 completed builds.
+This establishes neither its effect on build wall time nor the historical cause
+of the wait. No project build or comparator JVM ran during this diagnosis.
+
+Next, [reduce and qualify the disk-accounting work](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-storage-pressure/next-step.md)
+with bounded fixtures, preserve the existing limits and output proof, and add
+inexpensive observations for the remaining attribution gaps. The implementation
+block ends with integrated fixture proof and frozen inputs. A changed runner
+then needs a separate fresh control before the complete development sequence;
+the old passing control cannot qualify changed code. Any saving in this mode
 would describe the recorded workflow; BO-09 still needs the ordinary-workflow
-comparison. Task record:
-`.tools/state/buildopt-product-viability-v1/bo-06-quiet-measurement-2026-09-15/task-state.json`.
+comparison. Current diagnosis record:
+`.tools/state/buildopt-product-viability-v1/bo-06-storage-pressure-2026-09-15/task-state.json`.
 BO-07 and protected changes 21–100 remain deferred. Generic plan selection/reuse,
 adaptive fragments, runtime sweeps and another general cache remain retired.
 The user has authorized commit and push after each work block. Product viability
