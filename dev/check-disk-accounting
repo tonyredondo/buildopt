@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+buildopt_script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+case "${1:-}" in
+    --unit|--integration)
+        if [[ $# -ne 1 ]]; then exit 2; fi
+        exec python3 -B -I "${buildopt_script_dir}/quiet_start_integration_check.py" "--disk-${1#--}"
+        ;;
+    *) printf 'usage: dev/check-disk-accounting --unit|--integration\n' >&2; exit 2 ;;
+esac

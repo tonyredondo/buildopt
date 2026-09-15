@@ -1,0 +1,69 @@
+=== RUN   TestLiveDiskMeasurementToleratesNativeTempDeletion
+--- PASS: TestLiveDiskMeasurementToleratesNativeTempDeletion (0.01s)
+=== RUN   TestLiveDiskBytesCountFilesAndDoNotFollowSymlinks
+--- PASS: TestLiveDiskBytesCountFilesAndDoNotFollowSymlinks (0.00s)
+=== RUN   TestLiveDiskObservationCancelsWithinLargeDirectory
+--- PASS: TestLiveDiskObservationCancelsWithinLargeDirectory (0.12s)
+=== RUN   TestLiveDiskLogicalBytesAndExactCeiling
+--- PASS: TestLiveDiskLogicalBytesAndExactCeiling (0.00s)
+=== RUN   TestLiveDiskDoesNotEnumerateUnchangedRetainedDirectory
+--- PASS: TestLiveDiskDoesNotEnumerateUnchangedRetainedDirectory (0.00s)
+=== RUN   TestLiveDiskMutationAccounting
+=== RUN   TestLiveDiskMutationAccounting/grow
+=== RUN   TestLiveDiskMutationAccounting/shrink
+=== RUN   TestLiveDiskMutationAccounting/create
+=== RUN   TestLiveDiskMutationAccounting/delete
+=== RUN   TestLiveDiskMutationAccounting/rename
+=== RUN   TestLiveDiskMutationAccounting/cross-directory-rename
+=== RUN   TestLiveDiskMutationAccounting/atomic-replace
+=== RUN   TestLiveDiskMutationAccounting/temporary
+=== RUN   TestLiveDiskMutationAccounting/symlink
+=== RUN   TestLiveDiskMutationAccounting/symlink-replacement
+=== RUN   TestLiveDiskMutationAccounting/internal-hardlink
+=== RUN   TestLiveDiskMutationAccounting/external-hardlink
+=== RUN   TestLiveDiskMutationAccounting/sparse
+=== RUN   TestLiveDiskMutationAccounting/fallocate
+--- PASS: TestLiveDiskMutationAccounting (0.03s)
+    --- PASS: TestLiveDiskMutationAccounting/grow (0.00s)
+    --- PASS: TestLiveDiskMutationAccounting/shrink (0.01s)
+    --- PASS: TestLiveDiskMutationAccounting/create (0.00s)
+    --- PASS: TestLiveDiskMutationAccounting/delete (0.00s)
+    --- PASS: TestLiveDiskMutationAccounting/rename (0.00s)
+    --- PASS: TestLiveDiskMutationAccounting/cross-directory-rename (0.00s)
+    --- PASS: TestLiveDiskMutationAccounting/atomic-replace (0.00s)
+    --- PASS: TestLiveDiskMutationAccounting/temporary (0.00s)
+    --- PASS: TestLiveDiskMutationAccounting/symlink (0.00s)
+    --- PASS: TestLiveDiskMutationAccounting/symlink-replacement (0.00s)
+    --- PASS: TestLiveDiskMutationAccounting/internal-hardlink (0.00s)
+    --- PASS: TestLiveDiskMutationAccounting/external-hardlink (0.00s)
+    --- PASS: TestLiveDiskMutationAccounting/sparse (0.00s)
+    --- PASS: TestLiveDiskMutationAccounting/fallocate (0.00s)
+=== RUN   TestLiveDiskInvalidation
+=== RUN   TestLiveDiskInvalidation/new-directory
+=== RUN   TestLiveDiskInvalidation/directory-rename
+=== RUN   TestLiveDiskInvalidation/directory-removal
+=== RUN   TestLiveDiskInvalidation/root-replaced
+=== RUN   TestLiveDiskInvalidation/watch-lost
+=== RUN   TestLiveDiskInvalidation/mount-change
+--- PASS: TestLiveDiskInvalidation (0.00s)
+    --- PASS: TestLiveDiskInvalidation/new-directory (0.00s)
+    --- PASS: TestLiveDiskInvalidation/directory-rename (0.00s)
+    --- PASS: TestLiveDiskInvalidation/directory-removal (0.00s)
+    --- PASS: TestLiveDiskInvalidation/root-replaced (0.00s)
+    --- PASS: TestLiveDiskInvalidation/watch-lost (0.00s)
+    --- PASS: TestLiveDiskInvalidation/mount-change (0.00s)
+=== RUN   TestLiveDiskQueueOverflowFallsBack
+--- PASS: TestLiveDiskQueueOverflowFallsBack (0.03s)
+=== RUN   TestLiveDiskRefusesMissingObservationsAndFreeSpace
+=== RUN   TestLiveDiskRefusesMissingObservationsAndFreeSpace/missing-root
+=== RUN   TestLiveDiskRefusesMissingObservationsAndFreeSpace/unreadable-directory
+=== RUN   TestLiveDiskRefusesMissingObservationsAndFreeSpace/low-free-space
+--- PASS: TestLiveDiskRefusesMissingObservationsAndFreeSpace (0.01s)
+    --- PASS: TestLiveDiskRefusesMissingObservationsAndFreeSpace/missing-root (0.00s)
+    --- PASS: TestLiveDiskRefusesMissingObservationsAndFreeSpace/unreadable-directory (0.00s)
+    --- PASS: TestLiveDiskRefusesMissingObservationsAndFreeSpace/low-free-space (0.00s)
+=== RUN   TestLiveDiskCancellationJoinsSetupAndCloses
+    live_disk_test.go:300: cancellation and close: 3.128005ms
+--- PASS: TestLiveDiskCancellationJoinsSetupAndCloses (0.09s)
+PASS
+ok  	github.com/tonyredondo/buildopt/dev/history-replay	0.294s

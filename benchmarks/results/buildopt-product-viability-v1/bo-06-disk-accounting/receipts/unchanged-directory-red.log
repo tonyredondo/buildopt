@@ -1,0 +1,5 @@
+--- FAIL: TestLiveDiskDoesNotEnumerateUnchangedRetainedDirectory (0.00s)
+    live_disk_test.go:32: unchanged retained directory was enumerated again: bytes=16 error=<nil>
+FAIL
+FAIL	github.com/tonyredondo/buildopt/dev/history-replay	0.003s
+FAIL

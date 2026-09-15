@@ -1,0 +1,12 @@
+{
+  "classification": "fixture setup error",
+  "nativeStarts": 0,
+  "ownerBuilds": 0,
+  "comparatorJVMs": 0,
+  "observations": [
+    "Two source-unit invocations failed because the copied protocol was missing under the task specs directory.",
+    "An attempted copy used the nonexistent benchmarks/specs path. The actual root specs file was located and checked against SHA256 616e2e0cfbc276450cba000fe9afd1132a7c41bf772e5e070bf4547e5feeef41 before copying.",
+    "Subsequent source-unit run passed. No acceptance rule changed."
+  ],
+  "rawLogs": "Errors were observed in command output; no separate raw setup log was saved."
+}

@@ -18,6 +18,21 @@ its rejection behavior. These qualification tests do not advance seed history.
 
 ## Build and validate
 
+The live disk guard counts every regular-file entry, then uses Linux file
+notifications to recount changed directories. A directory move or lost
+observation returns that request to complete scans. Full boundary checks,
+the artifact ceiling and independent free-space/liveness checks remain.
+The [disk accounting contract](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-disk-accounting/accounting-contract.md)
+describes supported mutations and the fixture measurements.
+`./dev/check-disk-accounting --unit` checks the frozen measurement source.
+Its separate `--integration` mode can start seven native fixture commands;
+it requires Linux AMD64 and user systemd and does not run Gradle.
+
+`storage_observation.py` supplies optional storage and observer counters to the
+frozen external sampler. Missing counters carry a reason; they cannot establish
+quiet conditions. Its unit checks run with
+`python3 -B -I dev/history-replay/storage_observation_test.py`.
+
 `quiet_start.py` is a separate Linux diagnostic. It observes `/proc/pressure`
 for a recent 30-second window with no sampled resource-pressure interval above
 10%, retaining all observations. It never starts a build and is not yet called

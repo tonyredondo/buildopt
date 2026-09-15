@@ -11,10 +11,13 @@ import tempfile
 
 
 def main():
-    if sys.argv[1:] not in (["--unit"], ["--integration"]):
-        raise SystemExit("usage: dev/check-quiet-start-integration --unit|--integration")
+    if len(sys.argv) != 2 or sys.argv[1] not in ("--unit", "--integration", "--disk-unit", "--disk-integration"):
+        raise SystemExit("usage: frozen runner check --unit|--integration|--disk-unit|--disk-integration")
+    disk = sys.argv[1].startswith("--disk-")
+    integration = sys.argv[1].endswith("integration")
     root = Path(__file__).resolve().parent.parent
-    evidence = root / "benchmarks/results/buildopt-product-viability-v1/bo-06-quiet-start-integration"
+    evidence_name = "bo-06-disk-accounting" if disk else "bo-06-quiet-start-integration"
+    evidence = root / "benchmarks/results/buildopt-product-viability-v1" / evidence_name
     manifest = json.loads((evidence / "evidence-manifest.json").read_text())
     for name, expected in manifest["files"].items():
         path = Path(name)
@@ -22,6 +25,8 @@ def main():
             raise ValueError(f"evidence path leaves the result directory: {name}")
         if hashlib.sha256((evidence / path).read_bytes()).hexdigest() != expected:
             raise ValueError(f"retained evidence differs: {name}")
+    if disk:
+        subprocess.run([sys.executable, "-B", "-I", str(evidence / "verify-evidence.py")], check=True, timeout=60)
     frozen = json.loads((evidence / "source-freeze.json").read_text())
 
     def checked(name, expected):
@@ -55,11 +60,12 @@ def main():
         (target / "specs").mkdir()
         (target / "specs/poc-product-viability-v1.json").write_bytes(protocol)
         args = [str(root / "dev/run"), "--toolchain", "go", "--", "go", "test", "-mod=readonly", "-count=1"]
-        if sys.argv[1] == "--integration":
-            # Exactly two possible native fixture starts, no Gradle or owner
-            # builds. Requires Linux amd64 and a working user systemd manager.
-            args += ["-tags=replay_integration", "-run=^TestQuietRunner", "-timeout=610s"]
-            limit = 630
+        if integration:
+            # Two (quiet) or seven (disk + quiet) possible native fixture
+            # starts; no Gradle. Requires Linux amd64 and user systemd.
+            pattern = "^(TestQuietRunner|TestLiveDiskRunnerIntegration)" if disk else "^TestQuietRunner"
+            args += ["-tags=replay_integration", "-run=" + pattern, "-timeout=" + ("700s" if disk else "610s")]
+            limit = 720 if disk else 630
         else:
             args += ["-timeout=160s"]
             limit = 180
@@ -68,7 +74,7 @@ def main():
         result = subprocess.run(["timeout", "--signal=TERM", "--kill-after=10s", str(limit) + "s", *args], cwd=root)
         if result.returncode:
             raise SystemExit(result.returncode)
-        print("BO-06 quiet-start checks passed; no owner timing was performed.")
+        print(f"BO-06 {evidence_name} checks passed; no owner timing was performed.")
 
 
 if __name__ == "__main__":

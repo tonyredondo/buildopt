@@ -1,0 +1,46 @@
+{
+  "schema": "buildopt.history-replay/protocol/v2",
+  "experiment": "FIXED_NI",
+  "mode": "P",
+  "platform": "linux-amd64-cgroup-v2",
+  "manifestSchema": "buildopt.history-replay/manifest/v2",
+  "recordSchema": "buildopt.history-replay/record/v2",
+  "resultSchema": "buildopt.history-replay/result/v2",
+  "confirmation": {
+    "replications": 2,
+    "anchorOrdinal": 0,
+    "prefixEnd": 20,
+    "lastOrdinal": 100,
+    "validationSlots": 80,
+    "minimumComparableSlots": 76,
+    "minimumNetFraction": 0.05,
+    "minimumNetPerSlotNS": 1000000000,
+    "tailAllowanceNS": 1000000000,
+    "tailAllowanceFraction": 0.05
+  },
+  "bootstrap": {
+    "samples": 10000,
+    "seed": 20260908,
+    "blocks": [
+      5,
+      10
+    ],
+    "quantile": "nearest-rank"
+  },
+  "classes": [
+    "COMPARABLE",
+    "NATIVE_RETAINED",
+    "NATIVE_BUILD_FAILURE",
+    "DEPENDENCY_UNAVAILABLE",
+    "NATIVE_NONDETERMINISM",
+    "HARNESS_INVALID",
+    "CANDIDATE_FAILURE",
+    "NOT_RUN_DEPENDENCY",
+    "NOT_RUN_LIMIT"
+  ],
+  "primaryCapture": "symmetric-lean-graph-and-outcomes",
+  "deepTrace": "diagnostic-only",
+  "retry": "declared-reserve-equal-quiescent-state-both-arms",
+  "warmDaemonRecovery": "close-incomplete-on-session-loss",
+  "ownerOutputPolicy": "optional explicit bound C5 root-build policy; exact additional config; qualified same-arm causal raw-output reuse"
+}

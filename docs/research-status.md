@@ -159,16 +159,26 @@ supervisor recorded almost one core of CPU work during all 25 completed builds.
 This establishes neither its effect on build wall time nor the historical cause
 of the wait. No project build or comparator JVM ran during this diagnosis.
 
-Next, [reduce and qualify the disk-accounting work](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-storage-pressure/next-step.md)
-with bounded fixtures, preserve the existing limits and output proof, and add
-inexpensive observations for the remaining attribution gaps. The implementation
-block ends with integrated fixture proof and frozen inputs. A changed runner
-then needs a separate fresh control before the complete development sequence;
-the old passing control cannot qualify changed code. Any saving in this mode
-would describe the recorded workflow; BO-09 still needs the ordinary-workflow
-comparison. Current diagnosis record:
-`.tools/state/buildopt-product-viability-v1/bo-06-storage-pressure-2026-09-15/task-state.json`.
-BO-07 and protected changes 21–100 remain deferred. Generic plan selection/reuse,
+The [disk-accounting correction](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-disk-accounting/README.md) is now verified on bounded fixtures.
+Across twenty checks over 32,768 retained files, total CPU fell by about 74%
+in both repetitions, including setup and closure. The small fixture added
+about seven milliseconds overall. All 24 native fixture starts and the final
+runner's output, refusal and closure checks passed. Storage and observer
+counters now retain explicit unavailable fields. This establishes no project
+speedup or explanation of the historical storage wait.
+
+The runner and sampler share a new frozen measurement identity with the
+unchanged comparator and policies. Full validation admits the control proposal;
+development still requires a genuine passing control for that identity. Next,
+prepare the separate eight-build control and, only if it passes, the complete
+42-build development sequence under the existing limits. No timing allocation
+was activated in this implementation block. BO-06 remains partial and BO-07
+stays deferred. Savings in the recorded workflow still require the ordinary
+workflow comparison in BO-09.
+
+Current task record:
+`.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/task-state.json`.
+Protected changes 21–100 remain deferred. Generic plan selection/reuse,
 adaptive fragments, runtime sweeps and another general cache remain retired.
 The user has authorized commit and push after each work block. Product viability
 is not established.

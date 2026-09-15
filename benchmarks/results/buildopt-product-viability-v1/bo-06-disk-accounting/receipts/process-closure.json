@@ -1,0 +1,170 @@
+{
+  "status": "verified",
+  "units": {
+    "buildopt-replay-ac79b3c6e7df0853-r1-N-1.service": {
+      "status": "inactive",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-ac79b3c6e7df0853-r1-N-1.service",
+      "closurePresent": true,
+      "configuration": "fixtures/disk/TestLiveDiskRunnerIntegration-mutations-1799895861/run/sessions/r1-000-g0-N/worker-config.json"
+    },
+    "buildopt-replay-ac79b3c6e7df0853-r1-I-2.service": {
+      "status": "inactive",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-ac79b3c6e7df0853-r1-I-2.service",
+      "closurePresent": true,
+      "configuration": "fixtures/disk/TestLiveDiskRunnerIntegration-mutations-1799895861/run/sessions/r1-000-g0-I/worker-config.json"
+    },
+    "buildopt-replay-e87925179dc6430b-r1-N-1.service": {
+      "status": "inactive",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-e87925179dc6430b-r1-N-1.service",
+      "closurePresent": true,
+      "configuration": "fixtures/disk/TestLiveDiskRunnerIntegration-fallback-3713867371/run/sessions/r1-000-g0-N/worker-config.json"
+    },
+    "buildopt-replay-e87925179dc6430b-r1-I-2.service": {
+      "status": "inactive",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-e87925179dc6430b-r1-I-2.service",
+      "closurePresent": true,
+      "configuration": "fixtures/disk/TestLiveDiskRunnerIntegration-fallback-3713867371/run/sessions/r1-000-g0-I/worker-config.json"
+    },
+    "buildopt-replay-dabde7587749846f-r1-N-1.service": {
+      "status": "inactive",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-dabde7587749846f-r1-N-1.service",
+      "closurePresent": true,
+      "configuration": "fixtures/disk/TestLiveDiskRunnerIntegration-ceiling-1444597436/run/sessions/r1-000-g0-N/worker-config.json"
+    },
+    "buildopt-replay-31f07f8278f4e0cc-r1-N-1.service": {
+      "status": "inactive",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-31f07f8278f4e0cc-r1-N-1.service",
+      "closurePresent": true,
+      "configuration": "fixtures/quiet/TestQuietRunnerActualPair-1224288986/run/sessions/r1-000-g0-N/worker-config.json"
+    },
+    "buildopt-replay-31f07f8278f4e0cc-r1-I-2.service": {
+      "status": "inactive",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-31f07f8278f4e0cc-r1-I-2.service",
+      "closurePresent": true,
+      "configuration": "fixtures/quiet/TestQuietRunnerActualPair-1224288986/run/sessions/r1-000-g0-I/worker-config.json"
+    },
+    "buildopt-replay-3dd8031329ebc4f9-r1-N-1.service": {
+      "status": "inactive",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-3dd8031329ebc4f9-r1-N-1.service",
+      "closurePresent": true,
+      "configuration": "fixtures/quiet/TestQuietRunnerStopsWithoutNativeLaunch-read-error-1406322503/run/sessions/r1-000-g0-N/worker-config.json"
+    },
+    "buildopt-replay-d48add32e17051fc-r1-N-1.service": {
+      "status": "inactive",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-d48add32e17051fc-r1-N-1.service",
+      "closurePresent": true,
+      "configuration": "fixtures/quiet/TestQuietRunnerStopsWithoutNativeLaunch-cancelled-3068276459/run/sessions/r1-000-g0-N/worker-config.json"
+    },
+    "buildopt-replay-25a99375a384c529-r1-N-1.service": {
+      "status": "inactive",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-25a99375a384c529-r1-N-1.service",
+      "closurePresent": true,
+      "configuration": "fixtures/quiet/TestQuietRunnerStopsWithoutNativeLaunch-deadline-3846986399/run/sessions/r1-000-g0-N/worker-config.json"
+    },
+    "buildopt-replay-abed951c7137fdc8-r1-N-1.service": {
+      "status": "inactive",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-abed951c7137fdc8-r1-N-1.service",
+      "closurePresent": true,
+      "configuration": "fixtures/quiet/TestQuietRunnerStopsWithoutNativeLaunch-stale-at-launch-1683457247/run/sessions/r1-000-g0-N/worker-config.json"
+    },
+    "buildopt-replay-881b487312d759e1-r1-N-1.service": {
+      "status": "inactive",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-881b487312d759e1-r1-N-1.service",
+      "closurePresent": true,
+      "configuration": "fixtures/cli/TestResearchCLIAndMissingResults-941901567/run/sessions/r1-000-g0-N/worker-config.json"
+    },
+    "buildopt-replay-881b487312d759e1-r1-I-2.service": {
+      "status": "inactive",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-881b487312d759e1-r1-I-2.service",
+      "closurePresent": true,
+      "configuration": "fixtures/cli/TestResearchCLIAndMissingResults-941901567/run/sessions/r1-000-g0-I/worker-config.json"
+    },
+    "buildopt-replay-881b487312d759e1-r1-I-3.service": {
+      "status": "inactive",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-881b487312d759e1-r1-I-3.service",
+      "closurePresent": true,
+      "configuration": "fixtures/cli/TestResearchCLIAndMissingResults-941901567/run/sessions/r1-001-g0-I/worker-config.json"
+    },
+    "buildopt-replay-881b487312d759e1-r1-N-4.service": {
+      "status": "inactive",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-881b487312d759e1-r1-N-4.service",
+      "closurePresent": true,
+      "configuration": "fixtures/cli/TestResearchCLIAndMissingResults-941901567/run/sessions/r1-001-g0-N/worker-config.json"
+    },
+    "buildopt-replay-eaa1db1ad01c785a-r1-N-1.service": {
+      "status": "inactive",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-eaa1db1ad01c785a-r1-N-1.service",
+      "closurePresent": true,
+      "configuration": "fixtures/fallback/TestTypedFailuresAndNativeFallback-mismatch-3242372488/run/sessions/r1-000-g0-N/worker-config.json"
+    },
+    "buildopt-replay-eaa1db1ad01c785a-r1-I-2.service": {
+      "status": "inactive",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-eaa1db1ad01c785a-r1-I-2.service",
+      "closurePresent": true,
+      "configuration": "fixtures/fallback/TestTypedFailuresAndNativeFallback-mismatch-3242372488/run/sessions/r1-000-g0-I/worker-config.json"
+    },
+    "buildopt-replay-d70d859d3d6e9011-r1-N-1.service": {
+      "status": "inactive",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-d70d859d3d6e9011-r1-N-1.service",
+      "closurePresent": true,
+      "configuration": "fixtures/fallback/TestTypedFailuresAndNativeFallback-fallback-1960355522/run/sessions/r1-000-g0-N/worker-config.json"
+    },
+    "buildopt-replay-d70d859d3d6e9011-r1-I-2.service": {
+      "status": "inactive",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-d70d859d3d6e9011-r1-I-2.service",
+      "closurePresent": true,
+      "configuration": "fixtures/fallback/TestTypedFailuresAndNativeFallback-fallback-1960355522/run/sessions/r1-000-g0-I/worker-config.json"
+    },
+    "buildopt-replay-d70d859d3d6e9011-r1-I-3.service": {
+      "status": "inactive",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-d70d859d3d6e9011-r1-I-3.service",
+      "closurePresent": true,
+      "configuration": "fixtures/fallback/TestTypedFailuresAndNativeFallback-fallback-1960355522/run/sessions/r1-001-g0-I/worker-config.json"
+    },
+    "buildopt-replay-d70d859d3d6e9011-r1-N-4.service": {
+      "status": "inactive",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-d70d859d3d6e9011-r1-N-4.service",
+      "closurePresent": true,
+      "configuration": "fixtures/fallback/TestTypedFailuresAndNativeFallback-fallback-1960355522/run/sessions/r1-001-g0-N/worker-config.json"
+    },
+    "buildopt-replay-d70d859d3d6e9011-r1-N-5.service": {
+      "status": "inactive",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-d70d859d3d6e9011-r1-N-5.service",
+      "closurePresent": true,
+      "configuration": "fixtures/fallback/TestTypedFailuresAndNativeFallback-fallback-1960355522/run/sessions/r1-002-g0-N/worker-config.json"
+    },
+    "buildopt-replay-d70d859d3d6e9011-r1-I-6.service": {
+      "status": "inactive",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-d70d859d3d6e9011-r1-I-6.service",
+      "closurePresent": true,
+      "configuration": "fixtures/fallback/TestTypedFailuresAndNativeFallback-fallback-1960355522/run/sessions/r1-002-g0-I/worker-config.json"
+    },
+    "buildopt-replay-b1dc234e43bf883c-r1-N-1.service": {
+      "status": "inactive",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-b1dc234e43bf883c-r1-N-1.service",
+      "closurePresent": true,
+      "configuration": "fixtures/drift/TestDriftStopsBeforeNextChild-source-779709946/run/sessions/r1-000-g0-N/worker-config.json"
+    },
+    "buildopt-replay-b1dc234e43bf883c-r1-I-2.service": {
+      "status": "inactive",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-b1dc234e43bf883c-r1-I-2.service",
+      "closurePresent": true,
+      "configuration": "fixtures/drift/TestDriftStopsBeforeNextChild-source-779709946/run/sessions/r1-000-g0-I/worker-config.json"
+    },
+    "buildopt-replay-1d0e25459de869cc-r1-N-1.service": {
+      "status": "inactive",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-1d0e25459de869cc-r1-N-1.service",
+      "closurePresent": true,
+      "configuration": "fixtures/driver-death/TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost-3855393862/run/sessions/r1-000-g0-N/worker-config.json"
+    },
+    "buildopt-replay-1d0e25459de869cc-r1-I-2.service": {
+      "status": "inactive",
+      "cgroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-1d0e25459de869cc-r1-I-2.service",
+      "closurePresent": true,
+      "configuration": "fixtures/driver-death/TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost-3855393862/run/sessions/r1-000-g0-I/worker-config.json"
+    }
+  },
+  "controllerProcesses": [],
+  "ownerBuilds": 0,
+  "comparatorJVMs": 0
+}

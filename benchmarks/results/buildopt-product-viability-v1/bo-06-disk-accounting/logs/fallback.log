@@ -1,0 +1,9 @@
+=== RUN   TestTypedFailuresAndNativeFallback
+=== RUN   TestTypedFailuresAndNativeFallback/mismatch
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/fixtures/fallback/TestTypedFailuresAndNativeFallback-mismatch-3242372488
+=== RUN   TestTypedFailuresAndNativeFallback/fallback
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/fixtures/fallback/TestTypedFailuresAndNativeFallback-fallback-1960355522
+--- PASS: TestTypedFailuresAndNativeFallback (34.36s)
+    --- PASS: TestTypedFailuresAndNativeFallback/mismatch (9.96s)
+    --- PASS: TestTypedFailuresAndNativeFallback/fallback (24.40s)
+PASS

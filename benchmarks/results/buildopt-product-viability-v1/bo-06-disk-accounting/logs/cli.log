@@ -1,0 +1,4 @@
+=== RUN   TestResearchCLIAndMissingResults
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/fixtures/cli/TestResearchCLIAndMissingResults-941901567
+--- PASS: TestResearchCLIAndMissingResults (17.77s)
+PASS

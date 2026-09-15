@@ -1,0 +1,74 @@
+{
+  "status": "verified",
+  "scope": "Runner and local correctness frozen; control proposal admitted; development requires a fresh genuine passing control. No allocation started.",
+  "measurementIdentity": "07ad4c609d81cdcc6f21351577757be88daf2db1e8d4ead08dd6aed94e93dcad",
+  "previousIdentity": "b59d6a66c1ba948541d22adf0e7bc9632ff6f3e7b4a3330d86944d4f4ad483cc",
+  "localProof": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/receipts/local-proof.json",
+    "sha256": "5cfef8713498e6b06bb802b6a17dd0500e164c01ed7496139a1e82475af449c4"
+  },
+  "quietPolicy": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/inputs/quiet-start-policy.json",
+    "sha256": "1c1d2080051f44929de62b0e0447fa1ccd63e490f8762c5c6619b33c5e2d22bb"
+  },
+  "ownerPolicy": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/qualified-owner-policy.json",
+    "sha256": "2e60df8b397fa85a947ff85bca0c3efb8d40815a7f8089315cb68315db176924"
+  },
+  "comparatorQualification": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-comparator-qualification-2026-09-15/inputs/owner-qualification.json",
+    "sha256": "faf1f33d618b99ac47b3e585e0b30460c176895e0acacb7b50d0e20bbf967add"
+  },
+  "sharedFields": [
+    "mode",
+    "protocol",
+    "executable",
+    "package",
+    "commonGit",
+    "command",
+    "environment",
+    "runtime",
+    "baseline",
+    "candidate",
+    "outputs",
+    "acquisition",
+    "generatedPaths",
+    "affinity",
+    "daemonPolicy",
+    "quietStart"
+  ],
+  "proposals": [
+    {
+      "kind": "control",
+      "manifest": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/manifests/control-proposal.json",
+        "sha256": "fc26c342c6a6846455277b1ffdc9281f0e1944e61acb7fe21bbef3c20b32fda5"
+      },
+      "identity": "07ad4c609d81cdcc6f21351577757be88daf2db1e8d4ead08dd6aed94e93dcad",
+      "exitCode": 0,
+      "stdout": "manifest valid; no workflow started\n",
+      "stderr": "",
+      "expected": "admitted",
+      "durationNS": 3900150666,
+      "runRootAbsent": true
+    },
+    {
+      "kind": "development",
+      "manifest": {
+        "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/manifests/development-proposal.json",
+        "sha256": "171263f7a125972275bc3202cb897439c4bb4acc29787264217a6095ae425907"
+      },
+      "identity": "07ad4c609d81cdcc6f21351577757be88daf2db1e8d4ead08dd6aed94e93dcad",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "lean research missing required control or prefix proof\n",
+      "expected": "lean research missing required control or prefix proof",
+      "durationNS": 4053037,
+      "runRootAbsent": true
+    }
+  ],
+  "ownerBuilds": 0,
+  "comparatorJVMs": 0,
+  "protectedSourceReads": 0,
+  "priorControlCanQualifyNewIdentity": false
+}

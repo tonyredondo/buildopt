@@ -141,6 +141,9 @@ func loadAttempt(m Manifest, b Binding, costs map[string]Cost, sourceHashes map[
 	if native.ResourcesBefore.At.Boot != native.Start.Boot || native.ResourcesBefore.At.NS > native.Start.NS || native.ResourcesAfter.At.Boot != native.End.Boot || native.ResourcesAfter.At.NS < native.End.NS || len(native.ResourcesBefore.CgroupFiles) != 5 || len(native.ResourcesAfter.CgroupFiles) != 5 || native.ResourcesBefore.CPUAffinity == "" {
 		return start, end, errors.New("missing native resource/host interval")
 	}
+	if err := checkDiskReceipt(m, dir, native); err != nil {
+		return start, end, err
+	}
 	var rawPID ProcessIdentity
 	if err := readJSON(filepath.Join(dir, "native-pid.json"), &rawPID); err != nil {
 		return start, end, err

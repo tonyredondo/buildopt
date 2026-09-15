@@ -291,6 +291,8 @@ func executeOwned(cfg WorkerConfig, q ProcessRequest, onExit func(ProcessReceipt
 		}
 		seen := map[string]ProcessIdentity{}
 		var watchErr error
+		disk := newLiveDiskGuard(cfg.RunRoot, cfg.Limits)
+		diskReceipt := DiskObserverReceipt{Schema: "buildopt.disk-observer/v1", Attempt: q.Attempt, Root: cfg.RunRoot, MaxBytes: cfg.Limits.MaxBytes, MinimumFreeBytes: cfg.Limits.MinimumFreeBytes, Begin: stamp()}
 		done := make(chan struct{})
 		finished := make(chan struct{})
 		go func() {
@@ -306,7 +308,7 @@ func executeOwned(cfg WorkerConfig, q ProcessRequest, onExit func(ProcessReceipt
 				}
 				return freeDiskGuard(cfg.RunRoot, cfg.Limits.MinimumFreeBytes)
 			}, func(stop <-chan struct{}) error {
-				return diskGuardUntil(cfg.RunRoot, cfg.Limits, stop)
+				return disk.Check(stop)
 			}, func() error {
 				ps, e := cgroupProcesses(r.Supervisor.Cgroup)
 				if e != nil {
@@ -317,11 +319,18 @@ func executeOwned(cfg WorkerConfig, q ProcessRequest, onExit func(ProcessReceipt
 				}
 				return nil
 			}, cancel)
+			diskReceipt.Status = disk.Status()
+			watchErr = errors.Join(watchErr, disk.Close())
+			diskReceipt.End = stamp()
 		}()
 		waitErr := c.Wait()
 		r.End = stamp()
 		close(done)
 		<-finished
+		diskReceipt.End = stamp()
+		if e := writeExclusive(filepath.Join(q.Evidence, "disk-observer.json"), jsonBytes(diskReceipt), 0600); e != nil {
+			return r, e
+		}
 		for _, p := range seen {
 			r.Observed = append(r.Observed, p)
 		}

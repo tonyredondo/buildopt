@@ -1,0 +1,48 @@
+{
+  "label": "drift",
+  "command": [
+    "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/fixture-tests",
+    "-test.run=^TestDriftStopsBeforeNextChild$/^source$",
+    "-test.v",
+    "-test.timeout=165s"
+  ],
+  "reserved": 2,
+  "beginUTC": "2026-09-15T16:53:50.729597+00:00",
+  "binarySHA256": "ea2b36cad31638ac62e8b2b5421b59a9ad9c498cde333760e770a0f8845ddd74",
+  "exitCode": 0,
+  "elapsedNS": 8007881593,
+  "storageSamples": 8,
+  "samplerBefore": {
+    "pid": 2253983,
+    "beginBootNS": 367701747668916,
+    "available": true,
+    "identity": {
+      "startTicks": 36770171,
+      "cpuTicks": 2
+    },
+    "io": {
+      "available": true,
+      "value": "rchar: 9011210\nwchar: 9676\nsyscr: 199\nsyscw: 1\nread_bytes: 0\nwrite_bytes: 12288\ncancelled_write_bytes: 0\n"
+    },
+    "ticksPerSecond": 100,
+    "selfCPUNS": 27949927,
+    "endBootNS": 367701747774536
+  },
+  "samplerAfter": {
+    "pid": 2253983,
+    "beginBootNS": 367709755685229,
+    "available": true,
+    "identity": {
+      "startTicks": 36770171,
+      "cpuTicks": 3
+    },
+    "io": {
+      "available": true,
+      "value": "rchar: 103528692\nwchar: 137730\nsyscr: 5503\nsyscw: 211\nread_bytes: 4149248\nwrite_bytes: 8515584\ncancelled_write_bytes: 0\n"
+    },
+    "ticksPerSecond": 100,
+    "selfCPUNS": 34890672,
+    "endBootNS": 367709755870479
+  },
+  "actualFixtureStarts": 2
+}

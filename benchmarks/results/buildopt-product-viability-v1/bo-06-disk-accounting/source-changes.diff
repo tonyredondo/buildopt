@@ -1,0 +1,1050 @@
+--- before/checker.go
++++ after/checker.go
+@@ -129,0 +130,3 @@
++	}
++	if err := checkDiskReceipt(m, dir, native); err != nil {
++		return start, end, err
+--- before/disk_receipt.go
++++ after/disk_receipt.go
+@@ -0,0 +1,42 @@
++//go:build linux && amd64
++
++package main
++
++import (
++	"errors"
++	"path/filepath"
++)
++
++type DiskObserverReceipt struct {
++	Schema           string                 `json:"schema"`
++	Attempt          string                 `json:"attempt"`
++	Root             string                 `json:"root"`
++	MaxBytes         int64                  `json:"maxBytes"`
++	MinimumFreeBytes uint64                 `json:"minimumFreeBytes"`
++	Begin            Stamp                  `json:"begin"`
++	End              Stamp                  `json:"end"`
++	Status           map[string]interface{} `json:"status"`
++}
++
++func checkDiskReceipt(m Manifest, dir string, native ProcessReceipt) error {
++	var receipt DiskObserverReceipt
++	if err := readJSON(filepath.Join(dir, "disk-observer.json"), &receipt); err != nil {
++		return err
++	}
++	if receipt.Schema != "buildopt.disk-observer/v1" || receipt.Attempt != native.Attempt || receipt.Root != m.RunRoot || receipt.MaxBytes != m.Limits.MaxBytes || receipt.MinimumFreeBytes != m.Limits.MinimumFreeBytes || checkStampInterval(receipt.Begin, receipt.End) != nil || receipt.Begin.Boot != native.Start.Boot || receipt.Begin.NS < native.Start.NS || receipt.End.NS < native.End.NS {
++		return errors.New("disk observer identity, limits or boundaries differ")
++	}
++	counts := map[string]int64{}
++	for _, key := range []string{"checks", "fullScans", "cachedChecks", "watchedInodes"} {
++		n, ok := receipt.Status[key].(float64)
++		if !ok || n < 0 || n > 1e12 || n != float64(int64(n)) {
++			return errors.New("invalid disk observer counters")
++		}
++		counts[key] = int64(n)
++	}
++	reason, ok := receipt.Status["fallbackReason"].(string)
++	if !ok || len(receipt.Status) != 5 || counts["cachedChecks"]+counts["fullScans"] > counts["checks"] || reason == "" && counts["fullScans"] != 0 || reason != "" && counts["watchedInodes"] != 0 {
++		return errors.New("inconsistent disk observer counters")
++	}
++	return nil
++}
+--- before/live_disk_integration_test.go
++++ after/live_disk_integration_test.go
+@@ -0,0 +1,138 @@
++//go:build linux && amd64 && replay_integration
++
++package main
++
++import (
++	"os"
++	"path/filepath"
++	"testing"
++	"time"
++)
++
++func TestLiveDiskChild(t *testing.T) {
++	if os.Getenv("BUILDOPT_FIXTURE_CHILD") != "1" {
++		return
++	}
++	repo, err := os.Getwd()
++	if err != nil {
++		t.Fatal(err)
++	}
++	check := func(err error) {
++		t.Helper()
++		if err != nil {
++			t.Fatal(err)
++		}
++	}
++	mode := os.Args[len(os.Args)-1]
++	file := filepath.Join(repo, "out", "active")
++	mustWrite(t, file, []byte("x"))
++	time.Sleep(250 * time.Millisecond)
++	if mode == "ceiling" {
++		check(os.Truncate(file, 80<<20))
++		time.Sleep(30 * time.Second)
++		t.Fatal("size guard did not cancel native child")
++	}
++	tmp := filepath.Join(repo, "out", "temporary")
++	check(os.Mkdir(tmp, 0700))
++	mustWrite(t, filepath.Join(tmp, "file"), []byte("temporary"))
++	time.Sleep(200 * time.Millisecond)
++	if mode == "fallback" {
++		check(os.Rename(tmp, tmp+"-renamed"))
++		tmp += "-renamed"
++	}
++	check(os.RemoveAll(tmp))
++	check(os.Truncate(file, 1024))
++	time.Sleep(250 * time.Millisecond)
++	source, err := os.ReadFile(filepath.Join(repo, "source.txt"))
++	check(err)
++	mustWrite(t, filepath.Join(repo, "out", "result.txt"), source)
++	mustWrite(t, filepath.Join(repo, "out", "diagnostics.txt"), []byte("success\n"))
++	evidence := filepath.Dir(os.Getenv("BUILDOPT_REPLAY_CAPTURE"))
++	mustWrite(t, filepath.Join(evidence, "fixture-tasks.json"), jsonBytes([]TaskOutcome{{":fixture", "EXECUTED", true}}))
++}
++
++func TestLiveDiskRunnerIntegration(t *testing.T) {
++	for _, mode := range []string{"mutations", "fallback", "ceiling"} {
++		t.Run(mode, func(t *testing.T) {
++			m := runnableFixture(t, 1, mode)
++			m.Command[1] = "-test.run=^TestLiveDiskChild$"
++			m.Limits.RetryPairs = 0
++			r := runFixture(t, m)
++			err := r.execute(1, 0, -1)
++			if mode == "ceiling" {
++				if err == nil {
++					t.Fatal("size breach did not stop the runner")
++				}
++			} else {
++				if err != nil {
++					t.Fatal(err)
++				}
++				result, err := writeResult(m.RunRoot)
++				if err != nil {
++					t.Fatal(err)
++				}
++				if result.Decision != "FIXTURE_VERIFIED" || result.WorkflowStarts != 2 {
++					t.Fatalf("incomplete fixture: %+v", result)
++				}
++				if err := checkResult(m.RunRoot, filepath.Join(m.RunRoot, "result.json")); err != nil {
++					t.Fatal(err)
++				}
++			}
++			paths, err := filepath.Glob(filepath.Join(m.RunRoot, "attempts", "*", "disk-observer.json"))
++			if err != nil {
++				t.Fatal(err)
++			}
++			want := 2
++			if mode == "ceiling" {
++				want = 1
++			}
++			if len(paths) != want {
++				t.Fatalf("observer receipts=%d want=%d", len(paths), want)
++			}
++			for _, path := range paths {
++				var receipt DiskObserverReceipt
++				if err := readJSON(path, &receipt); err != nil {
++					t.Fatal(err)
++				}
++				if receipt.Status["checks"].(float64) < 2 {
++					t.Fatal("fixture did not exercise live polling")
++				}
++				fallback := receipt.Status["fallbackReason"].(string)
++				if (fallback != "") != (mode == "fallback") {
++					t.Fatalf("unexpected fallback: %q", fallback)
++				}
++				var native ProcessReceipt
++				if err := readJSON(filepath.Join(filepath.Dir(path), "native-finish.json"), &native); err != nil {
++					t.Fatal(err)
++				}
++				if mode == "ceiling" && native.Outcome != "OWNERSHIP_OR_LIMIT_FAILURE" {
++					t.Fatalf("size cancellation lost: %+v", native)
++				}
++				if mode == "ceiling" && native.End.NS-native.Start.NS > int64(3*time.Second) {
++					t.Fatal("live size cancellation exceeded three seconds")
++				}
++				if err := checkDiskReceipt(m, filepath.Dir(path), native); err != nil {
++					t.Fatal(err)
++				}
++				ps, err := cgroupProcesses(native.Supervisor.Cgroup)
++				if !os.IsNotExist(err) && (err != nil || len(ps) != 0) {
++					t.Fatalf("owned processes remain: %v %v", ps, err)
++				}
++				if mode == "mutations" {
++					raw, err := os.ReadFile(path)
++					if err != nil {
++						t.Fatal(err)
++					}
++					if err := os.Remove(path); err != nil {
++						t.Fatal(err)
++					}
++					if checkResult(m.RunRoot, filepath.Join(m.RunRoot, "result.json")) == nil {
++						t.Fatal("missing disk receipt qualified")
++					}
++					mustWrite(t, path, raw)
++				}
++				t.Logf("%s: %+v", native.Attempt, receipt.Status)
++			}
++		})
++	}
++}
+--- before/live_disk_linux.go
++++ after/live_disk_linux.go
+@@ -0,0 +1,413 @@
++//go:build linux && amd64
++
++package main
++
++import (
++	"bytes"
++	"encoding/binary"
++	"errors"
++	"fmt"
++	"io"
++	"os"
++	"path/filepath"
++	"strings"
++
++	"golang.org/x/sys/unix"
++)
++
++// liveDiskGuard caches logical sizes only while every regular inode and
++// directory is watched. File watches also cover writes through an outside
++// hardlink. Lost events, moved directories, unsupported filesystems
++// and observation errors revert this request to the original full scanner.
++// It is single-owner state: Check and Close are called by the disk observer.
++// Independent preflight/postflight full scans and the polling cadence remain.
++// See https://man7.org/linux/man-pages/man7/inotify.7.html for notification gaps.
++type liveDiskGuard struct {
++	root                            string
++	limits                          Limits
++	fd                              int
++	initialized                     bool
++	fallback                        string
++	rootInfo                        os.FileInfo
++	mounts                          []byte
++	dirs                            map[string]*diskDirectory
++	watches                         map[int]*diskWatch
++	total                           int64
++	checks, fullScans, cachedChecks int
++}
++
++type diskFile struct {
++	size     int64
++	wd       int
++	dev, ino uint64
++}
++
++type diskDirectory struct {
++	path  string
++	info  os.FileInfo
++	wd    int
++	files map[string]diskFile
++}
++
++type diskWatch struct {
++	directory string
++	paths     map[string]bool
++	dev, ino  uint64
++	dead      bool
++}
++
++func newLiveDiskGuard(root string, limits Limits) *liveDiskGuard {
++	return &liveDiskGuard{root: filepath.Clean(root), limits: limits, fd: -1}
++}
++
++func diskObservationCancelled(stop <-chan struct{}) error {
++	select {
++	case <-stop:
++		return errDiskObservationStopped
++	default:
++		return nil
++	}
++}
++
++func (g *liveDiskGuard) Close() error {
++	if g.fd < 0 {
++		return nil
++	}
++	fd := g.fd
++	g.fd = -1
++	g.dirs, g.watches = nil, nil
++	return unix.Close(fd)
++}
++
++func (g *liveDiskGuard) disable(reason string) error {
++	g.fallback = reason
++	return g.Close()
++}
++
++func (g *liveDiskGuard) Status() map[string]interface{} {
++	return map[string]interface{}{"checks": g.checks, "fullScans": g.fullScans, "cachedChecks": g.cachedChecks, "fallbackReason": g.fallback, "watchedInodes": len(g.watches)}
++}
++
++func (g *liveDiskGuard) Check(stop <-chan struct{}) error {
++	g.checks++
++	if err := diskObservationCancelled(stop); err != nil {
++		return err
++	}
++	if err := freeDiskGuard(g.root, g.limits.MinimumFreeBytes); err != nil {
++		return err
++	}
++	if !g.initialized {
++		g.initialized = true
++		if err := g.initialize(stop); err != nil {
++			if errors.Is(err, errDiskObservationStopped) {
++				return err
++			}
++			if closeErr := g.disable(err.Error()); closeErr != nil {
++				return closeErr
++			}
++		}
++	}
++	if g.fallback == "" {
++		if err := g.update(stop); err != nil {
++			if errors.Is(err, errDiskObservationStopped) {
++				return err
++			}
++			if closeErr := g.disable(err.Error()); closeErr != nil {
++				return closeErr
++			}
++		} else {
++			g.cachedChecks++
++			if g.total > g.limits.MaxBytes {
++				return errors.New("NOT_RUN_LIMIT: artifact size ceiling")
++			}
++			return nil
++		}
++	}
++	g.fullScans++
++	return diskGuardUntil(g.root, g.limits, stop)
++}
++
++func (g *liveDiskGuard) initialize(stop <-chan struct{}) error {
++	var fs unix.Statfs_t
++	if err := unix.Statfs(g.root, &fs); err != nil {
++		return err
++	}
++	switch fs.Type {
++	case unix.BTRFS_SUPER_MAGIC, unix.EXT4_SUPER_MAGIC, unix.XFS_SUPER_MAGIC, unix.TMPFS_MAGIC:
++	default:
++		return fmt.Errorf("full scan required for filesystem %x", fs.Type)
++	}
++	var err error
++	if g.mounts, err = os.ReadFile("/proc/self/mountinfo"); err != nil {
++		return err
++	}
++	unescape := strings.NewReplacer("\\040", " ", "\\011", "\t", "\\012", "\n", "\\134", "\\")
++	for _, line := range strings.Split(string(g.mounts), "\n") {
++		fields := strings.Fields(line)
++		if len(fields) > 4 {
++			mount := unescape.Replace(fields[4])
++			if mount != g.root && inside(g.root, mount) {
++				return errors.New("full scan required for nested mount")
++			}
++		}
++	}
++	if g.rootInfo, err = os.Lstat(g.root); err != nil {
++		return err
++	}
++	if !g.rootInfo.IsDir() {
++		return errors.New("full scan required for non-directory root")
++	}
++	if g.fd, err = unix.InotifyInit1(unix.IN_NONBLOCK | unix.IN_CLOEXEC); err != nil {
++		return err
++	}
++	g.dirs = map[string]*diskDirectory{}
++	g.watches = map[int]*diskWatch{}
++	return g.addTree(g.root, stop)
++}
++
++func (g *liveDiskGuard) addTree(root string, stop <-chan struct{}) error {
++	queue := []string{root}
++	for len(queue) > 0 {
++		if err := diskObservationCancelled(stop); err != nil {
++			return err
++		}
++		path := queue[len(queue)-1]
++		queue = queue[:len(queue)-1]
++		info, e := os.Lstat(path)
++		if e != nil {
++			return e
++		}
++		if !info.IsDir() {
++			return errors.New("directory changed during watch setup")
++		}
++		wd, e := unix.InotifyAddWatch(g.fd, path, unix.IN_ONLYDIR|unix.IN_DONT_FOLLOW|unix.IN_CREATE|unix.IN_DELETE|unix.IN_MOVED_FROM|unix.IN_MOVED_TO|unix.IN_ATTRIB|unix.IN_MOVE_SELF|unix.IN_DELETE_SELF)
++		if e != nil {
++			return e
++		}
++		if _, exists := g.watches[wd]; exists {
++			return errors.New("aliased or recycled directory watch")
++		}
++		dir := &diskDirectory{path: path, info: info, wd: wd, files: map[string]diskFile{}}
++		g.dirs[path] = dir
++		g.watches[wd] = &diskWatch{directory: path}
++		children, e := g.scanDirectory(dir, stop, true)
++		if e != nil {
++			return e
++		}
++		queue = append(queue, children...)
++	}
++	return nil
++}
++
++func (g *liveDiskGuard) scanDirectory(dir *diskDirectory, stop <-chan struct{}, initial bool) ([]string, error) {
++	file, err := os.OpenFile(dir.path, os.O_RDONLY|unix.O_DIRECTORY|unix.O_NOFOLLOW, 0)
++	if err != nil {
++		return nil, err
++	}
++	defer file.Close()
++	info, err := file.Stat()
++	if err != nil {
++		return nil, err
++	}
++	if !os.SameFile(info, dir.info) {
++		return nil, errors.New("watched directory identity changed")
++	}
++	next := map[string]diskFile{}
++	children := []string{}
++	for {
++		if err = diskObservationCancelled(stop); err != nil {
++			return nil, err
++		}
++		names, readErr := file.Readdirnames(256)
++		for _, name := range names {
++			if err = diskObservationCancelled(stop); err != nil {
++				return nil, err
++			}
++			var st unix.Stat_t
++			if err = unix.Fstatat(int(file.Fd()), name, &st, unix.AT_SYMLINK_NOFOLLOW); err != nil {
++				return nil, err
++			}
++			path := filepath.Join(dir.path, name)
++			switch st.Mode & unix.S_IFMT {
++			case unix.S_IFDIR:
++				if initial {
++					children = append(children, path)
++				} else if g.dirs[path] == nil {
++					if err := g.addTree(path, stop); err != nil {
++						return nil, err
++					}
++				}
++			case unix.S_IFREG:
++				item, exists := dir.files[name]
++				if !exists || item.dev != uint64(st.Dev) || item.ino != st.Ino || g.watches[item.wd] == nil || g.watches[item.wd].dead {
++					wd, e := unix.InotifyAddWatch(g.fd, path, unix.IN_DONT_FOLLOW|unix.IN_MODIFY|unix.IN_ATTRIB|unix.IN_CLOSE_WRITE|unix.IN_MOVE_SELF|unix.IN_DELETE_SELF)
++					if e != nil {
++						return nil, e
++					}
++					// A path replaced while a watch is installed cannot qualify this count.
++					var verify unix.Stat_t
++					if e = unix.Fstatat(int(file.Fd()), name, &verify, unix.AT_SYMLINK_NOFOLLOW); e != nil {
++						return nil, e
++					}
++					if verify.Dev != st.Dev || verify.Ino != st.Ino || verify.Mode&unix.S_IFMT != unix.S_IFREG {
++						return nil, errors.New("file changed during watch setup")
++					}
++					st = verify
++					watch := g.watches[wd]
++					if watch == nil {
++						watch = &diskWatch{paths: map[string]bool{}, dev: uint64(st.Dev), ino: st.Ino}
++						g.watches[wd] = watch
++					}
++					if watch.dead || watch.directory != "" || watch.dev != uint64(st.Dev) || watch.ino != st.Ino {
++						return nil, errors.New("watch descriptor identity changed")
++					}
++					watch.paths[path] = true
++					item = diskFile{wd: wd, dev: uint64(st.Dev), ino: st.Ino}
++				}
++				item.size = st.Size
++				next[name] = item
++			}
++		}
++		if readErr != nil {
++			if !errors.Is(readErr, io.EOF) {
++				return nil, readErr
++			}
++			break
++		}
++	}
++	for name, old := range dir.files {
++		g.total -= old.size
++		if replacement, exists := next[name]; !exists || replacement.wd != old.wd {
++			delete(g.watches[old.wd].paths, filepath.Join(dir.path, name))
++		}
++	}
++	for _, item := range next {
++		g.total += item.size
++	}
++	dir.files = next
++	return children, nil
++}
++
++func (g *liveDiskGuard) events(stop <-chan struct{}) (map[string]bool, error) {
++	dirty := map[string]bool{}
++	var buf [65536]byte
++	// Bounded work under a continuous writer. Queue loss or excessive churn
++	// returns to the original scanner instead of retaining an incomplete count.
++	for reads := 0; reads < 64; reads++ {
++		if err := diskObservationCancelled(stop); err != nil {
++			return nil, err
++		}
++		n, err := unix.Read(g.fd, buf[:])
++		if errors.Is(err, unix.EINTR) {
++			continue
++		}
++		if errors.Is(err, unix.EAGAIN) {
++			return dirty, nil
++		}
++		if err != nil {
++			return nil, err
++		}
++		if n == 0 {
++			return nil, errors.New("notification stream closed")
++		}
++		for at := 0; at < n; {
++			if n-at < unix.SizeofInotifyEvent {
++				return nil, errors.New("truncated notification")
++			}
++			wd := int(int32(binary.LittleEndian.Uint32(buf[at:])))
++			mask := binary.LittleEndian.Uint32(buf[at+4:])
++			length := int(binary.LittleEndian.Uint32(buf[at+12:]))
++			if length > n-at-unix.SizeofInotifyEvent {
++				return nil, errors.New("truncated notification name")
++			}
++			at += unix.SizeofInotifyEvent + length
++			if mask&(unix.IN_Q_OVERFLOW|unix.IN_UNMOUNT) != 0 {
++				return nil, errors.New("filesystem notifications lost")
++			}
++			watch := g.watches[wd]
++			if watch == nil {
++				return nil, errors.New("unknown filesystem watch")
++			}
++			if watch.directory != "" {
++				if mask&unix.IN_MOVE_SELF != 0 || mask&unix.IN_ISDIR != 0 && mask&(unix.IN_MOVED_FROM|unix.IN_MOVED_TO) != 0 {
++					return nil, errors.New("directory topology changed")
++				}
++				if mask&(unix.IN_DELETE_SELF|unix.IN_IGNORED) != 0 {
++					watch.dead = true
++				}
++				dirty[watch.directory] = true
++			} else {
++				for path := range watch.paths {
++					dirty[filepath.Dir(path)] = true
++				}
++				if mask&unix.IN_IGNORED != 0 {
++					watch.dead = true
++				}
++			}
++		}
++	}
++	return nil, errors.New("filesystem notification churn exceeded observation budget")
++}
++
++func (g *liveDiskGuard) removeTree(root string) {
++	for path, dir := range g.dirs {
++		if path != root && !inside(root, path) {
++			continue
++		}
++		for name, item := range dir.files {
++			g.total -= item.size
++			delete(g.watches[item.wd].paths, filepath.Join(path, name))
++		}
++		// Keep descriptor tombstones. Recycled or aliased watches cannot
++		// silently reinterpret queued events from a different directory.
++		g.watches[dir.wd].dead = true
++		delete(g.dirs, path)
++	}
++}
++
++func (g *liveDiskGuard) update(stop <-chan struct{}) error {
++	info, err := os.Lstat(g.root)
++	if err != nil {
++		return err
++	}
++	if !os.SameFile(info, g.rootInfo) {
++		return errors.New("root identity changed")
++	}
++	mounts, err := os.ReadFile("/proc/self/mountinfo")
++	if err != nil {
++		return err
++	}
++	if !bytes.Equal(g.mounts, mounts) {
++		return errors.New("mount topology changed")
++	}
++	dirty, err := g.events(stop)
++	if err != nil {
++		return err
++	}
++	// Deleted directories must be removed before their parents are rescanned.
++	// A still-present directory with a lost watch instead requires a full scan.
++	for path := range dirty {
++		dir := g.dirs[path]
++		if dir == nil || !g.watches[dir.wd].dead {
++			continue
++		}
++		if _, err := os.Lstat(path); os.IsNotExist(err) && path != g.root {
++			g.removeTree(path)
++		} else {
++			return errors.New("directory watch lost")
++		}
++	}
++	for path := range dirty {
++		dir := g.dirs[path]
++		if dir == nil {
++			continue // A deleted subtree was removed above.
++		}
++		if _, err := g.scanDirectory(dir, stop, false); err != nil {
++			return err
++		}
++	}
++	// Notifications generated during a scan are deliberately retained for the
++	// next poll. As with the full scanner, this is a live observation, not an
++	// atomic filesystem snapshot. A complete postflight scan remains mandatory.
++	return nil
++}
+--- before/live_disk_performance_test.go
++++ after/live_disk_performance_test.go
+@@ -0,0 +1,111 @@
++//go:build linux && amd64 && replay_disk_perf
++
++package main
++
++import (
++	"encoding/json"
++	"fmt"
++	"os"
++	"path/filepath"
++	"runtime"
++	"testing"
++	"time"
++
++	"golang.org/x/sys/unix"
++)
++
++// Explicit allocation: two sizes, old/new, two repetitions, twenty checks per
++// case. This is not part of regular CI and does not launch native workflows.
++func TestLiveDiskAllocatedPerformance(t *testing.T) {
++	output := os.Getenv("BUILDOPT_DISK_PERF_OUTPUT")
++	if output == "" {
++		t.Fatal("BUILDOPT_DISK_PERF_OUTPUT must name a new receipt")
++	}
++	f, err := os.OpenFile(output, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0600)
++	if err != nil {
++		t.Fatal(err)
++	}
++	defer f.Close()
++	check := func(err error) {
++		t.Helper()
++		if err != nil {
++			t.Fatal(err)
++		}
++	}
++	cpu := func() int64 {
++		var u unix.Rusage
++		check(unix.Getrusage(unix.RUSAGE_SELF, &u))
++		return u.Utime.Nano() + u.Stime.Nano()
++	}
++	rows := []map[string]interface{}{}
++	for _, count := range []int{16, 32768} {
++		root := t.TempDir()
++		for i := 0; i < count; i++ {
++			dir := filepath.Join(root, "retained", fmt.Sprintf("%04d", i/256))
++			if i%256 == 0 {
++				check(os.MkdirAll(dir, 0700))
++			}
++			check(os.WriteFile(filepath.Join(dir, fmt.Sprintf("%06d", i)), []byte("retained output"), 0600))
++		}
++		active := filepath.Join(root, "active")
++		check(os.Mkdir(active, 0700))
++		file := filepath.Join(active, "growing")
++		check(os.WriteFile(file, nil, 0600))
++		byVersion := map[string][]int64{}
++		for repeat := 0; repeat < 2; repeat++ {
++			order := []string{"full", "notified"}
++			if repeat == 1 {
++				order = []string{"notified", "full"}
++			}
++			for _, version := range order {
++				check(os.Truncate(file, 0))
++				runtime.GC()
++				g := newLiveDiskGuard(root, Limits{MaxBytes: 1 << 30})
++				beginCPU, begin := cpu(), time.Now()
++				var firstCPU, firstWall int64
++				for i := 0; i < 20; i++ {
++					check(os.Truncate(file, int64(i+1)))
++					tmp := filepath.Join(active, "temporary")
++					if i%2 == 0 {
++						check(os.Mkdir(tmp, 0700))
++						check(os.WriteFile(filepath.Join(tmp, "output"), []byte("temporary"), 0600))
++					} else {
++						check(os.RemoveAll(tmp))
++					}
++					if version == "full" {
++						check(diskGuard(root, g.limits))
++					} else {
++						check(g.Check(nil))
++					}
++					if i == 0 {
++						firstCPU = cpu() - beginCPU
++						firstWall = time.Since(begin).Nanoseconds()
++					}
++				}
++				status := g.Status()
++				check(g.Close())
++				elapsed, work := time.Since(begin).Nanoseconds(), cpu()-beginCPU
++				row := map[string]interface{}{"files": count, "version": version, "repeat": repeat + 1, "checks": 20,
++					"elapsedNS": elapsed, "cpuNS": work, "firstCheckElapsedNS": firstWall, "firstCheckCPUNS": firstCPU, "observer": status}
++				rows = append(rows, row)
++				check(json.NewEncoder(f).Encode(row))
++				check(f.Sync())
++				t.Logf("files=%d version=%s repetition=%d CPU=%.6fs elapsed=%.6fs", count, version, repeat+1, float64(work)/1e9, float64(elapsed)/1e9)
++				byVersion[version] = append(byVersion[version], work)
++				if version == "notified" && (g.fallback != "" || g.fullScans != 0) {
++					t.Fatalf("fixture lost incremental accounting: %+v", status)
++				}
++			}
++		}
++		if count == 32768 {
++			for i := 0; i < 2; i++ {
++				if byVersion["notified"][i] >= byVersion["full"][i] {
++					t.Fatalf("large fixture did not reduce total CPU: %+v", byVersion)
++				}
++			}
++		}
++	}
++	if len(rows) != 8 {
++		t.Fatal("measurement allocation differs")
++	}
++}
+--- before/live_disk_test.go
++++ after/live_disk_test.go
+@@ -0,0 +1,308 @@
++//go:build linux && amd64
++
++package main
++
++import (
++	"errors"
++	"fmt"
++	"os"
++	"path/filepath"
++	"strconv"
++	"strings"
++	"testing"
++	"time"
++
++	"golang.org/x/sys/unix"
++)
++
++func TestLiveDiskDoesNotEnumerateUnchangedRetainedDirectory(t *testing.T) {
++	root := t.TempDir()
++	retained := filepath.Join(root, "retained")
++	if err := os.Mkdir(retained, 0700); err != nil {
++		t.Fatal(err)
++	}
++	if err := os.WriteFile(filepath.Join(retained, "result"), []byte("result"), 0600); err != nil {
++		t.Fatal(err)
++	}
++	guard := newLiveDiskGuard(root, Limits{MaxBytes: 100})
++	defer guard.Close()
++	if err := guard.Check(nil); err != nil {
++		t.Fatal(err)
++	}
++	// Observe actual directory enumeration, rather than assert a timing on a
++	// shared host. Attach after the initial complete observation.
++	fd, err := unix.InotifyInit1(unix.IN_NONBLOCK | unix.IN_CLOEXEC)
++	if err != nil {
++		t.Fatal(err)
++	}
++	defer unix.Close(fd)
++	if _, err = unix.InotifyAddWatch(fd, retained, unix.IN_OPEN|unix.IN_ONLYDIR); err != nil {
++		t.Fatal(err)
++	}
++	if err = guard.Check(nil); err != nil {
++		t.Fatal(err)
++	}
++	var events [4096]byte
++	n, err := unix.Read(fd, events[:])
++	if !errors.Is(err, unix.EAGAIN) || n > 0 {
++		t.Fatalf("unchanged retained directory was enumerated again: bytes=%d error=%v", n, err)
++	}
++}
++
++func liveDiskFixture(t *testing.T) (string, *liveDiskGuard) {
++	t.Helper()
++	root := filepath.Join(t.TempDir(), "owned")
++	for _, name := range []string{"a", "b"} {
++		if err := os.MkdirAll(filepath.Join(root, name), 0700); err != nil {
++			t.Fatal(err)
++		}
++	}
++	if err := os.WriteFile(filepath.Join(root, "a", "file"), []byte("five!"), 0600); err != nil {
++		t.Fatal(err)
++	}
++	g := newLiveDiskGuard(root, Limits{MaxBytes: 1 << 40})
++	t.Cleanup(func() {
++		if err := g.Close(); err != nil {
++			t.Error(err)
++		}
++	})
++	if err := g.Check(nil); err != nil {
++		t.Fatal(err)
++	}
++	if g.fallback != "" {
++		t.Fatalf("fixture cannot exercise notifications: %s", g.fallback)
++	}
++	return root, g
++}
++
++func assertLiveDiskTotal(t *testing.T, g *liveDiskGuard, fallback bool) {
++	t.Helper()
++	want, err := treeBytes(g.root)
++	if err != nil {
++		t.Fatal(err)
++	}
++	g.limits.MaxBytes = want
++	if err = g.Check(nil); err != nil {
++		t.Fatalf("exact ceiling %d: %v", want, err)
++	}
++	if (g.fallback != "") != fallback {
++		t.Fatalf("fallback=%q, want fallback=%v", g.fallback, fallback)
++	}
++	if !fallback && g.total != want {
++		t.Fatalf("cached bytes=%d, full scan=%d", g.total, want)
++	}
++	if want > 0 {
++		g.limits.MaxBytes = want - 1
++		if err = g.Check(nil); err == nil || !strings.Contains(err.Error(), "artifact size ceiling") {
++			t.Fatalf("under-sized ceiling accepted: %v", err)
++		}
++	}
++}
++
++func TestLiveDiskMutationAccounting(t *testing.T) {
++	for _, kind := range []string{"grow", "shrink", "create", "delete", "rename", "cross-directory-rename", "atomic-replace", "temporary", "temporary-directory", "symlink", "symlink-replacement", "internal-hardlink", "external-hardlink", "sparse", "fallocate"} {
++		t.Run(kind, func(t *testing.T) {
++			root, g := liveDiskFixture(t)
++			file := filepath.Join(root, "a", "file")
++			check := func(err error) {
++				t.Helper()
++				if err != nil {
++					t.Fatal(err)
++				}
++			}
++			switch kind {
++			case "grow":
++				check(os.Truncate(file, 100))
++			case "shrink":
++				check(os.Truncate(file, 1))
++			case "create":
++				check(os.WriteFile(filepath.Join(root, "b", "new"), []byte("created"), 0600))
++			case "delete":
++				check(os.Remove(file))
++			case "rename":
++				check(os.Rename(file, filepath.Join(root, "a", "renamed")))
++			case "cross-directory-rename":
++				check(os.Rename(file, filepath.Join(root, "b", "renamed")))
++			case "atomic-replace":
++				tmp := filepath.Join(root, "a", "temporary")
++				check(os.WriteFile(tmp, []byte("replacement bytes"), 0600))
++				check(os.Rename(tmp, file))
++			case "temporary":
++				tmp := filepath.Join(root, "a", "temporary")
++				check(os.WriteFile(tmp, []byte("temporary bytes"), 0600))
++				assertLiveDiskTotal(t, g, false)
++				check(os.Remove(tmp))
++			case "temporary-directory":
++				tmp := filepath.Join(root, "b", "tmp", "nested")
++				check(os.MkdirAll(tmp, 0700))
++				check(os.WriteFile(filepath.Join(tmp, "file"), []byte("temporary bytes"), 0600))
++				assertLiveDiskTotal(t, g, false)
++				check(os.RemoveAll(filepath.Dir(tmp)))
++			case "symlink":
++				check(os.Symlink(filepath.Dir(root), filepath.Join(root, "b", "link")))
++			case "symlink-replacement":
++				check(os.Remove(file))
++				check(os.Symlink(filepath.Dir(root), file))
++			case "internal-hardlink":
++				link := filepath.Join(root, "b", "alias")
++				check(os.Link(file, link))
++				assertLiveDiskTotal(t, g, false)
++				check(os.Truncate(link, 99))
++			case "external-hardlink":
++				// After creation has been consumed, only a watch on the regular
++				// inode can report growth through this outside directory entry.
++				link := filepath.Join(filepath.Dir(root), "outside")
++				check(os.Link(file, link))
++				assertLiveDiskTotal(t, g, false)
++				check(os.Truncate(link, 999))
++			case "sparse":
++				check(os.Truncate(file, 1<<30))
++			case "fallocate":
++				f, err := os.OpenFile(file, os.O_WRONLY, 0)
++				check(err)
++				check(unix.Fallocate(int(f.Fd()), 0, 0, 8192))
++				check(f.Close())
++			}
++			assertLiveDiskTotal(t, g, false)
++		})
++	}
++}
++
++func TestLiveDiskInvalidation(t *testing.T) {
++	for _, kind := range []string{"new-directory", "directory-rename", "directory-removal", "root-replaced", "watch-lost", "mount-change"} {
++		t.Run(kind, func(t *testing.T) {
++			root, g := liveDiskFixture(t)
++			var err error
++			switch kind {
++			case "new-directory":
++				err = os.Mkdir(filepath.Join(root, "new"), 0700)
++				if err == nil {
++					err = os.WriteFile(filepath.Join(root, "new", "file"), []byte("included"), 0600)
++				}
++			case "directory-rename":
++				err = os.Rename(filepath.Join(root, "a"), filepath.Join(root, "renamed"))
++			case "directory-removal":
++				err = os.Remove(filepath.Join(root, "b"))
++			case "root-replaced":
++				err = os.Rename(root, root+"-previous")
++				if err == nil {
++					err = os.Mkdir(root, 0700)
++				}
++				if err == nil {
++					err = os.WriteFile(filepath.Join(root, "new"), []byte("new tree"), 0600)
++				}
++			case "watch-lost":
++				_, err = unix.InotifyRmWatch(g.fd, uint32(g.dirs[root].wd))
++			case "mount-change":
++				g.mounts = []byte("previous mount observation")
++			}
++			if err != nil {
++				t.Fatal(err)
++			}
++			fallback := kind != "new-directory" && kind != "directory-removal"
++			assertLiveDiskTotal(t, g, fallback)
++			if fallback && g.fd != -1 {
++				t.Fatal("invalid observer leaked its descriptor")
++			}
++		})
++	}
++}
++
++func TestLiveDiskQueueOverflowFallsBack(t *testing.T) {
++	root, g := liveDiskFixture(t)
++	limitRaw, err := os.ReadFile("/proc/sys/fs/inotify/max_queued_events")
++	if err != nil {
++		t.Fatal(err)
++	}
++	limit, err := strconv.Atoi(strings.TrimSpace(string(limitRaw)))
++	if err != nil || limit > 65536 {
++		t.Fatalf("bounded overflow fixture requires queue <=65536: %s %v", limitRaw, err)
++	}
++	// Alternating watched inodes prevents identical adjacent events coalescing.
++	a := filepath.Join(root, "a", "file")
++	b := filepath.Join(root, "b", "other")
++	if err := os.WriteFile(b, nil, 0600); err != nil {
++		t.Fatal(err)
++	}
++	if err := g.Check(nil); err != nil {
++		t.Fatal(err)
++	}
++	for i := 0; i < limit+2; i++ {
++		path := a
++		if i%2 == 0 {
++			path = b
++		}
++		if err := os.Truncate(path, int64(i+1)); err != nil {
++			t.Fatal(err)
++		}
++	}
++	assertLiveDiskTotal(t, g, true)
++	if !strings.Contains(g.fallback, "notifications lost") {
++		t.Fatalf("overflow reason: %s", g.fallback)
++	}
++}
++
++func TestLiveDiskRefusesMissingObservationsAndFreeSpace(t *testing.T) {
++	for _, kind := range []string{"missing-root", "unreadable-directory", "low-free-space"} {
++		t.Run(kind, func(t *testing.T) {
++			root, g := liveDiskFixture(t)
++			var err error
++			switch kind {
++			case "missing-root":
++				err = os.Rename(root, root+"-moved")
++			case "unreadable-directory":
++				if os.Geteuid() == 0 {
++					t.Skip("permission denial needs an unprivileged test process")
++				}
++				path := filepath.Join(root, "a")
++				err = os.Chmod(path, 0000)
++				defer os.Chmod(path, 0700)
++			case "low-free-space":
++				g.limits.MinimumFreeBytes = ^uint64(0)
++			}
++			if err != nil {
++				t.Fatal(err)
++			}
++			if err = g.Check(nil); err == nil {
++				t.Fatal("failed observation or floor was accepted")
++			}
++		})
++	}
++}
++
++func TestLiveDiskCancellationJoinsSetupAndCloses(t *testing.T) {
++	root := t.TempDir()
++	for i := 0; i < 8192; i++ {
++		if err := os.WriteFile(filepath.Join(root, fmt.Sprintf("%06d", i)), nil, 0600); err != nil {
++			t.Fatal(err)
++		}
++	}
++	stop := make(chan struct{})
++	result := make(chan error, 1)
++	g := newLiveDiskGuard(root, Limits{MaxBytes: 1 << 40})
++	go func() { result <- g.Check(stop) }()
++	time.Sleep(time.Millisecond)
++	begin := time.Now()
++	close(stop)
++	select {
++	case err := <-result:
++		if !errors.Is(err, errDiskObservationStopped) {
++			t.Fatalf("setup cancellation: %v", err)
++		}
++	case <-time.After(time.Second):
++		t.Fatal("setup failed to join on cancellation")
++	}
++	fd := g.fd
++	if err := g.Close(); err != nil {
++		t.Fatal(err)
++	}
++	if fd >= 0 {
++		if _, err := unix.FcntlInt(uintptr(fd), unix.F_GETFD, 0); !errors.Is(err, unix.EBADF) {
++			t.Fatalf("watch descriptor remains open: %v", err)
++		}
++	}
++	if err := g.Close(); err != nil {
++		t.Fatal(err)
++	}
++	t.Logf("cancellation and close: %s", time.Since(begin))
++}
+--- before/process_linux.go
++++ after/process_linux.go
+@@ -295,0 +296,2 @@
++		disk := newLiveDiskGuard(cfg.RunRoot, cfg.Limits)
++		diskReceipt := DiskObserverReceipt{Schema: "buildopt.disk-observer/v1", Attempt: q.Attempt, Root: cfg.RunRoot, MaxBytes: cfg.Limits.MaxBytes, MinimumFreeBytes: cfg.Limits.MinimumFreeBytes, Begin: stamp()}
+@@ -307 +309 @@
+-				return diskGuardUntil(cfg.RunRoot, cfg.Limits, stop)
++				return disk.Check(stop)
+@@ -317,0 +320,3 @@
++			diskReceipt.Status = disk.Status()
++			watchErr = errors.Join(watchErr, disk.Close())
++			diskReceipt.End = stamp()
+@@ -322,0 +328,4 @@
++		diskReceipt.End = stamp()
++		if e := writeExclusive(filepath.Join(q.Evidence, "disk-observer.json"), jsonBytes(diskReceipt), 0600); e != nil {
++			return r, e
++		}

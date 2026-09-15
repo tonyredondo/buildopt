@@ -1,0 +1,5 @@
+=== RUN   TestBO06DiskChangedDocumentation
+    bo06_disk_task_test.go:18: Checked 31 changed Markdown and JSON documents using repository rules
+--- PASS: TestBO06DiskChangedDocumentation (0.13s)
+PASS
+ok  	github.com/tonyredondo/buildopt/dev/documentation-validator	0.131s

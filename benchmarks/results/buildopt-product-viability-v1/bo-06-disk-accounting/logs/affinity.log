@@ -1,0 +1,18 @@
+=== RUN   TestAffinityScope
+=== RUN   TestAffinityScope/success
+    affinity_test.go:86: affinity mode=success tid=2254470 pid=2254468
+=== RUN   TestAffinityScope/launch-failure
+    affinity_test.go:86: affinity mode=launch-failure tid=2254476 pid=2254468
+=== RUN   TestAffinityScope/set-failure
+    affinity_test.go:86: affinity mode=set-failure tid=2254470 pid=2254468
+=== RUN   TestAffinityScope/restore-failure
+    affinity_test.go:86: affinity mode=restore-failure tid=2254470 pid=2254468
+=== RUN   TestAffinityScope/cancel
+    affinity_test.go:86: affinity mode=cancel tid=2254498 pid=2254468
+--- PASS: TestAffinityScope (0.14s)
+    --- PASS: TestAffinityScope/success (0.03s)
+    --- PASS: TestAffinityScope/launch-failure (0.00s)
+    --- PASS: TestAffinityScope/set-failure (0.00s)
+    --- PASS: TestAffinityScope/restore-failure (0.00s)
+    --- PASS: TestAffinityScope/cancel (0.10s)
+PASS

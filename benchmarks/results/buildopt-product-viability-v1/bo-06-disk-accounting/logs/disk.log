@@ -1,0 +1,17 @@
+=== RUN   TestLiveDiskRunnerIntegration
+=== RUN   TestLiveDiskRunnerIntegration/mutations
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/fixtures/disk/TestLiveDiskRunnerIntegration-mutations-1799895861
+    live_disk_integration_test.go:134: r1-000-g0-I: map[cachedChecks:7 checks:7 fallbackReason: fullScans:0 watchedInodes:104]
+    live_disk_integration_test.go:134: r1-000-g0-N: map[cachedChecks:7 checks:7 fallbackReason: fullScans:0 watchedInodes:62]
+=== RUN   TestLiveDiskRunnerIntegration/fallback
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/fixtures/disk/TestLiveDiskRunnerIntegration-fallback-3713867371
+    live_disk_integration_test.go:134: r1-000-g0-I: map[cachedChecks:4 checks:7 fallbackReason:directory topology changed fullScans:3 watchedInodes:0]
+    live_disk_integration_test.go:134: r1-000-g0-N: map[cachedChecks:4 checks:7 fallbackReason:directory topology changed fullScans:3 watchedInodes:0]
+=== RUN   TestLiveDiskRunnerIntegration/ceiling
+    runner_test.go:224: retained fixture: /home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/fixtures/disk/TestLiveDiskRunnerIntegration-ceiling-1444597436
+    live_disk_integration_test.go:134: r1-000-g0-N: map[cachedChecks:3 checks:3 fallbackReason: fullScans:0 watchedInodes:60]
+--- PASS: TestLiveDiskRunnerIntegration (22.90s)
+    --- PASS: TestLiveDiskRunnerIntegration/mutations (9.01s)
+    --- PASS: TestLiveDiskRunnerIntegration/fallback (9.83s)
+    --- PASS: TestLiveDiskRunnerIntegration/ceiling (4.06s)
+PASS

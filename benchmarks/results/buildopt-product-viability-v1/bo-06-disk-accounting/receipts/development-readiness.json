@@ -1,0 +1,9 @@
+{
+  "schema": "buildopt.lean-research/readiness/v1",
+  "mode": "P_LEAN_RESEARCH_V1",
+  "identity": "07ad4c609d81cdcc6f21351577757be88daf2db1e8d4ead08dd6aed94e93dcad",
+  "localProof": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/receipts/local-proof.json",
+    "sha256": "5cfef8713498e6b06bb802b6a17dd0500e164c01ed7496139a1e82475af449c4"
+  }
+}

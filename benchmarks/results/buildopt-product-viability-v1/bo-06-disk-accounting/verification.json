@@ -1,0 +1,416 @@
+{
+  "schema": "buildopt.disk-accounting/verification/v1",
+  "status": "verified locally; publication CI recorded separately",
+  "atUTC": "2026-09-15T16:59:33.366962+00:00",
+  "sourceFreeze": "source-freeze.json",
+  "unit": {
+    "topLevel": 40,
+    "includingSubtests": 114,
+    "exitCode": 0,
+    "log": "logs/unit-final.jsonl"
+  },
+  "checks": [
+    {
+      "label": "disk",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/fixture-tests",
+        "-test.run=^TestLiveDiskRunnerIntegration$",
+        "-test.v",
+        "-test.timeout=180s"
+      ],
+      "reserved": 5,
+      "beginUTC": "2026-09-15T16:46:35.528961+00:00",
+      "binarySHA256": "ea2b36cad31638ac62e8b2b5421b59a9ad9c498cde333760e770a0f8845ddd74",
+      "exitCode": 0,
+      "elapsedNS": 23023685019,
+      "storageSamples": 23,
+      "samplerBefore": {
+        "pid": 2241416,
+        "beginBootNS": 367266547138140,
+        "available": true,
+        "identity": {
+          "startTicks": 36726649,
+          "cpuTicks": 3
+        },
+        "io": {
+          "available": true,
+          "value": "rchar: 9212033\nwchar: 6585\nsyscr: 228\nsyscw: 2\nread_bytes: 0\nwrite_bytes: 122880\ncancelled_write_bytes: 0\n"
+        },
+        "ticksPerSecond": 100,
+        "selfCPUNS": 45943237,
+        "endBootNS": 367266547246931
+      },
+      "samplerAfter": {
+        "pid": 2241416,
+        "beginBootNS": 367289570954840,
+        "available": true,
+        "identity": {
+          "startTicks": 36726649,
+          "cpuTicks": 6
+        },
+        "io": {
+          "available": true,
+          "value": "rchar: 337679351\nwchar: 387783\nsyscr: 20325\nsyscw: 613\nread_bytes: 12488704\nwrite_bytes: 21143552\ncancelled_write_bytes: 0\n"
+        },
+        "ticksPerSecond": 100,
+        "selfCPUNS": 67503441,
+        "endBootNS": 367289571107300
+      },
+      "actualFixtureStarts": 5
+    },
+    {
+      "label": "quiet",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/fixture-tests",
+        "-test.run=^TestQuietRunner",
+        "-test.v",
+        "-test.timeout=610s"
+      ],
+      "reserved": 2,
+      "beginUTC": "2026-09-15T16:47:13.681807+00:00",
+      "binarySHA256": "ea2b36cad31638ac62e8b2b5421b59a9ad9c498cde333760e770a0f8845ddd74",
+      "exitCode": 0,
+      "elapsedNS": 290029999072,
+      "storageSamples": 289,
+      "samplerBefore": {
+        "pid": 2242284,
+        "beginBootNS": 367304700076168,
+        "available": true,
+        "identity": {
+          "startTicks": 36730465,
+          "cpuTicks": 3
+        },
+        "io": {
+          "available": true,
+          "value": "rchar: 9209442\nwchar: 4643\nsyscr: 220\nsyscw: 1\nread_bytes: 0\nwrite_bytes: 8192\ncancelled_write_bytes: 0\n"
+        },
+        "ticksPerSecond": 100,
+        "selfCPUNS": 44088725,
+        "endBootNS": 367304700183549
+      },
+      "samplerAfter": {
+        "pid": 2242284,
+        "beginBootNS": 367594730211991,
+        "available": true,
+        "identity": {
+          "startTicks": 36730465,
+          "cpuTicks": 26
+        },
+        "io": {
+          "available": true,
+          "value": "rchar: 485661593\nwchar: 1465334\nsyscr: 38826\nsyscw: 1354\nread_bytes: 20746240\nwrite_bytes: 28086272\ncancelled_write_bytes: 0\n"
+        },
+        "ticksPerSecond": 100,
+        "selfCPUNS": 275150097,
+        "endBootNS": 367594730396831
+      },
+      "actualFixtureStarts": 2
+    },
+    {
+      "label": "cli",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/fixture-tests",
+        "-test.run=^TestResearchCLIAndMissingResults$",
+        "-test.v",
+        "-test.timeout=165s"
+      ],
+      "reserved": 4,
+      "beginUTC": "2026-09-15T16:52:57.608456+00:00",
+      "binarySHA256": "ea2b36cad31638ac62e8b2b5421b59a9ad9c498cde333760e770a0f8845ddd74",
+      "exitCode": 0,
+      "elapsedNS": 18016772374,
+      "storageSamples": 18,
+      "samplerBefore": {
+        "pid": 2252647,
+        "beginBootNS": 367648626093504,
+        "available": true,
+        "identity": {
+          "startTicks": 36764859,
+          "cpuTicks": 2
+        },
+        "io": {
+          "available": true,
+          "value": "rchar: 9004709\nwchar: 6393\nsyscr: 199\nsyscw: 1\nread_bytes: 0\nwrite_bytes: 90112\ncancelled_write_bytes: 0\n"
+        },
+        "ticksPerSecond": 100,
+        "selfCPUNS": 28301427,
+        "endBootNS": 367648626200514
+      },
+      "samplerAfter": {
+        "pid": 2252647,
+        "beginBootNS": 367666642998388,
+        "available": true,
+        "identity": {
+          "startTicks": 36764859,
+          "cpuTicks": 4
+        },
+        "io": {
+          "available": true,
+          "value": "rchar: 191744992\nwchar: 279571\nsyscr: 12977\nsyscw: 403\nread_bytes: 4149248\nwrite_bytes: 19787776\ncancelled_write_bytes: 0\n"
+        },
+        "ticksPerSecond": 100,
+        "selfCPUNS": 43567236,
+        "endBootNS": 367666643187818
+      },
+      "actualFixtureStarts": 4
+    },
+    {
+      "label": "fallback",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/fixture-tests",
+        "-test.run=^TestTypedFailuresAndNativeFallback$/^(mismatch|fallback)$",
+        "-test.v",
+        "-test.timeout=165s"
+      ],
+      "reserved": 8,
+      "beginUTC": "2026-09-15T16:53:15.658202+00:00",
+      "binarySHA256": "ea2b36cad31638ac62e8b2b5421b59a9ad9c498cde333760e770a0f8845ddd74",
+      "exitCode": 0,
+      "elapsedNS": 35038028633,
+      "storageSamples": 35,
+      "samplerBefore": {
+        "pid": 2253104,
+        "beginBootNS": 367666675836915,
+        "available": true,
+        "identity": {
+          "startTicks": 36766664,
+          "cpuTicks": 2
+        },
+        "io": {
+          "available": true,
+          "value": "rchar: 9007958\nwchar: 8046\nsyscr: 199\nsyscw: 1\nread_bytes: 0\nwrite_bytes: 8192\ncancelled_write_bytes: 0\n"
+        },
+        "ticksPerSecond": 100,
+        "selfCPUNS": 27566467,
+        "endBootNS": 367666675947215
+      },
+      "samplerAfter": {
+        "pid": 2253104,
+        "beginBootNS": 367701714018268,
+        "available": true,
+        "identity": {
+          "startTicks": 36766664,
+          "cpuTicks": 5
+        },
+        "io": {
+          "available": true,
+          "value": "rchar: 397679506\nwchar: 572674\nsyscr: 29540\nsyscw: 911\nread_bytes: 8298496\nwrite_bytes: 36732928\ncancelled_write_bytes: 0\n"
+        },
+        "ticksPerSecond": 100,
+        "selfCPUNS": 62064408,
+        "endBootNS": 367701714205608
+      },
+      "actualFixtureStarts": 8
+    },
+    {
+      "label": "drift",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/fixture-tests",
+        "-test.run=^TestDriftStopsBeforeNextChild$/^source$",
+        "-test.v",
+        "-test.timeout=165s"
+      ],
+      "reserved": 2,
+      "beginUTC": "2026-09-15T16:53:50.729597+00:00",
+      "binarySHA256": "ea2b36cad31638ac62e8b2b5421b59a9ad9c498cde333760e770a0f8845ddd74",
+      "exitCode": 0,
+      "elapsedNS": 8007881593,
+      "storageSamples": 8,
+      "samplerBefore": {
+        "pid": 2253983,
+        "beginBootNS": 367701747668916,
+        "available": true,
+        "identity": {
+          "startTicks": 36770171,
+          "cpuTicks": 2
+        },
+        "io": {
+          "available": true,
+          "value": "rchar: 9011210\nwchar: 9676\nsyscr: 199\nsyscw: 1\nread_bytes: 0\nwrite_bytes: 12288\ncancelled_write_bytes: 0\n"
+        },
+        "ticksPerSecond": 100,
+        "selfCPUNS": 27949927,
+        "endBootNS": 367701747774536
+      },
+      "samplerAfter": {
+        "pid": 2253983,
+        "beginBootNS": 367709755685229,
+        "available": true,
+        "identity": {
+          "startTicks": 36770171,
+          "cpuTicks": 3
+        },
+        "io": {
+          "available": true,
+          "value": "rchar: 103528692\nwchar: 137730\nsyscr: 5503\nsyscw: 211\nread_bytes: 4149248\nwrite_bytes: 8515584\ncancelled_write_bytes: 0\n"
+        },
+        "ticksPerSecond": 100,
+        "selfCPUNS": 34890672,
+        "endBootNS": 367709755870479
+      },
+      "actualFixtureStarts": 2
+    },
+    {
+      "label": "driver-death",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/fixture-tests",
+        "-test.run=^TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost$",
+        "-test.v",
+        "-test.timeout=165s"
+      ],
+      "reserved": 3,
+      "beginUTC": "2026-09-15T16:53:58.771129+00:00",
+      "binarySHA256": "ea2b36cad31638ac62e8b2b5421b59a9ad9c498cde333760e770a0f8845ddd74",
+      "exitCode": 0,
+      "elapsedNS": 11011091353,
+      "storageSamples": 11,
+      "samplerBefore": {
+        "pid": 2254198,
+        "beginBootNS": 367709788562946,
+        "available": true,
+        "identity": {
+          "startTicks": 36770976,
+          "cpuTicks": 1
+        },
+        "io": {
+          "available": true,
+          "value": "rchar: 9014465\nwchar: 11327\nsyscr: 199\nsyscw: 1\nread_bytes: 0\nwrite_bytes: 12288\ncancelled_write_bytes: 0\n"
+        },
+        "ticksPerSecond": 100,
+        "selfCPUNS": 27522477,
+        "endBootNS": 367709788666846
+      },
+      "samplerAfter": {
+        "pid": 2254198,
+        "beginBootNS": 367720799787389,
+        "available": true,
+        "identity": {
+          "startTicks": 36770976,
+          "cpuTicks": 3
+        },
+        "io": {
+          "available": true,
+          "value": "rchar: 169945395\nwchar: 273718\nsyscr: 11932\nsyscw: 431\nread_bytes: 4149248\nwrite_bytes: 11812864\ncancelled_write_bytes: 0\n"
+        },
+        "ticksPerSecond": 100,
+        "selfCPUNS": 37295323,
+        "endBootNS": 367720799972979
+      },
+      "actualFixtureStarts": 3
+    },
+    {
+      "label": "affinity",
+      "command": [
+        "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/fixture-tests",
+        "-test.run=^TestAffinityScope$",
+        "-test.v",
+        "-test.timeout=30s"
+      ],
+      "reserved": 0,
+      "beginUTC": "2026-09-15T16:54:09.813635+00:00",
+      "binarySHA256": "ea2b36cad31638ac62e8b2b5421b59a9ad9c498cde333760e770a0f8845ddd74",
+      "exitCode": 0,
+      "elapsedNS": 1001632246,
+      "storageSamples": 1,
+      "samplerBefore": {
+        "pid": 2252646,
+        "beginBootNS": 367720831106643,
+        "available": true,
+        "identity": {
+          "startTicks": 36764858,
+          "cpuTicks": 3
+        },
+        "io": {
+          "available": true,
+          "value": "rchar: 872162292\nwchar: 1324448\nsyscr: 60196\nsyscw: 1969\nread_bytes: 20746240\nwrite_bytes: 76996608\ncancelled_write_bytes: 0\n"
+        },
+        "ticksPerSecond": 100,
+        "selfCPUNS": 42434147,
+        "endBootNS": 367720831206483
+      },
+      "samplerAfter": {
+        "pid": 2252646,
+        "beginBootNS": 367721832869259,
+        "available": true,
+        "identity": {
+          "startTicks": 36764858,
+          "cpuTicks": 3
+        },
+        "io": {
+          "available": true,
+          "value": "rchar: 872214586\nwchar: 1341176\nsyscr: 60300\nsyscw: 1991\nread_bytes: 20746240\nwrite_bytes: 77021184\ncancelled_write_bytes: 0\n"
+        },
+        "ticksPerSecond": 100,
+        "selfCPUNS": 43734697,
+        "endBootNS": 367721833076680
+      },
+      "actualFixtureStarts": 0
+    }
+  ],
+  "raceLog": "receipts/race.log",
+  "priorArchiveUnitLog": "logs/prior-archive-unit.log",
+  "nativeStartReceipts": [
+    "fixtures/cli/TestResearchCLIAndMissingResults-941901567/run/attempts/r1-000-g0-I/native-pid.json",
+    "fixtures/cli/TestResearchCLIAndMissingResults-941901567/run/attempts/r1-000-g0-N/native-pid.json",
+    "fixtures/cli/TestResearchCLIAndMissingResults-941901567/run/attempts/r1-001-g0-I/native-pid.json",
+    "fixtures/cli/TestResearchCLIAndMissingResults-941901567/run/attempts/r1-001-g0-N/native-pid.json",
+    "fixtures/disk/TestLiveDiskRunnerIntegration-ceiling-1444597436/run/attempts/r1-000-g0-N/native-pid.json",
+    "fixtures/disk/TestLiveDiskRunnerIntegration-fallback-3713867371/run/attempts/r1-000-g0-I/native-pid.json",
+    "fixtures/disk/TestLiveDiskRunnerIntegration-fallback-3713867371/run/attempts/r1-000-g0-N/native-pid.json",
+    "fixtures/disk/TestLiveDiskRunnerIntegration-mutations-1799895861/run/attempts/r1-000-g0-I/native-pid.json",
+    "fixtures/disk/TestLiveDiskRunnerIntegration-mutations-1799895861/run/attempts/r1-000-g0-N/native-pid.json",
+    "fixtures/drift/TestDriftStopsBeforeNextChild-source-779709946/run/attempts/r1-000-g0-I/native-pid.json",
+    "fixtures/drift/TestDriftStopsBeforeNextChild-source-779709946/run/attempts/r1-000-g0-N/native-pid.json",
+    "fixtures/driver-death/TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost-3855393862/run/attempts/r1-000-g0-I/native-pid.json",
+    "fixtures/driver-death/TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost-3855393862/run/attempts/r1-000-g0-N/native-pid.json",
+    "fixtures/driver-death/TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost-3855393862/run/attempts/r1-001-g0-I/native-pid.json",
+    "fixtures/fallback/TestTypedFailuresAndNativeFallback-fallback-1960355522/run/attempts/r1-000-g0-I/native-pid.json",
+    "fixtures/fallback/TestTypedFailuresAndNativeFallback-fallback-1960355522/run/attempts/r1-000-g0-N/native-pid.json",
+    "fixtures/fallback/TestTypedFailuresAndNativeFallback-fallback-1960355522/run/attempts/r1-001-g0-I/native-pid.json",
+    "fixtures/fallback/TestTypedFailuresAndNativeFallback-fallback-1960355522/run/attempts/r1-001-g0-N/native-pid.json",
+    "fixtures/fallback/TestTypedFailuresAndNativeFallback-fallback-1960355522/run/attempts/r1-002-g0-I/native-pid.json",
+    "fixtures/fallback/TestTypedFailuresAndNativeFallback-fallback-1960355522/run/attempts/r1-002-g0-N/native-pid.json",
+    "fixtures/fallback/TestTypedFailuresAndNativeFallback-mismatch-3242372488/run/attempts/r1-000-g0-I/native-pid.json",
+    "fixtures/fallback/TestTypedFailuresAndNativeFallback-mismatch-3242372488/run/attempts/r1-000-g0-N/native-pid.json",
+    "fixtures/quiet/TestQuietRunnerActualPair-1224288986/run/attempts/r1-000-g0-I/native-pid.json",
+    "fixtures/quiet/TestQuietRunnerActualPair-1224288986/run/attempts/r1-000-g0-N/native-pid.json"
+  ],
+  "ownedWorkerSessions": 27,
+  "totalNativeFixtureStarts": 24,
+  "ownerBuilds": 0,
+  "comparatorJVMs": 0,
+  "protectedSourceReads": 0,
+  "standaloneHelperProcesses": 12,
+  "helperDetails": "Three CLI helpers, one fixture-driver, three affinity-test children, one detached sleep child, two identity queries and two admission commands. Test controller commands and worker sessions are recorded separately.",
+  "performanceCases": 8,
+  "limits": {
+    "workSeconds": 14400,
+    "taskBytes": 2147483648,
+    "ownerStarts": 0,
+    "comparatorJVMStarts": 0,
+    "fixtureWorkflowStarts": 32,
+    "standaloneHelperProcesses": 32,
+    "performanceCases": 8,
+    "ciWaitSeconds": 2700
+  },
+  "sourceReadiness": "next-control-admission.json",
+  "retainedSetupErrors": "receipts/setup-errors.json",
+  "productValue": "NOT_ESTABLISHED",
+  "archivedSourceUnit": {
+    "command": "./dev/check-disk-accounting --unit",
+    "exitCode": 0,
+    "log": "logs/archive-unit.log"
+  },
+  "documentation": {
+    "command": "Repository documentation validator on changed Markdown and JSON",
+    "exitCode": 0,
+    "log": "logs/documentation.log"
+  },
+  "goVet": {
+    "exitCode": 0,
+    "packages": [
+      "dev/history-replay",
+      "frozen measurement source"
+    ]
+  }
+}

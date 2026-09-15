@@ -1,0 +1,632 @@
+{
+  "samples": 23,
+  "meanCollectionElapsedNS": 499063,
+  "totalCollectionCPUNS": 8514794,
+  "samplerLifecycleCPUNS": 21560204,
+  "hostDeviceCountersAvailable": true,
+  "pendingWritesAvailable": true,
+  "groupSamples": {
+    "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-ac79b3c6e7df0853-r1-N-1.service": [
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      }
+    ],
+    "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-ac79b3c6e7df0853-r1-I-2.service": [
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      }
+    ],
+    "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-e87925179dc6430b-r1-N-1.service": [
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      }
+    ],
+    "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-e87925179dc6430b-r1-I-2.service": [
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      },
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      }
+    ],
+    "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/buildopt-replay-dabde7587749846f-r1-N-1.service": [
+      {
+        "pressure": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        },
+        "counters": {
+          "available": false,
+          "errno": 2,
+          "reason": "No such file or directory"
+        }
+      }
+    ]
+  }
+}

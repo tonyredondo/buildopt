@@ -1,7 +1,7 @@
 # Build Optimization research execution plan
 
 Date: 2026-09-14. Program: `BUILDOPT-VIABILITY-V1`.
-Status: governing plan in execution; BO-01 through BO-05 verified; BO-06 partial; storage diagnosis complete. Reduce repeated disk-accounting work and qualify the changed runner before a fresh control and complete development replay.
+Status: governing plan in execution; BO-01 through BO-05 verified; BO-06 partial. Disk-accounting correction and fixture qualification complete; new inputs frozen for a fresh control and complete development replay.
 
 This plan records the direction agreed after the research review and its
 discussion. It owns research priorities, sequencing and the
@@ -139,7 +139,7 @@ the outcome may be negative. Advance only on the outcome required below.
 | BO-03 | Estimate realistic whole-build opportunity per candidate | BO-01; measurement readiness before fresh timing | verified; [five candidate assessments](../../benchmarks/results/buildopt-product-viability-v1/bo-03-opportunity-assessment/README.md); only Checkstyle warrants the planned short screen after readiness checks; missing workflow evidence remains unqualified |
 | BO-04 | Admit or reject a focused Build Impact hypothesis | BO-01 and existing evidence review | verified; [no new trial admitted](../../benchmarks/results/buildopt-product-viability-v1/bo-04-build-impact-review/README.md); original savings retained |
 | BO-05 | Select a candidate through short comparisons | BO-02 as applicable, BO-03, early BO-06 correctness, and BO-04 for Build Impact | verified; [both fresh sequences passed](../../benchmarks/results/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay/README.md), saving 34.14% and 28.17%; the interrupted attempt remains separate |
-| BO-06 | Qualify correctness and freeze the implementation and protocol | Admitted opportunity; screen integration proof before BO-05, final freeze afterward | partial; the fresh quiet-start control passed with a 0.132-second difference (0.103%); all eight builds and eight output comparisons passed; [development stopped after 17 of 42 builds](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-quiet-measurement/README.md) because the next launch could not obtain low storage pressure; [diagnosis complete](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-storage-pressure/README.md), repeated supervisor scans need correction before another measurement |
+| BO-06 | Qualify correctness and freeze the implementation and protocol | Admitted opportunity; screen integration proof before BO-05, final freeze afterward | partial; the fresh quiet-start control passed with a 0.132-second difference (0.103%); all eight builds and eight output comparisons passed; [development stopped after 17 of 42 builds](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-quiet-measurement/README.md) because the next launch could not obtain low storage pressure; [disk-accounting correction qualified](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-disk-accounting/README.md); new runner inputs frozen; a fresh genuine control is still required before development |
 | BO-07 | Establish sustained saving in the first repository | BO-05 and complete BO-06 | deferred |
 | BO-08 | Test the same mechanism on two other repositories | BO-07 positive | deferred |
 | BO-09 | Deliver and measure an MVP with manual controls | BO-08 positive | deferred |
@@ -542,6 +542,26 @@ Do not raise thresholds, discard the interruption, resume the closed allocation
 or move to BO-07. BO-06 and its final freeze remain partial; protected changes
 21–100 remain deferred. Current diagnosis record:
 `.tools/state/buildopt-product-viability-v1/bo-06-storage-pressure-2026-09-15/task-state.json`.
+
+**Disk-accounting correction qualified, 2026-09-15:** the
+[fixture result and frozen inputs](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-disk-accounting/README.md) complete conditions 1–6 of the
+storage diagnosis follow-up. Twenty checks over 32,768 retained files used
+about 74% less CPU in both repetitions, including initial watch setup and
+closure. The small case added about seven milliseconds. Limits and complete
+boundary counts remain unchanged; unsupported observations return to full scans.
+All 24 native fixture starts and affected compatibility checks passed, including
+actual cancellation, output refusal, missing evidence and driver loss. New
+storage counters preserve unavailable observations and record their own cost.
+
+The control proposal passes full validation with the new runner and sampler;
+development is refused until a fresh genuine control passes for the same
+identity. The comparator and quiet policy remain unchanged. No Elasticsearch
+build, comparator JVM or protected source read ran in this block. Conditions
+7–8 are next: a separate allocation for eight control builds, then all 42
+development builds only if the control passes. The existing ceilings and
+stopping rules still apply. This closes the implementation block, not BO-06.
+Current task record:
+`.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/task-state.json`.
 
 ### BO-07: Measure sustained saving on the first repository
 

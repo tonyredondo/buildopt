@@ -1,0 +1,81 @@
+{
+  "schema": "buildopt.lean-research/local-proof/v1",
+  "exitCode": 0,
+  "executable": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/history-replay-disk",
+    "sha256": "43c0cd8a8325c6b7abf9b4f217fd27683548c30bb4dffefe98472d878362f989"
+  },
+  "package": [
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/source",
+      "sha256": "bf662df07f00aa4fcde00012a7bf73ee07612d190502afcb5a3634b5f4fa3ce1"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/tools/common.py",
+      "sha256": "680f5401187f06ab002098e1fb27c608c75c88d92d6a234cd81b88b844869b4c"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/tools/run_trial.py",
+      "sha256": "3cff479bc01317e1ebe610a852f68d11e5ab73033a2a96f7925457913cc46817"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/tools/storage_observation.py",
+      "sha256": "9af5afe18cfdd97867370a653568c54e32feb93bfa51bfa2a8ccf3b015a37fc2"
+    },
+    {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/tools/storage_observation_test.py",
+      "sha256": "400aec58fbd8316a2b4f64a82efe787acd49571165f736f8af3678685b6bac6b"
+    }
+  ],
+  "ownerStarts": 0,
+  "checks": {
+    "invocation-output": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/logs/disk.log",
+      "sha256": "7068121de6f82ab2b18c148d2141f214517e2b65690cdb79594d50940275d062"
+    },
+    "failure-fallback": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/logs/fallback.log",
+      "sha256": "b8228e93ce58f78e3a099e95fe2862e69b1ca11b5e9d43093199535fa658ce38"
+    },
+    "cancellation-closure": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/logs/driver-death.log",
+      "sha256": "012eff21ac0a37c47eec1f18957bcd67c94634c02def8ef2ffa5f8b895da6aff"
+    },
+    "source-drift": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/logs/drift.log",
+      "sha256": "f27571b78af37b8070d54a0f1802d437c94e85b9c1697f31fb96f1c1e46890fa"
+    },
+    "missing-result": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/logs/cli.log",
+      "sha256": "352a768f0a567cd300460eb487f6148678893a6d479f169232a545370a02ca3a"
+    },
+    "readiness-admission": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/logs/unit-final.jsonl",
+      "sha256": "7afba4eb5e8c8dfdf0e8d66a8f7863f6f019e85f0b2dc42b6ee3252695ee2653"
+    },
+    "affinity": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/logs/affinity.log",
+      "sha256": "99052890a3f3391165e29960d27232f51d5ec3694c8ad7aea2c2c2fcd3710770"
+    },
+    "quiet-start-window": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/logs/quiet.log",
+      "sha256": "b72350fb8fdb7e8abab95b553af4ce51835e82a760e16246256fa774880493f8"
+    },
+    "quiet-start-launch": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/logs/quiet.log",
+      "sha256": "b72350fb8fdb7e8abab95b553af4ce51835e82a760e16246256fa774880493f8"
+    },
+    "quiet-start-failures": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/logs/quiet.log",
+      "sha256": "b72350fb8fdb7e8abab95b553af4ce51835e82a760e16246256fa774880493f8"
+    },
+    "recorder-resources": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/logs/quiet.log",
+      "sha256": "b72350fb8fdb7e8abab95b553af4ce51835e82a760e16246256fa774880493f8"
+    },
+    "disk-accounting": {
+      "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/logs/disk.log",
+      "sha256": "7068121de6f82ab2b18c148d2141f214517e2b65690cdb79594d50940275d062"
+    }
+  }
+}

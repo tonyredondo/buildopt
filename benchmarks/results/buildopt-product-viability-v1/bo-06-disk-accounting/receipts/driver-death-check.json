@@ -1,0 +1,48 @@
+{
+  "label": "driver-death",
+  "command": [
+    "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-disk-accounting-2026-09-15/fixture-tests",
+    "-test.run=^TestDriverDeathKillsDetachedTreeAndRetainsCandidateCost$",
+    "-test.v",
+    "-test.timeout=165s"
+  ],
+  "reserved": 3,
+  "beginUTC": "2026-09-15T16:53:58.771129+00:00",
+  "binarySHA256": "ea2b36cad31638ac62e8b2b5421b59a9ad9c498cde333760e770a0f8845ddd74",
+  "exitCode": 0,
+  "elapsedNS": 11011091353,
+  "storageSamples": 11,
+  "samplerBefore": {
+    "pid": 2254198,
+    "beginBootNS": 367709788562946,
+    "available": true,
+    "identity": {
+      "startTicks": 36770976,
+      "cpuTicks": 1
+    },
+    "io": {
+      "available": true,
+      "value": "rchar: 9014465\nwchar: 11327\nsyscr: 199\nsyscw: 1\nread_bytes: 0\nwrite_bytes: 12288\ncancelled_write_bytes: 0\n"
+    },
+    "ticksPerSecond": 100,
+    "selfCPUNS": 27522477,
+    "endBootNS": 367709788666846
+  },
+  "samplerAfter": {
+    "pid": 2254198,
+    "beginBootNS": 367720799787389,
+    "available": true,
+    "identity": {
+      "startTicks": 36770976,
+      "cpuTicks": 3
+    },
+    "io": {
+      "available": true,
+      "value": "rchar: 169945395\nwchar: 273718\nsyscr: 11932\nsyscw: 431\nread_bytes: 4149248\nwrite_bytes: 11812864\ncancelled_write_bytes: 0\n"
+    },
+    "ticksPerSecond": 100,
+    "selfCPUNS": 37295323,
+    "endBootNS": 367720799972979
+  },
+  "actualFixtureStarts": 3
+}
