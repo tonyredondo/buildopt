@@ -1,0 +1,292 @@
+--- frozen/files.go
++++ diagnostic/files.go
+@@ -123,6 +123,7 @@
+ 	return "", errors.New("bound input must be a regular file or directory")
+ }
+ func checkBinding(b Binding) error {
++	defer preparationTrace("check-binding", b.Path)()
+ 	h, e := bindingDigest(b.Path)
+ 	if e != nil {
+ 		return e
+@@ -175,6 +176,9 @@
+ }
+ 
+ func copyTree(src, dst string) error {
++	copyTraceDepth++
++	defer func() { copyTraceDepth-- }()
++	if copyTraceDepth == 1 { defer preparationTrace("copy-tree", []string{src, dst})() }
+ 	if _, err := os.Lstat(dst); !os.IsNotExist(err) {
+ 		return fmt.Errorf("copy destination exists: %s", dst)
+ 	}
+--- frozen/history.go
++++ diagnostic/history.go
+@@ -174,6 +174,7 @@
+ }
+ 
+ func gitAt(root string, args ...string) ([]byte, error) {
++	defer preparationTrace("git", append([]string{root}, args...))()
+ 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+ 	defer cancel()
+ 	c := exec.CommandContext(ctx, "git", append([]string{"-C", root}, args...)...)
+@@ -325,6 +326,7 @@
+ }
+ 
+ func verifySource(common, repo, revision string, patches []Patch, generated []string) (string, error) {
++	defer preparationTrace("verify-source", repo)()
+ 	head, err := gitAt(repo, "rev-parse", "HEAD")
+ 	if err != nil || strings.TrimSpace(string(head)) != revision {
+ 		return "", errors.New("source HEAD drift")
+--- frozen/main.go
++++ diagnostic/main.go
+@@ -1,5 +1,6 @@
+ //go:build linux && amd64
+ 
++// This diagnostic has no workflow, worker, comparison or resume entry point.
+ package main
+ 
+ import (
+@@ -7,103 +8,124 @@
+ 	"errors"
+ 	"fmt"
+ 	"os"
+-	"strconv"
++	"path/filepath"
++	"time"
+ )
+ 
+-func command(args []string) error {
+-	if len(args) == 0 {
+-		return errors.New("usage: history-replay validate MANIFEST | run MANIFEST | resume RUN_ROOT | check RUN_ROOT | history COMMON_GIT ENDPOINT COUNT OUTPUT")
++type preparationConfig struct {
++	Schema           string  `json:"schema"`
++	Original         Binding `json:"original"`
++	RunRoot          string  `json:"runRoot"`
++	DeadlineUTC      string  `json:"deadlineUTC"`
++	MaxRunNS         int64   `json:"maxRunNS"`
++	MaxBytes         int64   `json:"maxBytes"`
++	MinimumFreeBytes uint64  `json:"minimumFreeBytes"`
++}
++
++var traceID int
++var traceStack []int
++var copyTraceDepth int
++
++// Spans add counter reads and pipe writes, not file scans or synchronization.
++func preparationTrace(kind string, detail any) func() {
++	traceID++
++	id := traceID
++	parent := 0
++	if len(traceStack) > 0 {
++		parent = traceStack[len(traceStack)-1]
+ 	}
+-	switch args[0] {
+-	case "worker":
+-		if len(args) != 3 {
+-			return errors.New("invalid private worker invocation")
++	emit := func(event string) {
++		counters, err := observeRecorder()
++		if err != nil {
++			panic(err)
+ 		}
+-		return serveWorker(args[1], args[2])
+-	case "research-identity":
+-		if len(args) != 2 {
+-			return errors.New("research-identity requires one manifest")
++		if err = json.NewEncoder(os.Stdout).Encode(map[string]any{"event": event, "id": id, "parent": parent, "kind": kind, "detail": detail, "resources": counters}); err != nil {
++			panic(err)
+ 		}
+-		var m Manifest
+-		if err := readJSON(args[1], &m); err != nil {
++	}
++	emit("BEGIN")
++	traceStack = append(traceStack, id)
++	return func() { emit("RETURN"); traceStack = traceStack[:len(traceStack)-1] }
++}
++
++func preparationManifest(c preparationConfig) (Manifest, error) {
++	var m Manifest
++	if c.Schema != "buildopt.preparation-observation/config/v1" || !filepath.IsAbs(c.RunRoot) || c.MaxRunNS <= 0 || c.MaxRunNS > int64(time.Hour) || c.MaxBytes != 16<<30 || c.MinimumFreeBytes != 40<<30 {
++		return m, errors.New("invalid diagnostic bounds")
++	}
++	if err := checkBinding(c.Original); err != nil {
++		return m, err
++	}
++	if err := readJSON(c.Original.Path, &m); err != nil {
++		return m, err
++	}
++	if m.Driver != "GRADLE" || m.Mode != leanResearchMode || m.Phase != "QUALIFICATION" || len(m.Outputs.Projectors) != 0 || len(m.History) != 4 || m.History[0].Commit != "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe" || m.RunRoot == c.RunRoot {
++		return m, errors.New("requires the frozen development control inputs and a fresh diagnostic root")
++	}
++	if _, err := os.Lstat(c.RunRoot); !os.IsNotExist(err) {
++		return m, errors.New("diagnostic root already exists or cannot be checked")
++	}
++	deadline, err := time.Parse(time.RFC3339Nano, c.DeadlineUTC)
++	if err != nil || !time.Now().Before(deadline) {
++		return m, errors.New("diagnostic deadline expired")
++	}
++	m.RunRoot = c.RunRoot
++	m.Limits.DeadlineUTC = c.DeadlineUTC
++	m.Limits.MaxRunNS = c.MaxRunNS
++	m.Limits.MaxBytes = c.MaxBytes
++	m.Limits.MinimumFreeBytes = c.MinimumFreeBytes
++	m.Limits.MaxWorkflowStarts = 0
++	m.Limits.MaxGradleStarts = 0
++	m.Limits.RetryPairs = 0
++	return m, nil
++}
++
++func prepareOnly(path string) error {
++	var config preparationConfig
++	if err := readJSON(path, &config); err != nil {
++		return err
++	}
++	m, err := preparationManifest(config)
++	if err != nil {
++		return err
++	}
++	defer preparationTrace("preparation", m.RunRoot)()
++	if err = os.Mkdir(m.RunRoot, 0700); err != nil {
++		return err
++	}
++	for _, name := range []string{"costs", "states", "recorder-resources"} {
++		if err = os.Mkdir(filepath.Join(m.RunRoot, name), 0700); err != nil {
+ 			return err
+ 		}
+-		fmt.Println(researchIdentity(m))
+-		return nil
+-	case "validate":
+-		if len(args) != 2 {
+-			return errors.New("validate requires one manifest")
+-		}
+-		var m Manifest
+-		if err := readJSON(args[1], &m); err != nil {
++	}
++	b, err := saveBound(filepath.Join(m.RunRoot, "diagnostic-manifest.json"), m)
++	if err != nil {
++		return err
++	}
++	r := &runner{manifest: m, binding: b, start: stamp(), sessions: map[string]workerSession{}, states: map[string]StatePin{}, stateBindings: map[string]Binding{}, builds: map[string]map[string]bool{}, generations: map[string]int{}}
++	if err = r.initialize(1); err != nil {
++		return err
++	}
++	// The previous control refused its first request: only N's preflight ran.
++	state := r.states[armKey(1, "N")]
++	return r.phase(Cost{ID: "diagnostic-N-preflight", Class: "research", Purpose: "source-input-state-proof", Replication: 1, Ordinal: 0, Arm: "N"}, func() error {
++		if err := checkInputs(m); err != nil {
+ 			return err
+ 		}
+-		if err := validateManifest(m); err != nil {
++		if err := verifyState(m, state); err != nil {
+ 			return err
+ 		}
+-		fmt.Println("manifest valid; no workflow started")
+-		return nil
+-	case "history":
+-		if len(args) != 5 {
+-			return errors.New("history requires common Git directory, frozen endpoint, count and output")
+-		}
+-		count, err := strconv.Atoi(args[3])
+-		if err != nil {
+-			return err
+-		}
+-		rows, err := reconstructHistory(args[1], args[2], count)
+-		if err != nil {
+-			return err
+-		}
+-		return writeExclusive(args[4], jsonBytes(rows), 0600)
+-	case "run":
+-		if len(args) != 2 {
+-			return errors.New("run requires one manifest")
+-		}
+-		r, err := newRunner(args[1])
+-		if err != nil {
+-			return err
+-		}
+-		runErr := r.execute(1, 0, -1)
+-		result, checkErr := writeResult(r.manifest.RunRoot)
+-		if checkErr != nil {
+-			return errors.Join(runErr, checkErr)
+-		}
+-		if err = json.NewEncoder(os.Stdout).Encode(result); err != nil {
+-			return err
+-		}
+-		return runErr
+-	case "check":
+-		if len(args) != 2 {
+-			return errors.New("check requires one run root")
+-		}
+-		if err := checkResult(args[1], args[1]+"/result.json"); err != nil {
+-			return err
+-		}
+-		fmt.Println("raw evidence and claimed result agree")
+-		return nil
+-	case "resume":
+-		if len(args) != 2 {
+-			return errors.New("resume requires one owned run root")
+-		}
+-		r, rep, ordinal, err := resumeRunner(args[1])
+-		if err != nil {
+-			return err
+-		}
+-		runErr := r.execute(rep, ordinal, -1)
+-		result, checkErr := writeResult(args[1])
+-		if checkErr != nil {
+-			return errors.Join(runErr, checkErr)
+-		}
+-		if err = json.NewEncoder(os.Stdout).Encode(result); err != nil {
+-			return err
+-		}
+-		return runErr
+-	default:
+-		return fmt.Errorf("unsupported command %q", args[0])
+-	}
++		_, err := verifySource(m.CommonGit, filepath.Join(state.Root, "repo"), state.Revision, patchesFor(m, state), m.GeneratedPaths)
++		return err
++	})
+ }
+ 
++func command(args []string) error {
++	if len(args) != 2 || args[0] != "prepare-only" {
++		return errors.New("usage: preparation-observer prepare-only CONFIG; workflow entry points are unavailable")
++	}
++	return prepareOnly(args[1])
++}
+ func main() {
+ 	if err := command(os.Args[1:]); err != nil {
+ 		fmt.Fprintln(os.Stderr, err)
+--- frozen/records.go
++++ diagnostic/records.go
+@@ -49,6 +49,7 @@
+ }
+ 
+ func captureState(m Manifest, rep int, arm string, ordinal int, previous string, baseline, candidate bool) (StatePin, error) {
++	defer preparationTrace("capture-state", arm)()
+ 	root := filepath.Join(m.RunRoot, fmt.Sprintf("r%d", rep), arm)
+ 	repo := filepath.Join(root, "repo")
+ 	s := StatePin{Schema: recordSchema, Replication: rep, Arm: arm, Ordinal: ordinal, Revision: m.History[ordinal].Commit, CommonGit: m.CommonGit, Root: root, Previous: previous, BaselineApplied: baseline, CandidateApplied: candidate, Entries: []Entry{}}
+@@ -85,6 +86,7 @@
+ }
+ 
+ func verifyState(m Manifest, s StatePin) error {
++	defer preparationTrace("verify-state", s.Arm)()
+ 	if s.Schema != recordSchema || s.Ordinal < 0 || s.Ordinal > m.ExecutionEnd || s.Revision != m.History[s.Ordinal].Commit || s.Root != filepath.Join(m.RunRoot, fmt.Sprintf("r%d", s.Replication), s.Arm) || s.CommonGit != m.CommonGit {
+ 		return errors.New("state identity/future ordinal differs")
+ 	}
+--- frozen/runner.go
++++ diagnostic/runner.go
+@@ -77,6 +77,7 @@
+ }
+ 
+ func checkInputs(m Manifest) error {
++	defer preparationTrace("check-inputs", nil)()
+ 	if err := validateResearchMeasurement(m); err != nil {
+ 		return err
+ 	}
+@@ -155,6 +156,7 @@
+ func armKey(rep int, arm string) string { return fmt.Sprintf("r%d-%s", rep, arm) }
+ 
+ func (r *runner) initialize(rep int) error {
++	defer preparationTrace("initialize", rep)()
+ 	if err := r.guard(); err != nil {
+ 		return err
+ 	}

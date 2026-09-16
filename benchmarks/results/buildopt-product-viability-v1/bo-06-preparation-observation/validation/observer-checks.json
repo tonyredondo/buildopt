@@ -1,0 +1,16 @@
+[
+  {
+    "case": "success",
+    "exitCode": 0,
+    "status": "COMPLETE",
+    "error": null,
+    "processGroupGone": true
+  },
+  {
+    "case": "timeout",
+    "exitCode": 1,
+    "status": "INCOMPLETE",
+    "error": "RuntimeError('observation time limit')",
+    "processGroupGone": true
+  }
+]

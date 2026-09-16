@@ -1,0 +1,48 @@
+{
+  "binarySHA256": "730f767d0b801d597154d3c7bd41cfbf78070795fbfab0f230aaabfccb0ad1de",
+  "refusals": [
+    {
+      "operation": "run",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "usage: preparation-observer prepare-only CONFIG; workflow entry points are unavailable\n"
+    },
+    {
+      "operation": "resume",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "usage: preparation-observer prepare-only CONFIG; workflow entry points are unavailable\n"
+    },
+    {
+      "operation": "worker",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "usage: preparation-observer prepare-only CONFIG; workflow entry points are unavailable\n"
+    },
+    {
+      "operation": "check",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "usage: preparation-observer prepare-only CONFIG; workflow entry points are unavailable\n"
+    },
+    {
+      "operation": "history",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "usage: preparation-observer prepare-only CONFIG; workflow entry points are unavailable\n"
+    },
+    {
+      "operation": "validate",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "usage: preparation-observer prepare-only CONFIG; workflow entry points are unavailable\n"
+    },
+    {
+      "operation": "research-identity",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "usage: preparation-observer prepare-only CONFIG; workflow entry points are unavailable\n"
+    }
+  ],
+  "workflowSymbolsAbsent": true
+}

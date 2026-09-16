@@ -1,0 +1,25 @@
+{
+  "baselineSeconds": 180,
+  "recoverySeconds": 180,
+  "maxObservationSeconds": 3600,
+  "maxFreeSpaceDecreaseBytes": 17179869184,
+  "minimumFreeBytes": 42949672960,
+  "maxDiagnosticBytes": 67108864,
+  "projectBuilds": 0,
+  "comparisonJVMs": 0,
+  "retries": 0,
+  "CIWaitSeconds": 2700,
+  "schema": "buildopt.preparation-observation/protocol/v1",
+  "observerCPU": 9,
+  "sequence": [
+    "180 seconds baseline",
+    "initialize N and I in original order",
+    "original first-request preflight for N",
+    "180 seconds recovery"
+  ],
+  "classification": "Diagnostic only; no build admission, performance comparison or allocation reuse.",
+  "baselineDisposition": "Retain all baseline observations; quantify quiet windows without changing or filtering the preparation sequence.",
+  "storageLimit": "Abort if available disk falls by more than 16 GiB from entry, including unrelated activity, or below 40 GiB. Do not scan the growing tree during observation.",
+  "originalManifestSHA256": "3089f190f946190fb14c3ac088a50b5a12d81805501f152dd17c447cff591642",
+  "sourceArchiveSHA256": "0774e668fc6ebb1dc42c4f3cde6bf21cc8dfc03ea5d03c31949adf0b21d2da10"
+}

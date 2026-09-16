@@ -1,0 +1,5 @@
+=== RUN   TestPreparationRecordedWindows
+    quiet_rule_test.go:17: All 1250 window decisions agree with the original rule, including the unchanged 180-second recovery budget
+--- PASS: TestPreparationRecordedWindows (0.03s)
+PASS
+ok  	github.com/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-preparation-observation-2026-09-16/validation	0.032s

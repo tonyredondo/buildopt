@@ -1,0 +1,18 @@
+package main
+import ("encoding/json"; "io"; "os"; "testing")
+func TestPreparationRecordedWindows(t *testing.T) {
+ f,err:=os.Open("../samples.jsonl");if err!=nil{t.Fatal(err)};defer f.Close()
+ decoder:=json.NewDecoder(f);samples:=[]PressureSample{}
+ for {var row struct{Pressure PressureSample};err=decoder.Decode(&row);if err==io.EOF{break};if err!=nil{t.Fatal(err)};samples=append(samples,row.Pressure)}
+ data,err:=os.ReadFile("../analysis.json");if err!=nil{t.Fatal(err)}
+ var result struct{Periods map[string]struct{BeginNS,EndNS int64; Windows []struct{SampleIndex int;EndNS int64;Reason string}}}
+ if err=json.Unmarshal(data,&result);err!=nil{t.Fatal(err)}
+ count:=0
+ for name,period:=range result.Periods {
+  selected:=[]PressureSample{}
+  for _,sample:=range samples{if period.BeginNS<=sample.Begin.NS && sample.End.NS<=period.EndNS{selected=append(selected,sample)}}
+  if len(selected)!=len(period.Windows){t.Fatalf("missing windows: %s",name)}
+  for i,expected:=range period.Windows {ready,reason:=quietWindow(selected[:i+1],fixedQuietPolicy());if expected.SampleIndex!=i || expected.EndNS!=selected[i].End.NS || ready!=(expected.Reason=="quiet window") || reason!=expected.Reason{t.Fatalf("%s window %d differs: %s / %s",name,i,reason,expected.Reason)};count++}
+ }
+ t.Logf("All %d window decisions agree with the original rule, including the unchanged 180-second recovery budget",count)
+}

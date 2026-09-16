@@ -1,0 +1,12 @@
+{
+  "schema": "buildopt.preparation-observation/config/v1",
+  "original": {
+    "path": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-preparation-observation-2026-09-16/inputs/original-manifest.json",
+    "sha256": "3089f190f946190fb14c3ac088a50b5a12d81805501f152dd17c447cff591642"
+  },
+  "runRoot": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-preparation-observation-2026-09-16/run",
+  "deadlineUTC": "2026-09-16T09:16:43.867559+00:00",
+  "maxRunNS": 3600000000000,
+  "maxBytes": 17179869184,
+  "minimumFreeBytes": 42949672960
+}

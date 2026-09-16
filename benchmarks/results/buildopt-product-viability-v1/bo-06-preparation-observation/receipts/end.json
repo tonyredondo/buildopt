@@ -1,0 +1,81 @@
+{
+  "status": "COMPLETE",
+  "startedBootNS": 423074880226792,
+  "endedBootNS": 424143881203434,
+  "endedUTC": "2026-09-16T08:34:32.870426+00:00",
+  "boundaries": {
+    "baselineBeginNS": 423074880226792,
+    "baselineEndNS": 423254894904587,
+    "preparationLaunchNS": 423254894905147,
+    "preparationExitObservedNS": 423962881100650,
+    "recoveryBeginNS": 423962881101240,
+    "recoveryEndNS": 424143881184734
+  },
+  "preparationExitCode": 0,
+  "error": null,
+  "streamErrors": [],
+  "samples": 1070,
+  "traceRows": 900,
+  "diagnosticBytes": 4209486,
+  "observerBefore": {
+    "pid": 3054857,
+    "beginBootNS": 423074881218613,
+    "available": true,
+    "identity": {
+      "startTicks": 42307480,
+      "cpuTicks": 3
+    },
+    "io": {
+      "available": true,
+      "value": "rchar: 14198143\nwchar: 21857\nsyscr: 611\nsyscw: 10\nread_bytes: 0\nwrite_bytes: 159744\ncancelled_write_bytes: 0\n"
+    },
+    "ticksPerSecond": 100,
+    "selfCPUNS": 46506457,
+    "endBootNS": 423074881347593
+  },
+  "observerAfter": {
+    "pid": 3054857,
+    "beginBootNS": 424143881204434,
+    "available": true,
+    "identity": {
+      "startTicks": 42307480,
+      "cpuTicks": 241
+    },
+    "io": {
+      "available": true,
+      "value": "rchar: 24381886158\nwchar: 983586331\nsyscr: 1324453\nsyscw: 129170\nread_bytes: 6953107456\nwrite_bytes: 1795280896\ncancelled_write_bytes: 0\n"
+    },
+    "ticksPerSecond": 100,
+    "selfCPUNS": 2422514289,
+    "endBootNS": 424143881306935
+  },
+  "freeBytesBefore": 750044315648,
+  "freeBytesAfter": 749659533312,
+  "worktrees": [
+    {
+      "repository": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-preparation-observation-2026-09-16/run/r1/N/repo",
+      "commonGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/eic-native-v1/repos/elasticsearch.git",
+      "arm": "N",
+      "expectedSHA": "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe",
+      "status": "verified",
+      "remoteTarget": "local subject worktree; no publication",
+      "locator": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-preparation-observation-2026-09-16/task-state.json",
+      "branch": "bv-replay-5fe219687231-r1-N-000",
+      "head": "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe"
+    },
+    {
+      "repository": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-preparation-observation-2026-09-16/run/r1/I/repo",
+      "commonGit": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/eic-native-v1/repos/elasticsearch.git",
+      "arm": "I",
+      "expectedSHA": "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe",
+      "status": "verified",
+      "remoteTarget": "local subject worktree; no publication",
+      "locator": "/home/tonyredondo/repos/github/tonyredondo/buildopt/.tools/state/buildopt-product-viability-v1/bo-06-preparation-observation-2026-09-16/task-state.json",
+      "branch": "bv-replay-5fe219687231-r1-I-000",
+      "head": "1e1b40d2f3ddbad40cdeba2f9e2241440785c3fe"
+    }
+  ],
+  "projectBuilds": 0,
+  "comparisonJVMs": 0,
+  "retries": 0
+}

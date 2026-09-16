@@ -201,13 +201,23 @@ qualify. The original runner's rule agrees with all 180 recorded decisions.
 This confirms that the earlier sustained pressure was no longer present
 throughout the observation. It does not identify its cause or qualify a build.
 
-Next, assess whether preparation itself prevents a usable measurement window,
-through a separately bounded preparation-only observation before more timing.
-No project build ran here, and no automatic retry or threshold change is
-admitted. BO-06 remains partial; BO-07 and protected validation remain deferred.
+The [preparation-only observation](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-preparation-observation/README.md)
+completed both environments and the first request's input checks. Average
+disk-wait pressure rose from 0.80% to 84.56% during preparation, then fell to
+0.88% in the first three minutes afterward. The first quiet window appeared
+after 47 seconds, within the unchanged wait limit. Copies took 445.74 seconds,
+63% of preparation time. No indexer appeared in the process checks. No project
+build or comparison JVM ran, and the original timing inputs stayed unchanged.
+The earlier prolonged refusal was not reproduced; its exact cause remains
+unproven.
+
+Next, prepare a separate eight-build control with the unchanged method, followed
+by the complete 42-build development sequence only if it passes. The observation
+does not activate that allocation, admit an automatic retry or change a
+threshold. BO-06 remains partial; BO-07 and protected validation remain deferred.
 
 Current task record:
-`.tools/state/buildopt-product-viability-v1/bo-06-host-observation-2026-09-16/task-state.json`.
+`.tools/state/buildopt-product-viability-v1/bo-06-preparation-observation-2026-09-16/task-state.json`.
 Protected changes 21–100 remain deferred. Generic plan selection/reuse,
 adaptive fragments, runtime sweeps and another general cache remain retired.
 The user has authorized commit and push after each work block. Product viability

@@ -1,0 +1,16 @@
+{
+  "status": "verified",
+  "observationStatus": "COMPLETE",
+  "sourceBindings": 36,
+  "sourceBindingsUnchanged": true,
+  "observerExited": true,
+  "preparationGroupGone": true,
+  "projectBuilds": 0,
+  "comparisonJVMs": 0,
+  "logicalRunBytes": 7132277890,
+  "allocatedRunBytes": 7380967424,
+  "runFiles": 105678,
+  "originalTimingInputsChanged": false,
+  "recoveryCollectionSeconds": 181.00008349400014,
+  "recoveryNote": "The 180-second target closed at the next one-second sample (181 seconds). The continuation finding uses only windows ending within the original 180-second budget."
+}

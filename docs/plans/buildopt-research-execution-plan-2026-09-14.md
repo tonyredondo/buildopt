@@ -1,7 +1,7 @@
 # Build Optimization research execution plan
 
 Date: 2026-09-14. Program: `BUILDOPT-VIABILITY-V1`.
-Status: governing plan in execution; BO-01 through BO-05 verified; BO-06 partial. The reserved-workstation control never launched a build. A subsequent host-only observation found quiet windows; preparation conditions still need checking before more timing.
+Status: governing plan in execution; BO-01 through BO-05 verified; BO-06 partial. A preparation-only observation found heavy disk pressure that subsided within the existing wait limit. A fresh control and conditional development sequence remain to be measured.
 
 This plan records the direction agreed after the research review and its
 discussion. It owns research priorities, sequencing and the
@@ -139,7 +139,7 @@ the outcome may be negative. Advance only on the outcome required below.
 | BO-03 | Estimate realistic whole-build opportunity per candidate | BO-01; measurement readiness before fresh timing | verified; [five candidate assessments](../../benchmarks/results/buildopt-product-viability-v1/bo-03-opportunity-assessment/README.md); only Checkstyle warrants the planned short screen after readiness checks; missing workflow evidence remains unqualified |
 | BO-04 | Admit or reject a focused Build Impact hypothesis | BO-01 and existing evidence review | verified; [no new trial admitted](../../benchmarks/results/buildopt-product-viability-v1/bo-04-build-impact-review/README.md); original savings retained |
 | BO-05 | Select a candidate through short comparisons | BO-02 as applicable, BO-03, early BO-06 correctness, and BO-04 for Build Impact | verified; [both fresh sequences passed](../../benchmarks/results/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay/README.md), saving 34.14% and 28.17%; the interrupted attempt remains separate |
-| BO-06 | Qualify correctness and freeze the implementation and protocol | Admitted opportunity; screen integration proof before BO-05, final freeze afterward | partial; the reserved-workstation repeat stopped before its first build; a later [host-only observation](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-host-observation/README.md) found quiet windows; preparation conditions remain unverified; no new control or development replay admitted |
+| BO-06 | Qualify correctness and freeze the implementation and protocol | Admitted opportunity; screen integration proof before BO-05, final freeze afterward | partial; the [preparation-only observation](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-preparation-observation/README.md) recovered a quiet window after 47 seconds; no project build ran; prepare a separate control and conditional development sequence with the unchanged method |
 | BO-07 | Establish sustained saving in the first repository | BO-05 and complete BO-06 | deferred |
 | BO-08 | Test the same mechanism on two other repositories | BO-07 positive | deferred |
 | BO-09 | Deliver and measure an MVP with manual controls | BO-08 positive | deferred |
@@ -631,6 +631,31 @@ preparation without launching Gradle. This host trace is not launch admission
 or a control result. BO-06 remains partial and the protected history stays
 deferred. Task record:
 `.tools/state/buildopt-product-viability-v1/bo-06-host-observation-2026-09-16/task-state.json`.
+
+**Preparation-only observation, 2026-09-16:** both environments and the first
+request's preflight completed in the
+[single diagnostic pass](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-preparation-observation/README.md).
+Disk pressure averaged 0.80% before preparation, 84.56% during it and 0.88%
+within the first three minutes afterward. The first qualifying quiet window
+appeared after 47 seconds. Copies consumed 445.74 seconds, or 63% of preparation
+time. The observer used 2.38 CPU seconds across the complete observation.
+No indexer appeared in the 107 process checks. The earlier prolonged wait
+was not reproduced; its exact cause remains unproven.
+
+All 1,250 window evaluations agree with the original rule. The recovery
+collection closed on the next sample at 181 seconds; the decision uses only
+windows within the unchanged 180-second budget. Source bindings, preparation
+checks and process closure passed. The diagnostic could not launch a workflow;
+no project build, comparison JVM or protected-history read occurred. The timing
+runner and its identity remain unchanged.
+
+Next, prepare a separate eight-build identical-code control. Only a passing
+result permits the complete 42-build development sequence, under the existing
+50-build, 50-comparator, ten-hour and 80-GiB limits, with at least 40 GiB free and
+no retries. This diagnostic activates no timing allocation. Reducing copy cost
+is a separate question and is not required before that next control. BO-06
+remains partial; BO-07 and protected validation remain deferred. Task record:
+`.tools/state/buildopt-product-viability-v1/bo-06-preparation-observation-2026-09-16/task-state.json`.
 
 ### BO-07: Measure sustained saving on the first repository
 
