@@ -1,0 +1,21 @@
+package main
+import (
+ "encoding/json"
+ "os"
+ "testing"
+)
+func TestObservedQuietWindows(t *testing.T) {
+ raw, err := os.ReadFile("../observation.json"); if err != nil { t.Fatal(err) }
+ var trace struct { Samples []PressureSample }; if err = json.Unmarshal(raw, &trace); err != nil { t.Fatal(err) }
+ raw, err = os.ReadFile("../analysis.json"); if err != nil { t.Fatal(err) }
+ var result struct { Windows []struct { SampleIndex int; Decision string } }
+ if err = json.Unmarshal(raw, &result); err != nil { t.Fatal(err) }
+ if len(trace.Samples) != 180 || len(result.Windows) != len(trace.Samples) { t.Fatal("incomplete trace") }
+ count := 0
+ for i, expected := range result.Windows {
+  ready, _ := quietWindow(trace.Samples[:i+1], fixedQuietPolicy())
+  if expected.SampleIndex != i || ready != (expected.Decision == "QUIET_WINDOW") { t.Fatalf("window %d differs",i) }
+  if ready { count++ }
+ }
+ t.Logf("All %d recorded decisions agree with the extracted frozen rule; %d quiet windows",len(trace.Samples),count)
+}

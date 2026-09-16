@@ -1,7 +1,7 @@
 # Build Optimization research execution plan
 
 Date: 2026-09-14. Program: `BUILDOPT-VIABILITY-V1`.
-Status: governing plan in execution; BO-01 through BO-05 verified; BO-06 partial. Fresh control stopped before its second build; development remains unrun. A separate measurement-environment or observation-policy decision is required before more timing.
+Status: governing plan in execution; BO-01 through BO-05 verified; BO-06 partial. The reserved-workstation control never launched a build. A subsequent host-only observation found quiet windows; preparation conditions still need checking before more timing.
 
 This plan records the direction agreed after the research review and its
 discussion. It owns research priorities, sequencing and the
@@ -139,7 +139,7 @@ the outcome may be negative. Advance only on the outcome required below.
 | BO-03 | Estimate realistic whole-build opportunity per candidate | BO-01; measurement readiness before fresh timing | verified; [five candidate assessments](../../benchmarks/results/buildopt-product-viability-v1/bo-03-opportunity-assessment/README.md); only Checkstyle warrants the planned short screen after readiness checks; missing workflow evidence remains unqualified |
 | BO-04 | Admit or reject a focused Build Impact hypothesis | BO-01 and existing evidence review | verified; [no new trial admitted](../../benchmarks/results/buildopt-product-viability-v1/bo-04-build-impact-review/README.md); original savings retained |
 | BO-05 | Select a candidate through short comparisons | BO-02 as applicable, BO-03, early BO-06 correctness, and BO-04 for Build Impact | verified; [both fresh sequences passed](../../benchmarks/results/buildopt-product-viability-v1/bo-05-checkstyle-observer-replay/README.md), saving 34.14% and 28.17%; the interrupted attempt remains separate |
-| BO-06 | Qualify correctness and freeze the implementation and protocol | Admitted opportunity; screen integration proof before BO-05, final freeze afterward | partial; the [reserved-workstation repeat](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-reserved-host/README.md) stopped before its first build; persistent disk pressure, zero comparisons, development unrun; allocation closed; establish quiet measurement conditions before another timing decision |
+| BO-06 | Qualify correctness and freeze the implementation and protocol | Admitted opportunity; screen integration proof before BO-05, final freeze afterward | partial; the reserved-workstation repeat stopped before its first build; a later [host-only observation](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-host-observation/README.md) found quiet windows; preparation conditions remain unverified; no new control or development replay admitted |
 | BO-07 | Establish sustained saving in the first repository | BO-05 and complete BO-06 | deferred |
 | BO-08 | Test the same mechanism on two other repositories | BO-07 positive | deferred |
 | BO-09 | Deliver and measure an MVP with manual controls | BO-08 positive | deferred |
@@ -615,6 +615,22 @@ closed, and the raw unknown reservation remains preserved. The next step is a
 separate host-only observation with the recorder stopped and indexer finished,
 then a measurement decision. No automatic control retry, weaker threshold,
 BO-07 or protected replay follows. BO-06 remains partial.
+
+**Host-only observation, 2026-09-16:** the
+[three-minute observation](https://github.com/tonyredondo/buildopt/blob/main/benchmarks/results/buildopt-product-viability-v1/bo-06-host-observation/README.md)
+found its first qualifying quiet window at 58 seconds. Disk pressure averaged
+0.71%; three of 179 intervals exceeded 10%, and the final window did not qualify.
+All 180 window decisions agree with the original frozen rule. The earlier
+recorder and worker group were closed, and no indexer appeared in 19 process
+checks. The observer completed with no project builds, comparison JVMs or retries.
+
+The sustained pressure was no longer present throughout this observation;
+its earlier cause remains unproven. Before another timing decision, check
+whether preparation brings it back using a separately bounded observation of
+preparation without launching Gradle. This host trace is not launch admission
+or a control result. BO-06 remains partial and the protected history stays
+deferred. Task record:
+`.tools/state/buildopt-product-viability-v1/bo-06-host-observation-2026-09-16/task-state.json`.
 
 ### BO-07: Measure sustained saving on the first repository
 

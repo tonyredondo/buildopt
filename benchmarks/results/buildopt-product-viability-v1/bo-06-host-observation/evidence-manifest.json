@@ -1,0 +1,60 @@
+{
+  "schema": "buildopt.evidence-index/v1",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 4795,
+      "sha256": "5f5338a8f0c6aba865a18057ceb5548f77cdadff4beafa5c0fb60c01c067e6bd"
+    },
+    {
+      "path": "allocation.json",
+      "bytes": 749,
+      "sha256": "9904a0188eb2254acb989761ad7cc6e08b8764433fe88a4777285b8357bd1be1"
+    },
+    {
+      "path": "analyse.py",
+      "bytes": 5101,
+      "sha256": "b9a7711a1b0dbc192b8793d457872116a9858a2812edfaaa879c8b784e9ed192"
+    },
+    {
+      "path": "analysis.json",
+      "bytes": 75067,
+      "sha256": "a8908153bb5daf6e87569cf2693ca2a007b4c88780c48a592c8b3cb909bc191e"
+    },
+    {
+      "path": "observation.json",
+      "bytes": 143224,
+      "sha256": "dbf0d716c28b67f5753ece61e2f105cc8c574904691b159b1c6aab331472446b"
+    },
+    {
+      "path": "observe.py",
+      "bytes": 5345,
+      "sha256": "da3b38e1cb0df1f8bbffc2dac7c1076af44b46da9f028738055cbb3723fe6cca"
+    },
+    {
+      "path": "policy.json",
+      "bytes": 263,
+      "sha256": "1c1d2080051f44929de62b0e0447fa1ccd63e490f8762c5c6619b33c5e2d22bb"
+    },
+    {
+      "path": "validation/quiet-rule-result.json",
+      "bytes": 464,
+      "sha256": "d70c9b75ee737ae8d0287a92abb26567f08ef59746b2a3191b190922c9c62673"
+    },
+    {
+      "path": "validation/quiet-rule.go.txt",
+      "bytes": 2481,
+      "sha256": "b2292b096bd6cf7d6938b667c61bc0f9f9a79108b11b86d70dc8d7cd97d0ef07"
+    },
+    {
+      "path": "validation/quiet_rule_test.go.txt",
+      "bytes": 1010,
+      "sha256": "1beec66de5d9d156f4e8d0de9ae3a8a6be30405fb2a277a30dd0cad2f6b66808"
+    },
+    {
+      "path": "validation/source-extraction.json",
+      "bytes": 1603,
+      "sha256": "652d30a4b1cbb15281ca1221dfd478252760e32a288d07eec68eb7f6f15aede2"
+    }
+  ]
+}

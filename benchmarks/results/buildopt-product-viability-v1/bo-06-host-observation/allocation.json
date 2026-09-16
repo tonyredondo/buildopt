@@ -1,0 +1,16 @@
+{
+  "schema": "buildopt.host-observation-allocation/v1",
+  "createdUTC": "2026-09-16T04:45:41.766728+00:00",
+  "scope": "One host-only observation, no project builds or comparison JVMs; no automatic retry or following control. No service changes.",
+  "durationNS": 180000000000,
+  "sampleNS": 1000000000,
+  "sampleCount": 180,
+  "hardMaximumNS": 210000000000,
+  "maximumDiagnosticBytes": 4194304,
+  "maxProjectBuilds": 0,
+  "maxComparatorJVMs": 0,
+  "retriesAllowed": 0,
+  "observerSHA256": "da3b38e1cb0df1f8bbffc2dac7c1076af44b46da9f028738055cbb3723fe6cca",
+  "policySHA256": "1c1d2080051f44929de62b0e0447fa1ccd63e490f8762c5c6619b33c5e2d22bb",
+  "classification": "Research diagnostic; not a quiet-start admission receipt or performance result."
+}

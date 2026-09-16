@@ -1,0 +1,87 @@
+package main
+
+import "errors"
+
+type Stamp struct {
+	NS   int64  `json:"ns"`
+	UTC  string `json:"utc"`
+	Boot string `json:"boot"`
+}
+
+type QuietPolicy struct {
+	Schema             string `json:"schema"`
+	WindowNS           int64  `json:"windowNS"`
+	SampleNS           int64  `json:"sampleNS"`
+	MaximumGapNS       int64  `json:"maximumGapNS"`
+	MaximumReadNS      int64  `json:"maximumReadNS"`
+	MaximumPressurePPM int64  `json:"maximumPressurePPM"`
+	MaximumWaitNS      int64  `json:"maximumWaitNS"`
+	MaximumLaunchAgeNS int64  `json:"maximumLaunchAgeNS"`
+}
+
+func fixedQuietPolicy() QuietPolicy {
+	return QuietPolicy{"buildopt.quiet-start/policy/v1", 30e9, 1e9, 3e9, 100e6, 100000, 180e9, 1e9}
+}
+
+type PressureSample struct {
+	Begin    Stamp            `json:"begin"`
+	End      Stamp            `json:"end"`
+	TotalsUS map[string]int64 `json:"totalsUS"`
+}
+
+func quietWindow(samples []PressureSample, p QuietPolicy) (bool, string) {
+	if len(samples) == 0 {
+		return false, "no observations"
+	}
+	last := samples[len(samples)-1]
+	first := -1
+	for i := len(samples) - 1; i >= 0; i-- {
+		if samples[i].End.NS <= last.End.NS-p.WindowNS {
+			first = i
+			break
+		}
+	}
+	if first < 0 {
+		return false, "window incomplete"
+	}
+	for i := first; i < len(samples); i++ {
+		s := samples[i]
+		if checkStampInterval(s.Begin, s.End) != nil || s.End.Boot != last.End.Boot || s.End.NS-s.Begin.NS > p.MaximumReadNS {
+			return false, "pressure read delayed or clock changed"
+		}
+		if len(s.TotalsUS) != 3 {
+			return false, "missing pressure counters"
+		}
+		for _, resource := range []string{"cpu", "io", "memory"} {
+			n, ok := s.TotalsUS[resource]
+			if !ok || n < 0 {
+				return false, "invalid pressure counters"
+			}
+			if i == first {
+				continue
+			}
+			prev := samples[i-1]
+			gap := s.End.NS - prev.End.NS
+			if gap <= 0 || gap > p.MaximumGapNS || s.Begin.NS < prev.End.NS {
+				return false, "sample gap or clock discontinuity"
+			}
+			delta := n - prev.TotalsUS[resource]
+			if delta < 0 {
+				return false, "pressure counter reset"
+			}
+			// Fixed 10% threshold: microseconds * 1000 / nanoseconds <= 1/10.
+			// Division avoids overflow if a malformed counter jumps very far.
+			if delta > gap/10000 {
+				return false, "pressure in window"
+			}
+		}
+	}
+	return true, "quiet window"
+}
+
+func checkStampInterval(start, end Stamp) error {
+	if start.Boot == "" || start.Boot != end.Boot || start.NS <= 0 || end.NS < start.NS {
+		return errors.New("invalid monotonic clock interval")
+	}
+	return nil
+}

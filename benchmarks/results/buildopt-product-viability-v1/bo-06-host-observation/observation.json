@@ -1,0 +1,3763 @@
+{
+  "schema": "buildopt.host-only-observation/v1",
+  "startedUTC": "2026-09-16T04:45:41.930725+00:00",
+  "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+  "startBootNS": 410412943580775,
+  "samples": [
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410412943800445
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410412943886735
+      },
+      "totalsUS": {
+        "cpu": 1669624280,
+        "io": 25108819947,
+        "memory": 949980072
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669624280\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=2.44 avg60=0.81 avg300=0.44 total=25108819947\nfull avg10=2.44 avg60=0.80 avg300=0.43 total=24583407097\n",
+        "memory": "some avg10=0.00 avg60=0.00 avg300=0.02 total=949980072\nfull avg10=0.00 avg60=0.00 avg300=0.02 total=938536663\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410413943797947
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410413944026557
+      },
+      "totalsUS": {
+        "cpu": 1669624843,
+        "io": 25108819947,
+        "memory": 949980072
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669624843\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=2.00 avg60=0.78 avg300=0.43 total=25108819947\nfull avg10=2.00 avg60=0.78 avg300=0.43 total=24583407097\n",
+        "memory": "some avg10=0.00 avg60=0.00 avg300=0.02 total=949980072\nfull avg10=0.00 avg60=0.00 avg300=0.02 total=938536663\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410414943791809
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410414944018010
+      },
+      "totalsUS": {
+        "cpu": 1669625646,
+        "io": 25108819976,
+        "memory": 949980072
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669625646\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=2.00 avg60=0.78 avg300=0.43 total=25108819976\nfull avg10=2.00 avg60=0.78 avg300=0.43 total=24583407126\n",
+        "memory": "some avg10=0.00 avg60=0.00 avg300=0.02 total=949980072\nfull avg10=0.00 avg60=0.00 avg300=0.02 total=938536663\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410415943754703
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410415943958123
+      },
+      "totalsUS": {
+        "cpu": 1669627323,
+        "io": 25108819976,
+        "memory": 949980072
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669627323\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=1.64 avg60=0.75 avg300=0.43 total=25108819976\nfull avg10=1.64 avg60=0.75 avg300=0.42 total=24583407126\n",
+        "memory": "some avg10=0.00 avg60=0.00 avg300=0.01 total=949980072\nfull avg10=0.00 avg60=0.00 avg300=0.01 total=938536663\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410416943754536
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410416943958726
+      },
+      "totalsUS": {
+        "cpu": 1669627998,
+        "io": 25108819976,
+        "memory": 949980072
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669627998\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=1.64 avg60=0.75 avg300=0.43 total=25108819976\nfull avg10=1.64 avg60=0.75 avg300=0.42 total=24583407126\n",
+        "memory": "some avg10=0.00 avg60=0.00 avg300=0.01 total=949980072\nfull avg10=0.00 avg60=0.00 avg300=0.01 total=938536663\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410417943752971
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410417943959841
+      },
+      "totalsUS": {
+        "cpu": 1669628694,
+        "io": 25108819976,
+        "memory": 949980072
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669628694\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=1.34 avg60=0.73 avg300=0.43 total=25108819976\nfull avg10=1.34 avg60=0.73 avg300=0.42 total=24583407126\n",
+        "memory": "some avg10=0.00 avg60=0.00 avg300=0.01 total=949980072\nfull avg10=0.00 avg60=0.00 avg300=0.01 total=938536663\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410418943924966
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410418944161047
+      },
+      "totalsUS": {
+        "cpu": 1669629725,
+        "io": 25108819976,
+        "memory": 949980072
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669629725\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=1.34 avg60=0.73 avg300=0.43 total=25108819976\nfull avg10=1.34 avg60=0.73 avg300=0.42 total=24583407126\n",
+        "memory": "some avg10=0.00 avg60=0.00 avg300=0.01 total=949980072\nfull avg10=0.00 avg60=0.00 avg300=0.01 total=938536663\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410419943952442
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410419944170033
+      },
+      "totalsUS": {
+        "cpu": 1669630660,
+        "io": 25108819976,
+        "memory": 949980072
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669630660\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=1.10 avg60=0.70 avg300=0.42 total=25108819976\nfull avg10=1.10 avg60=0.70 avg300=0.42 total=24583407126\n",
+        "memory": "some avg10=0.00 avg60=0.00 avg300=0.01 total=949980072\nfull avg10=0.00 avg60=0.00 avg300=0.01 total=938536663\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410420943659499
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410420943870689
+      },
+      "totalsUS": {
+        "cpu": 1669632542,
+        "io": 25108819976,
+        "memory": 949980072
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669632542\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=1.10 avg60=0.70 avg300=0.42 total=25108819976\nfull avg10=1.10 avg60=0.70 avg300=0.42 total=24583407126\n",
+        "memory": "some avg10=0.00 avg60=0.00 avg300=0.01 total=949980072\nfull avg10=0.00 avg60=0.00 avg300=0.01 total=938536663\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410421943854557
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410421944083447
+      },
+      "totalsUS": {
+        "cpu": 1669633224,
+        "io": 25108820043,
+        "memory": 949980072
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669633224\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.90 avg60=0.68 avg300=0.42 total=25108820043\nfull avg10=0.90 avg60=0.68 avg300=0.41 total=24583407193\n",
+        "memory": "some avg10=0.00 avg60=0.00 avg300=0.01 total=949980072\nfull avg10=0.00 avg60=0.00 avg300=0.01 total=938536663\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410422943664816
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410422943867366
+      },
+      "totalsUS": {
+        "cpu": 1669633846,
+        "io": 25108831184,
+        "memory": 949980072
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669633846\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.90 avg60=0.68 avg300=0.42 total=25108831184\nfull avg10=0.90 avg60=0.68 avg300=0.41 total=24583418149\n",
+        "memory": "some avg10=0.00 avg60=0.00 avg300=0.01 total=949980072\nfull avg10=0.00 avg60=0.00 avg300=0.01 total=938536663\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410423943944726
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410423944169626
+      },
+      "totalsUS": {
+        "cpu": 1669634548,
+        "io": 25108831184,
+        "memory": 949980072
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669634548\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.73 avg60=0.66 avg300=0.42 total=25108831184\nfull avg10=0.73 avg60=0.66 avg300=0.41 total=24583418149\n",
+        "memory": "some avg10=0.00 avg60=0.00 avg300=0.01 total=949980072\nfull avg10=0.00 avg60=0.00 avg300=0.01 total=938536663\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410424943656405
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410424943869675
+      },
+      "totalsUS": {
+        "cpu": 1669634996,
+        "io": 25108840778,
+        "memory": 949980086
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669634996\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.73 avg60=0.66 avg300=0.42 total=25108840778\nfull avg10=0.73 avg60=0.66 avg300=0.41 total=24583427697\n",
+        "memory": "some avg10=0.00 avg60=0.00 avg300=0.01 total=949980086\nfull avg10=0.00 avg60=0.00 avg300=0.01 total=938536677\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410425943759246
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410425943963906
+      },
+      "totalsUS": {
+        "cpu": 1669636834,
+        "io": 25108842269,
+        "memory": 949980086
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669636834\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.60 avg60=0.64 avg300=0.41 total=25108842269\nfull avg10=0.60 avg60=0.63 avg300=0.41 total=24583429188\n",
+        "memory": "some avg10=0.00 avg60=0.00 avg300=0.01 total=949980086\nfull avg10=0.00 avg60=0.00 avg300=0.01 total=938536677\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410426943755158
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410426943976538
+      },
+      "totalsUS": {
+        "cpu": 1669637695,
+        "io": 25108843359,
+        "memory": 949980086
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669637695\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.60 avg60=0.64 avg300=0.41 total=25108843359\nfull avg10=0.60 avg60=0.63 avg300=0.41 total=24583430279\n",
+        "memory": "some avg10=0.00 avg60=0.00 avg300=0.01 total=949980086\nfull avg10=0.00 avg60=0.00 avg300=0.01 total=938536677\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410427943751679
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410427943950170
+      },
+      "totalsUS": {
+        "cpu": 1669638961,
+        "io": 25108843359,
+        "memory": 949980086
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669638961\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.49 avg60=0.61 avg300=0.41 total=25108843359\nfull avg10=0.49 avg60=0.61 avg300=0.41 total=24583430279\n",
+        "memory": "some avg10=0.00 avg60=0.00 avg300=0.01 total=949980086\nfull avg10=0.00 avg60=0.00 avg300=0.01 total=938536677\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410428943942233
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410428944177503
+      },
+      "totalsUS": {
+        "cpu": 1669639849,
+        "io": 25108843359,
+        "memory": 949980086
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669639849\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.49 avg60=0.61 avg300=0.41 total=25108843359\nfull avg10=0.49 avg60=0.61 avg300=0.41 total=24583430279\n",
+        "memory": "some avg10=0.00 avg60=0.00 avg300=0.01 total=949980086\nfull avg10=0.00 avg60=0.00 avg300=0.01 total=938536677\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410429943970265
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410429944232205
+      },
+      "totalsUS": {
+        "cpu": 1669640689,
+        "io": 25108843359,
+        "memory": 949980086
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669640689\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.40 avg60=0.59 avg300=0.41 total=25108843359\nfull avg10=0.40 avg60=0.59 avg300=0.40 total=24583430279\n",
+        "memory": "some avg10=0.00 avg60=0.00 avg300=0.01 total=949980086\nfull avg10=0.00 avg60=0.00 avg300=0.01 total=938536677\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410430943653728
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410430943847568
+      },
+      "totalsUS": {
+        "cpu": 1669642539,
+        "io": 25108843359,
+        "memory": 949980086
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669642539\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.40 avg60=0.59 avg300=0.41 total=25108843359\nfull avg10=0.40 avg60=0.59 avg300=0.40 total=24583430279\n",
+        "memory": "some avg10=0.00 avg60=0.00 avg300=0.01 total=949980086\nfull avg10=0.00 avg60=0.00 avg300=0.01 total=938536677\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410431943758344
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410431943958334
+      },
+      "totalsUS": {
+        "cpu": 1669643968,
+        "io": 25108843359,
+        "memory": 949980086
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669643968\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.33 avg60=0.57 avg300=0.41 total=25108843359\nfull avg10=0.33 avg60=0.57 avg300=0.40 total=24583430279\n",
+        "memory": "some avg10=0.00 avg60=0.00 avg300=0.01 total=949980086\nfull avg10=0.00 avg60=0.00 avg300=0.01 total=938536677\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410432943752477
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410432943948198
+      },
+      "totalsUS": {
+        "cpu": 1669644771,
+        "io": 25108843359,
+        "memory": 949980086
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669644771\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.33 avg60=0.57 avg300=0.41 total=25108843359\nfull avg10=0.33 avg60=0.57 avg300=0.40 total=24583430279\n",
+        "memory": "some avg10=0.00 avg60=0.00 avg300=0.01 total=949980086\nfull avg10=0.00 avg60=0.00 avg300=0.01 total=938536677\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410433943763844
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410433943969294
+      },
+      "totalsUS": {
+        "cpu": 1669645617,
+        "io": 25108843359,
+        "memory": 949980086
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669645617\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.27 avg60=0.56 avg300=0.40 total=25108843359\nfull avg10=0.27 avg60=0.55 avg300=0.40 total=24583430279\n",
+        "memory": "some avg10=0.00 avg60=0.00 avg300=0.01 total=949980086\nfull avg10=0.00 avg60=0.00 avg300=0.01 total=938536677\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410434943757640
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410434943958520
+      },
+      "totalsUS": {
+        "cpu": 1669646488,
+        "io": 25108843359,
+        "memory": 949980086
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669646488\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.27 avg60=0.56 avg300=0.40 total=25108843359\nfull avg10=0.27 avg60=0.55 avg300=0.40 total=24583430279\n",
+        "memory": "some avg10=0.00 avg60=0.00 avg300=0.01 total=949980086\nfull avg10=0.00 avg60=0.00 avg300=0.01 total=938536677\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410435943650757
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410435943827937
+      },
+      "totalsUS": {
+        "cpu": 1669647484,
+        "io": 25108843359,
+        "memory": 949980086
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669647484\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.22 avg60=0.54 avg300=0.40 total=25108843359\nfull avg10=0.22 avg60=0.54 avg300=0.39 total=24583430279\n",
+        "memory": "some avg10=0.00 avg60=0.00 avg300=0.01 total=949980086\nfull avg10=0.00 avg60=0.00 avg300=0.01 total=938536677\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410436943749966
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410436943935876
+      },
+      "totalsUS": {
+        "cpu": 1669648358,
+        "io": 25108843359,
+        "memory": 949980086
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669648358\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.22 avg60=0.54 avg300=0.40 total=25108843359\nfull avg10=0.22 avg60=0.54 avg300=0.39 total=24583430279\n",
+        "memory": "some avg10=0.00 avg60=0.00 avg300=0.01 total=949980086\nfull avg10=0.00 avg60=0.00 avg300=0.01 total=938536677\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410437943652515
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410437943857066
+      },
+      "totalsUS": {
+        "cpu": 1669649075,
+        "io": 25108843359,
+        "memory": 949980086
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669649075\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.18 avg60=0.52 avg300=0.40 total=25108843359\nfull avg10=0.18 avg60=0.52 avg300=0.39 total=24583430279\n",
+        "memory": "some avg10=0.00 avg60=0.00 avg300=0.01 total=949980086\nfull avg10=0.00 avg60=0.00 avg300=0.01 total=938536677\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410438943753825
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410438943958775
+      },
+      "totalsUS": {
+        "cpu": 1669649642,
+        "io": 25108843359,
+        "memory": 949980086
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669649642\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.18 avg60=0.52 avg300=0.40 total=25108843359\nfull avg10=0.18 avg60=0.52 avg300=0.39 total=24583430279\n",
+        "memory": "some avg10=0.00 avg60=0.00 avg300=0.01 total=949980086\nfull avg10=0.00 avg60=0.00 avg300=0.01 total=938536677\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410439943905234
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410439944128474
+      },
+      "totalsUS": {
+        "cpu": 1669650651,
+        "io": 25108999205,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669650651\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.14 avg60=0.50 avg300=0.39 total=25108999205\nfull avg10=0.14 avg60=0.50 avg300=0.39 total=24583583613\n",
+        "memory": "some avg10=0.00 avg60=0.00 avg300=0.01 total=950000895\nfull avg10=0.00 avg60=0.00 avg300=0.01 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410440943758475
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410440943963015
+      },
+      "totalsUS": {
+        "cpu": 1669651541,
+        "io": 25108999205,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669651541\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.14 avg60=0.50 avg300=0.39 total=25108999205\nfull avg10=0.14 avg60=0.50 avg300=0.39 total=24583583613\n",
+        "memory": "some avg10=0.00 avg60=0.00 avg300=0.01 total=950000895\nfull avg10=0.00 avg60=0.00 avg300=0.01 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410441943896527
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410441944120348
+      },
+      "totalsUS": {
+        "cpu": 1669652903,
+        "io": 25108999485,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669652903\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=1.38 avg60=0.71 avg300=0.44 total=25108999485\nfull avg10=1.38 avg60=0.71 avg300=0.43 total=24583583884\n",
+        "memory": "some avg10=0.18 avg60=0.03 avg300=0.02 total=950000895\nfull avg10=0.18 avg60=0.03 avg300=0.02 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410442943752678
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410442943969119
+      },
+      "totalsUS": {
+        "cpu": 1669653707,
+        "io": 25108999485,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669653707\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=1.38 avg60=0.71 avg300=0.44 total=25108999485\nfull avg10=1.38 avg60=0.71 avg300=0.43 total=24583583884\n",
+        "memory": "some avg10=0.18 avg60=0.03 avg300=0.02 total=950000895\nfull avg10=0.18 avg60=0.03 avg300=0.02 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410443943760712
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410443943968332
+      },
+      "totalsUS": {
+        "cpu": 1669654510,
+        "io": 25108999523,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669654510\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=1.13 avg60=0.69 avg300=0.44 total=25108999523\nfull avg10=1.13 avg60=0.69 avg300=0.43 total=24583583922\n",
+        "memory": "some avg10=0.14 avg60=0.03 avg300=0.02 total=950000895\nfull avg10=0.14 avg60=0.03 avg300=0.02 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410444943653216
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410444943841296
+      },
+      "totalsUS": {
+        "cpu": 1669655624,
+        "io": 25108999523,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669655624\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=1.13 avg60=0.69 avg300=0.44 total=25108999523\nfull avg10=1.13 avg60=0.69 avg300=0.43 total=24583583922\n",
+        "memory": "some avg10=0.14 avg60=0.03 avg300=0.02 total=950000895\nfull avg10=0.14 avg60=0.03 avg300=0.02 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410445943760539
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410445943965629
+      },
+      "totalsUS": {
+        "cpu": 1669656747,
+        "io": 25108999536,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669656747\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.93 avg60=0.67 avg300=0.43 total=25108999536\nfull avg10=0.93 avg60=0.67 avg300=0.43 total=24583583935\n",
+        "memory": "some avg10=0.12 avg60=0.03 avg300=0.01 total=950000895\nfull avg10=0.12 avg60=0.03 avg300=0.01 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410446943659475
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410446943866005
+      },
+      "totalsUS": {
+        "cpu": 1669657880,
+        "io": 25108999536,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669657880\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.93 avg60=0.67 avg300=0.43 total=25108999536\nfull avg10=0.93 avg60=0.67 avg300=0.43 total=24583583935\n",
+        "memory": "some avg10=0.12 avg60=0.03 avg300=0.01 total=950000895\nfull avg10=0.12 avg60=0.03 avg300=0.01 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410447943756982
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410447943977002
+      },
+      "totalsUS": {
+        "cpu": 1669658619,
+        "io": 25109000395,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669658619\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.76 avg60=0.64 avg300=0.43 total=25109000395\nfull avg10=0.76 avg60=0.64 avg300=0.42 total=24583584777\n",
+        "memory": "some avg10=0.09 avg60=0.03 avg300=0.01 total=950000895\nfull avg10=0.09 avg60=0.03 avg300=0.01 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410448943750188
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410448943920769
+      },
+      "totalsUS": {
+        "cpu": 1669659448,
+        "io": 25109000395,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669659448\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.76 avg60=0.64 avg300=0.43 total=25109000395\nfull avg10=0.76 avg60=0.64 avg300=0.42 total=24583584777\n",
+        "memory": "some avg10=0.09 avg60=0.03 avg300=0.01 total=950000895\nfull avg10=0.09 avg60=0.03 avg300=0.01 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410449943754725
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410449943962345
+      },
+      "totalsUS": {
+        "cpu": 1669660341,
+        "io": 25109000395,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669660341\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.62 avg60=0.62 avg300=0.43 total=25109000395\nfull avg10=0.62 avg60=0.62 avg300=0.42 total=24583584777\n",
+        "memory": "some avg10=0.08 avg60=0.02 avg300=0.01 total=950000895\nfull avg10=0.08 avg60=0.02 avg300=0.01 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410450943891033
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410450944118354
+      },
+      "totalsUS": {
+        "cpu": 1669661055,
+        "io": 25109000395,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669661055\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.62 avg60=0.62 avg300=0.43 total=25109000395\nfull avg10=0.62 avg60=0.62 avg300=0.42 total=24583584777\n",
+        "memory": "some avg10=0.08 avg60=0.02 avg300=0.01 total=950000895\nfull avg10=0.08 avg60=0.02 avg300=0.01 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410451943651331
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410451943847341
+      },
+      "totalsUS": {
+        "cpu": 1669662638,
+        "io": 25109000395,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669662638\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.51 avg60=0.60 avg300=0.42 total=25109000395\nfull avg10=0.51 avg60=0.60 avg300=0.42 total=24583584777\n",
+        "memory": "some avg10=0.06 avg60=0.02 avg300=0.01 total=950000895\nfull avg10=0.06 avg60=0.02 avg300=0.01 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410452943761011
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410452943978481
+      },
+      "totalsUS": {
+        "cpu": 1669663352,
+        "io": 25109000395,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669663352\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.51 avg60=0.60 avg300=0.42 total=25109000395\nfull avg10=0.51 avg60=0.60 avg300=0.42 total=24583584777\n",
+        "memory": "some avg10=0.06 avg60=0.02 avg300=0.01 total=950000895\nfull avg10=0.06 avg60=0.02 avg300=0.01 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410453943892761
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410453944115311
+      },
+      "totalsUS": {
+        "cpu": 1669664025,
+        "io": 25109000395,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669664025\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.41 avg60=0.58 avg300=0.42 total=25109000395\nfull avg10=0.41 avg60=0.58 avg300=0.41 total=24583584777\n",
+        "memory": "some avg10=0.05 avg60=0.02 avg300=0.01 total=950000895\nfull avg10=0.05 avg60=0.02 avg300=0.01 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410454943702873
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410454943915323
+      },
+      "totalsUS": {
+        "cpu": 1669664674,
+        "io": 25109000395,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669664674\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.41 avg60=0.58 avg300=0.42 total=25109000395\nfull avg10=0.41 avg60=0.58 avg300=0.41 total=24583584777\n",
+        "memory": "some avg10=0.05 avg60=0.02 avg300=0.01 total=950000895\nfull avg10=0.05 avg60=0.02 avg300=0.01 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410455943732004
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410455943896404
+      },
+      "totalsUS": {
+        "cpu": 1669665831,
+        "io": 25109000395,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669665831\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.34 avg60=0.56 avg300=0.42 total=25109000395\nfull avg10=0.34 avg60=0.56 avg300=0.41 total=24583584777\n",
+        "memory": "some avg10=0.04 avg60=0.02 avg300=0.01 total=950000895\nfull avg10=0.04 avg60=0.02 avg300=0.01 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410456943662857
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410456943853048
+      },
+      "totalsUS": {
+        "cpu": 1669667924,
+        "io": 25109000395,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669667924\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.34 avg60=0.56 avg300=0.42 total=25109000395\nfull avg10=0.34 avg60=0.56 avg300=0.41 total=24583584777\n",
+        "memory": "some avg10=0.04 avg60=0.02 avg300=0.01 total=950000895\nfull avg10=0.04 avg60=0.02 avg300=0.01 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410457943752111
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410457943921331
+      },
+      "totalsUS": {
+        "cpu": 1669668620,
+        "io": 25109000395,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669668620\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.27 avg60=0.54 avg300=0.41 total=25109000395\nfull avg10=0.27 avg60=0.54 avg300=0.41 total=24583584777\n",
+        "memory": "some avg10=0.03 avg60=0.02 avg300=0.01 total=950000895\nfull avg10=0.03 avg60=0.02 avg300=0.01 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410458943757665
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410458943965725
+      },
+      "totalsUS": {
+        "cpu": 1669669208,
+        "io": 25109000593,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669669208\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.27 avg60=0.54 avg300=0.41 total=25109000593\nfull avg10=0.27 avg60=0.54 avg300=0.41 total=24583584924\n",
+        "memory": "some avg10=0.03 avg60=0.02 avg300=0.01 total=950000895\nfull avg10=0.03 avg60=0.02 avg300=0.01 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410459943873941
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410459944098941
+      },
+      "totalsUS": {
+        "cpu": 1669670300,
+        "io": 25109000593,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669670300\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.22 avg60=0.53 avg300=0.41 total=25109000593\nfull avg10=0.22 avg60=0.53 avg300=0.41 total=24583584924\n",
+        "memory": "some avg10=0.02 avg60=0.02 avg300=0.01 total=950000895\nfull avg10=0.02 avg60=0.02 avg300=0.01 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410460943651125
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410460943847655
+      },
+      "totalsUS": {
+        "cpu": 1669671185,
+        "io": 25109000593,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669671185\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.22 avg60=0.53 avg300=0.41 total=25109000593\nfull avg10=0.22 avg60=0.53 avg300=0.41 total=24583584924\n",
+        "memory": "some avg10=0.02 avg60=0.02 avg300=0.01 total=950000895\nfull avg10=0.02 avg60=0.02 avg300=0.01 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410461943649571
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410461943824481
+      },
+      "totalsUS": {
+        "cpu": 1669671758,
+        "io": 25109000593,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669671758\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.18 avg60=0.51 avg300=0.41 total=25109000593\nfull avg10=0.18 avg60=0.51 avg300=0.40 total=24583584924\n",
+        "memory": "some avg10=0.02 avg60=0.02 avg300=0.01 total=950000895\nfull avg10=0.02 avg60=0.02 avg300=0.01 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410462943755078
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410462943959328
+      },
+      "totalsUS": {
+        "cpu": 1669672866,
+        "io": 25109000593,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669672866\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.18 avg60=0.51 avg300=0.41 total=25109000593\nfull avg10=0.18 avg60=0.51 avg300=0.40 total=24583584924\n",
+        "memory": "some avg10=0.02 avg60=0.02 avg300=0.01 total=950000895\nfull avg10=0.02 avg60=0.02 avg300=0.01 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410463943861025
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410463944104425
+      },
+      "totalsUS": {
+        "cpu": 1669674006,
+        "io": 25109000593,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669674006\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.15 avg60=0.49 avg300=0.40 total=25109000593\nfull avg10=0.15 avg60=0.49 avg300=0.40 total=24583584924\n",
+        "memory": "some avg10=0.01 avg60=0.02 avg300=0.01 total=950000895\nfull avg10=0.01 avg60=0.02 avg300=0.01 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410464943899683
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410464944127743
+      },
+      "totalsUS": {
+        "cpu": 1669675253,
+        "io": 25109000593,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669675253\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.15 avg60=0.49 avg300=0.40 total=25109000593\nfull avg10=0.15 avg60=0.49 avg300=0.40 total=24583584924\n",
+        "memory": "some avg10=0.01 avg60=0.02 avg300=0.01 total=950000895\nfull avg10=0.01 avg60=0.02 avg300=0.01 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410465943943131
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410465944166721
+      },
+      "totalsUS": {
+        "cpu": 1669676566,
+        "io": 25109000593,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669676566\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.12 avg60=0.47 avg300=0.40 total=25109000593\nfull avg10=0.12 avg60=0.47 avg300=0.40 total=24583584924\n",
+        "memory": "some avg10=0.01 avg60=0.02 avg300=0.01 total=950000895\nfull avg10=0.01 avg60=0.02 avg300=0.01 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410466943853971
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410466944080521
+      },
+      "totalsUS": {
+        "cpu": 1669677537,
+        "io": 25109000593,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669677537\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.12 avg60=0.47 avg300=0.40 total=25109000593\nfull avg10=0.12 avg60=0.47 avg300=0.40 total=24583584924\n",
+        "memory": "some avg10=0.01 avg60=0.02 avg300=0.01 total=950000895\nfull avg10=0.01 avg60=0.02 avg300=0.01 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410467943759741
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410467943964061
+      },
+      "totalsUS": {
+        "cpu": 1669679100,
+        "io": 25109000593,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669679100\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.10 avg60=0.46 avg300=0.40 total=25109000593\nfull avg10=0.10 avg60=0.46 avg300=0.39 total=24583584924\n",
+        "memory": "some avg10=0.01 avg60=0.02 avg300=0.01 total=950000895\nfull avg10=0.01 avg60=0.02 avg300=0.01 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410468943754352
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410468943956412
+      },
+      "totalsUS": {
+        "cpu": 1669679689,
+        "io": 25109000593,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669679689\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.10 avg60=0.46 avg300=0.40 total=25109000593\nfull avg10=0.10 avg60=0.46 avg300=0.39 total=24583584924\n",
+        "memory": "some avg10=0.01 avg60=0.02 avg300=0.01 total=950000895\nfull avg10=0.01 avg60=0.02 avg300=0.01 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410469943664373
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410469943857064
+      },
+      "totalsUS": {
+        "cpu": 1669680614,
+        "io": 25109000593,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669680614\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.08 avg60=0.44 avg300=0.40 total=25109000593\nfull avg10=0.08 avg60=0.44 avg300=0.39 total=24583584924\n",
+        "memory": "some avg10=0.00 avg60=0.01 avg300=0.01 total=950000895\nfull avg10=0.00 avg60=0.01 avg300=0.01 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410470943779686
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410470943995156
+      },
+      "totalsUS": {
+        "cpu": 1669681592,
+        "io": 25109000593,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669681592\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.08 avg60=0.44 avg300=0.40 total=25109000593\nfull avg10=0.08 avg60=0.44 avg300=0.39 total=24583584924\n",
+        "memory": "some avg10=0.00 avg60=0.01 avg300=0.01 total=950000895\nfull avg10=0.00 avg60=0.01 avg300=0.01 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410471943769879
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410471943974280
+      },
+      "totalsUS": {
+        "cpu": 1669682746,
+        "io": 25109000593,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669682746\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.06 avg60=0.43 avg300=0.39 total=25109000593\nfull avg10=0.06 avg60=0.43 avg300=0.39 total=24583584924\n",
+        "memory": "some avg10=0.00 avg60=0.01 avg300=0.01 total=950000895\nfull avg10=0.00 avg60=0.01 avg300=0.01 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410472943671622
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410472943910472
+      },
+      "totalsUS": {
+        "cpu": 1669683776,
+        "io": 25109018200,
+        "memory": 950000895
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669683776\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.06 avg60=0.43 avg300=0.39 total=25109018200\nfull avg10=0.06 avg60=0.43 avg300=0.39 total=24583602422\n",
+        "memory": "some avg10=0.00 avg60=0.01 avg300=0.01 total=950000895\nfull avg10=0.00 avg60=0.01 avg300=0.01 total=938557454\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410473943649577
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410473943807207
+      },
+      "totalsUS": {
+        "cpu": 1669684505,
+        "io": 25109046398,
+        "memory": 950022581
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669684505\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.41 avg60=0.48 avg300=0.40 total=25109046398\nfull avg10=0.41 avg60=0.48 avg300=0.40 total=24583630559\n",
+        "memory": "some avg10=0.18 avg60=0.05 avg300=0.02 total=950022581\nfull avg10=0.18 avg60=0.05 avg300=0.02 total=938579102\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410474943652752
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410474943829942
+      },
+      "totalsUS": {
+        "cpu": 1669685721,
+        "io": 25109046398,
+        "memory": 950022581
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669685721\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.41 avg60=0.48 avg300=0.40 total=25109046398\nfull avg10=0.41 avg60=0.48 avg300=0.40 total=24583630559\n",
+        "memory": "some avg10=0.18 avg60=0.05 avg300=0.02 total=950022581\nfull avg10=0.18 avg60=0.05 avg300=0.02 total=938579102\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410475944020857
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410475944235417
+      },
+      "totalsUS": {
+        "cpu": 1669686232,
+        "io": 25109046398,
+        "memory": 950022581
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669686232\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.34 avg60=0.46 avg300=0.40 total=25109046398\nfull avg10=0.34 avg60=0.46 avg300=0.40 total=24583630559\n",
+        "memory": "some avg10=0.15 avg60=0.04 avg300=0.01 total=950022581\nfull avg10=0.15 avg60=0.04 avg300=0.01 total=938579102\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410476944019554
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410476944232604
+      },
+      "totalsUS": {
+        "cpu": 1669686950,
+        "io": 25109046398,
+        "memory": 950022581
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669686950\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.34 avg60=0.46 avg300=0.40 total=25109046398\nfull avg10=0.34 avg60=0.46 avg300=0.40 total=24583630559\n",
+        "memory": "some avg10=0.15 avg60=0.04 avg300=0.01 total=950022581\nfull avg10=0.15 avg60=0.04 avg300=0.01 total=938579102\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410477943993300
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410477944216380
+      },
+      "totalsUS": {
+        "cpu": 1669688202,
+        "io": 25109046398,
+        "memory": 950022581
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669688202\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.28 avg60=0.45 avg300=0.40 total=25109046398\nfull avg10=0.28 avg60=0.45 avg300=0.39 total=24583630559\n",
+        "memory": "some avg10=0.12 avg60=0.04 avg300=0.01 total=950022581\nfull avg10=0.12 avg60=0.04 avg300=0.01 total=938579102\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410478943942237
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410478944181788
+      },
+      "totalsUS": {
+        "cpu": 1669688827,
+        "io": 25109046398,
+        "memory": 950022581
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669688827\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.28 avg60=0.45 avg300=0.40 total=25109046398\nfull avg10=0.28 avg60=0.45 avg300=0.39 total=24583630559\n",
+        "memory": "some avg10=0.12 avg60=0.04 avg300=0.01 total=950022581\nfull avg10=0.12 avg60=0.04 avg300=0.01 total=938579102\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410479943851936
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410479944161466
+      },
+      "totalsUS": {
+        "cpu": 1669689312,
+        "io": 25109068021,
+        "memory": 950022581
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669689312\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.22 avg60=0.43 avg300=0.40 total=25109068021\nfull avg10=0.22 avg60=0.43 avg300=0.39 total=24583652064\n",
+        "memory": "some avg10=0.10 avg60=0.04 avg300=0.01 total=950022581\nfull avg10=0.10 avg60=0.04 avg300=0.01 total=938579102\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410480943714514
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410480943923534
+      },
+      "totalsUS": {
+        "cpu": 1669689861,
+        "io": 25109068021,
+        "memory": 950022581
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669689861\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.22 avg60=0.43 avg300=0.40 total=25109068021\nfull avg10=0.22 avg60=0.43 avg300=0.39 total=24583652064\n",
+        "memory": "some avg10=0.10 avg60=0.04 avg300=0.01 total=950022581\nfull avg10=0.10 avg60=0.04 avg300=0.01 total=938579102\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410481943905233
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410481944221264
+      },
+      "totalsUS": {
+        "cpu": 1669690584,
+        "io": 25109068021,
+        "memory": 950022581
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669690584\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.36 avg60=0.45 avg300=0.40 total=25109068021\nfull avg10=0.36 avg60=0.45 avg300=0.39 total=24583652064\n",
+        "memory": "some avg10=0.08 avg60=0.04 avg300=0.01 total=950022581\nfull avg10=0.08 avg60=0.04 avg300=0.01 total=938579102\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410482943651983
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410482943848463
+      },
+      "totalsUS": {
+        "cpu": 1669691915,
+        "io": 25109068021,
+        "memory": 950022581
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669691915\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.36 avg60=0.45 avg300=0.40 total=25109068021\nfull avg10=0.36 avg60=0.45 avg300=0.39 total=24583652064\n",
+        "memory": "some avg10=0.08 avg60=0.04 avg300=0.01 total=950022581\nfull avg10=0.08 avg60=0.04 avg300=0.01 total=938579102\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410483943899964
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410483944214204
+      },
+      "totalsUS": {
+        "cpu": 1669692770,
+        "io": 25109068021,
+        "memory": 950022581
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669692770\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.30 avg60=0.44 avg300=0.40 total=25109068021\nfull avg10=0.30 avg60=0.44 avg300=0.39 total=24583652064\n",
+        "memory": "some avg10=0.06 avg60=0.04 avg300=0.01 total=950022581\nfull avg10=0.06 avg60=0.04 avg300=0.01 total=938579102\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410484944035646
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410484944331966
+      },
+      "totalsUS": {
+        "cpu": 1669693546,
+        "io": 25109099923,
+        "memory": 950037361
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669693546\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.30 avg60=0.44 avg300=0.40 total=25109099923\nfull avg10=0.30 avg60=0.44 avg300=0.39 total=24583683871\n",
+        "memory": "some avg10=0.06 avg60=0.04 avg300=0.01 total=950037361\nfull avg10=0.06 avg60=0.04 avg300=0.01 total=938593847\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410485943871628
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410485944103868
+      },
+      "totalsUS": {
+        "cpu": 1669694556,
+        "io": 25109099923,
+        "memory": 950037361
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669694556\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.42 avg60=0.45 avg300=0.40 total=25109099923\nfull avg10=0.42 avg60=0.45 avg300=0.40 total=24583683871\n",
+        "memory": "some avg10=0.05 avg60=0.04 avg300=0.01 total=950037361\nfull avg10=0.05 avg60=0.04 avg300=0.01 total=938593847\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410486943951401
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410486944177541
+      },
+      "totalsUS": {
+        "cpu": 1669695588,
+        "io": 25109099923,
+        "memory": 950037361
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669695588\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.42 avg60=0.45 avg300=0.40 total=25109099923\nfull avg10=0.42 avg60=0.45 avg300=0.40 total=24583683871\n",
+        "memory": "some avg10=0.05 avg60=0.04 avg300=0.01 total=950037361\nfull avg10=0.05 avg60=0.04 avg300=0.01 total=938593847\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410487943973395
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410487944157885
+      },
+      "totalsUS": {
+        "cpu": 1669696903,
+        "io": 25109099923,
+        "memory": 950037361
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669696903\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.35 avg60=0.44 avg300=0.40 total=25109099923\nfull avg10=0.35 avg60=0.44 avg300=0.39 total=24583683871\n",
+        "memory": "some avg10=0.04 avg60=0.03 avg300=0.01 total=950037361\nfull avg10=0.04 avg60=0.03 avg300=0.01 total=938593847\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410488943673238
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410488943880598
+      },
+      "totalsUS": {
+        "cpu": 1669697806,
+        "io": 25109099923,
+        "memory": 950037361
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669697806\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.35 avg60=0.44 avg300=0.40 total=25109099923\nfull avg10=0.35 avg60=0.44 avg300=0.39 total=24583683871\n",
+        "memory": "some avg10=0.04 avg60=0.03 avg300=0.01 total=950037361\nfull avg10=0.04 avg60=0.03 avg300=0.01 total=938593847\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410489943759542
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410489943965622
+      },
+      "totalsUS": {
+        "cpu": 1669698473,
+        "io": 25109099923,
+        "memory": 950037361
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669698473\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.28 avg60=0.42 avg300=0.40 total=25109099923\nfull avg10=0.28 avg60=0.42 avg300=0.39 total=24583683871\n",
+        "memory": "some avg10=0.03 avg60=0.03 avg300=0.01 total=950037361\nfull avg10=0.03 avg60=0.03 avg300=0.01 total=938593847\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410490943917399
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410490944142769
+      },
+      "totalsUS": {
+        "cpu": 1669699253,
+        "io": 25109099923,
+        "memory": 950037361
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669699253\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.28 avg60=0.42 avg300=0.40 total=25109099923\nfull avg10=0.28 avg60=0.42 avg300=0.39 total=24583683871\n",
+        "memory": "some avg10=0.03 avg60=0.03 avg300=0.01 total=950037361\nfull avg10=0.03 avg60=0.03 avg300=0.01 total=938593847\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410491943912675
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410491944137085
+      },
+      "totalsUS": {
+        "cpu": 1669700232,
+        "io": 25109099923,
+        "memory": 950037361
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669700232\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.23 avg60=0.41 avg300=0.39 total=25109099923\nfull avg10=0.23 avg60=0.41 avg300=0.39 total=24583683871\n",
+        "memory": "some avg10=0.03 avg60=0.03 avg300=0.01 total=950037361\nfull avg10=0.03 avg60=0.03 avg300=0.01 total=938593847\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410492943674772
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410492943922652
+      },
+      "totalsUS": {
+        "cpu": 1669701121,
+        "io": 25109099923,
+        "memory": 950037361
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669701121\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.23 avg60=0.41 avg300=0.39 total=25109099923\nfull avg10=0.23 avg60=0.41 avg300=0.39 total=24583683871\n",
+        "memory": "some avg10=0.03 avg60=0.03 avg300=0.01 total=950037361\nfull avg10=0.03 avg60=0.03 avg300=0.01 total=938593847\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410493943911460
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410493944135800
+      },
+      "totalsUS": {
+        "cpu": 1669702459,
+        "io": 25109099923,
+        "memory": 950037361
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669702459\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.19 avg60=0.40 avg300=0.39 total=25109099923\nfull avg10=0.19 avg60=0.40 avg300=0.38 total=24583683871\n",
+        "memory": "some avg10=0.02 avg60=0.03 avg300=0.01 total=950037361\nfull avg10=0.02 avg60=0.03 avg300=0.01 total=938593847\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410494943761857
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410494943970088
+      },
+      "totalsUS": {
+        "cpu": 1669703364,
+        "io": 25109099923,
+        "memory": 950037361
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669703364\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.19 avg60=0.40 avg300=0.39 total=25109099923\nfull avg10=0.19 avg60=0.40 avg300=0.38 total=24583683871\n",
+        "memory": "some avg10=0.02 avg60=0.03 avg300=0.01 total=950037361\nfull avg10=0.02 avg60=0.03 avg300=0.01 total=938593847\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410495943761346
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410495943967147
+      },
+      "totalsUS": {
+        "cpu": 1669704590,
+        "io": 25109099923,
+        "memory": 950037361
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669704590\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.15 avg60=0.38 avg300=0.39 total=25109099923\nfull avg10=0.15 avg60=0.38 avg300=0.38 total=24583683871\n",
+        "memory": "some avg10=0.01 avg60=0.03 avg300=0.01 total=950037361\nfull avg10=0.01 avg60=0.03 avg300=0.01 total=938593847\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410496943873726
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410496944093986
+      },
+      "totalsUS": {
+        "cpu": 1669705585,
+        "io": 25109099923,
+        "memory": 950037361
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669705585\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.15 avg60=0.38 avg300=0.39 total=25109099923\nfull avg10=0.15 avg60=0.38 avg300=0.38 total=24583683871\n",
+        "memory": "some avg10=0.01 avg60=0.03 avg300=0.01 total=950037361\nfull avg10=0.01 avg60=0.03 avg300=0.01 total=938593847\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410497943915166
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410497944142336
+      },
+      "totalsUS": {
+        "cpu": 1669706597,
+        "io": 25109099923,
+        "memory": 950037361
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669706597\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.12 avg60=0.37 avg300=0.38 total=25109099923\nfull avg10=0.12 avg60=0.37 avg300=0.38 total=24583683871\n",
+        "memory": "some avg10=0.01 avg60=0.03 avg300=0.01 total=950037361\nfull avg10=0.01 avg60=0.03 avg300=0.01 total=938593847\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410498943753077
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410498943956807
+      },
+      "totalsUS": {
+        "cpu": 1669708648,
+        "io": 25109099923,
+        "memory": 950037361
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669708648\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.12 avg60=0.37 avg300=0.38 total=25109099923\nfull avg10=0.12 avg60=0.37 avg300=0.38 total=24583683871\n",
+        "memory": "some avg10=0.01 avg60=0.03 avg300=0.01 total=950037361\nfull avg10=0.01 avg60=0.03 avg300=0.01 total=938593847\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410499943924279
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410499944147339
+      },
+      "totalsUS": {
+        "cpu": 1669709402,
+        "io": 25109099932,
+        "memory": 950037361
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669709402\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.10 avg60=0.36 avg300=0.38 total=25109099932\nfull avg10=0.10 avg60=0.36 avg300=0.38 total=24583683880\n",
+        "memory": "some avg10=0.01 avg60=0.02 avg300=0.01 total=950037361\nfull avg10=0.01 avg60=0.02 avg300=0.01 total=938593847\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410500943736052
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410500943944592
+      },
+      "totalsUS": {
+        "cpu": 1669710078,
+        "io": 25109099932,
+        "memory": 950037361
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669710078\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.10 avg60=0.36 avg300=0.38 total=25109099932\nfull avg10=0.10 avg60=0.36 avg300=0.38 total=24583683880\n",
+        "memory": "some avg10=0.01 avg60=0.02 avg300=0.01 total=950037361\nfull avg10=0.01 avg60=0.02 avg300=0.01 total=938593847\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410501943734803
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410501943970203
+      },
+      "totalsUS": {
+        "cpu": 1669711135,
+        "io": 25109099932,
+        "memory": 950037361
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669711135\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.08 avg60=0.35 avg300=0.38 total=25109099932\nfull avg10=0.08 avg60=0.35 avg300=0.37 total=24583683880\n",
+        "memory": "some avg10=0.01 avg60=0.02 avg300=0.01 total=950037361\nfull avg10=0.01 avg60=0.02 avg300=0.01 total=938593847\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410502943757527
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410502943976667
+      },
+      "totalsUS": {
+        "cpu": 1669712310,
+        "io": 25109099932,
+        "memory": 950037361
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669712310\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.08 avg60=0.35 avg300=0.38 total=25109099932\nfull avg10=0.08 avg60=0.35 avg300=0.37 total=24583683880\n",
+        "memory": "some avg10=0.01 avg60=0.02 avg300=0.01 total=950037361\nfull avg10=0.01 avg60=0.02 avg300=0.01 total=938593847\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410503943918461
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410503944139551
+      },
+      "totalsUS": {
+        "cpu": 1669714079,
+        "io": 25109163345,
+        "memory": 950045217
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669714079\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.61 avg60=0.43 avg300=0.40 total=25109163345\nfull avg10=0.61 avg60=0.43 avg300=0.39 total=24583746923\n",
+        "memory": "some avg10=0.00 avg60=0.02 avg300=0.01 total=950045217\nfull avg10=0.00 avg60=0.02 avg300=0.01 total=938601666\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410504943664356
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410504943859496
+      },
+      "totalsUS": {
+        "cpu": 1669714615,
+        "io": 25109166674,
+        "memory": 950045217
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669714615\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.61 avg60=0.43 avg300=0.40 total=25109166674\nfull avg10=0.61 avg60=0.43 avg300=0.39 total=24583750251\n",
+        "memory": "some avg10=0.00 avg60=0.02 avg300=0.01 total=950045217\nfull avg10=0.00 avg60=0.02 avg300=0.01 total=938601666\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410505943917081
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410505944139681
+      },
+      "totalsUS": {
+        "cpu": 1669715193,
+        "io": 25109166674,
+        "memory": 950045217
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669715193\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.50 avg60=0.42 avg300=0.39 total=25109166674\nfull avg10=0.50 avg60=0.42 avg300=0.39 total=24583750251\n",
+        "memory": "some avg10=0.00 avg60=0.02 avg300=0.01 total=950045217\nfull avg10=0.00 avg60=0.02 avg300=0.01 total=938601666\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410506943759587
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410506943962667
+      },
+      "totalsUS": {
+        "cpu": 1669716027,
+        "io": 25109166674,
+        "memory": 950045217
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669716027\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.50 avg60=0.42 avg300=0.39 total=25109166674\nfull avg10=0.50 avg60=0.42 avg300=0.39 total=24583750251\n",
+        "memory": "some avg10=0.00 avg60=0.02 avg300=0.01 total=950045217\nfull avg10=0.00 avg60=0.02 avg300=0.01 total=938601666\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410507943923683
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410507944144004
+      },
+      "totalsUS": {
+        "cpu": 1669716646,
+        "io": 25109220693,
+        "memory": 950059453
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669716646\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.77 avg60=0.47 avg300=0.40 total=25109220693\nfull avg10=0.77 avg60=0.47 avg300=0.40 total=24583804164\n",
+        "memory": "some avg10=0.00 avg60=0.02 avg300=0.01 total=950059453\nfull avg10=0.00 avg60=0.02 avg300=0.01 total=938615902\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410508943651030
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410508943845120
+      },
+      "totalsUS": {
+        "cpu": 1669717929,
+        "io": 25109220693,
+        "memory": 950059453
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669717929\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.77 avg60=0.47 avg300=0.40 total=25109220693\nfull avg10=0.77 avg60=0.47 avg300=0.40 total=24583804164\n",
+        "memory": "some avg10=0.00 avg60=0.02 avg300=0.01 total=950059453\nfull avg10=0.00 avg60=0.02 avg300=0.01 total=938615902\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410509943758978
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410509943964938
+      },
+      "totalsUS": {
+        "cpu": 1669718848,
+        "io": 25109220693,
+        "memory": 950059453
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669718848\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.63 avg60=0.45 avg300=0.40 total=25109220693\nfull avg10=0.63 avg60=0.45 avg300=0.40 total=24583804164\n",
+        "memory": "some avg10=0.00 avg60=0.02 avg300=0.01 total=950059453\nfull avg10=0.00 avg60=0.02 avg300=0.01 total=938615902\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410510943937438
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410510944160978
+      },
+      "totalsUS": {
+        "cpu": 1669720528,
+        "io": 25109220693,
+        "memory": 950059453
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669720528\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.63 avg60=0.45 avg300=0.40 total=25109220693\nfull avg10=0.63 avg60=0.45 avg300=0.40 total=24583804164\n",
+        "memory": "some avg10=0.00 avg60=0.02 avg300=0.01 total=950059453\nfull avg10=0.00 avg60=0.02 avg300=0.01 total=938615902\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410511943761466
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410511943968637
+      },
+      "totalsUS": {
+        "cpu": 1669722062,
+        "io": 25109220693,
+        "memory": 950059453
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669722062\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.51 avg60=0.44 avg300=0.40 total=25109220693\nfull avg10=0.51 avg60=0.44 avg300=0.39 total=24583804164\n",
+        "memory": "some avg10=0.00 avg60=0.02 avg300=0.01 total=950059453\nfull avg10=0.00 avg60=0.02 avg300=0.01 total=938615902\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410512943671856
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410512943881947
+      },
+      "totalsUS": {
+        "cpu": 1669722899,
+        "io": 25109220693,
+        "memory": 950059453
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669722899\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.51 avg60=0.44 avg300=0.40 total=25109220693\nfull avg10=0.51 avg60=0.44 avg300=0.39 total=24583804164\n",
+        "memory": "some avg10=0.00 avg60=0.02 avg300=0.01 total=950059453\nfull avg10=0.00 avg60=0.02 avg300=0.01 total=938615902\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410513943659845
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410513943834845
+      },
+      "totalsUS": {
+        "cpu": 1669723708,
+        "io": 25109220693,
+        "memory": 950059453
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669723708\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.42 avg60=0.42 avg300=0.40 total=25109220693\nfull avg10=0.42 avg60=0.42 avg300=0.39 total=24583804164\n",
+        "memory": "some avg10=0.00 avg60=0.02 avg300=0.01 total=950059453\nfull avg10=0.00 avg60=0.02 avg300=0.01 total=938615902\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410514943887357
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410514944109487
+      },
+      "totalsUS": {
+        "cpu": 1669724592,
+        "io": 25109220693,
+        "memory": 950059453
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669724592\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.42 avg60=0.42 avg300=0.40 total=25109220693\nfull avg10=0.42 avg60=0.42 avg300=0.39 total=24583804164\n",
+        "memory": "some avg10=0.00 avg60=0.02 avg300=0.01 total=950059453\nfull avg10=0.00 avg60=0.02 avg300=0.01 total=938615902\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410515943722679
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410515943943990
+      },
+      "totalsUS": {
+        "cpu": 1669725356,
+        "io": 25109220693,
+        "memory": 950059453
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669725356\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.34 avg60=0.41 avg300=0.39 total=25109220693\nfull avg10=0.34 avg60=0.41 avg300=0.39 total=24583804164\n",
+        "memory": "some avg10=0.00 avg60=0.02 avg300=0.00 total=950059453\nfull avg10=0.00 avg60=0.02 avg300=0.00 total=938615902\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410516943761251
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410516943981632
+      },
+      "totalsUS": {
+        "cpu": 1669725961,
+        "io": 25109220693,
+        "memory": 950059453
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669725961\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.34 avg60=0.41 avg300=0.39 total=25109220693\nfull avg10=0.34 avg60=0.41 avg300=0.39 total=24583804164\n",
+        "memory": "some avg10=0.00 avg60=0.02 avg300=0.00 total=950059453\nfull avg10=0.00 avg60=0.02 avg300=0.00 total=938615902\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410517943756775
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410517943962326
+      },
+      "totalsUS": {
+        "cpu": 1669726834,
+        "io": 25109220693,
+        "memory": 950059453
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669726834\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.28 avg60=0.40 avg300=0.39 total=25109220693\nfull avg10=0.28 avg60=0.40 avg300=0.38 total=24583804164\n",
+        "memory": "some avg10=0.00 avg60=0.02 avg300=0.00 total=950059453\nfull avg10=0.00 avg60=0.02 avg300=0.00 total=938615902\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410518943865089
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410518944087740
+      },
+      "totalsUS": {
+        "cpu": 1669727646,
+        "io": 25109220693,
+        "memory": 950059453
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669727646\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.28 avg60=0.40 avg300=0.39 total=25109220693\nfull avg10=0.28 avg60=0.40 avg300=0.38 total=24583804164\n",
+        "memory": "some avg10=0.00 avg60=0.02 avg300=0.00 total=950059453\nfull avg10=0.00 avg60=0.02 avg300=0.00 total=938615902\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410519943975865
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410519944219375
+      },
+      "totalsUS": {
+        "cpu": 1669729791,
+        "io": 25109220693,
+        "memory": 950059453
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669729791\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.23 avg60=0.38 avg300=0.39 total=25109220693\nfull avg10=0.23 avg60=0.38 avg300=0.38 total=24583804164\n",
+        "memory": "some avg10=0.00 avg60=0.02 avg300=0.00 total=950059453\nfull avg10=0.00 avg60=0.02 avg300=0.00 total=938615902\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410520943946339
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410520944170229
+      },
+      "totalsUS": {
+        "cpu": 1669730528,
+        "io": 25109220693,
+        "memory": 950059453
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669730528\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.23 avg60=0.38 avg300=0.39 total=25109220693\nfull avg10=0.23 avg60=0.38 avg300=0.38 total=24583804164\n",
+        "memory": "some avg10=0.00 avg60=0.02 avg300=0.00 total=950059453\nfull avg10=0.00 avg60=0.02 avg300=0.00 total=938615902\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410521943755884
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410521943960394
+      },
+      "totalsUS": {
+        "cpu": 1669731482,
+        "io": 25109220693,
+        "memory": 950059453
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669731482\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.18 avg60=0.37 avg300=0.38 total=25109220693\nfull avg10=0.18 avg60=0.37 avg300=0.38 total=24583804164\n",
+        "memory": "some avg10=0.00 avg60=0.01 avg300=0.00 total=950059453\nfull avg10=0.00 avg60=0.01 avg300=0.00 total=938615902\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410522944021921
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410522944229701
+      },
+      "totalsUS": {
+        "cpu": 1669732305,
+        "io": 25109220693,
+        "memory": 950059453
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669732305\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.18 avg60=0.37 avg300=0.38 total=25109220693\nfull avg10=0.18 avg60=0.37 avg300=0.38 total=24583804164\n",
+        "memory": "some avg10=0.00 avg60=0.01 avg300=0.00 total=950059453\nfull avg10=0.00 avg60=0.01 avg300=0.00 total=938615902\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410523943752717
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410523943950807
+      },
+      "totalsUS": {
+        "cpu": 1669733198,
+        "io": 25109220693,
+        "memory": 950059453
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669733198\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.15 avg60=0.36 avg300=0.38 total=25109220693\nfull avg10=0.15 avg60=0.36 avg300=0.38 total=24583804164\n",
+        "memory": "some avg10=0.00 avg60=0.01 avg300=0.00 total=950059453\nfull avg10=0.00 avg60=0.01 avg300=0.00 total=938615902\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410524944014595
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410524944239815
+      },
+      "totalsUS": {
+        "cpu": 1669733975,
+        "io": 25109220695,
+        "memory": 950059453
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669733975\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.15 avg60=0.36 avg300=0.38 total=25109220695\nfull avg10=0.15 avg60=0.36 avg300=0.38 total=24583804166\n",
+        "memory": "some avg10=0.00 avg60=0.01 avg300=0.00 total=950059453\nfull avg10=0.00 avg60=0.01 avg300=0.00 total=938615902\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410525944025043
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410525944230293
+      },
+      "totalsUS": {
+        "cpu": 1669735171,
+        "io": 25109220695,
+        "memory": 950059453
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669735171\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.12 avg60=0.35 avg300=0.38 total=25109220695\nfull avg10=0.12 avg60=0.35 avg300=0.37 total=24583804166\n",
+        "memory": "some avg10=0.00 avg60=0.01 avg300=0.00 total=950059453\nfull avg10=0.00 avg60=0.01 avg300=0.00 total=938615902\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410526943856561
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410526944096861
+      },
+      "totalsUS": {
+        "cpu": 1669735467,
+        "io": 25109276464,
+        "memory": 950059453
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669735467\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.12 avg60=0.35 avg300=0.38 total=25109276464\nfull avg10=0.12 avg60=0.35 avg300=0.37 total=24583859880\n",
+        "memory": "some avg10=0.00 avg60=0.01 avg300=0.00 total=950059453\nfull avg10=0.00 avg60=0.01 avg300=0.00 total=938615902\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410527943877270
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410527944104851
+      },
+      "totalsUS": {
+        "cpu": 1669736426,
+        "io": 25109276464,
+        "memory": 950059453
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669736426\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.46 avg60=0.40 avg300=0.39 total=25109276464\nfull avg10=0.46 avg60=0.40 avg300=0.38 total=24583859880\n",
+        "memory": "some avg10=0.00 avg60=0.01 avg300=0.00 total=950059453\nfull avg10=0.00 avg60=0.01 avg300=0.00 total=938615902\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410528943754330
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410528943968250
+      },
+      "totalsUS": {
+        "cpu": 1669737415,
+        "io": 25109276464,
+        "memory": 950059453
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669737415\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.46 avg60=0.40 avg300=0.39 total=25109276464\nfull avg10=0.46 avg60=0.40 avg300=0.38 total=24583859880\n",
+        "memory": "some avg10=0.00 avg60=0.01 avg300=0.00 total=950059453\nfull avg10=0.00 avg60=0.01 avg300=0.00 total=938615902\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410529943684170
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410529943894840
+      },
+      "totalsUS": {
+        "cpu": 1669739169,
+        "io": 25109299129,
+        "memory": 950064031
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669739169\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.38 avg60=0.39 avg300=0.39 total=25109299129\nfull avg10=0.38 avg60=0.39 avg300=0.38 total=24583882416\n",
+        "memory": "some avg10=0.00 avg60=0.01 avg300=0.00 total=950064031\nfull avg10=0.00 avg60=0.01 avg300=0.00 total=938620480\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410530943761721
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410530943968171
+      },
+      "totalsUS": {
+        "cpu": 1669740227,
+        "io": 25109299129,
+        "memory": 950064031
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669740227\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.38 avg60=0.39 avg300=0.39 total=25109299129\nfull avg10=0.38 avg60=0.39 avg300=0.38 total=24583882416\n",
+        "memory": "some avg10=0.00 avg60=0.01 avg300=0.00 total=950064031\nfull avg10=0.00 avg60=0.01 avg300=0.00 total=938620480\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410531943651721
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410531943849301
+      },
+      "totalsUS": {
+        "cpu": 1669740845,
+        "io": 25109299129,
+        "memory": 950064031
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669740845\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.49 avg60=0.41 avg300=0.39 total=25109299129\nfull avg10=0.49 avg60=0.41 avg300=0.39 total=24583882416\n",
+        "memory": "some avg10=0.00 avg60=0.01 avg300=0.00 total=950064031\nfull avg10=0.00 avg60=0.01 avg300=0.00 total=938620480\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410532943929213
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410532944150723
+      },
+      "totalsUS": {
+        "cpu": 1669741489,
+        "io": 25109299129,
+        "memory": 950064031
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669741489\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.49 avg60=0.41 avg300=0.39 total=25109299129\nfull avg10=0.49 avg60=0.41 avg300=0.39 total=24583882416\n",
+        "memory": "some avg10=0.00 avg60=0.01 avg300=0.00 total=950064031\nfull avg10=0.00 avg60=0.01 avg300=0.00 total=938620480\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410533943899175
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410533944122935
+      },
+      "totalsUS": {
+        "cpu": 1669742188,
+        "io": 25109362421,
+        "memory": 950064031
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669742188\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.40 avg60=0.39 avg300=0.39 total=25109362421\nfull avg10=0.40 avg60=0.39 avg300=0.38 total=24583945527\n",
+        "memory": "some avg10=0.00 avg60=0.01 avg300=0.00 total=950064031\nfull avg10=0.00 avg60=0.01 avg300=0.00 total=938620480\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410534943650108
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410534943841238
+      },
+      "totalsUS": {
+        "cpu": 1669744502,
+        "io": 25109386005,
+        "memory": 950080859
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669744502\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.40 avg60=0.39 avg300=0.39 total=25109386005\nfull avg10=0.40 avg60=0.39 avg300=0.38 total=24583969019\n",
+        "memory": "some avg10=0.00 avg60=0.01 avg300=0.00 total=950080859\nfull avg10=0.00 avg60=0.01 avg300=0.00 total=938637274\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410535943753712
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410535943947442
+      },
+      "totalsUS": {
+        "cpu": 1669745084,
+        "io": 25109386582,
+        "memory": 950080859
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669745084\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=1.05 avg60=0.51 avg300=0.41 total=25109386582\nfull avg10=1.05 avg60=0.51 avg300=0.41 total=24583969583\n",
+        "memory": "some avg10=0.00 avg60=0.01 avg300=0.00 total=950080859\nfull avg10=0.00 avg60=0.01 avg300=0.00 total=938637274\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410536943754156
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410536943958926
+      },
+      "totalsUS": {
+        "cpu": 1669746066,
+        "io": 25109386632,
+        "memory": 950080859
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669746066\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=1.05 avg60=0.51 avg300=0.41 total=25109386632\nfull avg10=1.05 avg60=0.51 avg300=0.41 total=24583969633\n",
+        "memory": "some avg10=0.00 avg60=0.01 avg300=0.00 total=950080859\nfull avg10=0.00 avg60=0.01 avg300=0.00 total=938637274\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410537943760491
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410537943967791
+      },
+      "totalsUS": {
+        "cpu": 1669746895,
+        "io": 25109390648,
+        "memory": 950080859
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669746895\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.86 avg60=0.49 avg300=0.41 total=25109390648\nfull avg10=0.86 avg60=0.49 avg300=0.40 total=24583973632\n",
+        "memory": "some avg10=0.00 avg60=0.01 avg300=0.00 total=950080859\nfull avg10=0.00 avg60=0.01 avg300=0.00 total=938637274\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410538943754348
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410538943956178
+      },
+      "totalsUS": {
+        "cpu": 1669747648,
+        "io": 25109390663,
+        "memory": 950080859
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669747648\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.86 avg60=0.49 avg300=0.41 total=25109390663\nfull avg10=0.86 avg60=0.49 avg300=0.40 total=24583973647\n",
+        "memory": "some avg10=0.00 avg60=0.01 avg300=0.00 total=950080859\nfull avg10=0.00 avg60=0.01 avg300=0.00 total=938637274\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410539943653271
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410539943847632
+      },
+      "totalsUS": {
+        "cpu": 1669748607,
+        "io": 25109390663,
+        "memory": 950080859
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669748607\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.70 avg60=0.48 avg300=0.41 total=25109390663\nfull avg10=0.70 avg60=0.48 avg300=0.40 total=24583973647\n",
+        "memory": "some avg10=0.00 avg60=0.01 avg300=0.00 total=950080859\nfull avg10=0.00 avg60=0.01 avg300=0.00 total=938637274\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410540943760008
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410540943970298
+      },
+      "totalsUS": {
+        "cpu": 1669749308,
+        "io": 25109390663,
+        "memory": 950080859
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669749308\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.70 avg60=0.48 avg300=0.41 total=25109390663\nfull avg10=0.70 avg60=0.48 avg300=0.40 total=24583973647\n",
+        "memory": "some avg10=0.00 avg60=0.01 avg300=0.00 total=950080859\nfull avg10=0.00 avg60=0.01 avg300=0.00 total=938637274\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410541943905445
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410541944129956
+      },
+      "totalsUS": {
+        "cpu": 1669750743,
+        "io": 25109390663,
+        "memory": 950080859
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669750743\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.57 avg60=0.46 avg300=0.40 total=25109390663\nfull avg10=0.57 avg60=0.46 avg300=0.40 total=24583973647\n",
+        "memory": "some avg10=0.00 avg60=0.01 avg300=0.00 total=950080859\nfull avg10=0.00 avg60=0.01 avg300=0.00 total=938637274\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410542943762153
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410542943980303
+      },
+      "totalsUS": {
+        "cpu": 1669751729,
+        "io": 25109390663,
+        "memory": 950080859
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669751729\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.57 avg60=0.46 avg300=0.40 total=25109390663\nfull avg10=0.57 avg60=0.46 avg300=0.40 total=24583973647\n",
+        "memory": "some avg10=0.00 avg60=0.01 avg300=0.00 total=950080859\nfull avg10=0.00 avg60=0.01 avg300=0.00 total=938637274\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410543943754321
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410543943960901
+      },
+      "totalsUS": {
+        "cpu": 1669752641,
+        "io": 25109425548,
+        "memory": 950095747
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669752641\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.65 avg60=0.48 avg300=0.41 total=25109425548\nfull avg10=0.65 avg60=0.48 avg300=0.40 total=24584008205\n",
+        "memory": "some avg10=0.00 avg60=0.01 avg300=0.00 total=950095747\nfull avg10=0.00 avg60=0.01 avg300=0.00 total=938651850\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410544943652790
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410544943818660
+      },
+      "totalsUS": {
+        "cpu": 1669753530,
+        "io": 25109426697,
+        "memory": 950095921
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669753530\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.65 avg60=0.48 avg300=0.41 total=25109426697\nfull avg10=0.65 avg60=0.48 avg300=0.40 total=24584009250\n",
+        "memory": "some avg10=0.00 avg60=0.01 avg300=0.00 total=950095921\nfull avg10=0.00 avg60=0.01 avg300=0.00 total=938652023\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410545943659710
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410545943823490
+      },
+      "totalsUS": {
+        "cpu": 1669754014,
+        "io": 25109427434,
+        "memory": 950096658
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669754014\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.53 avg60=0.46 avg300=0.41 total=25109427434\nfull avg10=0.53 avg60=0.46 avg300=0.40 total=24584009986\n",
+        "memory": "some avg10=0.00 avg60=0.01 avg300=0.00 total=950096658\nfull avg10=0.00 avg60=0.01 avg300=0.00 total=938652760\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410546943658160
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410546943827570
+      },
+      "totalsUS": {
+        "cpu": 1669754154,
+        "io": 25109427434,
+        "memory": 950096658
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669754154\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.53 avg60=0.46 avg300=0.41 total=25109427434\nfull avg10=0.53 avg60=0.46 avg300=0.40 total=24584009986\n",
+        "memory": "some avg10=0.00 avg60=0.01 avg300=0.00 total=950096658\nfull avg10=0.00 avg60=0.01 avg300=0.00 total=938652760\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410547943659050
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410547943817271
+      },
+      "totalsUS": {
+        "cpu": 1669754425,
+        "io": 25109427434,
+        "memory": 950096658
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669754425\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.43 avg60=0.45 avg300=0.40 total=25109427434\nfull avg10=0.43 avg60=0.45 avg300=0.40 total=24584009986\n",
+        "memory": "some avg10=0.00 avg60=0.01 avg300=0.00 total=950096658\nfull avg10=0.00 avg60=0.01 avg300=0.00 total=938652760\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410548943659212
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410548943828182
+      },
+      "totalsUS": {
+        "cpu": 1669754569,
+        "io": 25109427434,
+        "memory": 950096658
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669754569\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.43 avg60=0.45 avg300=0.40 total=25109427434\nfull avg10=0.43 avg60=0.45 avg300=0.40 total=24584009986\n",
+        "memory": "some avg10=0.00 avg60=0.01 avg300=0.00 total=950096658\nfull avg10=0.00 avg60=0.01 avg300=0.00 total=938652760\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410549943703014
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410549943913964
+      },
+      "totalsUS": {
+        "cpu": 1669754952,
+        "io": 25109517405,
+        "memory": 950138326
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669754952\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.35 avg60=0.43 avg300=0.40 total=25109517405\nfull avg10=0.35 avg60=0.43 avg300=0.39 total=24584099703\n",
+        "memory": "some avg10=0.00 avg60=0.00 avg300=0.00 total=950138326\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=938694366\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410550943751056
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410550943979697
+      },
+      "totalsUS": {
+        "cpu": 1669756272,
+        "io": 25109525143,
+        "memory": 950140909
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669756272\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.35 avg60=0.43 avg300=0.40 total=25109525143\nfull avg10=0.35 avg60=0.43 avg300=0.39 total=24584107378\n",
+        "memory": "some avg10=0.00 avg60=0.00 avg300=0.00 total=950140909\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=938696949\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410551943880100
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410551944106750
+      },
+      "totalsUS": {
+        "cpu": 1669756986,
+        "io": 25109525143,
+        "memory": 950140909
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669756986\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=1.01 avg60=0.55 avg300=0.42 total=25109525143\nfull avg10=1.01 avg60=0.55 avg300=0.42 total=24584107378\n",
+        "memory": "some avg10=0.36 avg60=0.07 avg300=0.01 total=950140909\nfull avg10=0.36 avg60=0.07 avg300=0.01 total=938696949\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410552943753854
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410552943958584
+      },
+      "totalsUS": {
+        "cpu": 1669757678,
+        "io": 25109525143,
+        "memory": 950140909
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669757678\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=1.01 avg60=0.55 avg300=0.42 total=25109525143\nfull avg10=1.01 avg60=0.55 avg300=0.42 total=24584107378\n",
+        "memory": "some avg10=0.36 avg60=0.07 avg300=0.01 total=950140909\nfull avg10=0.36 avg60=0.07 avg300=0.01 total=938696949\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410553943922508
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410553944174438
+      },
+      "totalsUS": {
+        "cpu": 1669758697,
+        "io": 25109525143,
+        "memory": 950140909
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669758697\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.83 avg60=0.53 avg300=0.42 total=25109525143\nfull avg10=0.83 avg60=0.53 avg300=0.42 total=24584107378\n",
+        "memory": "some avg10=0.29 avg60=0.07 avg300=0.01 total=950140909\nfull avg10=0.29 avg60=0.07 avg300=0.01 total=938696949\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410554943760872
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410554943976223
+      },
+      "totalsUS": {
+        "cpu": 1669759159,
+        "io": 25109573016,
+        "memory": 950154654
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669759159\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.83 avg60=0.53 avg300=0.42 total=25109573016\nfull avg10=0.83 avg60=0.53 avg300=0.42 total=24584155251\n",
+        "memory": "some avg10=0.29 avg60=0.07 avg300=0.01 total=950154654\nfull avg10=0.29 avg60=0.07 avg300=0.01 total=938710694\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410555943771659
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410555943991299
+      },
+      "totalsUS": {
+        "cpu": 1669760541,
+        "io": 25109606234,
+        "memory": 950161056
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669760541\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=1.40 avg60=0.64 avg300=0.45 total=25109606234\nfull avg10=1.40 avg60=0.64 avg300=0.44 total=24584187855\n",
+        "memory": "some avg10=0.42 avg60=0.10 avg300=0.02 total=950161056\nfull avg10=0.42 avg60=0.10 avg300=0.02 total=938717073\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410556943753416
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410556943962876
+      },
+      "totalsUS": {
+        "cpu": 1669761270,
+        "io": 25109637816,
+        "memory": 950168173
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669761270\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=1.40 avg60=0.64 avg300=0.45 total=25109637816\nfull avg10=1.40 avg60=0.64 avg300=0.44 total=24584219300\n",
+        "memory": "some avg10=0.42 avg60=0.10 avg300=0.02 total=950168173\nfull avg10=0.42 avg60=0.10 avg300=0.02 total=938724169\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410557943917673
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410557944145303
+      },
+      "totalsUS": {
+        "cpu": 1669761817,
+        "io": 25109660442,
+        "memory": 950176273
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669761817\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=1.51 avg60=0.69 avg300=0.46 total=25109660442\nfull avg10=1.51 avg60=0.69 avg300=0.45 total=24584241927\n",
+        "memory": "some avg10=0.34 avg60=0.09 avg300=0.02 total=950176273\nfull avg10=0.34 avg60=0.09 avg300=0.02 total=938732269\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410558943885561
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410558944122521
+      },
+      "totalsUS": {
+        "cpu": 1669762655,
+        "io": 25109660442,
+        "memory": 950176273
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669762655\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=1.51 avg60=0.69 avg300=0.46 total=25109660442\nfull avg10=1.51 avg60=0.69 avg300=0.45 total=24584241927\n",
+        "memory": "some avg10=0.34 avg60=0.09 avg300=0.02 total=950176273\nfull avg10=0.34 avg60=0.09 avg300=0.02 total=938732269\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410559943911508
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410559944142028
+      },
+      "totalsUS": {
+        "cpu": 1669763443,
+        "io": 25109660442,
+        "memory": 950176273
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669763443\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=1.24 avg60=0.66 avg300=0.45 total=25109660442\nfull avg10=1.24 avg60=0.66 avg300=0.45 total=24584241927\n",
+        "memory": "some avg10=0.28 avg60=0.09 avg300=0.02 total=950176273\nfull avg10=0.28 avg60=0.09 avg300=0.02 total=938732269\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410560943658917
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410560943847887
+      },
+      "totalsUS": {
+        "cpu": 1669764633,
+        "io": 25109660452,
+        "memory": 950176273
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669764633\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=1.24 avg60=0.66 avg300=0.45 total=25109660452\nfull avg10=1.24 avg60=0.66 avg300=0.45 total=24584241936\n",
+        "memory": "some avg10=0.28 avg60=0.09 avg300=0.02 total=950176273\nfull avg10=0.28 avg60=0.09 avg300=0.02 total=938732269\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410561943873997
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410561944104547
+      },
+      "totalsUS": {
+        "cpu": 1669765499,
+        "io": 25109660452,
+        "memory": 950176273
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669765499\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=1.01 avg60=0.64 avg300=0.45 total=25109660452\nfull avg10=1.01 avg60=0.64 avg300=0.45 total=24584241936\n",
+        "memory": "some avg10=0.23 avg60=0.09 avg300=0.02 total=950176273\nfull avg10=0.23 avg60=0.09 avg300=0.02 total=938732269\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410562943651706
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410562943844096
+      },
+      "totalsUS": {
+        "cpu": 1669766226,
+        "io": 25109660452,
+        "memory": 950176273
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669766226\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=1.01 avg60=0.64 avg300=0.45 total=25109660452\nfull avg10=1.01 avg60=0.64 avg300=0.45 total=24584241936\n",
+        "memory": "some avg10=0.23 avg60=0.09 avg300=0.02 total=950176273\nfull avg10=0.23 avg60=0.09 avg300=0.02 total=938732269\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410563943791755
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410563944016275
+      },
+      "totalsUS": {
+        "cpu": 1669766978,
+        "io": 25109660452,
+        "memory": 950176273
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669766978\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.83 avg60=0.62 avg300=0.45 total=25109660452\nfull avg10=0.83 avg60=0.62 avg300=0.44 total=24584241936\n",
+        "memory": "some avg10=0.18 avg60=0.08 avg300=0.01 total=950176273\nfull avg10=0.18 avg60=0.08 avg300=0.01 total=938732269\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410564943665815
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410564943866005
+      },
+      "totalsUS": {
+        "cpu": 1669767749,
+        "io": 25109933782,
+        "memory": 950197283
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669767749\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.83 avg60=0.62 avg300=0.45 total=25109933782\nfull avg10=0.83 avg60=0.62 avg300=0.44 total=24584514406\n",
+        "memory": "some avg10=0.18 avg60=0.08 avg300=0.01 total=950197283\nfull avg10=0.18 avg60=0.08 avg300=0.01 total=938753279\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410565943648796
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410565943810306
+      },
+      "totalsUS": {
+        "cpu": 1669770090,
+        "io": 25109933782,
+        "memory": 950197283
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669770090\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=3.03 avg60=1.03 avg300=0.53 total=25109933782\nfull avg10=3.03 avg60=1.03 avg300=0.53 total=24584514406\n",
+        "memory": "some avg10=0.33 avg60=0.11 avg300=0.02 total=950197283\nfull avg10=0.33 avg60=0.11 avg300=0.02 total=938753279\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410566943750477
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410566943964507
+      },
+      "totalsUS": {
+        "cpu": 1669771136,
+        "io": 25109935441,
+        "memory": 950197283
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669771136\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=3.03 avg60=1.03 avg300=0.53 total=25109935441\nfull avg10=3.03 avg60=1.03 avg300=0.53 total=24584516065\n",
+        "memory": "some avg10=0.33 avg60=0.11 avg300=0.02 total=950197283\nfull avg10=0.33 avg60=0.11 avg300=0.02 total=938753279\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410567943671061
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410567943883462
+      },
+      "totalsUS": {
+        "cpu": 1669771701,
+        "io": 25109935441,
+        "memory": 950197283
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669771701\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=2.48 avg60=0.99 avg300=0.53 total=25109935441\nfull avg10=2.48 avg60=0.99 avg300=0.52 total=24584516065\n",
+        "memory": "some avg10=0.27 avg60=0.11 avg300=0.02 total=950197283\nfull avg10=0.27 avg60=0.11 avg300=0.02 total=938753279\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410568944023764
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410568944235495
+      },
+      "totalsUS": {
+        "cpu": 1669772424,
+        "io": 25109935441,
+        "memory": 950197283
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669772424\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=2.48 avg60=0.99 avg300=0.53 total=25109935441\nfull avg10=2.48 avg60=0.99 avg300=0.52 total=24584516065\n",
+        "memory": "some avg10=0.27 avg60=0.11 avg300=0.02 total=950197283\nfull avg10=0.27 avg60=0.11 avg300=0.02 total=938753279\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410569944031008
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410569944238779
+      },
+      "totalsUS": {
+        "cpu": 1669773181,
+        "io": 25109935441,
+        "memory": 950197283
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669773181\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=2.03 avg60=0.96 avg300=0.52 total=25109935441\nfull avg10=2.03 avg60=0.96 avg300=0.52 total=24584516065\n",
+        "memory": "some avg10=0.22 avg60=0.11 avg300=0.02 total=950197283\nfull avg10=0.22 avg60=0.11 avg300=0.02 total=938753279\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410570943759312
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410570943965662
+      },
+      "totalsUS": {
+        "cpu": 1669773967,
+        "io": 25109935441,
+        "memory": 950197283
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669773967\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=2.03 avg60=0.96 avg300=0.52 total=25109935441\nfull avg10=2.03 avg60=0.96 avg300=0.52 total=24584516065\n",
+        "memory": "some avg10=0.22 avg60=0.11 avg300=0.02 total=950197283\nfull avg10=0.22 avg60=0.11 avg300=0.02 total=938753279\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410571943753567
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410571943958117
+      },
+      "totalsUS": {
+        "cpu": 1669775660,
+        "io": 25109935441,
+        "memory": 950197283
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669775660\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=1.66 avg60=0.93 avg300=0.52 total=25109935441\nfull avg10=1.66 avg60=0.93 avg300=0.52 total=24584516065\n",
+        "memory": "some avg10=0.18 avg60=0.10 avg300=0.02 total=950197283\nfull avg10=0.18 avg60=0.10 avg300=0.02 total=938753279\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410572943652682
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410572943846163
+      },
+      "totalsUS": {
+        "cpu": 1669776691,
+        "io": 25109935441,
+        "memory": 950197283
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669776691\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=1.66 avg60=0.93 avg300=0.52 total=25109935441\nfull avg10=1.66 avg60=0.93 avg300=0.52 total=24584516065\n",
+        "memory": "some avg10=0.18 avg60=0.10 avg300=0.02 total=950197283\nfull avg10=0.18 avg60=0.10 avg300=0.02 total=938753279\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410573944033319
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410573944254259
+      },
+      "totalsUS": {
+        "cpu": 1669778019,
+        "io": 25109935441,
+        "memory": 950197283
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669778019\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=1.36 avg60=0.90 avg300=0.52 total=25109935441\nfull avg10=1.36 avg60=0.90 avg300=0.51 total=24584516065\n",
+        "memory": "some avg10=0.15 avg60=0.10 avg300=0.02 total=950197283\nfull avg10=0.15 avg60=0.10 avg300=0.02 total=938753279\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410574943753506
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410574943958187
+      },
+      "totalsUS": {
+        "cpu": 1669778899,
+        "io": 25109935441,
+        "memory": 950197283
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669778899\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=1.36 avg60=0.90 avg300=0.52 total=25109935441\nfull avg10=1.36 avg60=0.90 avg300=0.51 total=24584516065\n",
+        "memory": "some avg10=0.15 avg60=0.10 avg300=0.02 total=950197283\nfull avg10=0.15 avg60=0.10 avg300=0.02 total=938753279\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410575943997442
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410575944221873
+      },
+      "totalsUS": {
+        "cpu": 1669780069,
+        "io": 25109935441,
+        "memory": 950197283
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669780069\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=1.11 avg60=0.87 avg300=0.51 total=25109935441\nfull avg10=1.11 avg60=0.87 avg300=0.51 total=24584516065\n",
+        "memory": "some avg10=0.12 avg60=0.10 avg300=0.02 total=950197283\nfull avg10=0.12 avg60=0.10 avg300=0.02 total=938753279\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410576943753638
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410576943959489
+      },
+      "totalsUS": {
+        "cpu": 1669781084,
+        "io": 25109935441,
+        "memory": 950197283
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669781084\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=1.11 avg60=0.87 avg300=0.51 total=25109935441\nfull avg10=1.11 avg60=0.87 avg300=0.51 total=24584516065\n",
+        "memory": "some avg10=0.12 avg60=0.10 avg300=0.02 total=950197283\nfull avg10=0.12 avg60=0.10 avg300=0.02 total=938753279\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410577943760036
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410577943970876
+      },
+      "totalsUS": {
+        "cpu": 1669782492,
+        "io": 25109935441,
+        "memory": 950197283
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669782492\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.91 avg60=0.84 avg300=0.51 total=25109935441\nfull avg10=0.91 avg60=0.84 avg300=0.50 total=24584516065\n",
+        "memory": "some avg10=0.10 avg60=0.09 avg300=0.02 total=950197283\nfull avg10=0.10 avg60=0.09 avg300=0.02 total=938753279\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410578943864904
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410578944096534
+      },
+      "totalsUS": {
+        "cpu": 1669783347,
+        "io": 25109935441,
+        "memory": 950197283
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669783347\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.91 avg60=0.84 avg300=0.51 total=25109935441\nfull avg10=0.91 avg60=0.84 avg300=0.50 total=24584516065\n",
+        "memory": "some avg10=0.10 avg60=0.09 avg300=0.02 total=950197283\nfull avg10=0.10 avg60=0.09 avg300=0.02 total=938753279\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410579943753533
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410579943957743
+      },
+      "totalsUS": {
+        "cpu": 1669784936,
+        "io": 25109935441,
+        "memory": 950197283
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669784936\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.74 avg60=0.81 avg300=0.50 total=25109935441\nfull avg10=0.74 avg60=0.81 avg300=0.50 total=24584516065\n",
+        "memory": "some avg10=0.08 avg60=0.09 avg300=0.02 total=950197283\nfull avg10=0.08 avg60=0.09 avg300=0.02 total=938753279\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410580943748752
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410580943908492
+      },
+      "totalsUS": {
+        "cpu": 1669785905,
+        "io": 25109935441,
+        "memory": 950197283
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669785905\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.74 avg60=0.81 avg300=0.50 total=25109935441\nfull avg10=0.74 avg60=0.81 avg300=0.50 total=24584516065\n",
+        "memory": "some avg10=0.08 avg60=0.09 avg300=0.02 total=950197283\nfull avg10=0.08 avg60=0.09 avg300=0.02 total=938753279\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410581943753412
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410581943958523
+      },
+      "totalsUS": {
+        "cpu": 1669787288,
+        "io": 25109935809,
+        "memory": 950197283
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669787288\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.61 avg60=0.78 avg300=0.50 total=25109935809\nfull avg10=0.61 avg60=0.78 avg300=0.50 total=24584516432\n",
+        "memory": "some avg10=0.06 avg60=0.08 avg300=0.02 total=950197283\nfull avg10=0.06 avg60=0.08 avg300=0.02 total=938753279\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410582943868622
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410582944094512
+      },
+      "totalsUS": {
+        "cpu": 1669788226,
+        "io": 25109935809,
+        "memory": 950197283
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669788226\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.61 avg60=0.78 avg300=0.50 total=25109935809\nfull avg10=0.61 avg60=0.78 avg300=0.50 total=24584516432\n",
+        "memory": "some avg10=0.06 avg60=0.08 avg300=0.02 total=950197283\nfull avg10=0.06 avg60=0.08 avg300=0.02 total=938753279\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410583943753233
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410583943958403
+      },
+      "totalsUS": {
+        "cpu": 1669789388,
+        "io": 25109935809,
+        "memory": 950197283
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669789388\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.50 avg60=0.76 avg300=0.50 total=25109935809\nfull avg10=0.50 avg60=0.76 avg300=0.49 total=24584516432\n",
+        "memory": "some avg10=0.05 avg60=0.08 avg300=0.02 total=950197283\nfull avg10=0.05 avg60=0.08 avg300=0.02 total=938753279\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410584943754455
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410584943961025
+      },
+      "totalsUS": {
+        "cpu": 1669790499,
+        "io": 25109935809,
+        "memory": 950197283
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669790499\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.50 avg60=0.76 avg300=0.50 total=25109935809\nfull avg10=0.50 avg60=0.76 avg300=0.49 total=24584516432\n",
+        "memory": "some avg10=0.05 avg60=0.08 avg300=0.02 total=950197283\nfull avg10=0.05 avg60=0.08 avg300=0.02 total=938753279\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410585943749518
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410585943909249
+      },
+      "totalsUS": {
+        "cpu": 1669791551,
+        "io": 25109935809,
+        "memory": 950197283
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669791551\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.41 avg60=0.73 avg300=0.49 total=25109935809\nfull avg10=0.41 avg60=0.73 avg300=0.49 total=24584516432\n",
+        "memory": "some avg10=0.04 avg60=0.08 avg300=0.02 total=950197283\nfull avg10=0.04 avg60=0.08 avg300=0.02 total=938753279\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410586943663630
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410586943852371
+      },
+      "totalsUS": {
+        "cpu": 1669792268,
+        "io": 25110087787,
+        "memory": 950204048
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669792268\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=0.41 avg60=0.73 avg300=0.49 total=25110087787\nfull avg10=0.41 avg60=0.73 avg300=0.49 total=24584585359\n",
+        "memory": "some avg10=0.04 avg60=0.08 avg300=0.02 total=950204048\nfull avg10=0.04 avg60=0.08 avg300=0.02 total=938760035\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410587943760713
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410587943964653
+      },
+      "totalsUS": {
+        "cpu": 1669793233,
+        "io": 25110087787,
+        "memory": 950204048
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669793233\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=1.60 avg60=0.94 avg300=0.54 total=25110087787\nfull avg10=0.87 avg60=0.81 avg300=0.51 total=24584585359\n",
+        "memory": "some avg10=0.03 avg60=0.08 avg300=0.02 total=950204048\nfull avg10=0.03 avg60=0.08 avg300=0.02 total=938760035\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410588943759916
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410588943966567
+      },
+      "totalsUS": {
+        "cpu": 1669794244,
+        "io": 25110087787,
+        "memory": 950204048
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669794244\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=1.60 avg60=0.94 avg300=0.54 total=25110087787\nfull avg10=0.87 avg60=0.81 avg300=0.51 total=24584585359\n",
+        "memory": "some avg10=0.03 avg60=0.08 avg300=0.02 total=950204048\nfull avg10=0.03 avg60=0.08 avg300=0.02 total=938760035\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410589943750410
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410589943918051
+      },
+      "totalsUS": {
+        "cpu": 1669795183,
+        "io": 25110087787,
+        "memory": 950204048
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669795183\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=1.31 avg60=0.91 avg300=0.53 total=25110087787\nfull avg10=0.71 avg60=0.78 avg300=0.50 total=24584585359\n",
+        "memory": "some avg10=0.02 avg60=0.07 avg300=0.02 total=950204048\nfull avg10=0.02 avg60=0.07 avg300=0.02 total=938760035\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410590943756086
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410590943960206
+      },
+      "totalsUS": {
+        "cpu": 1669796176,
+        "io": 25110087787,
+        "memory": 950204048
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669796176\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=1.31 avg60=0.91 avg300=0.53 total=25110087787\nfull avg10=0.71 avg60=0.78 avg300=0.50 total=24584585359\n",
+        "memory": "some avg10=0.02 avg60=0.07 avg300=0.02 total=950204048\nfull avg10=0.02 avg60=0.07 avg300=0.02 total=938760035\n"
+      }
+    },
+    {
+      "begin": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410591943651491
+      },
+      "end": {
+        "boot": "6ad05171-c9b6-4984-ac81-21e604b84fc5",
+        "ns": 410591943833511
+      },
+      "totalsUS": {
+        "cpu": 1669798620,
+        "io": 25110087787,
+        "memory": 950204048
+      },
+      "raw": {
+        "cpu": "some avg10=0.00 avg60=0.00 avg300=0.00 total=1669798620\nfull avg10=0.00 avg60=0.00 avg300=0.00 total=0\n",
+        "io": "some avg10=1.07 avg60=0.88 avg300=0.53 total=25110087787\nfull avg10=0.58 avg60=0.75 avg300=0.50 total=24584585359\n",
+        "memory": "some avg10=0.02 avg60=0.07 avg300=0.02 total=950204048\nfull avg10=0.02 avg60=0.07 avg300=0.02 total=938760035\n"
+      }
+    }
+  ],
+  "processChecks": [
+    {
+      "atUTC": "2026-09-16T04:45:41.930673+00:00",
+      "indexers": [],
+      "oldProcesses": [],
+      "unavailable": [],
+      "oldCgroupExists": false
+    },
+    {
+      "atUTC": "2026-09-16T04:45:51.944424+00:00",
+      "indexers": [],
+      "oldProcesses": [],
+      "unavailable": [],
+      "oldCgroupExists": false
+    },
+    {
+      "atUTC": "2026-09-16T04:46:01.944485+00:00",
+      "indexers": [],
+      "oldProcesses": [],
+      "unavailable": [],
+      "oldCgroupExists": false
+    },
+    {
+      "atUTC": "2026-09-16T04:46:11.944582+00:00",
+      "indexers": [],
+      "oldProcesses": [],
+      "unavailable": [],
+      "oldCgroupExists": false
+    },
+    {
+      "atUTC": "2026-09-16T04:46:21.944244+00:00",
+      "indexers": [],
+      "oldProcesses": [],
+      "unavailable": [],
+      "oldCgroupExists": false
+    },
+    {
+      "atUTC": "2026-09-16T04:46:31.944338+00:00",
+      "indexers": [],
+      "oldProcesses": [],
+      "unavailable": [],
+      "oldCgroupExists": false
+    },
+    {
+      "atUTC": "2026-09-16T04:46:41.944339+00:00",
+      "indexers": [],
+      "oldProcesses": [],
+      "unavailable": [],
+      "oldCgroupExists": false
+    },
+    {
+      "atUTC": "2026-09-16T04:46:51.944382+00:00",
+      "indexers": [],
+      "oldProcesses": [],
+      "unavailable": [],
+      "oldCgroupExists": false
+    },
+    {
+      "atUTC": "2026-09-16T04:47:01.944320+00:00",
+      "indexers": [],
+      "oldProcesses": [],
+      "unavailable": [],
+      "oldCgroupExists": false
+    },
+    {
+      "atUTC": "2026-09-16T04:47:11.944240+00:00",
+      "indexers": [],
+      "oldProcesses": [],
+      "unavailable": [],
+      "oldCgroupExists": false
+    },
+    {
+      "atUTC": "2026-09-16T04:47:21.944311+00:00",
+      "indexers": [],
+      "oldProcesses": [],
+      "unavailable": [],
+      "oldCgroupExists": false
+    },
+    {
+      "atUTC": "2026-09-16T04:47:31.944737+00:00",
+      "indexers": [],
+      "oldProcesses": [],
+      "unavailable": [],
+      "oldCgroupExists": false
+    },
+    {
+      "atUTC": "2026-09-16T04:47:41.944563+00:00",
+      "indexers": [],
+      "oldProcesses": [],
+      "unavailable": [],
+      "oldCgroupExists": false
+    },
+    {
+      "atUTC": "2026-09-16T04:47:51.944404+00:00",
+      "indexers": [],
+      "oldProcesses": [],
+      "unavailable": [],
+      "oldCgroupExists": false
+    },
+    {
+      "atUTC": "2026-09-16T04:48:01.944662+00:00",
+      "indexers": [],
+      "oldProcesses": [],
+      "unavailable": [],
+      "oldCgroupExists": false
+    },
+    {
+      "atUTC": "2026-09-16T04:48:11.944271+00:00",
+      "indexers": [],
+      "oldProcesses": [],
+      "unavailable": [],
+      "oldCgroupExists": false
+    },
+    {
+      "atUTC": "2026-09-16T04:48:21.944291+00:00",
+      "indexers": [],
+      "oldProcesses": [],
+      "unavailable": [],
+      "oldCgroupExists": false
+    },
+    {
+      "atUTC": "2026-09-16T04:48:31.944635+00:00",
+      "indexers": [],
+      "oldProcesses": [],
+      "unavailable": [],
+      "oldCgroupExists": false
+    },
+    {
+      "atUTC": "2026-09-16T04:48:41.944508+00:00",
+      "indexers": [],
+      "oldProcesses": [],
+      "unavailable": [],
+      "oldCgroupExists": false
+    }
+  ],
+  "storageBefore": {
+    "atUTC": "2026-09-16T04:45:41.930777+00:00",
+    "pendingWrites": {
+      "Dirty": "4096 kB",
+      "Writeback": "0 kB"
+    },
+    "diskstats": "   8       0 sda 4769047 1633140 519066726 161739489 11893105 12406293 1072205716 76266035 0 44875402 251026131 9 0 3057504 4 510679 13020601\n   8       1 sda1 36 0 10588 629 0 0 0 0 0 485 629 0 0 0 0 0 0\n   8       2 sda2 39 0 11472 1475 0 0 0 0 0 1232 1475 0 0 0 0 0 0\n   8       3 sda3 365 4069 68197 8156 70 0 68 172 0 4340 8333 9 0 3057504 4 0 0\n   8       4 sda4 4768536 1629071 518969765 161725595 11893033 12406293 1072205648 76265722 0 44872137 237991317 0 0 0 0 0 0\n 259       0 nvme0n1 254 0 15662 443 0 0 0 0 0 149 443 0 0 0 0 0 0\n 259       1 nvme0n1p1 47 0 3344 74 0 0 0 0 0 75 74 0 0 0 0 0 0\n 259       2 nvme0n1p2 39 0 2416 72 0 0 0 0 0 72 72 0 0 0 0 0 0\n 259       3 nvme0n1p3 47 0 3342 75 0 0 0 0 0 74 75 0 0 0 0 0 0\n 259       4 nvme0n1p4 45 0 3312 75 0 0 0 0 0 74 75 0 0 0 0 0 0\n   8      16 sdb 191 1 8097 6362 2 0 4096 68 0 6380 6431 2 0 16777200 0 0 0\n   8      17 sdb1 119 1 4369 6285 2 0 4096 68 0 6315 6354 2 0 16777200 0 0 0\n 253       0 dm-0 6397564 0 518968458 292790944 24299323 0 1072205648 2691963476 0 44993181 2984754420 0 0 0 0 0 0\n 252       0 zram0 473571 0 3792376 2342 1358735 0 19990208 27298 0 130774 29640 0 0 0 0 0 0\n 253       1 dm-1 101 0 2865 6276 1 0 4096 36 0 6300 6312 2 0 16777200 0 0 0\n"
+  },
+  "status": "COMPLETE",
+  "endBootNS": 410592943872116,
+  "endedUTC": "2026-09-16T04:48:41.931016+00:00",
+  "observerCPUSeconds": 0.266927982,
+  "storageAfter": {
+    "atUTC": "2026-09-16T04:48:41.931103+00:00",
+    "pendingWrites": {
+      "Dirty": "1576 kB",
+      "Writeback": "0 kB"
+    },
+    "diskstats": "   8       0 sda 4769086 1633140 519068446 161740151 11895797 12407906 1072366924 76271669 0 44878394 251034423 9 0 3057504 4 510731 13022597\n   8       1 sda1 36 0 10588 629 0 0 0 0 0 485 629 0 0 0 0 0 0\n   8       2 sda2 39 0 11472 1475 0 0 0 0 0 1232 1475 0 0 0 0 0 0\n   8       3 sda3 365 4069 68197 8156 70 0 68 172 0 4340 8333 9 0 3057504 4 0 0\n   8       4 sda4 4768575 1629071 518971485 161726257 11895725 12407906 1072366856 76271355 0 44875129 237997613 0 0 0 0 0 0\n 259       0 nvme0n1 254 0 15662 443 0 0 0 0 0 149 443 0 0 0 0 0 0\n 259       1 nvme0n1p1 47 0 3344 74 0 0 0 0 0 75 74 0 0 0 0 0 0\n 259       2 nvme0n1p2 39 0 2416 72 0 0 0 0 0 72 72 0 0 0 0 0 0\n 259       3 nvme0n1p3 47 0 3342 75 0 0 0 0 0 74 75 0 0 0 0 0 0\n 259       4 nvme0n1p4 45 0 3312 75 0 0 0 0 0 74 75 0 0 0 0 0 0\n   8      16 sdb 191 1 8097 6362 2 0 4096 68 0 6380 6431 2 0 16777200 0 0 0\n   8      17 sdb1 119 1 4369 6285 2 0 4096 68 0 6315 6354 2 0 16777200 0 0 0\n 253       0 dm-0 6397603 0 518970178 292791614 24303628 0 1072366856 2692069325 0 44996176 2984860939 0 0 0 0 0 0\n 252       0 zram0 473639 0 3792920 2342 1358735 0 19990208 27298 0 130774 29640 0 0 0 0 0 0\n 253       1 dm-1 101 0 2865 6276 1 0 4096 36 0 6300 6312 2 0 16777200 0 0 0\n"
+  }
+}

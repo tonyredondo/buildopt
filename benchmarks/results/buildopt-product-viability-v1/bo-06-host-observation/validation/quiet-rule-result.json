@@ -1,0 +1,8 @@
+{
+  "command": "./dev/run --toolchain go -- go test -count=1 -v ./.tools/state/buildopt-product-viability-v1/bo-06-host-observation-2026-09-16/validation",
+  "exitCode": 0,
+  "test": "TestObservedQuietWindows",
+  "result": "All 180 recorded decisions agree with the extracted frozen rule; 94 quiet windows",
+  "sourceCheckedAgainst": "bo-06-reserved-host/runner-source.tar.gz",
+  "scope": "Pure recorded-counter evaluation; no project builds or comparison JVMs"
+}

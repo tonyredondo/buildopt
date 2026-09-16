@@ -1,0 +1,38 @@
+[
+  {
+    "sourceFile": "process_linux.go",
+    "sourceSHA256": "8ae6925ec420f96d8376851f90125c1e7251f77a6e7b1ff3776536cc5e087b09",
+    "declaration": "type Stamp struct",
+    "extractedSHA256": "245910e70ee369c305c4bbca1b8d58cec191ecc9914f01661eb69d34120bc4f9"
+  },
+  {
+    "sourceFile": "quiet_start.go",
+    "sourceSHA256": "f213029a8835e859a5c38504b1b64138a2dca23da032428f4803274dd7b6b0f0",
+    "declaration": "type QuietPolicy struct",
+    "extractedSHA256": "313b24553af5f600e8cceffd09855529d3ab6ceb4d1929971dc978dc4d94a5df"
+  },
+  {
+    "sourceFile": "quiet_start.go",
+    "sourceSHA256": "f213029a8835e859a5c38504b1b64138a2dca23da032428f4803274dd7b6b0f0",
+    "declaration": "func fixedQuietPolicy",
+    "extractedSHA256": "a9a2174dcbf7b80ea0166f98eab2b5bef85ce9eed5d5374303cbe05aa1d3e0e2"
+  },
+  {
+    "sourceFile": "quiet_start.go",
+    "sourceSHA256": "f213029a8835e859a5c38504b1b64138a2dca23da032428f4803274dd7b6b0f0",
+    "declaration": "type PressureSample struct",
+    "extractedSHA256": "1b9abc4aac2888125df1f96e851a9b1921a77fd94236f8712a4ce0f4a98c6168"
+  },
+  {
+    "sourceFile": "quiet_start.go",
+    "sourceSHA256": "f213029a8835e859a5c38504b1b64138a2dca23da032428f4803274dd7b6b0f0",
+    "declaration": "func quietWindow",
+    "extractedSHA256": "b40d428862a1dac4be99b69634155046f0a4d53f51186129962031a3f321d6ff"
+  },
+  {
+    "sourceFile": "checker.go",
+    "sourceSHA256": "efdce153188be533a67e65a0ce2bd45ba3b73663ffafe739e425e573668950fb",
+    "declaration": "func checkStampInterval",
+    "extractedSHA256": "f343cefaad38c5380bb58df964c6b8fc276281e2328ddfcaa15d5a5ee82c8084"
+  }
+]
